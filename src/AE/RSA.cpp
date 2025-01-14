@@ -15,8 +15,8 @@ void AE_RSA::KeyGen(pk *pk, sk *sk, short k) {
     RandomGenerator::RandomInLength(&q, k / 2);
     mpz_nextprime(q, q);
 
-    // PrintMpz("p", p);
-    // PrintMpz("q", q);
+    // Logger::PrintMpz("p", &p);
+    // Logger::PrintMpz("q", &q);
     
     // n = p * q
     mpz_mul(pk->n, p, q);

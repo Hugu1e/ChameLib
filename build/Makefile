@@ -153,6 +153,30 @@ src/AE/RSA.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/RSA_test.dir/build.make CMakeFiles/RSA_test.dir/src/AE/RSA.cpp.s
 .PHONY : src/AE/RSA.cpp.s
 
+src/utils/Logger.o: src/utils/Logger.cpp.o
+.PHONY : src/utils/Logger.o
+
+# target to build an object file
+src/utils/Logger.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/RSA_test.dir/build.make CMakeFiles/RSA_test.dir/src/utils/Logger.cpp.o
+.PHONY : src/utils/Logger.cpp.o
+
+src/utils/Logger.i: src/utils/Logger.cpp.i
+.PHONY : src/utils/Logger.i
+
+# target to preprocess a source file
+src/utils/Logger.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/RSA_test.dir/build.make CMakeFiles/RSA_test.dir/src/utils/Logger.cpp.i
+.PHONY : src/utils/Logger.cpp.i
+
+src/utils/Logger.s: src/utils/Logger.cpp.s
+.PHONY : src/utils/Logger.s
+
+# target to generate assembly for a file
+src/utils/Logger.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/RSA_test.dir/build.make CMakeFiles/RSA_test.dir/src/utils/Logger.cpp.s
+.PHONY : src/utils/Logger.cpp.s
+
 src/utils/RandomGenerator.o: src/utils/RandomGenerator.cpp.o
 .PHONY : src/utils/RandomGenerator.o
 
@@ -213,6 +237,9 @@ help:
 	@echo "... src/AE/RSA.o"
 	@echo "... src/AE/RSA.i"
 	@echo "... src/AE/RSA.s"
+	@echo "... src/utils/Logger.o"
+	@echo "... src/utils/Logger.i"
+	@echo "... src/utils/Logger.s"
 	@echo "... src/utils/RandomGenerator.o"
 	@echo "... src/utils/RandomGenerator.i"
 	@echo "... src/utils/RandomGenerator.s"

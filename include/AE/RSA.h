@@ -1,9 +1,11 @@
 #ifndef CHAMELIB_RSA_H
 #define CHAMELIB_RSA_H
 
-#include <libs/gmp/include/gmp.h>
+#include <gmp/gmp.h>
+#include <iostream>
 #include <string>
 #include <utils/RandomGenerator.h>
+#include <utils/Logger.h>
 
 class AE_RSA{
     public:

@@ -1,7 +1,7 @@
 #ifndef CHAMELIB_UTILS_RANDOMGENERATOR_H
 #define CHAMELIB_UTILS_RANDOMGENERATOR_H
 
-#include <libs/gmp/include/gmp.h>
+#include <gmp/gmp.h>
 #include <sys/time.h>
 
 class RandomGenerator{

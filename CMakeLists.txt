@@ -5,22 +5,9 @@ set(CMAKE_CXX_STANDARD 17)
 SET(CMAKE_BUILD_TYPE "Debug")
 # SET(CMAKE_BUILD_TYPE "Release")
 
-include_directories(${CMAKE_SOURCE_DIR}/libs/gmp/include)
-include_directories(libs/pbc/include)
-include_directories(include)
+include_directories(include libs/include/)
 
-
-set(GMP_LIBRARY_PATH ${CMAKE_SOURCE_DIR}/libs/gmp/lib/libgmp.so)
-if (EXISTS ${GMP_LIBRARY_PATH})
-    message(STATUS "GMP library found at: ${GMP_LIBRARY_PATH}")
-else()
-    message(FATAL_ERROR "GMP library not found at: ${GMP_LIBRARY_PATH}")
-endif()
-# link_libraries(${GMP_LIBRARY_PATH})
-
-
-
-
+link_directories(libs/lib)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -pthread -mavx2 -O0")
 add_compile_options(-Wunknown-pragmas)
@@ -45,10 +32,12 @@ endif (LOCAL_DEBUG)
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS} -g -ggdb")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS}")
 
+
 add_executable(RSA_test
         tests/RSA_test/RSA_test.cpp
         src/AE/RSA.cpp
+        src/utils/Logger.cpp
         src/utils/RandomGenerator.cpp
         )
-target_link_libraries(RSA_test ${GMP_LIB_PATH})
+target_link_libraries(RSA_test gmp)
 
