@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "system_error": "cpp",
+        "exception": "cpp",
+        "string": "cpp"
+    }
+}
