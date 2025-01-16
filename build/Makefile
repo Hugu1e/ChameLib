@@ -65,6 +65,16 @@ CMAKE_BINARY_DIR = /home/hyj/ChameLib/build
 #=============================================================================
 # Targets provided globally by CMake.
 
+# Special rule for the target test
+test:
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running tests..."
+	/usr/local/bin/ctest --force-new-ctest-process $(ARGS)
+.PHONY : test
+
+# Special rule for the target test
+test/fast: test
+.PHONY : test/fast
+
 # Special rule for the target edit_cache
 edit_cache:
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "No interactive CMake dialog available..."
@@ -84,6 +94,51 @@ rebuild_cache:
 # Special rule for the target rebuild_cache
 rebuild_cache/fast: rebuild_cache
 .PHONY : rebuild_cache/fast
+
+# Special rule for the target list_install_components
+list_install_components:
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Available install components are: \"Unspecified\""
+.PHONY : list_install_components
+
+# Special rule for the target list_install_components
+list_install_components/fast: list_install_components
+.PHONY : list_install_components/fast
+
+# Special rule for the target install
+install: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Install the project..."
+	/usr/local/bin/cmake -P cmake_install.cmake
+.PHONY : install
+
+# Special rule for the target install
+install/fast: preinstall/fast
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Install the project..."
+	/usr/local/bin/cmake -P cmake_install.cmake
+.PHONY : install/fast
+
+# Special rule for the target install/local
+install/local: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing only the local directory..."
+	/usr/local/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
+.PHONY : install/local
+
+# Special rule for the target install/local
+install/local/fast: preinstall/fast
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing only the local directory..."
+	/usr/local/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
+.PHONY : install/local/fast
+
+# Special rule for the target install/strip
+install/strip: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing the project stripped..."
+	/usr/local/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
+.PHONY : install/strip
+
+# Special rule for the target install/strip
+install/strip/fast: preinstall/fast
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing the project stripped..."
+	/usr/local/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
+.PHONY : install/strip/fast
 
 # The main all target
 all: cmake_check_build_system
@@ -117,6 +172,19 @@ depend:
 .PHONY : depend
 
 #=============================================================================
+# Target rules for targets named ChameLib
+
+# Build rule for target.
+ChameLib: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 ChameLib
+.PHONY : ChameLib
+
+# fast build rule for target.
+ChameLib/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ChameLib.dir/build.make CMakeFiles/ChameLib.dir/build
+.PHONY : ChameLib/fast
+
+#=============================================================================
 # Target rules for targets named RSA_test
 
 # Build rule for target.
@@ -147,7 +215,7 @@ src/AE/RSA.o: src/AE/RSA.cpp.o
 
 # target to build an object file
 src/AE/RSA.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/RSA_test.dir/build.make CMakeFiles/RSA_test.dir/src/AE/RSA.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ChameLib.dir/build.make CMakeFiles/ChameLib.dir/src/AE/RSA.cpp.o
 .PHONY : src/AE/RSA.cpp.o
 
 src/AE/RSA.i: src/AE/RSA.cpp.i
@@ -155,7 +223,7 @@ src/AE/RSA.i: src/AE/RSA.cpp.i
 
 # target to preprocess a source file
 src/AE/RSA.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/RSA_test.dir/build.make CMakeFiles/RSA_test.dir/src/AE/RSA.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ChameLib.dir/build.make CMakeFiles/ChameLib.dir/src/AE/RSA.cpp.i
 .PHONY : src/AE/RSA.cpp.i
 
 src/AE/RSA.s: src/AE/RSA.cpp.s
@@ -163,7 +231,7 @@ src/AE/RSA.s: src/AE/RSA.cpp.s
 
 # target to generate assembly for a file
 src/AE/RSA.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/RSA_test.dir/build.make CMakeFiles/RSA_test.dir/src/AE/RSA.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ChameLib.dir/build.make CMakeFiles/ChameLib.dir/src/AE/RSA.cpp.s
 .PHONY : src/AE/RSA.cpp.s
 
 src/base/MpzElements.o: src/base/MpzElements.cpp.o
@@ -171,8 +239,7 @@ src/base/MpzElements.o: src/base/MpzElements.cpp.o
 
 # target to build an object file
 src/base/MpzElements.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/RSA_test.dir/build.make CMakeFiles/RSA_test.dir/src/base/MpzElements.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Elements_test.dir/build.make CMakeFiles/Elements_test.dir/src/base/MpzElements.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ChameLib.dir/build.make CMakeFiles/ChameLib.dir/src/base/MpzElements.cpp.o
 .PHONY : src/base/MpzElements.cpp.o
 
 src/base/MpzElements.i: src/base/MpzElements.cpp.i
@@ -180,8 +247,7 @@ src/base/MpzElements.i: src/base/MpzElements.cpp.i
 
 # target to preprocess a source file
 src/base/MpzElements.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/RSA_test.dir/build.make CMakeFiles/RSA_test.dir/src/base/MpzElements.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Elements_test.dir/build.make CMakeFiles/Elements_test.dir/src/base/MpzElements.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ChameLib.dir/build.make CMakeFiles/ChameLib.dir/src/base/MpzElements.cpp.i
 .PHONY : src/base/MpzElements.cpp.i
 
 src/base/MpzElements.s: src/base/MpzElements.cpp.s
@@ -189,8 +255,7 @@ src/base/MpzElements.s: src/base/MpzElements.cpp.s
 
 # target to generate assembly for a file
 src/base/MpzElements.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/RSA_test.dir/build.make CMakeFiles/RSA_test.dir/src/base/MpzElements.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Elements_test.dir/build.make CMakeFiles/Elements_test.dir/src/base/MpzElements.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ChameLib.dir/build.make CMakeFiles/ChameLib.dir/src/base/MpzElements.cpp.s
 .PHONY : src/base/MpzElements.cpp.s
 
 src/base/PbcElements.o: src/base/PbcElements.cpp.o
@@ -198,7 +263,7 @@ src/base/PbcElements.o: src/base/PbcElements.cpp.o
 
 # target to build an object file
 src/base/PbcElements.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Elements_test.dir/build.make CMakeFiles/Elements_test.dir/src/base/PbcElements.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ChameLib.dir/build.make CMakeFiles/ChameLib.dir/src/base/PbcElements.cpp.o
 .PHONY : src/base/PbcElements.cpp.o
 
 src/base/PbcElements.i: src/base/PbcElements.cpp.i
@@ -206,7 +271,7 @@ src/base/PbcElements.i: src/base/PbcElements.cpp.i
 
 # target to preprocess a source file
 src/base/PbcElements.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Elements_test.dir/build.make CMakeFiles/Elements_test.dir/src/base/PbcElements.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ChameLib.dir/build.make CMakeFiles/ChameLib.dir/src/base/PbcElements.cpp.i
 .PHONY : src/base/PbcElements.cpp.i
 
 src/base/PbcElements.s: src/base/PbcElements.cpp.s
@@ -214,7 +279,7 @@ src/base/PbcElements.s: src/base/PbcElements.cpp.s
 
 # target to generate assembly for a file
 src/base/PbcElements.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Elements_test.dir/build.make CMakeFiles/Elements_test.dir/src/base/PbcElements.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ChameLib.dir/build.make CMakeFiles/ChameLib.dir/src/base/PbcElements.cpp.s
 .PHONY : src/base/PbcElements.cpp.s
 
 src/curve/params.o: src/curve/params.cpp.o
@@ -222,8 +287,7 @@ src/curve/params.o: src/curve/params.cpp.o
 
 # target to build an object file
 src/curve/params.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/RSA_test.dir/build.make CMakeFiles/RSA_test.dir/src/curve/params.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Elements_test.dir/build.make CMakeFiles/Elements_test.dir/src/curve/params.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ChameLib.dir/build.make CMakeFiles/ChameLib.dir/src/curve/params.cpp.o
 .PHONY : src/curve/params.cpp.o
 
 src/curve/params.i: src/curve/params.cpp.i
@@ -231,8 +295,7 @@ src/curve/params.i: src/curve/params.cpp.i
 
 # target to preprocess a source file
 src/curve/params.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/RSA_test.dir/build.make CMakeFiles/RSA_test.dir/src/curve/params.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Elements_test.dir/build.make CMakeFiles/Elements_test.dir/src/curve/params.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ChameLib.dir/build.make CMakeFiles/ChameLib.dir/src/curve/params.cpp.i
 .PHONY : src/curve/params.cpp.i
 
 src/curve/params.s: src/curve/params.cpp.s
@@ -240,16 +303,39 @@ src/curve/params.s: src/curve/params.cpp.s
 
 # target to generate assembly for a file
 src/curve/params.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/RSA_test.dir/build.make CMakeFiles/RSA_test.dir/src/curve/params.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Elements_test.dir/build.make CMakeFiles/Elements_test.dir/src/curve/params.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ChameLib.dir/build.make CMakeFiles/ChameLib.dir/src/curve/params.cpp.s
 .PHONY : src/curve/params.cpp.s
+
+src/utils/Logger.o: src/utils/Logger.cpp.o
+.PHONY : src/utils/Logger.o
+
+# target to build an object file
+src/utils/Logger.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ChameLib.dir/build.make CMakeFiles/ChameLib.dir/src/utils/Logger.cpp.o
+.PHONY : src/utils/Logger.cpp.o
+
+src/utils/Logger.i: src/utils/Logger.cpp.i
+.PHONY : src/utils/Logger.i
+
+# target to preprocess a source file
+src/utils/Logger.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ChameLib.dir/build.make CMakeFiles/ChameLib.dir/src/utils/Logger.cpp.i
+.PHONY : src/utils/Logger.cpp.i
+
+src/utils/Logger.s: src/utils/Logger.cpp.s
+.PHONY : src/utils/Logger.s
+
+# target to generate assembly for a file
+src/utils/Logger.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ChameLib.dir/build.make CMakeFiles/ChameLib.dir/src/utils/Logger.cpp.s
+.PHONY : src/utils/Logger.cpp.s
 
 src/utils/RandomGenerator.o: src/utils/RandomGenerator.cpp.o
 .PHONY : src/utils/RandomGenerator.o
 
 # target to build an object file
 src/utils/RandomGenerator.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/RSA_test.dir/build.make CMakeFiles/RSA_test.dir/src/utils/RandomGenerator.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ChameLib.dir/build.make CMakeFiles/ChameLib.dir/src/utils/RandomGenerator.cpp.o
 .PHONY : src/utils/RandomGenerator.cpp.o
 
 src/utils/RandomGenerator.i: src/utils/RandomGenerator.cpp.i
@@ -257,7 +343,7 @@ src/utils/RandomGenerator.i: src/utils/RandomGenerator.cpp.i
 
 # target to preprocess a source file
 src/utils/RandomGenerator.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/RSA_test.dir/build.make CMakeFiles/RSA_test.dir/src/utils/RandomGenerator.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ChameLib.dir/build.make CMakeFiles/ChameLib.dir/src/utils/RandomGenerator.cpp.i
 .PHONY : src/utils/RandomGenerator.cpp.i
 
 src/utils/RandomGenerator.s: src/utils/RandomGenerator.cpp.s
@@ -265,7 +351,7 @@ src/utils/RandomGenerator.s: src/utils/RandomGenerator.cpp.s
 
 # target to generate assembly for a file
 src/utils/RandomGenerator.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/RSA_test.dir/build.make CMakeFiles/RSA_test.dir/src/utils/RandomGenerator.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ChameLib.dir/build.make CMakeFiles/ChameLib.dir/src/utils/RandomGenerator.cpp.s
 .PHONY : src/utils/RandomGenerator.cpp.s
 
 tests/RSA_test/RSA_test.o: tests/RSA_test/RSA_test.cpp.o
@@ -350,7 +436,13 @@ help:
 	@echo "... clean"
 	@echo "... depend"
 	@echo "... edit_cache"
+	@echo "... install"
+	@echo "... install/local"
+	@echo "... install/strip"
+	@echo "... list_install_components"
 	@echo "... rebuild_cache"
+	@echo "... test"
+	@echo "... ChameLib"
 	@echo "... Elements_test"
 	@echo "... RSA_test"
 	@echo "... src/AE/RSA.o"
@@ -365,6 +457,9 @@ help:
 	@echo "... src/curve/params.o"
 	@echo "... src/curve/params.i"
 	@echo "... src/curve/params.s"
+	@echo "... src/utils/Logger.o"
+	@echo "... src/utils/Logger.i"
+	@echo "... src/utils/Logger.s"
 	@echo "... src/utils/RandomGenerator.o"
 	@echo "... src/utils/RandomGenerator.i"
 	@echo "... src/utils/RandomGenerator.s"
