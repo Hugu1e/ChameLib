@@ -11,8 +11,3 @@ class BaseException: public std::exception{
             return m.c_str();
         }
 };
-
-class VarNotExistsException: public BaseException{
-    public:
-        VarNotExistsException(const std::string& message):BaseException(message){}
-};

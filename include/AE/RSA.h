@@ -1,7 +1,7 @@
 #ifndef CHAMELIB_RSA_H
 #define CHAMELIB_RSA_H
 
-#include <gmp/gmp.h>
+#include <gmp.h>
 #include <iostream>
 #include <string>
 #include <utils/RandomGenerator.h>

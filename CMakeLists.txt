@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 17)
 SET(CMAKE_BUILD_TYPE "Debug")
 # SET(CMAKE_BUILD_TYPE "Release")
 
-include_directories(include libs/include/)
+include_directories(include libs/include/gmp libs/include/pbc)
 
 link_directories(libs/lib)
 
@@ -38,6 +38,14 @@ add_executable(RSA_test
         src/AE/RSA.cpp
         src/utils/Logger.cpp
         src/utils/RandomGenerator.cpp
-        )
+)
 target_link_libraries(RSA_test gmp)
+
+
+add_executable(Elements_test
+        tests/base_test/Elements_test.cpp
+        src/base/PbcElements.cpp
+        src/curve/params.cpp
+)
+target_link_libraries(Elements_test pbc)
 

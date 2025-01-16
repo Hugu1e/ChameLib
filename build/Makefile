@@ -129,6 +129,19 @@ RSA_test/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/RSA_test.dir/build.make CMakeFiles/RSA_test.dir/build
 .PHONY : RSA_test/fast
 
+#=============================================================================
+# Target rules for targets named Elements_test
+
+# Build rule for target.
+Elements_test: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 Elements_test
+.PHONY : Elements_test
+
+# fast build rule for target.
+Elements_test/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Elements_test.dir/build.make CMakeFiles/Elements_test.dir/build
+.PHONY : Elements_test/fast
+
 src/AE/RSA.o: src/AE/RSA.cpp.o
 .PHONY : src/AE/RSA.o
 
@@ -152,6 +165,54 @@ src/AE/RSA.s: src/AE/RSA.cpp.s
 src/AE/RSA.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/RSA_test.dir/build.make CMakeFiles/RSA_test.dir/src/AE/RSA.cpp.s
 .PHONY : src/AE/RSA.cpp.s
+
+src/base/PbcElements.o: src/base/PbcElements.cpp.o
+.PHONY : src/base/PbcElements.o
+
+# target to build an object file
+src/base/PbcElements.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Elements_test.dir/build.make CMakeFiles/Elements_test.dir/src/base/PbcElements.cpp.o
+.PHONY : src/base/PbcElements.cpp.o
+
+src/base/PbcElements.i: src/base/PbcElements.cpp.i
+.PHONY : src/base/PbcElements.i
+
+# target to preprocess a source file
+src/base/PbcElements.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Elements_test.dir/build.make CMakeFiles/Elements_test.dir/src/base/PbcElements.cpp.i
+.PHONY : src/base/PbcElements.cpp.i
+
+src/base/PbcElements.s: src/base/PbcElements.cpp.s
+.PHONY : src/base/PbcElements.s
+
+# target to generate assembly for a file
+src/base/PbcElements.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Elements_test.dir/build.make CMakeFiles/Elements_test.dir/src/base/PbcElements.cpp.s
+.PHONY : src/base/PbcElements.cpp.s
+
+src/curve/params.o: src/curve/params.cpp.o
+.PHONY : src/curve/params.o
+
+# target to build an object file
+src/curve/params.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Elements_test.dir/build.make CMakeFiles/Elements_test.dir/src/curve/params.cpp.o
+.PHONY : src/curve/params.cpp.o
+
+src/curve/params.i: src/curve/params.cpp.i
+.PHONY : src/curve/params.i
+
+# target to preprocess a source file
+src/curve/params.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Elements_test.dir/build.make CMakeFiles/Elements_test.dir/src/curve/params.cpp.i
+.PHONY : src/curve/params.cpp.i
+
+src/curve/params.s: src/curve/params.cpp.s
+.PHONY : src/curve/params.s
+
+# target to generate assembly for a file
+src/curve/params.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Elements_test.dir/build.make CMakeFiles/Elements_test.dir/src/curve/params.cpp.s
+.PHONY : src/curve/params.cpp.s
 
 src/utils/Logger.o: src/utils/Logger.cpp.o
 .PHONY : src/utils/Logger.o
@@ -225,6 +286,30 @@ tests/RSA_test/RSA_test.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/RSA_test.dir/build.make CMakeFiles/RSA_test.dir/tests/RSA_test/RSA_test.cpp.s
 .PHONY : tests/RSA_test/RSA_test.cpp.s
 
+tests/base_test/Elements_test.o: tests/base_test/Elements_test.cpp.o
+.PHONY : tests/base_test/Elements_test.o
+
+# target to build an object file
+tests/base_test/Elements_test.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Elements_test.dir/build.make CMakeFiles/Elements_test.dir/tests/base_test/Elements_test.cpp.o
+.PHONY : tests/base_test/Elements_test.cpp.o
+
+tests/base_test/Elements_test.i: tests/base_test/Elements_test.cpp.i
+.PHONY : tests/base_test/Elements_test.i
+
+# target to preprocess a source file
+tests/base_test/Elements_test.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Elements_test.dir/build.make CMakeFiles/Elements_test.dir/tests/base_test/Elements_test.cpp.i
+.PHONY : tests/base_test/Elements_test.cpp.i
+
+tests/base_test/Elements_test.s: tests/base_test/Elements_test.cpp.s
+.PHONY : tests/base_test/Elements_test.s
+
+# target to generate assembly for a file
+tests/base_test/Elements_test.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Elements_test.dir/build.make CMakeFiles/Elements_test.dir/tests/base_test/Elements_test.cpp.s
+.PHONY : tests/base_test/Elements_test.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -233,10 +318,17 @@ help:
 	@echo "... depend"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
+	@echo "... Elements_test"
 	@echo "... RSA_test"
 	@echo "... src/AE/RSA.o"
 	@echo "... src/AE/RSA.i"
 	@echo "... src/AE/RSA.s"
+	@echo "... src/base/PbcElements.o"
+	@echo "... src/base/PbcElements.i"
+	@echo "... src/base/PbcElements.s"
+	@echo "... src/curve/params.o"
+	@echo "... src/curve/params.i"
+	@echo "... src/curve/params.s"
 	@echo "... src/utils/Logger.o"
 	@echo "... src/utils/Logger.i"
 	@echo "... src/utils/Logger.s"
@@ -246,6 +338,9 @@ help:
 	@echo "... tests/RSA_test/RSA_test.o"
 	@echo "... tests/RSA_test/RSA_test.i"
 	@echo "... tests/RSA_test/RSA_test.s"
+	@echo "... tests/base_test/Elements_test.o"
+	@echo "... tests/base_test/Elements_test.i"
+	@echo "... tests/base_test/Elements_test.s"
 .PHONY : help
 
 

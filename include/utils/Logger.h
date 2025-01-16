@@ -1,7 +1,7 @@
 #ifndef CHAMELIB_LOGGER_H
 #define CHAMELIB_LOGGER_H
 
-#include <gmp/gmp.h>
+#include <gmp.h>
 #include <string>
 
 class Logger{
