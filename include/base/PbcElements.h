@@ -1,5 +1,5 @@
-#ifndef CHAMELIB_ELEMENT_H
-#define CHAMELIB_ELEMENT_H
+#ifndef CHAMELIB_PBCELEMENT_H
+#define CHAMELIB_PBCELEMENT_H
 
 #include <pbc.h>
 #include <iostream>
@@ -27,4 +27,4 @@ class PbcElements{
         void printElement(std::string s);
 };
 
-#endif  // CHAMELIB_ELEMENT_H
+#endif  // CHAMELIB_PBCELEMENT_H

@@ -15,6 +15,8 @@ class CommonTest{
 
         std::chrono::_V2::system_clock::time_point ts, te;
 
+        std::string current_test_name;
+
         FILE *out = NULL;
         
         CurveParams curves;
@@ -32,7 +34,7 @@ class CommonTest{
 
         void OutTime(std::string name, int id, double us);
 
-        void start();
+        void start(std::string current_test_name);
         void end(std::string test_name);
 
         element_s *get_G1() { return G1; }

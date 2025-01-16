@@ -45,8 +45,9 @@ target_link_libraries(RSA_test gmp)
 add_executable(Elements_test
         tests/base_test/Elements_test.cpp
         src/base/PbcElements.cpp
+        src/base/MpzElements.cpp
         src/curve/params.cpp
         tests/common/CommonTest.cpp
 )
-target_link_libraries(Elements_test pbc)
+target_link_libraries(Elements_test pbc gmp)
 

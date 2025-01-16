@@ -34,13 +34,15 @@ void CommonTest::OutTime(std::string name, int id, double us) {
     if(visiable) printf("%s %d time: %lf ms.\n", name.c_str(), id, us);
 }
 
-void CommonTest::start() {
+void CommonTest::start(std::string current_test_name) {
+    this->current_test_name = current_test_name;
     ts = std::chrono::system_clock::now();
 }
 
-void CommonTest::end(std::string test_name) {
+void CommonTest::end(std::string current_test_name) {
+    if(this->current_test_name != current_test_name) throw std::runtime_error("end(): wrong test pair");
     te = std::chrono::system_clock::now();
-    OutTime(test_name, 0, std::chrono::duration_cast<std::chrono::microseconds>(te - ts).count());
+    OutTime(current_test_name, 0, std::chrono::duration_cast<std::chrono::microseconds>(te - ts).count());
 }
 
 CommonTest::~CommonTest() {

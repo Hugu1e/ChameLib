@@ -166,6 +166,30 @@ src/AE/RSA.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/RSA_test.dir/build.make CMakeFiles/RSA_test.dir/src/AE/RSA.cpp.s
 .PHONY : src/AE/RSA.cpp.s
 
+src/base/MpzElements.o: src/base/MpzElements.cpp.o
+.PHONY : src/base/MpzElements.o
+
+# target to build an object file
+src/base/MpzElements.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Elements_test.dir/build.make CMakeFiles/Elements_test.dir/src/base/MpzElements.cpp.o
+.PHONY : src/base/MpzElements.cpp.o
+
+src/base/MpzElements.i: src/base/MpzElements.cpp.i
+.PHONY : src/base/MpzElements.i
+
+# target to preprocess a source file
+src/base/MpzElements.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Elements_test.dir/build.make CMakeFiles/Elements_test.dir/src/base/MpzElements.cpp.i
+.PHONY : src/base/MpzElements.cpp.i
+
+src/base/MpzElements.s: src/base/MpzElements.cpp.s
+.PHONY : src/base/MpzElements.s
+
+# target to generate assembly for a file
+src/base/MpzElements.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Elements_test.dir/build.make CMakeFiles/Elements_test.dir/src/base/MpzElements.cpp.s
+.PHONY : src/base/MpzElements.cpp.s
+
 src/base/PbcElements.o: src/base/PbcElements.cpp.o
 .PHONY : src/base/PbcElements.o
 
@@ -347,6 +371,9 @@ help:
 	@echo "... src/AE/RSA.o"
 	@echo "... src/AE/RSA.i"
 	@echo "... src/AE/RSA.s"
+	@echo "... src/base/MpzElements.o"
+	@echo "... src/base/MpzElements.i"
+	@echo "... src/base/MpzElements.s"
 	@echo "... src/base/PbcElements.o"
 	@echo "... src/base/PbcElements.i"
 	@echo "... src/base/PbcElements.s"

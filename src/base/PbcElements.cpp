@@ -174,4 +174,21 @@ void PbcElements::printElement(std::string s){
 
 PbcElements::~PbcElements()
 {
+    std::unordered_map<std::string, element_s *>::iterator it;
+    for (it = elements_G1->begin(); it != elements_G1->end(); ++it)
+    {
+        element_clear(it->second);
+    }
+    for (it = elements_G2->begin(); it != elements_G2->end(); ++it)
+    {
+        element_clear(it->second);
+    }
+    for (it = elements_GT->begin(); it != elements_GT->end(); ++it)
+    {
+        element_clear(it->second);
+    }
+    for (it = elements_Zn->begin(); it != elements_Zn->end(); ++it)
+    {
+        element_clear(it->second);
+    }
 }

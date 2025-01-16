@@ -1,4 +1,5 @@
 #include <base/PbcElements.h>
+#include <base/MpzElements.h>
 #include <CommonTest.h>
 
 int main(int argc, char *argv[]) {
@@ -12,7 +13,7 @@ int main(int argc, char *argv[]) {
     element_t m;
     element_init_same_as(m, test.get_Zn());  
 
-    test.start();
+    test.start("test1");
 
     element_set1(m);
 
@@ -31,4 +32,24 @@ int main(int argc, char *argv[]) {
     element_printf("m2: %B\n", m2);
 
     test.end("test1");
+
+    test.start("test2");
+    mpz_t n;
+    mpz_init(n);
+
+    MpzElements mpzElements;
+    mpzElements.printElement("n");
+
+    mpz_set_ui(n, 1234567890);
+    mpzElements.insertElement("n", n);
+    mpzElements.printElement("n");
+    mpzElements.printElement();
+
+    mpz_t n2;
+    mpz_init(n2);
+    mpz_set(n2, mpzElements.getElement("n"));
+    gmp_printf("n: %Zd\n", n);
+    gmp_printf("n2: %Zd\n", n2);
+
+    test.end("test2");
 }
