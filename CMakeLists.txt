@@ -36,10 +36,12 @@ set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS}")
 add_executable(RSA_test
         tests/RSA_test/RSA_test.cpp
         src/AE/RSA.cpp
-        src/utils/Logger.cpp
+        src/base/MpzElements.cpp
         src/utils/RandomGenerator.cpp
+        src/curve/params.cpp
+        tests/common/CommonTest.cpp
 )
-target_link_libraries(RSA_test gmp)
+target_link_libraries(RSA_test pbc gmp)
 
 
 add_executable(Elements_test

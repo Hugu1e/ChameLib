@@ -2,13 +2,8 @@
 #include <base/MpzElements.h>
 #include <CommonTest.h>
 
-int main(int argc, char *argv[]) {
-    if(argc < 2) {
-        printf("usage: %s [a|e|i|f|d224]\n", argv[0]);
-        return 0;
-    }
-
-    CommonTest test(argv[0], argv[1]);
+void test(std::string test_name, std::string curve){
+    CommonTest test(test_name, curve);
 
     element_t m;
     element_init_same_as(m, test.get_Zn());  
@@ -52,4 +47,15 @@ int main(int argc, char *argv[]) {
     gmp_printf("n2: %Zd\n", n2);
 
     test.end("test2");
+}
+
+int main(int argc, char *argv[]) {
+    if(argc == 1) {
+        test(argv[0], "a");
+    }else if(argc == 2){
+        test(argv[0], argv[1]);
+    }else{
+        printf("usage: %s [a|e|i|f|d224]\n", argv[0]);
+        return 1;
+    }
 }

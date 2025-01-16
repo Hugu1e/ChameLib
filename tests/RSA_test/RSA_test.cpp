@@ -1,27 +1,34 @@
 #include <AE/RSA.h>
-#include <iostream>
+#include <CommonTest.h>
 
 int test_result = 1;
 
+void test(std::string test_name, std::string curve){
+    CommonTest test(test_name, curve);
 
-
-void test(){
     AE_RSA rsa;
-    AE_RSA::pk pk;
-    AE_RSA::sk sk;
+    RSA_pk pk;
+    RSA_sk sk;
 
     mpz_t m,c,m2;
     mpz_inits(m,c,m2,NULL);
 
+    test.start("KeyGen");
     rsa.KeyGen(&pk, &sk, 1024);
-    gmp_printf("Public Key (e, n): (%Zd, %Zd)\n", pk.e, pk.n);
-    gmp_printf("Private Key (d): %Zd\n", sk.d);
+    test.end("KeyGen");
+    pk.printElement("n");
+    pk.printElement("e");
+    sk.printElement("d");
 
     mpz_set_ui(m, 123456);
+    test.start("Encrypt");
     rsa.Encrypt(&c, &m, &pk);
+    test.end("Encrypt");
     gmp_printf("Ciphertext: %Zd\n", c);
 
+    test.start("Decrypt");
     rsa.Decrypt(&m2, &c, &sk, &pk);
+    test.end("Decrypt");
     gmp_printf("Decrypted Plaintext: %Zd\n", m);
 
     if (mpz_cmp(m, m2) == 0) {
@@ -36,6 +43,16 @@ void test(){
 
 
 int main(int argc, char *argv[]){
-    test();
+    if(argc == 1) {
+        test(argv[0], "a");
+    }else if(argc == 2){
+        test(argv[0], argv[1]);
+    }else{
+        printf("usage: %s [a|e|i|f|d224]\n", argv[0]);
+        return 1;
+    }
+    
+
     return test_result;
 }
+

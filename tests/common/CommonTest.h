@@ -27,7 +27,7 @@ class CommonTest{
         
     
     public:
-        CommonTest(std::string test_name, std::string curve, bool out_file = true, bool visiable = true);
+        CommonTest(std::string test_name, std::string curve, bool out_file = true, bool visiable = false);
         ~CommonTest();
 
         void init_type(std::string param);

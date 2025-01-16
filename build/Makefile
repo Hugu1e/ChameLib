@@ -171,6 +171,7 @@ src/base/MpzElements.o: src/base/MpzElements.cpp.o
 
 # target to build an object file
 src/base/MpzElements.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/RSA_test.dir/build.make CMakeFiles/RSA_test.dir/src/base/MpzElements.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Elements_test.dir/build.make CMakeFiles/Elements_test.dir/src/base/MpzElements.cpp.o
 .PHONY : src/base/MpzElements.cpp.o
 
@@ -179,6 +180,7 @@ src/base/MpzElements.i: src/base/MpzElements.cpp.i
 
 # target to preprocess a source file
 src/base/MpzElements.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/RSA_test.dir/build.make CMakeFiles/RSA_test.dir/src/base/MpzElements.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Elements_test.dir/build.make CMakeFiles/Elements_test.dir/src/base/MpzElements.cpp.i
 .PHONY : src/base/MpzElements.cpp.i
 
@@ -187,6 +189,7 @@ src/base/MpzElements.s: src/base/MpzElements.cpp.s
 
 # target to generate assembly for a file
 src/base/MpzElements.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/RSA_test.dir/build.make CMakeFiles/RSA_test.dir/src/base/MpzElements.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Elements_test.dir/build.make CMakeFiles/Elements_test.dir/src/base/MpzElements.cpp.s
 .PHONY : src/base/MpzElements.cpp.s
 
@@ -219,6 +222,7 @@ src/curve/params.o: src/curve/params.cpp.o
 
 # target to build an object file
 src/curve/params.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/RSA_test.dir/build.make CMakeFiles/RSA_test.dir/src/curve/params.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Elements_test.dir/build.make CMakeFiles/Elements_test.dir/src/curve/params.cpp.o
 .PHONY : src/curve/params.cpp.o
 
@@ -227,6 +231,7 @@ src/curve/params.i: src/curve/params.cpp.i
 
 # target to preprocess a source file
 src/curve/params.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/RSA_test.dir/build.make CMakeFiles/RSA_test.dir/src/curve/params.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Elements_test.dir/build.make CMakeFiles/Elements_test.dir/src/curve/params.cpp.i
 .PHONY : src/curve/params.cpp.i
 
@@ -235,32 +240,9 @@ src/curve/params.s: src/curve/params.cpp.s
 
 # target to generate assembly for a file
 src/curve/params.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/RSA_test.dir/build.make CMakeFiles/RSA_test.dir/src/curve/params.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Elements_test.dir/build.make CMakeFiles/Elements_test.dir/src/curve/params.cpp.s
 .PHONY : src/curve/params.cpp.s
-
-src/utils/Logger.o: src/utils/Logger.cpp.o
-.PHONY : src/utils/Logger.o
-
-# target to build an object file
-src/utils/Logger.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/RSA_test.dir/build.make CMakeFiles/RSA_test.dir/src/utils/Logger.cpp.o
-.PHONY : src/utils/Logger.cpp.o
-
-src/utils/Logger.i: src/utils/Logger.cpp.i
-.PHONY : src/utils/Logger.i
-
-# target to preprocess a source file
-src/utils/Logger.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/RSA_test.dir/build.make CMakeFiles/RSA_test.dir/src/utils/Logger.cpp.i
-.PHONY : src/utils/Logger.cpp.i
-
-src/utils/Logger.s: src/utils/Logger.cpp.s
-.PHONY : src/utils/Logger.s
-
-# target to generate assembly for a file
-src/utils/Logger.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/RSA_test.dir/build.make CMakeFiles/RSA_test.dir/src/utils/Logger.cpp.s
-.PHONY : src/utils/Logger.cpp.s
 
 src/utils/RandomGenerator.o: src/utils/RandomGenerator.cpp.o
 .PHONY : src/utils/RandomGenerator.o
@@ -339,6 +321,7 @@ tests/common/CommonTest.o: tests/common/CommonTest.cpp.o
 
 # target to build an object file
 tests/common/CommonTest.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/RSA_test.dir/build.make CMakeFiles/RSA_test.dir/tests/common/CommonTest.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Elements_test.dir/build.make CMakeFiles/Elements_test.dir/tests/common/CommonTest.cpp.o
 .PHONY : tests/common/CommonTest.cpp.o
 
@@ -347,6 +330,7 @@ tests/common/CommonTest.i: tests/common/CommonTest.cpp.i
 
 # target to preprocess a source file
 tests/common/CommonTest.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/RSA_test.dir/build.make CMakeFiles/RSA_test.dir/tests/common/CommonTest.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Elements_test.dir/build.make CMakeFiles/Elements_test.dir/tests/common/CommonTest.cpp.i
 .PHONY : tests/common/CommonTest.cpp.i
 
@@ -355,6 +339,7 @@ tests/common/CommonTest.s: tests/common/CommonTest.cpp.s
 
 # target to generate assembly for a file
 tests/common/CommonTest.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/RSA_test.dir/build.make CMakeFiles/RSA_test.dir/tests/common/CommonTest.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Elements_test.dir/build.make CMakeFiles/Elements_test.dir/tests/common/CommonTest.cpp.s
 .PHONY : tests/common/CommonTest.cpp.s
 
@@ -380,9 +365,6 @@ help:
 	@echo "... src/curve/params.o"
 	@echo "... src/curve/params.i"
 	@echo "... src/curve/params.s"
-	@echo "... src/utils/Logger.o"
-	@echo "... src/utils/Logger.i"
-	@echo "... src/utils/Logger.s"
 	@echo "... src/utils/RandomGenerator.o"
 	@echo "... src/utils/RandomGenerator.i"
 	@echo "... src/utils/RandomGenerator.s"

@@ -97,19 +97,19 @@ CMakeFiles/RSA_test.dir/src/AE/RSA.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/RSA_test.dir/src/AE/RSA.cpp.s"
 	/usr/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/hyj/ChameLib/src/AE/RSA.cpp -o CMakeFiles/RSA_test.dir/src/AE/RSA.cpp.s
 
-CMakeFiles/RSA_test.dir/src/utils/Logger.cpp.o: CMakeFiles/RSA_test.dir/flags.make
-CMakeFiles/RSA_test.dir/src/utils/Logger.cpp.o: /home/hyj/ChameLib/src/utils/Logger.cpp
-CMakeFiles/RSA_test.dir/src/utils/Logger.cpp.o: CMakeFiles/RSA_test.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/hyj/ChameLib/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/RSA_test.dir/src/utils/Logger.cpp.o"
-	/usr/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/RSA_test.dir/src/utils/Logger.cpp.o -MF CMakeFiles/RSA_test.dir/src/utils/Logger.cpp.o.d -o CMakeFiles/RSA_test.dir/src/utils/Logger.cpp.o -c /home/hyj/ChameLib/src/utils/Logger.cpp
+CMakeFiles/RSA_test.dir/src/base/MpzElements.cpp.o: CMakeFiles/RSA_test.dir/flags.make
+CMakeFiles/RSA_test.dir/src/base/MpzElements.cpp.o: /home/hyj/ChameLib/src/base/MpzElements.cpp
+CMakeFiles/RSA_test.dir/src/base/MpzElements.cpp.o: CMakeFiles/RSA_test.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/hyj/ChameLib/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/RSA_test.dir/src/base/MpzElements.cpp.o"
+	/usr/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/RSA_test.dir/src/base/MpzElements.cpp.o -MF CMakeFiles/RSA_test.dir/src/base/MpzElements.cpp.o.d -o CMakeFiles/RSA_test.dir/src/base/MpzElements.cpp.o -c /home/hyj/ChameLib/src/base/MpzElements.cpp
 
-CMakeFiles/RSA_test.dir/src/utils/Logger.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/RSA_test.dir/src/utils/Logger.cpp.i"
-	/usr/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/hyj/ChameLib/src/utils/Logger.cpp > CMakeFiles/RSA_test.dir/src/utils/Logger.cpp.i
+CMakeFiles/RSA_test.dir/src/base/MpzElements.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/RSA_test.dir/src/base/MpzElements.cpp.i"
+	/usr/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/hyj/ChameLib/src/base/MpzElements.cpp > CMakeFiles/RSA_test.dir/src/base/MpzElements.cpp.i
 
-CMakeFiles/RSA_test.dir/src/utils/Logger.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/RSA_test.dir/src/utils/Logger.cpp.s"
-	/usr/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/hyj/ChameLib/src/utils/Logger.cpp -o CMakeFiles/RSA_test.dir/src/utils/Logger.cpp.s
+CMakeFiles/RSA_test.dir/src/base/MpzElements.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/RSA_test.dir/src/base/MpzElements.cpp.s"
+	/usr/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/hyj/ChameLib/src/base/MpzElements.cpp -o CMakeFiles/RSA_test.dir/src/base/MpzElements.cpp.s
 
 CMakeFiles/RSA_test.dir/src/utils/RandomGenerator.cpp.o: CMakeFiles/RSA_test.dir/flags.make
 CMakeFiles/RSA_test.dir/src/utils/RandomGenerator.cpp.o: /home/hyj/ChameLib/src/utils/RandomGenerator.cpp
@@ -125,23 +125,55 @@ CMakeFiles/RSA_test.dir/src/utils/RandomGenerator.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/RSA_test.dir/src/utils/RandomGenerator.cpp.s"
 	/usr/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/hyj/ChameLib/src/utils/RandomGenerator.cpp -o CMakeFiles/RSA_test.dir/src/utils/RandomGenerator.cpp.s
 
+CMakeFiles/RSA_test.dir/src/curve/params.cpp.o: CMakeFiles/RSA_test.dir/flags.make
+CMakeFiles/RSA_test.dir/src/curve/params.cpp.o: /home/hyj/ChameLib/src/curve/params.cpp
+CMakeFiles/RSA_test.dir/src/curve/params.cpp.o: CMakeFiles/RSA_test.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/hyj/ChameLib/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/RSA_test.dir/src/curve/params.cpp.o"
+	/usr/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/RSA_test.dir/src/curve/params.cpp.o -MF CMakeFiles/RSA_test.dir/src/curve/params.cpp.o.d -o CMakeFiles/RSA_test.dir/src/curve/params.cpp.o -c /home/hyj/ChameLib/src/curve/params.cpp
+
+CMakeFiles/RSA_test.dir/src/curve/params.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/RSA_test.dir/src/curve/params.cpp.i"
+	/usr/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/hyj/ChameLib/src/curve/params.cpp > CMakeFiles/RSA_test.dir/src/curve/params.cpp.i
+
+CMakeFiles/RSA_test.dir/src/curve/params.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/RSA_test.dir/src/curve/params.cpp.s"
+	/usr/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/hyj/ChameLib/src/curve/params.cpp -o CMakeFiles/RSA_test.dir/src/curve/params.cpp.s
+
+CMakeFiles/RSA_test.dir/tests/common/CommonTest.cpp.o: CMakeFiles/RSA_test.dir/flags.make
+CMakeFiles/RSA_test.dir/tests/common/CommonTest.cpp.o: /home/hyj/ChameLib/tests/common/CommonTest.cpp
+CMakeFiles/RSA_test.dir/tests/common/CommonTest.cpp.o: CMakeFiles/RSA_test.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/hyj/ChameLib/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/RSA_test.dir/tests/common/CommonTest.cpp.o"
+	/usr/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/RSA_test.dir/tests/common/CommonTest.cpp.o -MF CMakeFiles/RSA_test.dir/tests/common/CommonTest.cpp.o.d -o CMakeFiles/RSA_test.dir/tests/common/CommonTest.cpp.o -c /home/hyj/ChameLib/tests/common/CommonTest.cpp
+
+CMakeFiles/RSA_test.dir/tests/common/CommonTest.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/RSA_test.dir/tests/common/CommonTest.cpp.i"
+	/usr/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/hyj/ChameLib/tests/common/CommonTest.cpp > CMakeFiles/RSA_test.dir/tests/common/CommonTest.cpp.i
+
+CMakeFiles/RSA_test.dir/tests/common/CommonTest.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/RSA_test.dir/tests/common/CommonTest.cpp.s"
+	/usr/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/hyj/ChameLib/tests/common/CommonTest.cpp -o CMakeFiles/RSA_test.dir/tests/common/CommonTest.cpp.s
+
 # Object files for target RSA_test
 RSA_test_OBJECTS = \
 "CMakeFiles/RSA_test.dir/tests/RSA_test/RSA_test.cpp.o" \
 "CMakeFiles/RSA_test.dir/src/AE/RSA.cpp.o" \
-"CMakeFiles/RSA_test.dir/src/utils/Logger.cpp.o" \
-"CMakeFiles/RSA_test.dir/src/utils/RandomGenerator.cpp.o"
+"CMakeFiles/RSA_test.dir/src/base/MpzElements.cpp.o" \
+"CMakeFiles/RSA_test.dir/src/utils/RandomGenerator.cpp.o" \
+"CMakeFiles/RSA_test.dir/src/curve/params.cpp.o" \
+"CMakeFiles/RSA_test.dir/tests/common/CommonTest.cpp.o"
 
 # External object files for target RSA_test
 RSA_test_EXTERNAL_OBJECTS =
 
 RSA_test: CMakeFiles/RSA_test.dir/tests/RSA_test/RSA_test.cpp.o
 RSA_test: CMakeFiles/RSA_test.dir/src/AE/RSA.cpp.o
-RSA_test: CMakeFiles/RSA_test.dir/src/utils/Logger.cpp.o
+RSA_test: CMakeFiles/RSA_test.dir/src/base/MpzElements.cpp.o
 RSA_test: CMakeFiles/RSA_test.dir/src/utils/RandomGenerator.cpp.o
+RSA_test: CMakeFiles/RSA_test.dir/src/curve/params.cpp.o
+RSA_test: CMakeFiles/RSA_test.dir/tests/common/CommonTest.cpp.o
 RSA_test: CMakeFiles/RSA_test.dir/build.make
 RSA_test: CMakeFiles/RSA_test.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/hyj/ChameLib/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Linking CXX executable RSA_test"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/hyj/ChameLib/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Linking CXX executable RSA_test"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/RSA_test.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
