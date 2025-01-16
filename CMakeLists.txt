@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 17)
 SET(CMAKE_BUILD_TYPE "Debug")
 # SET(CMAKE_BUILD_TYPE "Release")
 
-include_directories(include libs/include/gmp libs/include/pbc)
+include_directories(include libs/include/gmp libs/include/pbc tests/common)
 
 link_directories(libs/lib)
 
@@ -46,6 +46,7 @@ add_executable(Elements_test
         tests/base_test/Elements_test.cpp
         src/base/PbcElements.cpp
         src/curve/params.cpp
+        tests/common/CommonTest.cpp
 )
 target_link_libraries(Elements_test pbc)
 

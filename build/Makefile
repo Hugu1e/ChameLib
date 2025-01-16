@@ -310,6 +310,30 @@ tests/base_test/Elements_test.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Elements_test.dir/build.make CMakeFiles/Elements_test.dir/tests/base_test/Elements_test.cpp.s
 .PHONY : tests/base_test/Elements_test.cpp.s
 
+tests/common/CommonTest.o: tests/common/CommonTest.cpp.o
+.PHONY : tests/common/CommonTest.o
+
+# target to build an object file
+tests/common/CommonTest.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Elements_test.dir/build.make CMakeFiles/Elements_test.dir/tests/common/CommonTest.cpp.o
+.PHONY : tests/common/CommonTest.cpp.o
+
+tests/common/CommonTest.i: tests/common/CommonTest.cpp.i
+.PHONY : tests/common/CommonTest.i
+
+# target to preprocess a source file
+tests/common/CommonTest.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Elements_test.dir/build.make CMakeFiles/Elements_test.dir/tests/common/CommonTest.cpp.i
+.PHONY : tests/common/CommonTest.cpp.i
+
+tests/common/CommonTest.s: tests/common/CommonTest.cpp.s
+.PHONY : tests/common/CommonTest.s
+
+# target to generate assembly for a file
+tests/common/CommonTest.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Elements_test.dir/build.make CMakeFiles/Elements_test.dir/tests/common/CommonTest.cpp.s
+.PHONY : tests/common/CommonTest.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -341,6 +365,9 @@ help:
 	@echo "... tests/base_test/Elements_test.o"
 	@echo "... tests/base_test/Elements_test.i"
 	@echo "... tests/base_test/Elements_test.s"
+	@echo "... tests/common/CommonTest.o"
+	@echo "... tests/common/CommonTest.i"
+	@echo "... tests/common/CommonTest.s"
 .PHONY : help
 
 

@@ -4,7 +4,7 @@
 # compile CXX with /usr/bin/g++
 CXX_DEFINES = 
 
-CXX_INCLUDES = -I/home/hyj/ChameLib/include -I/home/hyj/ChameLib/libs/include/gmp -I/home/hyj/ChameLib/libs/include/pbc
+CXX_INCLUDES = -I/home/hyj/ChameLib/include -I/home/hyj/ChameLib/libs/include/gmp -I/home/hyj/ChameLib/libs/include/pbc -I/home/hyj/ChameLib/tests/common
 
 CXX_FLAGS =  -std=c++17 -pthread -mavx2 -O0 -fopenmp  -std=c++17 -pthread -mavx2 -O0 -fopenmp -g -ggdb -std=gnu++1z -Wunknown-pragmas
 
