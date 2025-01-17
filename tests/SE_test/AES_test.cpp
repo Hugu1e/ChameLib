@@ -24,13 +24,13 @@ void test(std::string test_name, std::string curve){
 
     test.start("Encrypt");
     RandomGenerator::RandomInLength(plaintext, 128);
-    Logger::PrintMpz("plaintext", plaintext);
+    Logger::PrintGmp("plaintext", plaintext);
     aes.Enc(ciphertext, key, plaintext);
     test.end("Encrypt");
 
     test.start("Decrypt");
     aes.Dec(decrypted_plaintext, key, ciphertext);
-    Logger::PrintMpz("decrypted_plaintext", decrypted_plaintext);
+    Logger::PrintGmp("decrypted_plaintext", decrypted_plaintext);
     test.end("Decrypt");
 
     if(mpz_cmp(plaintext, decrypted_plaintext) == 0){

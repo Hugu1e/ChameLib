@@ -1,0 +1,93 @@
+/**
+ * FAME： ciphertext-policy attribute-based encryotion
+ */
+#ifndef CHAMELIB_CP_ABE_H
+#define CHAMELIB_CP_ABE_H
+
+#include <base/PbcElements.h>
+#include <vector>
+#include <unordered_map>
+#include <ABE/Policy_resolution.h>
+#include <ABE/Policy_generation.h>
+#include <utils/Hash.h>
+
+class CP_ABE_mpk: public PbcElements{};
+class CP_ABE_msk: public PbcElements{};
+class CP_ABE_sks{
+    private:
+        PbcElements sk0;
+        std::vector<PbcElements> sk_y;
+        PbcElements sk_prime;
+    public:
+        PbcElements *get_sk0(){
+            return &sk0;
+        }
+        PbcElements *get_sk_y(int i){
+            return &sk_y[i];
+        }
+        std::vector<PbcElements> *get_sk_y(){
+            return &sk_y;
+        }
+        PbcElements *get_sk_prime(){
+            return &sk_prime;
+        }
+};
+class CP_ABE_ciphertext{
+    private:
+        PbcElements ct0;
+        std::vector<PbcElements> ct_y;
+        PbcElements ct_prime;
+    public:
+        PbcElements *get_ct0(){
+            return &ct0;
+        }
+        PbcElements *get_ct_y(int i){
+            return &ct_y[i];
+        }
+        std::vector<PbcElements> *get_ct_y(){
+            return &ct_y;
+        }
+        PbcElements *get_ct_prime(){
+            return &ct_prime;
+        }
+};
+
+
+class CP_ABE{
+    private:
+        element_s *G1, *G2, *GT, *Zn;
+        
+        // temporary variable
+        element_t tmp_G,tmp_G_2,tmp_G_3,tmp_G_4,tmp_H,tmp_H_2,tmp_H_3,tmp_GT,tmp_GT_2,tmp_GT_3,tmp_Zn,tmp_Zn_2,tmp_Zn_3;
+        element_t d1,d2,d3;
+        element_t r1,r2;
+        element_t b1r1a1,b1r1a2,b2r2a1,b2r2a2,r1r2a1,r1r2a2;
+        element_t s1,s2;
+        element_t g_pow_d1,g_pow_d2,g_pow_d3;
+        element_t H1,H2,T1,T2;
+        element_t sk_1_G,sk_2_G,sk_3_G,sk_1_H,sk_2_H,sk_3_H;
+        element_t ct_1_G,ct_2_G,ct_3_G,ct_1_H,ct_2_H,ct_3_H,ct_prime;
+
+        std::unordered_map<unsigned long int, std::string> pai;  // π(i) -> attr
+        std::unordered_map<std::string, unsigned long int> attr_map;  // attr -> index of attr_list
+
+        std::string policy_str;
+    public:
+        CP_ABE(element_s *_G1, element_s *_G2, element_s *_GT, element_s *_Zn);
+
+        void Setup(CP_ABE_msk *msk, CP_ABE_mpk *mpk);
+
+        void KeyGen(CP_ABE_sks *sks, CP_ABE_msk *msk, CP_ABE_mpk *mpk, std::vector<std::string> *attr_list);
+
+        void Hash(element_t res, std::string m);
+
+        void Encrypt(CP_ABE_ciphertext *ciphertext, CP_ABE_mpk *mpk, element_t msg, std::string policy_str);
+        void Encrypt(CP_ABE_ciphertext *ciphertext, CP_ABE_mpk *mpk, element_t msg, std::string policy_str, element_t s1, element_t s2);
+
+        void Decrypt(element_t res, CP_ABE_ciphertext *ciphertext,  CP_ABE_mpk *mpk, CP_ABE_sks *sks);
+
+        ~CP_ABE();
+};
+
+
+#endif  // CHAMELIB_CP_ABE_H

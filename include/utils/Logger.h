@@ -8,9 +8,9 @@
 class Logger
 {
 public:
-    static void PrintMpz(std::string mpz_name, mpz_t mpz);
-    static void PrintMpzsize(std::string mpz_name, mpz_t mpz);
-    static void PrintMpzWithSize(std::string mpz_name, mpz_t mpz);
+    static void PrintGmp(std::string mpz_name, mpz_t mpz);
+    static void PrintGmpsize(std::string mpz_name, mpz_t mpz);
+    static void PrintGmpWithSize(std::string mpz_name, mpz_t mpz);
 
     static void PrintPbc(std::string pbc_name, element_t element);
     static void PrintPbcsize(std::string pbc_name, element_t element);

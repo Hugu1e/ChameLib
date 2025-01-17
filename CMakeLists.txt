@@ -26,6 +26,7 @@ file(GLOB LIBRARY_SOURCES
     src/utils/*.cpp
     src/SE/*.cpp
     src/signature/*.cpp
+    src/ABE/*.cpp
 )
 add_library(ChameLib STATIC ${LIBRARY_SOURCES})
 target_link_libraries(ChameLib PUBLIC gmp pbc OpenSSL::SSL)
@@ -70,10 +71,14 @@ if(BUILD_TESTS)
     add_executable(BLS_test tests/signature_test/BLS_test.cpp tests/common/CommonTest.cpp)
     target_link_libraries(BLS_test PRIVATE ChameLib)
 
+    add_executable(CP_ABE_test tests/ABE_test/CP_ABE_test.cpp tests/common/CommonTest.cpp)
+    target_link_libraries(CP_ABE_test PRIVATE ChameLib)
+
     add_test(NAME RSA_Test COMMAND RSA_test)
     add_test(NAME Elements_Test COMMAND Elements_test)
     add_test(NAME AES_Test COMMAND AES_test)
     add_test(NAME BLS_Test COMMAND BLS_test)
+    add_test(NAME CP_ABE_Test COMMAND CP_ABE_test a 1 all)
 endif()
 
 install(TARGETS ChameLib ARCHIVE DESTINATION lib)

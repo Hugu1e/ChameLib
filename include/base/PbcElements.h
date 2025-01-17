@@ -17,6 +17,8 @@ class PbcElements{
     public:
         PbcElements();
         ~PbcElements();
+
+        PbcElements(const PbcElements &other);
         
         element_s* getElement(std::string s, std::string group);
         element_s* getElement(std::string s);

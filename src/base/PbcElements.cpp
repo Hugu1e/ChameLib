@@ -8,6 +8,39 @@ PbcElements::PbcElements()
     elements_Zn = new std::unordered_map<std::string, element_s *>();
 }
 
+PbcElements::PbcElements(const PbcElements &other){
+    elements_G1 = new std::unordered_map<std::string, element_s *>();
+    elements_G2 = new std::unordered_map<std::string, element_s *>();
+    elements_GT = new std::unordered_map<std::string, element_s *>();
+    elements_Zn = new std::unordered_map<std::string, element_s *>();
+
+    std::unordered_map<std::string, element_s *>::iterator it;
+    for(it = other.elements_G1->begin(); it != other.elements_G1->end(); ++it){
+        element_s *element = new element_s();
+        element_init_same_as(element, it->second);
+        element_set(element, it->second);
+        elements_G1->insert(std::pair<std::string, element_s *>(it->first, element));
+    }
+    for(it = other.elements_G2->begin(); it != other.elements_G2->end(); ++it){
+        element_s *element = new element_s();
+        element_init_same_as(element, it->second);
+        element_set(element, it->second);
+        elements_G2->insert(std::pair<std::string, element_s *>(it->first, element));
+    }
+    for(it = other.elements_GT->begin(); it != other.elements_GT->end(); ++it){
+        element_s *element = new element_s();
+        element_init_same_as(element, it->second);
+        element_set(element, it->second);
+        elements_GT->insert(std::pair<std::string, element_s *>(it->first, element));
+    }
+    for(it = other.elements_Zn->begin(); it != other.elements_Zn->end(); ++it){
+        element_s *element = new element_s();
+        element_init_same_as(element, it->second);
+        element_set(element, it->second);
+        elements_Zn->insert(std::pair<std::string, element_s *>(it->first, element));
+    }
+}
+
 element_s *PbcElements::getElement(std::string s, std::string group)
 {
     std::unordered_map<std::string, element_s *>::iterator it;
@@ -113,6 +146,8 @@ void PbcElements::insertElement(std::string s, std::string group, element_s *ele
     else if (group == "Zn")
     {
         elements_Zn->insert(std::pair<std::string, element_s *>(s, insertElement));
+    }else{
+        throw std::invalid_argument("PbcElements::insertElement(): Invalid group " + group);
     }
 }
 
@@ -192,3 +227,4 @@ PbcElements::~PbcElements()
         element_clear(it->second);
     }
 }
+
