@@ -74,11 +74,15 @@ if(BUILD_TESTS)
     add_executable(CP_ABE_test tests/ABE_test/CP_ABE_test.cpp tests/common/CommonTest.cpp)
     target_link_libraries(CP_ABE_test PRIVATE ChameLib)
 
+    add_executable(MA_ABE_test tests/ABE_test/MA_ABE_test.cpp tests/common/CommonTest.cpp)
+    target_link_libraries(MA_ABE_test PRIVATE ChameLib)
+
     add_test(NAME RSA_Test COMMAND RSA_test)
     add_test(NAME Elements_Test COMMAND Elements_test)
     add_test(NAME AES_Test COMMAND AES_test)
     add_test(NAME BLS_Test COMMAND BLS_test)
-    add_test(NAME CP_ABE_Test COMMAND CP_ABE_test a 1 all)
+    add_test(NAME CP_ABE_Test COMMAND CP_ABE_test)
+    add_test(NAME MA_ABE_Test COMMAND MA_ABE_test)
 endif()
 
 install(TARGETS ChameLib ARCHIVE DESTINATION lib)

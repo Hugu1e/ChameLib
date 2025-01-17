@@ -4,6 +4,7 @@
 /home/hyj/ChameLib/build/CMakeFiles/AES_test.dir
 /home/hyj/ChameLib/build/CMakeFiles/BLS_test.dir
 /home/hyj/ChameLib/build/CMakeFiles/CP_ABE_test.dir
+/home/hyj/ChameLib/build/CMakeFiles/MA_ABE_test.dir
 /home/hyj/ChameLib/build/CMakeFiles/test.dir
 /home/hyj/ChameLib/build/CMakeFiles/edit_cache.dir
 /home/hyj/ChameLib/build/CMakeFiles/rebuild_cache.dir

@@ -249,6 +249,19 @@ CP_ABE_test/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/CP_ABE_test.dir/build.make CMakeFiles/CP_ABE_test.dir/build
 .PHONY : CP_ABE_test/fast
 
+#=============================================================================
+# Target rules for targets named MA_ABE_test
+
+# Build rule for target.
+MA_ABE_test: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 MA_ABE_test
+.PHONY : MA_ABE_test
+
+# fast build rule for target.
+MA_ABE_test/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/MA_ABE_test.dir/build.make CMakeFiles/MA_ABE_test.dir/build
+.PHONY : MA_ABE_test/fast
+
 src/ABE/CP_ABE.o: src/ABE/CP_ABE.cpp.o
 .PHONY : src/ABE/CP_ABE.o
 
@@ -272,6 +285,30 @@ src/ABE/CP_ABE.s: src/ABE/CP_ABE.cpp.s
 src/ABE/CP_ABE.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/ChameLib.dir/build.make CMakeFiles/ChameLib.dir/src/ABE/CP_ABE.cpp.s
 .PHONY : src/ABE/CP_ABE.cpp.s
+
+src/ABE/MA_ABE.o: src/ABE/MA_ABE.cpp.o
+.PHONY : src/ABE/MA_ABE.o
+
+# target to build an object file
+src/ABE/MA_ABE.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ChameLib.dir/build.make CMakeFiles/ChameLib.dir/src/ABE/MA_ABE.cpp.o
+.PHONY : src/ABE/MA_ABE.cpp.o
+
+src/ABE/MA_ABE.i: src/ABE/MA_ABE.cpp.i
+.PHONY : src/ABE/MA_ABE.i
+
+# target to preprocess a source file
+src/ABE/MA_ABE.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ChameLib.dir/build.make CMakeFiles/ChameLib.dir/src/ABE/MA_ABE.cpp.i
+.PHONY : src/ABE/MA_ABE.cpp.i
+
+src/ABE/MA_ABE.s: src/ABE/MA_ABE.cpp.s
+.PHONY : src/ABE/MA_ABE.s
+
+# target to generate assembly for a file
+src/ABE/MA_ABE.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ChameLib.dir/build.make CMakeFiles/ChameLib.dir/src/ABE/MA_ABE.cpp.s
+.PHONY : src/ABE/MA_ABE.cpp.s
 
 src/ABE/Policy_generation.o: src/ABE/Policy_generation.cpp.o
 .PHONY : src/ABE/Policy_generation.o
@@ -681,6 +718,30 @@ tests/ABE_test/CP_ABE_test.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/CP_ABE_test.dir/build.make CMakeFiles/CP_ABE_test.dir/tests/ABE_test/CP_ABE_test.cpp.s
 .PHONY : tests/ABE_test/CP_ABE_test.cpp.s
 
+tests/ABE_test/MA_ABE_test.o: tests/ABE_test/MA_ABE_test.cpp.o
+.PHONY : tests/ABE_test/MA_ABE_test.o
+
+# target to build an object file
+tests/ABE_test/MA_ABE_test.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/MA_ABE_test.dir/build.make CMakeFiles/MA_ABE_test.dir/tests/ABE_test/MA_ABE_test.cpp.o
+.PHONY : tests/ABE_test/MA_ABE_test.cpp.o
+
+tests/ABE_test/MA_ABE_test.i: tests/ABE_test/MA_ABE_test.cpp.i
+.PHONY : tests/ABE_test/MA_ABE_test.i
+
+# target to preprocess a source file
+tests/ABE_test/MA_ABE_test.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/MA_ABE_test.dir/build.make CMakeFiles/MA_ABE_test.dir/tests/ABE_test/MA_ABE_test.cpp.i
+.PHONY : tests/ABE_test/MA_ABE_test.cpp.i
+
+tests/ABE_test/MA_ABE_test.s: tests/ABE_test/MA_ABE_test.cpp.s
+.PHONY : tests/ABE_test/MA_ABE_test.s
+
+# target to generate assembly for a file
+tests/ABE_test/MA_ABE_test.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/MA_ABE_test.dir/build.make CMakeFiles/MA_ABE_test.dir/tests/ABE_test/MA_ABE_test.cpp.s
+.PHONY : tests/ABE_test/MA_ABE_test.cpp.s
+
 tests/RSA_test/RSA_test.o: tests/RSA_test/RSA_test.cpp.o
 .PHONY : tests/RSA_test/RSA_test.o
 
@@ -763,6 +824,7 @@ tests/common/CommonTest.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/AES_test.dir/build.make CMakeFiles/AES_test.dir/tests/common/CommonTest.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/BLS_test.dir/build.make CMakeFiles/BLS_test.dir/tests/common/CommonTest.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/CP_ABE_test.dir/build.make CMakeFiles/CP_ABE_test.dir/tests/common/CommonTest.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/MA_ABE_test.dir/build.make CMakeFiles/MA_ABE_test.dir/tests/common/CommonTest.cpp.o
 .PHONY : tests/common/CommonTest.cpp.o
 
 tests/common/CommonTest.i: tests/common/CommonTest.cpp.i
@@ -775,6 +837,7 @@ tests/common/CommonTest.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/AES_test.dir/build.make CMakeFiles/AES_test.dir/tests/common/CommonTest.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/BLS_test.dir/build.make CMakeFiles/BLS_test.dir/tests/common/CommonTest.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/CP_ABE_test.dir/build.make CMakeFiles/CP_ABE_test.dir/tests/common/CommonTest.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/MA_ABE_test.dir/build.make CMakeFiles/MA_ABE_test.dir/tests/common/CommonTest.cpp.i
 .PHONY : tests/common/CommonTest.cpp.i
 
 tests/common/CommonTest.s: tests/common/CommonTest.cpp.s
@@ -787,6 +850,7 @@ tests/common/CommonTest.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/AES_test.dir/build.make CMakeFiles/AES_test.dir/tests/common/CommonTest.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/BLS_test.dir/build.make CMakeFiles/BLS_test.dir/tests/common/CommonTest.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/CP_ABE_test.dir/build.make CMakeFiles/CP_ABE_test.dir/tests/common/CommonTest.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/MA_ABE_test.dir/build.make CMakeFiles/MA_ABE_test.dir/tests/common/CommonTest.cpp.s
 .PHONY : tests/common/CommonTest.cpp.s
 
 tests/signature_test/BLS_test.o: tests/signature_test/BLS_test.cpp.o
@@ -831,10 +895,14 @@ help:
 	@echo "... CP_ABE_test"
 	@echo "... ChameLib"
 	@echo "... Elements_test"
+	@echo "... MA_ABE_test"
 	@echo "... RSA_test"
 	@echo "... src/ABE/CP_ABE.o"
 	@echo "... src/ABE/CP_ABE.i"
 	@echo "... src/ABE/CP_ABE.s"
+	@echo "... src/ABE/MA_ABE.o"
+	@echo "... src/ABE/MA_ABE.i"
+	@echo "... src/ABE/MA_ABE.s"
 	@echo "... src/ABE/Policy_generation.o"
 	@echo "... src/ABE/Policy_generation.i"
 	@echo "... src/ABE/Policy_generation.s"
@@ -886,6 +954,9 @@ help:
 	@echo "... tests/ABE_test/CP_ABE_test.o"
 	@echo "... tests/ABE_test/CP_ABE_test.i"
 	@echo "... tests/ABE_test/CP_ABE_test.s"
+	@echo "... tests/ABE_test/MA_ABE_test.o"
+	@echo "... tests/ABE_test/MA_ABE_test.i"
+	@echo "... tests/ABE_test/MA_ABE_test.s"
 	@echo "... tests/RSA_test/RSA_test.o"
 	@echo "... tests/RSA_test/RSA_test.i"
 	@echo "... tests/RSA_test/RSA_test.s"
