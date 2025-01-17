@@ -1,7 +1,7 @@
 CMakeFiles/RSA_test.dir/tests/RSA_test/RSA_test.cpp.o: \
  /home/hyj/ChameLib/tests/RSA_test/RSA_test.cpp \
  /usr/include/stdc-predef.h /home/hyj/ChameLib/include/AE/RSA.h \
- /home/hyj/ChameLib/include/base/MpzElements.h \
+ /home/hyj/ChameLib/include/base/GmpElements.h \
  /home/hyj/ChameLib/libs/include/gmp/gmp.h /usr/include/c++/5/iosfwd \
  /usr/include/x86_64-linux-gnu/c++/5/bits/c++config.h \
  /usr/include/x86_64-linux-gnu/c++/5/bits/os_defines.h \

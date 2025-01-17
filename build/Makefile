@@ -284,29 +284,29 @@ src/SE/AES.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/ChameLib.dir/build.make CMakeFiles/ChameLib.dir/src/SE/AES.cpp.s
 .PHONY : src/SE/AES.cpp.s
 
-src/base/MpzElements.o: src/base/MpzElements.cpp.o
-.PHONY : src/base/MpzElements.o
+src/base/GmpElements.o: src/base/GmpElements.cpp.o
+.PHONY : src/base/GmpElements.o
 
 # target to build an object file
-src/base/MpzElements.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/ChameLib.dir/build.make CMakeFiles/ChameLib.dir/src/base/MpzElements.cpp.o
-.PHONY : src/base/MpzElements.cpp.o
+src/base/GmpElements.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ChameLib.dir/build.make CMakeFiles/ChameLib.dir/src/base/GmpElements.cpp.o
+.PHONY : src/base/GmpElements.cpp.o
 
-src/base/MpzElements.i: src/base/MpzElements.cpp.i
-.PHONY : src/base/MpzElements.i
+src/base/GmpElements.i: src/base/GmpElements.cpp.i
+.PHONY : src/base/GmpElements.i
 
 # target to preprocess a source file
-src/base/MpzElements.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/ChameLib.dir/build.make CMakeFiles/ChameLib.dir/src/base/MpzElements.cpp.i
-.PHONY : src/base/MpzElements.cpp.i
+src/base/GmpElements.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ChameLib.dir/build.make CMakeFiles/ChameLib.dir/src/base/GmpElements.cpp.i
+.PHONY : src/base/GmpElements.cpp.i
 
-src/base/MpzElements.s: src/base/MpzElements.cpp.s
-.PHONY : src/base/MpzElements.s
+src/base/GmpElements.s: src/base/GmpElements.cpp.s
+.PHONY : src/base/GmpElements.s
 
 # target to generate assembly for a file
-src/base/MpzElements.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/ChameLib.dir/build.make CMakeFiles/ChameLib.dir/src/base/MpzElements.cpp.s
-.PHONY : src/base/MpzElements.cpp.s
+src/base/GmpElements.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ChameLib.dir/build.make CMakeFiles/ChameLib.dir/src/base/GmpElements.cpp.s
+.PHONY : src/base/GmpElements.cpp.s
 
 src/base/PbcElements.o: src/base/PbcElements.cpp.o
 .PHONY : src/base/PbcElements.o
@@ -605,9 +605,9 @@ help:
 	@echo "... src/SE/AES.o"
 	@echo "... src/SE/AES.i"
 	@echo "... src/SE/AES.s"
-	@echo "... src/base/MpzElements.o"
-	@echo "... src/base/MpzElements.i"
-	@echo "... src/base/MpzElements.s"
+	@echo "... src/base/GmpElements.o"
+	@echo "... src/base/GmpElements.i"
+	@echo "... src/base/GmpElements.s"
 	@echo "... src/base/PbcElements.o"
 	@echo "... src/base/PbcElements.i"
 	@echo "... src/base/PbcElements.s"

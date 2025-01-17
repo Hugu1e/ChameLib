@@ -1,22 +1,22 @@
-#include <base/MpzElements.h>
+#include <base/GmpElements.h>
 
-MpzElements::MpzElements()
+GmpElements::GmpElements()
 {
-    elements_mpz = new std::unordered_map<std::string, MP_INT *>();
+    elements_gmp = new std::unordered_map<std::string, MP_INT *>();
 }
 
-MP_INT *MpzElements::getElement(std::string s)
+MP_INT *GmpElements::getElement(std::string s)
 {
     std::unordered_map<std::string, MP_INT *>::iterator it;
-    it = elements_mpz->find(s);
-    if (it != elements_mpz->end())
+    it = elements_gmp->find(s);
+    if (it != elements_gmp->end())
     {
         return it->second;
     }
     return NULL;
 }
 
-void MpzElements::insertElement(std::string s, MP_INT *element)
+void GmpElements::insertElement(std::string s, MP_INT *element)
 {
     if(getElement(s) != NULL){
         throw ElementExistsException("insertElement(): Element " + s + " already exists");
@@ -26,28 +26,28 @@ void MpzElements::insertElement(std::string s, MP_INT *element)
     mpz_init(insertElement);
     mpz_set(insertElement, element);
 
-    elements_mpz->insert(std::pair<std::string, MP_INT *>(s, insertElement));
+    elements_gmp->insert(std::pair<std::string, MP_INT *>(s, insertElement));
     
 }
 
-void MpzElements::printElement()
+void GmpElements::printElement()
 {
-    if (elements_mpz->empty())
+    if (elements_gmp->empty())
     {
         std::cout << "No elements" << std::endl;
         return;
     }
 
     std::unordered_map<std::string, MP_INT *>::iterator it;
-    std::cout << "Mpz: " << elements_mpz->size() << " elements" << std::endl;
-    for (it = elements_mpz->begin(); it != elements_mpz->end(); ++it)
+    std::cout << "Mpz: " << elements_gmp->size() << " elements" << std::endl;
+    for (it = elements_gmp->begin(); it != elements_gmp->end(); ++it)
     {
         std::cout << it->first << ": " << std::endl;
         gmp_printf("%Zd\n", it->second);
     }
 }
 
-void MpzElements::printElement(std::string s){
+void GmpElements::printElement(std::string s){
     if(getElement(s) != NULL){
         gmp_printf("%s: %Zd\n", s.c_str(), getElement(s));
     }
@@ -56,10 +56,10 @@ void MpzElements::printElement(std::string s){
     }
 }
 
-MpzElements::~MpzElements()
+GmpElements::~GmpElements()
 {
     std::unordered_map<std::string, MP_INT *>::iterator it;
-    for (it = elements_mpz->begin(); it != elements_mpz->end(); ++it)
+    for (it = elements_gmp->begin(); it != elements_gmp->end(); ++it)
     {
         mpz_clear(it->second);
     }

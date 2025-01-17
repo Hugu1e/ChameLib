@@ -1,5 +1,5 @@
 #include <base/PbcElements.h>
-#include <base/MpzElements.h>
+#include <base/GmpElements.h>
 #include <CommonTest.h>
 
 void test(std::string test_name, std::string curve){
@@ -32,17 +32,17 @@ void test(std::string test_name, std::string curve){
     mpz_t n;
     mpz_init(n);
 
-    MpzElements mpzElements;
-    mpzElements.printElement("n");
+    GmpElements gmpElements;
+    gmpElements.printElement("n");
 
     mpz_set_ui(n, 1234567890);
-    mpzElements.insertElement("n", n);
-    mpzElements.printElement("n");
-    mpzElements.printElement();
+    gmpElements.insertElement("n", n);
+    gmpElements.printElement("n");
+    gmpElements.printElement();
 
     mpz_t n2;
     mpz_init(n2);
-    mpz_set(n2, mpzElements.getElement("n"));
+    mpz_set(n2, gmpElements.getElement("n"));
     gmp_printf("n: %Zd\n", n);
     gmp_printf("n2: %Zd\n", n2);
 

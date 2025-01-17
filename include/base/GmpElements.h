@@ -1,5 +1,5 @@
-#ifndef CHAMELIB_MPZELEMENT_H
-#define CHAMELIB_MPZELEMENT_H
+#ifndef CHAMELIB_GMPELEMENT_H
+#define CHAMELIB_GMPELEMENT_H
 
 #include <gmp.h>
 #include <iostream>
@@ -7,13 +7,13 @@
 #include <unordered_map>
 #include <exception/ElementException.h>
 
-class MpzElements{
+class GmpElements{
     private:
-        std::unordered_map<std::string, MP_INT *> *elements_mpz;
+        std::unordered_map<std::string, MP_INT *> *elements_gmp;
     
     public:
-        MpzElements();
-        ~MpzElements();
+        GmpElements();
+        ~GmpElements();
         
         MP_INT* getElement(std::string s);
         
@@ -23,4 +23,4 @@ class MpzElements{
         void printElement(std::string s);
 };
 
-#endif  // CHAMELIB_MPZELEMENT_H
+#endif  // CHAMELIB_GMPELEMENT_H
