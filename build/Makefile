@@ -223,6 +223,19 @@ AES_test/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/AES_test.dir/build.make CMakeFiles/AES_test.dir/build
 .PHONY : AES_test/fast
 
+#=============================================================================
+# Target rules for targets named BLS_test
+
+# Build rule for target.
+BLS_test: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 BLS_test
+.PHONY : BLS_test
+
+# fast build rule for target.
+BLS_test/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/BLS_test.dir/build.make CMakeFiles/BLS_test.dir/build
+.PHONY : BLS_test/fast
+
 src/AE/RSA.o: src/AE/RSA.cpp.o
 .PHONY : src/AE/RSA.o
 
@@ -342,6 +355,54 @@ src/curve/params.s: src/curve/params.cpp.s
 src/curve/params.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/ChameLib.dir/build.make CMakeFiles/ChameLib.dir/src/curve/params.cpp.s
 .PHONY : src/curve/params.cpp.s
+
+src/signature/BLS.o: src/signature/BLS.cpp.o
+.PHONY : src/signature/BLS.o
+
+# target to build an object file
+src/signature/BLS.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ChameLib.dir/build.make CMakeFiles/ChameLib.dir/src/signature/BLS.cpp.o
+.PHONY : src/signature/BLS.cpp.o
+
+src/signature/BLS.i: src/signature/BLS.cpp.i
+.PHONY : src/signature/BLS.i
+
+# target to preprocess a source file
+src/signature/BLS.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ChameLib.dir/build.make CMakeFiles/ChameLib.dir/src/signature/BLS.cpp.i
+.PHONY : src/signature/BLS.cpp.i
+
+src/signature/BLS.s: src/signature/BLS.cpp.s
+.PHONY : src/signature/BLS.s
+
+# target to generate assembly for a file
+src/signature/BLS.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ChameLib.dir/build.make CMakeFiles/ChameLib.dir/src/signature/BLS.cpp.s
+.PHONY : src/signature/BLS.cpp.s
+
+src/utils/Hash.o: src/utils/Hash.cpp.o
+.PHONY : src/utils/Hash.o
+
+# target to build an object file
+src/utils/Hash.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ChameLib.dir/build.make CMakeFiles/ChameLib.dir/src/utils/Hash.cpp.o
+.PHONY : src/utils/Hash.cpp.o
+
+src/utils/Hash.i: src/utils/Hash.cpp.i
+.PHONY : src/utils/Hash.i
+
+# target to preprocess a source file
+src/utils/Hash.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ChameLib.dir/build.make CMakeFiles/ChameLib.dir/src/utils/Hash.cpp.i
+.PHONY : src/utils/Hash.cpp.i
+
+src/utils/Hash.s: src/utils/Hash.cpp.s
+.PHONY : src/utils/Hash.s
+
+# target to generate assembly for a file
+src/utils/Hash.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ChameLib.dir/build.make CMakeFiles/ChameLib.dir/src/utils/Hash.cpp.s
+.PHONY : src/utils/Hash.cpp.s
 
 src/utils/Logger.o: src/utils/Logger.cpp.o
 .PHONY : src/utils/Logger.o
@@ -471,6 +532,7 @@ tests/common/CommonTest.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/RSA_test.dir/build.make CMakeFiles/RSA_test.dir/tests/common/CommonTest.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Elements_test.dir/build.make CMakeFiles/Elements_test.dir/tests/common/CommonTest.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/AES_test.dir/build.make CMakeFiles/AES_test.dir/tests/common/CommonTest.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/BLS_test.dir/build.make CMakeFiles/BLS_test.dir/tests/common/CommonTest.cpp.o
 .PHONY : tests/common/CommonTest.cpp.o
 
 tests/common/CommonTest.i: tests/common/CommonTest.cpp.i
@@ -481,6 +543,7 @@ tests/common/CommonTest.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/RSA_test.dir/build.make CMakeFiles/RSA_test.dir/tests/common/CommonTest.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Elements_test.dir/build.make CMakeFiles/Elements_test.dir/tests/common/CommonTest.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/AES_test.dir/build.make CMakeFiles/AES_test.dir/tests/common/CommonTest.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/BLS_test.dir/build.make CMakeFiles/BLS_test.dir/tests/common/CommonTest.cpp.i
 .PHONY : tests/common/CommonTest.cpp.i
 
 tests/common/CommonTest.s: tests/common/CommonTest.cpp.s
@@ -491,7 +554,32 @@ tests/common/CommonTest.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/RSA_test.dir/build.make CMakeFiles/RSA_test.dir/tests/common/CommonTest.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Elements_test.dir/build.make CMakeFiles/Elements_test.dir/tests/common/CommonTest.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/AES_test.dir/build.make CMakeFiles/AES_test.dir/tests/common/CommonTest.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/BLS_test.dir/build.make CMakeFiles/BLS_test.dir/tests/common/CommonTest.cpp.s
 .PHONY : tests/common/CommonTest.cpp.s
+
+tests/signature_test/BLS_test.o: tests/signature_test/BLS_test.cpp.o
+.PHONY : tests/signature_test/BLS_test.o
+
+# target to build an object file
+tests/signature_test/BLS_test.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/BLS_test.dir/build.make CMakeFiles/BLS_test.dir/tests/signature_test/BLS_test.cpp.o
+.PHONY : tests/signature_test/BLS_test.cpp.o
+
+tests/signature_test/BLS_test.i: tests/signature_test/BLS_test.cpp.i
+.PHONY : tests/signature_test/BLS_test.i
+
+# target to preprocess a source file
+tests/signature_test/BLS_test.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/BLS_test.dir/build.make CMakeFiles/BLS_test.dir/tests/signature_test/BLS_test.cpp.i
+.PHONY : tests/signature_test/BLS_test.cpp.i
+
+tests/signature_test/BLS_test.s: tests/signature_test/BLS_test.cpp.s
+.PHONY : tests/signature_test/BLS_test.s
+
+# target to generate assembly for a file
+tests/signature_test/BLS_test.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/BLS_test.dir/build.make CMakeFiles/BLS_test.dir/tests/signature_test/BLS_test.cpp.s
+.PHONY : tests/signature_test/BLS_test.cpp.s
 
 # Help Target
 help:
@@ -507,6 +595,7 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... test"
 	@echo "... AES_test"
+	@echo "... BLS_test"
 	@echo "... ChameLib"
 	@echo "... Elements_test"
 	@echo "... RSA_test"
@@ -525,6 +614,12 @@ help:
 	@echo "... src/curve/params.o"
 	@echo "... src/curve/params.i"
 	@echo "... src/curve/params.s"
+	@echo "... src/signature/BLS.o"
+	@echo "... src/signature/BLS.i"
+	@echo "... src/signature/BLS.s"
+	@echo "... src/utils/Hash.o"
+	@echo "... src/utils/Hash.i"
+	@echo "... src/utils/Hash.s"
 	@echo "... src/utils/Logger.o"
 	@echo "... src/utils/Logger.i"
 	@echo "... src/utils/Logger.s"
@@ -543,6 +638,9 @@ help:
 	@echo "... tests/common/CommonTest.o"
 	@echo "... tests/common/CommonTest.i"
 	@echo "... tests/common/CommonTest.s"
+	@echo "... tests/signature_test/BLS_test.o"
+	@echo "... tests/signature_test/BLS_test.i"
+	@echo "... tests/signature_test/BLS_test.s"
 .PHONY : help
 
 

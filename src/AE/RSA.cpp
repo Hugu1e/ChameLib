@@ -9,10 +9,10 @@ void AE_RSA::KeyGen(RSA_pk *pk, RSA_sk *sk, short k) {
     mpz_t p, q, phi, n, e, d;
     mpz_inits(p, q, phi, n, e, d, NULL);
 
-    RandomGenerator::RandomInLength(&p, k / 2);
+    RandomGenerator::RandomInLength(p, k / 2);
     mpz_nextprime(p, p); 
 
-    RandomGenerator::RandomInLength(&q, k / 2);
+    RandomGenerator::RandomInLength(q, k / 2);
     mpz_nextprime(q, q);
 
     // Logger::PrintMpz("p", &p);
@@ -46,12 +46,12 @@ void AE_RSA::KeyGen(RSA_pk *pk, RSA_sk *sk, short k) {
  * @param plaintext plaintext
  * @param pk public key
  */
-void AE_RSA::Encrypt(mpz_t *ciphertext, const mpz_t *plaintext, RSA_pk *pk) {
+void AE_RSA::Encrypt(mpz_t ciphertext, mpz_t plaintext, RSA_pk *pk) {
     mpz_t c;
     mpz_init(c);
     // c = m^e mod n
-    mpz_powm(c, *plaintext, pk->getElement("e"), pk->getElement("n"));
-    mpz_set(*ciphertext, c);
+    mpz_powm(c, plaintext, pk->getElement("e"), pk->getElement("n"));
+    mpz_set(ciphertext, c);
     mpz_clear(c);
 }
 
@@ -63,12 +63,12 @@ void AE_RSA::Encrypt(mpz_t *ciphertext, const mpz_t *plaintext, RSA_pk *pk) {
  * @param sk private key
  * @param pk public key
  */
-void AE_RSA::Decrypt(mpz_t *plaintext, const mpz_t *ciphertext, RSA_sk *sk, RSA_pk *pk) {
+void AE_RSA::Decrypt(mpz_t plaintext, mpz_t ciphertext, RSA_sk *sk, RSA_pk *pk) {
     mpz_t m;
     mpz_init(m);
     // m = c^d mod n
-    mpz_powm(m, *ciphertext, sk->getElement("d"), pk->getElement("n"));
-    mpz_set(*plaintext, m);
+    mpz_powm(m, ciphertext, sk->getElement("d"), pk->getElement("n"));
+    mpz_set(plaintext, m);
     mpz_clear(m);
 }
 

@@ -25,6 +25,7 @@ file(GLOB LIBRARY_SOURCES
     src/curve/*.cpp
     src/utils/*.cpp
     src/SE/*.cpp
+    src/signature/*.cpp
 )
 add_library(ChameLib STATIC ${LIBRARY_SOURCES})
 target_link_libraries(ChameLib PUBLIC gmp pbc OpenSSL::SSL)
@@ -53,8 +54,7 @@ endif (LOCAL_DEBUG)
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS} -g -ggdb")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS}")
 
-
-
+SET(BUILD_TESTS ON)
 if(BUILD_TESTS)
     enable_testing()
 
@@ -67,9 +67,13 @@ if(BUILD_TESTS)
     add_executable(AES_test tests/SE_test/AES_test.cpp tests/common/CommonTest.cpp)
     target_link_libraries(AES_test PRIVATE ChameLib)
 
+    add_executable(BLS_test tests/signature_test/BLS_test.cpp tests/common/CommonTest.cpp)
+    target_link_libraries(BLS_test PRIVATE ChameLib)
+
     add_test(NAME RSA_Test COMMAND RSA_test)
     add_test(NAME Elements_Test COMMAND Elements_test)
     add_test(NAME AES_Test COMMAND AES_test)
+    add_test(NAME BLS_Test COMMAND BLS_test)
 endif()
 
 install(TARGETS ChameLib ARCHIVE DESTINATION lib)

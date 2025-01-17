@@ -2,6 +2,7 @@
 /home/hyj/ChameLib/build/CMakeFiles/RSA_test.dir
 /home/hyj/ChameLib/build/CMakeFiles/Elements_test.dir
 /home/hyj/ChameLib/build/CMakeFiles/AES_test.dir
+/home/hyj/ChameLib/build/CMakeFiles/BLS_test.dir
 /home/hyj/ChameLib/build/CMakeFiles/test.dir
 /home/hyj/ChameLib/build/CMakeFiles/edit_cache.dir
 /home/hyj/ChameLib/build/CMakeFiles/rebuild_cache.dir

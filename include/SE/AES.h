@@ -15,12 +15,12 @@ class AES{
     public:
         AES();
 
-        void KGen(element_t *key);
-        void KGen(element_t *key, int k);
+        void KGen(element_t key);
+        void KGen(element_t key, int k);
 
-        void Enc(mpz_t *ciphertext, element_t *key, mpz_t *plaintext);
+        void Enc(mpz_t ciphertext, element_t key, mpz_t plaintext);
 
-        void Dec(mpz_t *decrypted_plaintext, element_t *key, mpz_t *ciphertext);
+        void Dec(mpz_t decrypted_plaintext, element_t key, mpz_t ciphertext);
 
         ~AES();
 };

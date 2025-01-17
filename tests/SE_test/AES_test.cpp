@@ -18,18 +18,19 @@ void test(std::string test_name, std::string curve){
     mpz_inits(plaintext, ciphertext, decrypted_plaintext, NULL);
 
     test.start("KGen");
-    aes.KGen(&key, 256);
+    aes.KGen(key, 256);
     test.end("KGen");
+    Logger::PrintPbc("key", key);
 
     test.start("Encrypt");
-    RandomGenerator::RandomInLength(&plaintext, 128);
-    Logger::PrintMpz("plaintext", &plaintext);
-    aes.Enc(&ciphertext, &key, &plaintext);
+    RandomGenerator::RandomInLength(plaintext, 128);
+    Logger::PrintMpz("plaintext", plaintext);
+    aes.Enc(ciphertext, key, plaintext);
     test.end("Encrypt");
 
     test.start("Decrypt");
-    aes.Dec(&decrypted_plaintext, &key, &ciphertext);
-    Logger::PrintMpz("decrypted_plaintext", &decrypted_plaintext);
+    aes.Dec(decrypted_plaintext, key, ciphertext);
+    Logger::PrintMpz("decrypted_plaintext", decrypted_plaintext);
     test.end("Decrypt");
 
     if(mpz_cmp(plaintext, decrypted_plaintext) == 0){

@@ -6,7 +6,7 @@
  * @param res random number
  * @param length length of random number
  */
-void RandomGenerator::RandomInLength(mpz_t *res, short length){
+void RandomGenerator::RandomInLength(mpz_t res, short length){
     gmp_randstate_t state;
     gmp_randinit_default(state);          
     
@@ -15,7 +15,7 @@ void RandomGenerator::RandomInLength(mpz_t *res, short length){
     unsigned long long seed = tv.tv_sec * 1000000 + tv.tv_usec;
 
     gmp_randseed_ui(state, seed);
-    mpz_urandomb(*res, state, length);
+    mpz_urandomb(res, state, length);
     gmp_randclear(state);
 }
 
@@ -25,7 +25,7 @@ void RandomGenerator::RandomInLength(mpz_t *res, short length){
  * @param res random number
  * @param n max number
  */
-void RandomGenerator::RandomN(mpz_t *res, mpz_t *n){
+void RandomGenerator::RandomN(mpz_t res, mpz_t n){
     gmp_randstate_t state;
     gmp_randinit_default(state);          
     
@@ -34,7 +34,7 @@ void RandomGenerator::RandomN(mpz_t *res, mpz_t *n){
     unsigned long long seed = tv.tv_sec * 1000000 + tv.tv_usec;
 
     gmp_randseed_ui(state, seed);
-    mpz_urandomm(*res, state, *n);
+    mpz_urandomm(res, state, n);
     gmp_randclear(state);
 }
 
@@ -44,14 +44,14 @@ void RandomGenerator::RandomN(mpz_t *res, mpz_t *n){
  * @param res random number
  * @param n max number
  */
-void RandomGenerator::RandomCoprimeN(mpz_t *res, mpz_t *n){
+void RandomGenerator::RandomCoprimeN(mpz_t res, mpz_t n){
     RandomN(res, n);
     mpz_t gcd;
     mpz_inits(gcd, NULL);
-    mpz_gcd(gcd, *res, *n);
+    mpz_gcd(gcd, res, n);
     while(mpz_cmp_ui(gcd, 1) != 0) {
         RandomN(res, n);
-        mpz_gcd(gcd, *res, *n);
+        mpz_gcd(gcd, res, n);
     }
     mpz_clears(gcd, NULL);
 }

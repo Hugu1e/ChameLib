@@ -39,6 +39,7 @@
         "numeric": "cpp",
         "sstream": "cpp",
         "utility": "cpp",
-        "ios": "cpp"
+        "ios": "cpp",
+        "cinttypes": "cpp"
     }
 }
