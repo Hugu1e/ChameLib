@@ -38,6 +38,7 @@
         "fstream": "cpp",
         "numeric": "cpp",
         "sstream": "cpp",
-        "utility": "cpp"
+        "utility": "cpp",
+        "ios": "cpp"
     }
 }

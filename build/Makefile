@@ -210,6 +210,19 @@ Elements_test/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Elements_test.dir/build.make CMakeFiles/Elements_test.dir/build
 .PHONY : Elements_test/fast
 
+#=============================================================================
+# Target rules for targets named AES_test
+
+# Build rule for target.
+AES_test: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 AES_test
+.PHONY : AES_test
+
+# fast build rule for target.
+AES_test/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/AES_test.dir/build.make CMakeFiles/AES_test.dir/build
+.PHONY : AES_test/fast
+
 src/AE/RSA.o: src/AE/RSA.cpp.o
 .PHONY : src/AE/RSA.o
 
@@ -233,6 +246,30 @@ src/AE/RSA.s: src/AE/RSA.cpp.s
 src/AE/RSA.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/ChameLib.dir/build.make CMakeFiles/ChameLib.dir/src/AE/RSA.cpp.s
 .PHONY : src/AE/RSA.cpp.s
+
+src/SE/AES.o: src/SE/AES.cpp.o
+.PHONY : src/SE/AES.o
+
+# target to build an object file
+src/SE/AES.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ChameLib.dir/build.make CMakeFiles/ChameLib.dir/src/SE/AES.cpp.o
+.PHONY : src/SE/AES.cpp.o
+
+src/SE/AES.i: src/SE/AES.cpp.i
+.PHONY : src/SE/AES.i
+
+# target to preprocess a source file
+src/SE/AES.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ChameLib.dir/build.make CMakeFiles/ChameLib.dir/src/SE/AES.cpp.i
+.PHONY : src/SE/AES.cpp.i
+
+src/SE/AES.s: src/SE/AES.cpp.s
+.PHONY : src/SE/AES.s
+
+# target to generate assembly for a file
+src/SE/AES.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ChameLib.dir/build.make CMakeFiles/ChameLib.dir/src/SE/AES.cpp.s
+.PHONY : src/SE/AES.cpp.s
 
 src/base/MpzElements.o: src/base/MpzElements.cpp.o
 .PHONY : src/base/MpzElements.o
@@ -378,6 +415,30 @@ tests/RSA_test/RSA_test.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/RSA_test.dir/build.make CMakeFiles/RSA_test.dir/tests/RSA_test/RSA_test.cpp.s
 .PHONY : tests/RSA_test/RSA_test.cpp.s
 
+tests/SE_test/AES_test.o: tests/SE_test/AES_test.cpp.o
+.PHONY : tests/SE_test/AES_test.o
+
+# target to build an object file
+tests/SE_test/AES_test.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/AES_test.dir/build.make CMakeFiles/AES_test.dir/tests/SE_test/AES_test.cpp.o
+.PHONY : tests/SE_test/AES_test.cpp.o
+
+tests/SE_test/AES_test.i: tests/SE_test/AES_test.cpp.i
+.PHONY : tests/SE_test/AES_test.i
+
+# target to preprocess a source file
+tests/SE_test/AES_test.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/AES_test.dir/build.make CMakeFiles/AES_test.dir/tests/SE_test/AES_test.cpp.i
+.PHONY : tests/SE_test/AES_test.cpp.i
+
+tests/SE_test/AES_test.s: tests/SE_test/AES_test.cpp.s
+.PHONY : tests/SE_test/AES_test.s
+
+# target to generate assembly for a file
+tests/SE_test/AES_test.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/AES_test.dir/build.make CMakeFiles/AES_test.dir/tests/SE_test/AES_test.cpp.s
+.PHONY : tests/SE_test/AES_test.cpp.s
+
 tests/base_test/Elements_test.o: tests/base_test/Elements_test.cpp.o
 .PHONY : tests/base_test/Elements_test.o
 
@@ -409,6 +470,7 @@ tests/common/CommonTest.o: tests/common/CommonTest.cpp.o
 tests/common/CommonTest.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/RSA_test.dir/build.make CMakeFiles/RSA_test.dir/tests/common/CommonTest.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Elements_test.dir/build.make CMakeFiles/Elements_test.dir/tests/common/CommonTest.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/AES_test.dir/build.make CMakeFiles/AES_test.dir/tests/common/CommonTest.cpp.o
 .PHONY : tests/common/CommonTest.cpp.o
 
 tests/common/CommonTest.i: tests/common/CommonTest.cpp.i
@@ -418,6 +480,7 @@ tests/common/CommonTest.i: tests/common/CommonTest.cpp.i
 tests/common/CommonTest.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/RSA_test.dir/build.make CMakeFiles/RSA_test.dir/tests/common/CommonTest.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Elements_test.dir/build.make CMakeFiles/Elements_test.dir/tests/common/CommonTest.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/AES_test.dir/build.make CMakeFiles/AES_test.dir/tests/common/CommonTest.cpp.i
 .PHONY : tests/common/CommonTest.cpp.i
 
 tests/common/CommonTest.s: tests/common/CommonTest.cpp.s
@@ -427,6 +490,7 @@ tests/common/CommonTest.s: tests/common/CommonTest.cpp.s
 tests/common/CommonTest.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/RSA_test.dir/build.make CMakeFiles/RSA_test.dir/tests/common/CommonTest.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Elements_test.dir/build.make CMakeFiles/Elements_test.dir/tests/common/CommonTest.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/AES_test.dir/build.make CMakeFiles/AES_test.dir/tests/common/CommonTest.cpp.s
 .PHONY : tests/common/CommonTest.cpp.s
 
 # Help Target
@@ -442,12 +506,16 @@ help:
 	@echo "... list_install_components"
 	@echo "... rebuild_cache"
 	@echo "... test"
+	@echo "... AES_test"
 	@echo "... ChameLib"
 	@echo "... Elements_test"
 	@echo "... RSA_test"
 	@echo "... src/AE/RSA.o"
 	@echo "... src/AE/RSA.i"
 	@echo "... src/AE/RSA.s"
+	@echo "... src/SE/AES.o"
+	@echo "... src/SE/AES.i"
+	@echo "... src/SE/AES.s"
 	@echo "... src/base/MpzElements.o"
 	@echo "... src/base/MpzElements.i"
 	@echo "... src/base/MpzElements.s"
@@ -466,6 +534,9 @@ help:
 	@echo "... tests/RSA_test/RSA_test.o"
 	@echo "... tests/RSA_test/RSA_test.i"
 	@echo "... tests/RSA_test/RSA_test.s"
+	@echo "... tests/SE_test/AES_test.o"
+	@echo "... tests/SE_test/AES_test.i"
+	@echo "... tests/SE_test/AES_test.s"
 	@echo "... tests/base_test/Elements_test.o"
 	@echo "... tests/base_test/Elements_test.i"
 	@echo "... tests/base_test/Elements_test.s"

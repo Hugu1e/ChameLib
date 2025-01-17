@@ -9,20 +9,26 @@ set(CMAKE_CXX_STANDARD 17)
 SET(CMAKE_BUILD_TYPE "Debug")
 # SET(CMAKE_BUILD_TYPE "Release")
 
-include_directories(include libs/include/gmp libs/include/pbc tests/common)
+include_directories(include libs/include/gmp libs/include/pbc libs/include/openssl tests/common)
 
 link_directories(libs/lib)
+
+find_package(OpenSSL REQUIRED)
+message(STATUS "OpenSSL include directory: ${OpenSSL_INCLUDE_DIR}")
+message(STATUS "OpenSSL SSL library: ${OpenSSL_SSL_LIBRARY}")
+message(STATUS "OpenSSL Crypto library: ${OpenSSL_CRYPTO_LIBRARY}")
+
 
 file(GLOB LIBRARY_SOURCES
     src/AE/*.cpp
     src/base/*.cpp
     src/curve/*.cpp
     src/utils/*.cpp
+    src/SE/*.cpp
 )
-
 add_library(ChameLib STATIC ${LIBRARY_SOURCES})
+target_link_libraries(ChameLib PUBLIC gmp pbc OpenSSL::SSL)
 
-target_link_libraries(ChameLib PUBLIC gmp pbc)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -pthread -mavx2 -O0")
 add_compile_options(-Wunknown-pragmas)
@@ -48,22 +54,6 @@ set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS} -g -ggdb")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS}")
 
 
-# add_executable(RSA_test 
-#         tests/RSA_test/RSA_test.cpp
-#         src/AE/RSA.cpp
-#         src/base/MpzElements.cpp
-#         src/utils/RandomGenerator.cpp
-#         src/curve/params.cpp
-#         tests/common/CommonTest.cpp
-# )
-
-# add_executable(Elements_test
-#         tests/base_test/Elements_test.cpp
-#         src/base/PbcElements.cpp
-#         src/base/MpzElements.cpp
-#         src/curve/params.cpp
-#         tests/common/CommonTest.cpp
-# )
 
 if(BUILD_TESTS)
     enable_testing()
@@ -74,8 +64,12 @@ if(BUILD_TESTS)
     add_executable(Elements_test tests/base_test/Elements_test.cpp tests/common/CommonTest.cpp)
     target_link_libraries(Elements_test PRIVATE ChameLib)
 
+    add_executable(AES_test tests/SE_test/AES_test.cpp tests/common/CommonTest.cpp)
+    target_link_libraries(AES_test PRIVATE ChameLib)
+
     add_test(NAME RSA_Test COMMAND RSA_test)
     add_test(NAME Elements_Test COMMAND Elements_test)
+    add_test(NAME AES_Test COMMAND AES_test)
 endif()
 
 install(TARGETS ChameLib ARCHIVE DESTINATION lib)
