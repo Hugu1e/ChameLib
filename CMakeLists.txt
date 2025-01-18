@@ -59,34 +59,19 @@ SET(BUILD_TESTS ON)
 if(BUILD_TESTS)
     enable_testing()
 
-    add_executable(RSA_test tests/RSA_test/RSA_test.cpp tests/common/CommonTest.cpp)
-    target_link_libraries(RSA_test PRIVATE ChameLib)
+    macro(add_test_executable test_name test_source)
+        add_executable(${test_name} ${test_source} tests/common/CommonTest.cpp)
+        target_link_libraries(${test_name} PRIVATE ChameLib)
+        add_test(NAME ${test_name} COMMAND ${test_name})
+    endmacro()
 
-    add_executable(Elements_test tests/base_test/Elements_test.cpp tests/common/CommonTest.cpp)
-    target_link_libraries(Elements_test PRIVATE ChameLib)
-
-    add_executable(AES_test tests/SE_test/AES_test.cpp tests/common/CommonTest.cpp)
-    target_link_libraries(AES_test PRIVATE ChameLib)
-
-    add_executable(BLS_test tests/signature_test/BLS_test.cpp tests/common/CommonTest.cpp)
-    target_link_libraries(BLS_test PRIVATE ChameLib)
-
-    add_executable(CP_ABE_test tests/ABE_test/CP_ABE_test.cpp tests/common/CommonTest.cpp)
-    target_link_libraries(CP_ABE_test PRIVATE ChameLib)
-
-    add_executable(MA_ABE_test tests/ABE_test/MA_ABE_test.cpp tests/common/CommonTest.cpp)
-    target_link_libraries(MA_ABE_test PRIVATE ChameLib)
-
-    add_executable(ABET_test tests/ABE_test/ABET_test.cpp tests/common/CommonTest.cpp)
-    target_link_libraries(ABET_test PRIVATE ChameLib)
-
-    add_test(NAME RSA_Test COMMAND RSA_test)
-    add_test(NAME Elements_Test COMMAND Elements_test)
-    add_test(NAME AES_Test COMMAND AES_test)
-    add_test(NAME BLS_Test COMMAND BLS_test)
-    add_test(NAME CP_ABE_Test COMMAND CP_ABE_test)
-    add_test(NAME MA_ABE_Test COMMAND MA_ABE_test)
-    add_test(NAME ABET_Test COMMAND ABET_test)
+    add_test_executable(RSA_test tests/RSA_test/RSA_test.cpp)
+    add_test_executable(Elements_test tests/base_test/Elements_test.cpp)
+    add_test_executable(AES_test tests/SE_test/AES_test.cpp)
+    add_test_executable(BLS_test tests/signature_test/BLS_test.cpp)
+    add_test_executable(CP_ABE_test tests/ABE_test/CP_ABE_test.cpp)
+    add_test_executable(MA_ABE_test tests/ABE_test/MA_ABE_test.cpp)
+    add_test_executable(ABET_test tests/ABE_test/ABET_test.cpp)
 endif()
 
 install(TARGETS ChameLib ARCHIVE DESTINATION lib)
