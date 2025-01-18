@@ -275,6 +275,19 @@ ABET_test/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/ABET_test.dir/build.make CMakeFiles/ABET_test.dir/build
 .PHONY : ABET_test/fast
 
+#=============================================================================
+# Target rules for targets named RABE_XNM_test
+
+# Build rule for target.
+RABE_XNM_test: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 RABE_XNM_test
+.PHONY : RABE_XNM_test
+
+# fast build rule for target.
+RABE_XNM_test/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/RABE_XNM_test.dir/build.make CMakeFiles/RABE_XNM_test.dir/build
+.PHONY : RABE_XNM_test/fast
+
 src/ABE/ABET.o: src/ABE/ABET.cpp.o
 .PHONY : src/ABE/ABET.o
 
@@ -395,6 +408,30 @@ src/ABE/Policy_resolution.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/ChameLib.dir/build.make CMakeFiles/ChameLib.dir/src/ABE/Policy_resolution.cpp.s
 .PHONY : src/ABE/Policy_resolution.cpp.s
 
+src/ABE/RABE_XNM.o: src/ABE/RABE_XNM.cpp.o
+.PHONY : src/ABE/RABE_XNM.o
+
+# target to build an object file
+src/ABE/RABE_XNM.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ChameLib.dir/build.make CMakeFiles/ChameLib.dir/src/ABE/RABE_XNM.cpp.o
+.PHONY : src/ABE/RABE_XNM.cpp.o
+
+src/ABE/RABE_XNM.i: src/ABE/RABE_XNM.cpp.i
+.PHONY : src/ABE/RABE_XNM.i
+
+# target to preprocess a source file
+src/ABE/RABE_XNM.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ChameLib.dir/build.make CMakeFiles/ChameLib.dir/src/ABE/RABE_XNM.cpp.i
+.PHONY : src/ABE/RABE_XNM.cpp.i
+
+src/ABE/RABE_XNM.s: src/ABE/RABE_XNM.cpp.s
+.PHONY : src/ABE/RABE_XNM.s
+
+# target to generate assembly for a file
+src/ABE/RABE_XNM.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ChameLib.dir/build.make CMakeFiles/ChameLib.dir/src/ABE/RABE_XNM.cpp.s
+.PHONY : src/ABE/RABE_XNM.cpp.s
+
 src/AE/RSA.o: src/AE/RSA.cpp.o
 .PHONY : src/AE/RSA.o
 
@@ -466,6 +503,30 @@ src/base/Access_structure.s: src/base/Access_structure.cpp.s
 src/base/Access_structure.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/ChameLib.dir/build.make CMakeFiles/ChameLib.dir/src/base/Access_structure.cpp.s
 .PHONY : src/base/Access_structure.cpp.s
+
+src/base/Binary_tree_RABE.o: src/base/Binary_tree_RABE.cpp.o
+.PHONY : src/base/Binary_tree_RABE.o
+
+# target to build an object file
+src/base/Binary_tree_RABE.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ChameLib.dir/build.make CMakeFiles/ChameLib.dir/src/base/Binary_tree_RABE.cpp.o
+.PHONY : src/base/Binary_tree_RABE.cpp.o
+
+src/base/Binary_tree_RABE.i: src/base/Binary_tree_RABE.cpp.i
+.PHONY : src/base/Binary_tree_RABE.i
+
+# target to preprocess a source file
+src/base/Binary_tree_RABE.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ChameLib.dir/build.make CMakeFiles/ChameLib.dir/src/base/Binary_tree_RABE.cpp.i
+.PHONY : src/base/Binary_tree_RABE.cpp.i
+
+src/base/Binary_tree_RABE.s: src/base/Binary_tree_RABE.cpp.s
+.PHONY : src/base/Binary_tree_RABE.s
+
+# target to generate assembly for a file
+src/base/Binary_tree_RABE.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ChameLib.dir/build.make CMakeFiles/ChameLib.dir/src/base/Binary_tree_RABE.cpp.s
+.PHONY : src/base/Binary_tree_RABE.cpp.s
 
 src/base/Binary_tree_policy.o: src/base/Binary_tree_policy.cpp.o
 .PHONY : src/base/Binary_tree_policy.o
@@ -731,6 +792,30 @@ src/utils/RandomGenerator.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/ChameLib.dir/build.make CMakeFiles/ChameLib.dir/src/utils/RandomGenerator.cpp.s
 .PHONY : src/utils/RandomGenerator.cpp.s
 
+src/utils/TimeUtils.o: src/utils/TimeUtils.cpp.o
+.PHONY : src/utils/TimeUtils.o
+
+# target to build an object file
+src/utils/TimeUtils.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ChameLib.dir/build.make CMakeFiles/ChameLib.dir/src/utils/TimeUtils.cpp.o
+.PHONY : src/utils/TimeUtils.cpp.o
+
+src/utils/TimeUtils.i: src/utils/TimeUtils.cpp.i
+.PHONY : src/utils/TimeUtils.i
+
+# target to preprocess a source file
+src/utils/TimeUtils.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ChameLib.dir/build.make CMakeFiles/ChameLib.dir/src/utils/TimeUtils.cpp.i
+.PHONY : src/utils/TimeUtils.cpp.i
+
+src/utils/TimeUtils.s: src/utils/TimeUtils.cpp.s
+.PHONY : src/utils/TimeUtils.s
+
+# target to generate assembly for a file
+src/utils/TimeUtils.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ChameLib.dir/build.make CMakeFiles/ChameLib.dir/src/utils/TimeUtils.cpp.s
+.PHONY : src/utils/TimeUtils.cpp.s
+
 tests/ABE_test/ABET_test.o: tests/ABE_test/ABET_test.cpp.o
 .PHONY : tests/ABE_test/ABET_test.o
 
@@ -802,6 +887,30 @@ tests/ABE_test/MA_ABE_test.s: tests/ABE_test/MA_ABE_test.cpp.s
 tests/ABE_test/MA_ABE_test.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/MA_ABE_test.dir/build.make CMakeFiles/MA_ABE_test.dir/tests/ABE_test/MA_ABE_test.cpp.s
 .PHONY : tests/ABE_test/MA_ABE_test.cpp.s
+
+tests/ABE_test/RABE_XNM_test.o: tests/ABE_test/RABE_XNM_test.cpp.o
+.PHONY : tests/ABE_test/RABE_XNM_test.o
+
+# target to build an object file
+tests/ABE_test/RABE_XNM_test.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/RABE_XNM_test.dir/build.make CMakeFiles/RABE_XNM_test.dir/tests/ABE_test/RABE_XNM_test.cpp.o
+.PHONY : tests/ABE_test/RABE_XNM_test.cpp.o
+
+tests/ABE_test/RABE_XNM_test.i: tests/ABE_test/RABE_XNM_test.cpp.i
+.PHONY : tests/ABE_test/RABE_XNM_test.i
+
+# target to preprocess a source file
+tests/ABE_test/RABE_XNM_test.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/RABE_XNM_test.dir/build.make CMakeFiles/RABE_XNM_test.dir/tests/ABE_test/RABE_XNM_test.cpp.i
+.PHONY : tests/ABE_test/RABE_XNM_test.cpp.i
+
+tests/ABE_test/RABE_XNM_test.s: tests/ABE_test/RABE_XNM_test.cpp.s
+.PHONY : tests/ABE_test/RABE_XNM_test.s
+
+# target to generate assembly for a file
+tests/ABE_test/RABE_XNM_test.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/RABE_XNM_test.dir/build.make CMakeFiles/RABE_XNM_test.dir/tests/ABE_test/RABE_XNM_test.cpp.s
+.PHONY : tests/ABE_test/RABE_XNM_test.cpp.s
 
 tests/RSA_test/RSA_test.o: tests/RSA_test/RSA_test.cpp.o
 .PHONY : tests/RSA_test/RSA_test.o
@@ -887,6 +996,7 @@ tests/common/CommonTest.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/CP_ABE_test.dir/build.make CMakeFiles/CP_ABE_test.dir/tests/common/CommonTest.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/MA_ABE_test.dir/build.make CMakeFiles/MA_ABE_test.dir/tests/common/CommonTest.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/ABET_test.dir/build.make CMakeFiles/ABET_test.dir/tests/common/CommonTest.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/RABE_XNM_test.dir/build.make CMakeFiles/RABE_XNM_test.dir/tests/common/CommonTest.cpp.o
 .PHONY : tests/common/CommonTest.cpp.o
 
 tests/common/CommonTest.i: tests/common/CommonTest.cpp.i
@@ -901,6 +1011,7 @@ tests/common/CommonTest.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/CP_ABE_test.dir/build.make CMakeFiles/CP_ABE_test.dir/tests/common/CommonTest.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/MA_ABE_test.dir/build.make CMakeFiles/MA_ABE_test.dir/tests/common/CommonTest.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/ABET_test.dir/build.make CMakeFiles/ABET_test.dir/tests/common/CommonTest.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/RABE_XNM_test.dir/build.make CMakeFiles/RABE_XNM_test.dir/tests/common/CommonTest.cpp.i
 .PHONY : tests/common/CommonTest.cpp.i
 
 tests/common/CommonTest.s: tests/common/CommonTest.cpp.s
@@ -915,6 +1026,7 @@ tests/common/CommonTest.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/CP_ABE_test.dir/build.make CMakeFiles/CP_ABE_test.dir/tests/common/CommonTest.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/MA_ABE_test.dir/build.make CMakeFiles/MA_ABE_test.dir/tests/common/CommonTest.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/ABET_test.dir/build.make CMakeFiles/ABET_test.dir/tests/common/CommonTest.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/RABE_XNM_test.dir/build.make CMakeFiles/RABE_XNM_test.dir/tests/common/CommonTest.cpp.s
 .PHONY : tests/common/CommonTest.cpp.s
 
 tests/signature_test/BLS_test.o: tests/signature_test/BLS_test.cpp.o
@@ -961,6 +1073,7 @@ help:
 	@echo "... ChameLib"
 	@echo "... Elements_test"
 	@echo "... MA_ABE_test"
+	@echo "... RABE_XNM_test"
 	@echo "... RSA_test"
 	@echo "... src/ABE/ABET.o"
 	@echo "... src/ABE/ABET.i"
@@ -977,6 +1090,9 @@ help:
 	@echo "... src/ABE/Policy_resolution.o"
 	@echo "... src/ABE/Policy_resolution.i"
 	@echo "... src/ABE/Policy_resolution.s"
+	@echo "... src/ABE/RABE_XNM.o"
+	@echo "... src/ABE/RABE_XNM.i"
+	@echo "... src/ABE/RABE_XNM.s"
 	@echo "... src/AE/RSA.o"
 	@echo "... src/AE/RSA.i"
 	@echo "... src/AE/RSA.s"
@@ -986,6 +1102,9 @@ help:
 	@echo "... src/base/Access_structure.o"
 	@echo "... src/base/Access_structure.i"
 	@echo "... src/base/Access_structure.s"
+	@echo "... src/base/Binary_tree_RABE.o"
+	@echo "... src/base/Binary_tree_RABE.i"
+	@echo "... src/base/Binary_tree_RABE.s"
 	@echo "... src/base/Binary_tree_policy.o"
 	@echo "... src/base/Binary_tree_policy.i"
 	@echo "... src/base/Binary_tree_policy.s"
@@ -1019,6 +1138,9 @@ help:
 	@echo "... src/utils/RandomGenerator.o"
 	@echo "... src/utils/RandomGenerator.i"
 	@echo "... src/utils/RandomGenerator.s"
+	@echo "... src/utils/TimeUtils.o"
+	@echo "... src/utils/TimeUtils.i"
+	@echo "... src/utils/TimeUtils.s"
 	@echo "... tests/ABE_test/ABET_test.o"
 	@echo "... tests/ABE_test/ABET_test.i"
 	@echo "... tests/ABE_test/ABET_test.s"
@@ -1028,6 +1150,9 @@ help:
 	@echo "... tests/ABE_test/MA_ABE_test.o"
 	@echo "... tests/ABE_test/MA_ABE_test.i"
 	@echo "... tests/ABE_test/MA_ABE_test.s"
+	@echo "... tests/ABE_test/RABE_XNM_test.o"
+	@echo "... tests/ABE_test/RABE_XNM_test.i"
+	@echo "... tests/ABE_test/RABE_XNM_test.s"
 	@echo "... tests/RSA_test/RSA_test.o"
 	@echo "... tests/RSA_test/RSA_test.i"
 	@echo "... tests/RSA_test/RSA_test.s"
