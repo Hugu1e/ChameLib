@@ -262,6 +262,43 @@ MA_ABE_test/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/MA_ABE_test.dir/build.make CMakeFiles/MA_ABE_test.dir/build
 .PHONY : MA_ABE_test/fast
 
+#=============================================================================
+# Target rules for targets named ABET_test
+
+# Build rule for target.
+ABET_test: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 ABET_test
+.PHONY : ABET_test
+
+# fast build rule for target.
+ABET_test/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ABET_test.dir/build.make CMakeFiles/ABET_test.dir/build
+.PHONY : ABET_test/fast
+
+src/ABE/ABET.o: src/ABE/ABET.cpp.o
+.PHONY : src/ABE/ABET.o
+
+# target to build an object file
+src/ABE/ABET.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ChameLib.dir/build.make CMakeFiles/ChameLib.dir/src/ABE/ABET.cpp.o
+.PHONY : src/ABE/ABET.cpp.o
+
+src/ABE/ABET.i: src/ABE/ABET.cpp.i
+.PHONY : src/ABE/ABET.i
+
+# target to preprocess a source file
+src/ABE/ABET.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ChameLib.dir/build.make CMakeFiles/ChameLib.dir/src/ABE/ABET.cpp.i
+.PHONY : src/ABE/ABET.cpp.i
+
+src/ABE/ABET.s: src/ABE/ABET.cpp.s
+.PHONY : src/ABE/ABET.s
+
+# target to generate assembly for a file
+src/ABE/ABET.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ChameLib.dir/build.make CMakeFiles/ChameLib.dir/src/ABE/ABET.cpp.s
+.PHONY : src/ABE/ABET.cpp.s
+
 src/ABE/CP_ABE.o: src/ABE/CP_ABE.cpp.o
 .PHONY : src/ABE/CP_ABE.o
 
@@ -694,6 +731,30 @@ src/utils/RandomGenerator.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/ChameLib.dir/build.make CMakeFiles/ChameLib.dir/src/utils/RandomGenerator.cpp.s
 .PHONY : src/utils/RandomGenerator.cpp.s
 
+tests/ABE_test/ABET_test.o: tests/ABE_test/ABET_test.cpp.o
+.PHONY : tests/ABE_test/ABET_test.o
+
+# target to build an object file
+tests/ABE_test/ABET_test.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ABET_test.dir/build.make CMakeFiles/ABET_test.dir/tests/ABE_test/ABET_test.cpp.o
+.PHONY : tests/ABE_test/ABET_test.cpp.o
+
+tests/ABE_test/ABET_test.i: tests/ABE_test/ABET_test.cpp.i
+.PHONY : tests/ABE_test/ABET_test.i
+
+# target to preprocess a source file
+tests/ABE_test/ABET_test.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ABET_test.dir/build.make CMakeFiles/ABET_test.dir/tests/ABE_test/ABET_test.cpp.i
+.PHONY : tests/ABE_test/ABET_test.cpp.i
+
+tests/ABE_test/ABET_test.s: tests/ABE_test/ABET_test.cpp.s
+.PHONY : tests/ABE_test/ABET_test.s
+
+# target to generate assembly for a file
+tests/ABE_test/ABET_test.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ABET_test.dir/build.make CMakeFiles/ABET_test.dir/tests/ABE_test/ABET_test.cpp.s
+.PHONY : tests/ABE_test/ABET_test.cpp.s
+
 tests/ABE_test/CP_ABE_test.o: tests/ABE_test/CP_ABE_test.cpp.o
 .PHONY : tests/ABE_test/CP_ABE_test.o
 
@@ -825,6 +886,7 @@ tests/common/CommonTest.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/BLS_test.dir/build.make CMakeFiles/BLS_test.dir/tests/common/CommonTest.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/CP_ABE_test.dir/build.make CMakeFiles/CP_ABE_test.dir/tests/common/CommonTest.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/MA_ABE_test.dir/build.make CMakeFiles/MA_ABE_test.dir/tests/common/CommonTest.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ABET_test.dir/build.make CMakeFiles/ABET_test.dir/tests/common/CommonTest.cpp.o
 .PHONY : tests/common/CommonTest.cpp.o
 
 tests/common/CommonTest.i: tests/common/CommonTest.cpp.i
@@ -838,6 +900,7 @@ tests/common/CommonTest.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/BLS_test.dir/build.make CMakeFiles/BLS_test.dir/tests/common/CommonTest.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/CP_ABE_test.dir/build.make CMakeFiles/CP_ABE_test.dir/tests/common/CommonTest.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/MA_ABE_test.dir/build.make CMakeFiles/MA_ABE_test.dir/tests/common/CommonTest.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ABET_test.dir/build.make CMakeFiles/ABET_test.dir/tests/common/CommonTest.cpp.i
 .PHONY : tests/common/CommonTest.cpp.i
 
 tests/common/CommonTest.s: tests/common/CommonTest.cpp.s
@@ -851,6 +914,7 @@ tests/common/CommonTest.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/BLS_test.dir/build.make CMakeFiles/BLS_test.dir/tests/common/CommonTest.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/CP_ABE_test.dir/build.make CMakeFiles/CP_ABE_test.dir/tests/common/CommonTest.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/MA_ABE_test.dir/build.make CMakeFiles/MA_ABE_test.dir/tests/common/CommonTest.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ABET_test.dir/build.make CMakeFiles/ABET_test.dir/tests/common/CommonTest.cpp.s
 .PHONY : tests/common/CommonTest.cpp.s
 
 tests/signature_test/BLS_test.o: tests/signature_test/BLS_test.cpp.o
@@ -890,6 +954,7 @@ help:
 	@echo "... list_install_components"
 	@echo "... rebuild_cache"
 	@echo "... test"
+	@echo "... ABET_test"
 	@echo "... AES_test"
 	@echo "... BLS_test"
 	@echo "... CP_ABE_test"
@@ -897,6 +962,9 @@ help:
 	@echo "... Elements_test"
 	@echo "... MA_ABE_test"
 	@echo "... RSA_test"
+	@echo "... src/ABE/ABET.o"
+	@echo "... src/ABE/ABET.i"
+	@echo "... src/ABE/ABET.s"
 	@echo "... src/ABE/CP_ABE.o"
 	@echo "... src/ABE/CP_ABE.i"
 	@echo "... src/ABE/CP_ABE.s"
@@ -951,6 +1019,9 @@ help:
 	@echo "... src/utils/RandomGenerator.o"
 	@echo "... src/utils/RandomGenerator.i"
 	@echo "... src/utils/RandomGenerator.s"
+	@echo "... tests/ABE_test/ABET_test.o"
+	@echo "... tests/ABE_test/ABET_test.i"
+	@echo "... tests/ABE_test/ABET_test.s"
 	@echo "... tests/ABE_test/CP_ABE_test.o"
 	@echo "... tests/ABE_test/CP_ABE_test.i"
 	@echo "... tests/ABE_test/CP_ABE_test.s"

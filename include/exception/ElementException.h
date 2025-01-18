@@ -8,4 +8,9 @@ class ElementExistsException: public BaseException{
         ElementExistsException(const std::string& message):BaseException(message){}
 };
 
+class ElementNotExistsException: public BaseException{
+    public:
+        ElementNotExistsException(const std::string& message):BaseException(message){}
+};
+
 #endif  // CHAMELIB_ELEMENTEXCEPTION_H
