@@ -63,7 +63,7 @@ void RABE_TMM::Setup(RABE_TMM_mpk *mpk, RABE_TMM_msk *msk, std::vector<RABE_TMM_
     element_random(tmp_G);
     mpk->insertElement("g", "G1", tmp_G);
     element_random(tmp_H);
-    msk->insertElement("h", "G2", tmp_H);
+    mpk->insertElement("h", "G2", tmp_H);
     element_random(tmp_Zn);
     msk->insertElement("a1", "Zn", tmp_Zn);
     element_random(tmp_Zn);
@@ -78,29 +78,28 @@ void RABE_TMM::Setup(RABE_TMM_mpk *mpk, RABE_TMM_msk *msk, std::vector<RABE_TMM_
     element_random(this->d3);
 
     // g^d1, g^d2, g^d3
-    element_pow_zn(tmp_G, msk->getElement("g"), this->d1);
+    element_pow_zn(tmp_G, mpk->getElement("g"), this->d1);
     msk->insertElement("g_pow_d1", "G1", tmp_G);
-    element_pow_zn(tmp_G, msk->getElement("g"), this->d2);
+    element_pow_zn(tmp_G, mpk->getElement("g"), this->d2);
     msk->insertElement("g_pow_d2", "G1", tmp_G);
-    element_pow_zn(tmp_G, msk->getElement("g"), this->d3);
+    element_pow_zn(tmp_G, mpk->getElement("g"), this->d3);
     msk->insertElement("g_pow_d3", "G1", tmp_G);
 
-    mpk->insertElement("h", "G2", msk->getElement("h"));
-    element_pow_zn(tmp_H, msk->getElement("h"), msk->getElement("a1"));
+    element_pow_zn(tmp_H, mpk->getElement("h"), msk->getElement("a1"));
     mpk->insertElement("H1", "G2", tmp_H);
-    element_pow_zn(tmp_H, msk->getElement("h"), msk->getElement("a2"));
+    element_pow_zn(tmp_H, mpk->getElement("h"), msk->getElement("a2"));
     mpk->insertElement("H2", "G2", tmp_H);
 
     // e(g,h)^(d1a1+d3)
     element_mul(this->tmp_Zn, this->d1, msk->getElement("a1"));
     element_add(this->tmp_Zn, this->tmp_Zn, this->d3);
-    element_pairing(this->tmp_GT, msk->getElement("g"), msk->getElement("h"));
+    element_pairing(this->tmp_GT, mpk->getElement("g"), mpk->getElement("h"));
     element_pow_zn(tmp_GT, this->tmp_GT, this->tmp_Zn);
     mpk->insertElement("T1", "GT", tmp_GT);
     // e(g,h)^(d2a2+d3)
     element_mul(this->tmp_Zn, this->d2, msk->getElement("a2"));
     element_add(this->tmp_Zn, this->tmp_Zn, this->d3);
-    element_pairing(this->tmp_GT, msk->getElement("g"), msk->getElement("h"));
+    element_pairing(this->tmp_GT, mpk->getElement("g"), mpk->getElement("h"));
     element_pow_zn(tmp_GT, this->tmp_GT, this->tmp_Zn);
     mpk->insertElement("T2", "GT", tmp_GT);
 
@@ -161,7 +160,7 @@ void RABE_TMM::KGen(RABE_TMM_skid *skid, Binary_tree_RABE *st, RABE_TMM_mpk *mpk
         element_pow_zn(this->tmp_G_3, this->tmp_G_3, this->r1r2a1);
         // g^(sigma_y / a1)
         element_div(this->tmp_Zn_2, this->tmp_Zn, msk->getElement("a1"));
-        element_pow_zn(this->tmp_G_4, msk->getElement("g"), this->tmp_Zn_2);
+        element_pow_zn(this->tmp_G_4, mpk->getElement("g"), this->tmp_Zn_2);
         // sky1
         element_mul(tmp_G, this->tmp_G, this->tmp_G_2);
         element_mul(tmp_G, tmp_G, this->tmp_G_3);
@@ -185,7 +184,7 @@ void RABE_TMM::KGen(RABE_TMM_skid *skid, Binary_tree_RABE *st, RABE_TMM_mpk *mpk
         element_pow_zn(this->tmp_G_3, this->tmp_G_3, this->r1r2a2);
         // g^(sigma_y / a2)
         element_div(this->tmp_Zn_2, this->tmp_Zn, msk->getElement("a2"));
-        element_pow_zn(this->tmp_G_4, msk->getElement("g"), this->tmp_Zn_2);
+        element_pow_zn(this->tmp_G_4, mpk->getElement("g"), this->tmp_Zn_2);
         // sky2
         element_mul(tmp_G, this->tmp_G, this->tmp_G_2);
         element_mul(tmp_G, tmp_G, this->tmp_G_3);
@@ -194,13 +193,18 @@ void RABE_TMM::KGen(RABE_TMM_skid *skid, Binary_tree_RABE *st, RABE_TMM_mpk *mpk
 
         // sky3 = g^(-sigma_y)
         element_neg(this->tmp_Zn, this->tmp_Zn);
-        element_pow_zn(tmp_G, msk->getElement("g"), this->tmp_Zn);
+        element_pow_zn(tmp_G, mpk->getElement("g"), this->tmp_Zn);
         sk_y.insertElement("sk_3", "G1", tmp_G);
 
         skid->get_sk_y()->push_back(sk_y);
     }
 
     // sk_prime
+    element_t tmp_sk_prime_sk_1, tmp_sk_prime_sk_2, tmp_sk_prime_sk_3;
+    element_init_same_as(tmp_sk_prime_sk_1, G1);
+    element_init_same_as(tmp_sk_prime_sk_2, G1);
+    element_init_same_as(tmp_sk_prime_sk_3, G1);
+
     // sigma_prime
     element_random(this->tmp_Zn);
     // t = 1
@@ -218,14 +222,13 @@ void RABE_TMM::KGen(RABE_TMM_skid *skid, Binary_tree_RABE *st, RABE_TMM_mpk *mpk
     element_pow_zn(this->tmp_G_3, this->tmp_G_3, this->r1r2a1);
     // g^(sigma_prime / a1)
     element_div(this->tmp_Zn_2, this->tmp_Zn, msk->getElement("a1"));
-    element_pow_zn(this->tmp_G_4, msk->getElement("g"), this->tmp_Zn_2);
+    element_pow_zn(this->tmp_G_4, mpk->getElement("g"), this->tmp_Zn_2);
     // sk_prime1
-    element_mul(tmp_G, msk->getElement("g_pow_d1"), this->tmp_G);
-    element_mul(tmp_G, tmp_G, this->tmp_G_2);
-    element_mul(tmp_G, tmp_G, this->tmp_G_3);
-    element_mul(tmp_G, tmp_G, this->tmp_G_4);
+    element_mul(tmp_sk_prime_sk_1, msk->getElement("g_pow_d1"), this->tmp_G);
+    element_mul(tmp_sk_prime_sk_1, tmp_sk_prime_sk_1, this->tmp_G_2);
+    element_mul(tmp_sk_prime_sk_1, tmp_sk_prime_sk_1, this->tmp_G_3);
+    element_mul(tmp_sk_prime_sk_1, tmp_sk_prime_sk_1, this->tmp_G_4);
 
-    skid->get_sk_prime()->insertElement("sk_1", "G1", tmp_G);
 
     // t = 2
     // H(0112)^b1r1a2
@@ -242,19 +245,18 @@ void RABE_TMM::KGen(RABE_TMM_skid *skid, Binary_tree_RABE *st, RABE_TMM_mpk *mpk
     element_pow_zn(this->tmp_G_3, this->tmp_G_3, this->r1r2a2);
     // g^(sigma_prime / a2)
     element_div(this->tmp_Zn_2, this->tmp_Zn, msk->getElement("a2"));
-    element_pow_zn(this->tmp_G_4, msk->getElement("g"), this->tmp_Zn_2);
+    element_pow_zn(this->tmp_G_4, mpk->getElement("g"), this->tmp_Zn_2);
     // sk_prime2
-    element_mul(tmp_G, msk->getElement("g_pow_d2"), this->tmp_G);
-    element_mul(tmp_G, tmp_G, this->tmp_G_2);
-    element_mul(tmp_G, tmp_G, this->tmp_G_3);
-    element_mul(tmp_G, tmp_G, this->tmp_G_4);
-    skid->get_sk_prime()->insertElement("sk_2", "G1", tmp_G);
+    element_mul(tmp_sk_prime_sk_2, msk->getElement("g_pow_d2"), this->tmp_G);
+    element_mul(tmp_sk_prime_sk_2, tmp_sk_prime_sk_2, this->tmp_G_2);
+    element_mul(tmp_sk_prime_sk_2, tmp_sk_prime_sk_2, this->tmp_G_3);
+    element_mul(tmp_sk_prime_sk_2, tmp_sk_prime_sk_2, this->tmp_G_4);
+
 
     // sk_prime3 = g^d3 * g ^ (-sigma_prime)
     element_neg(this->tmp_Zn, this->tmp_Zn);
-    element_pow_zn(tmp_G, msk->getElement("g"), this->tmp_Zn);
-    element_mul(tmp_G, tmp_G, msk->getElement("g_pow_d3"));
-    skid->get_sk_prime()->insertElement("sk_3", "G1", tmp_G);
+    element_pow_zn(tmp_sk_prime_sk_3, mpk->getElement("g"), this->tmp_Zn);
+    element_mul(tmp_sk_prime_sk_3, tmp_sk_prime_sk_3, msk->getElement("g_pow_d3"));
 
     // pick an unassigned node in st
     // id
@@ -276,15 +278,21 @@ void RABE_TMM::KGen(RABE_TMM_skid *skid, Binary_tree_RABE *st, RABE_TMM_mpk *mpk
         }else{
             element_set(this->tmp_G, node->getGtheta());
         }
-        // sk_theta = g^d3 * g^(-sigma_prime) / gtheta
-        element_div(this->tmp_G_2, skid->get_sk_prime()->getElement("sk_3"), this->tmp_G);
+        // sk'3 = g^d3 * g^(-sigma_prime) / gtheta
+        element_div(this->tmp_G_2, tmp_sk_prime_sk_3, this->tmp_G);
 
         PbcElements tmp_sk_theta;
-        tmp_sk_theta.insertElement("sk_theta", "G1", this->tmp_G_2);
-        skid->get_sk_theta()->emplace_back(std::make_pair(node, tmp_sk_theta));
+        tmp_sk_theta.insertElement("sk_1", "G1", tmp_sk_prime_sk_1);
+        tmp_sk_theta.insertElement("sk_2", "G1", tmp_sk_prime_sk_2);
+        tmp_sk_theta.insertElement("sk_3", "G1", this->tmp_G_2);
+        skid->get_sk_prime()->emplace_back(std::make_pair(node, tmp_sk_theta));
 
         node = node->getParent();
     }
+
+    element_clear(tmp_sk_prime_sk_1);
+    element_clear(tmp_sk_prime_sk_2);
+    element_clear(tmp_sk_prime_sk_3);
 }
 
 std::vector<Binary_tree_RABE_node *> RABE_TMM::KUNodes(Binary_tree_RABE *st, std::vector<RABE_TMM_revokedPreson *> *rl, time_t t)
@@ -308,9 +316,9 @@ void RABE_TMM::KUpt(RABE_TMM_kut *kut, RABE_TMM_mpk *mpk, Binary_tree_RABE *st, 
     for(int i = 0;i < thetas.size();i++){
         // rtheta
         element_random(this->tmp_Zn);
-        // gtheta * (H(1t)^rtheta)
-        std::string _1t = "1" + std::to_string(t);
-        this->Hash(this->tmp_G, _1t);
+        // gtheta * (H(t)^rtheta)
+        std::string _t = std::to_string(t);
+        this->Hash(this->tmp_G, _t);
         element_pow_zn(this->tmp_G, this->tmp_G, this->tmp_Zn);
         element_mul(this->tmp_G, thetas[i]->getGtheta(), this->tmp_G);
         // h^rtheta
@@ -335,31 +343,40 @@ void RABE_TMM::KUpt(RABE_TMM_kut *kut, RABE_TMM_mpk *mpk, Binary_tree_RABE *st, 
  * output: dkidt
  */
 void RABE_TMM::DKGen(RABE_TMM_dkidt *dkidt, RABE_TMM_mpk *mpk, RABE_TMM_skid *skid, RABE_TMM_kut *kut){
-    // TODO judge Path(id) ∩ KUNodes(st, rl, t) != NULL
-
-
-    // rtheta + rtheta'
-    element_random(this->tmp_Zn);
+    // judge Path(id) ∩ KUNodes(st, rl, t) != NULL
+    int index_skid = -1;
+    int index_kut = -1;
+    for(int i = 0;i<skid->get_sk_prime()->size();i++){
+        for(int j = 0;j<kut->get_ku_theta()->size();j++){
+            if(skid->get_sk_prime(i)->first == kut->get_ku_theta(j)->first){
+                
+                index_skid = i;
+                index_kut = j;
+                break;
+            }
+        }
+    }
+    if(index_skid == -1 || index_kut == -1){
+        printf("ERROR: Path(id) ∩ KUNodes(st, rl, t) == NULL\n");
+        return;
+    }
 
     dkidt->setTime(kut->getTime());
 
-    // sk'' = (sk1', sk2', sk3')
-    dkidt->get_sk_prime_prime()->insertElement("sk_1", "G1", skid->get_sk_prime()->getElement("sk_1"));
-    dkidt->get_sk_prime_prime()->insertElement("sk_2", "G1", skid->get_sk_prime()->getElement("sk_2"));
+    // sk' = (sk1', sk2', sk3')
+    dkidt->get_sk_prime()->insertElement("sk_1", "G1", skid->get_sk_prime(index_skid)->second.getElement("sk_1"));
+    dkidt->get_sk_prime()->insertElement("sk_2", "G1", skid->get_sk_prime(index_skid)->second.getElement("sk_2"));
     // sk3' = g^d3 * g^(-sigma_prime) * H(1t)^(rtheta + rtheta')
-    std::string _1t = "1" + std::to_string(dkidt->getTime());
-    this->Hash(this->tmp_G, _1t);
-    element_pow_zn(this->tmp_G, this->tmp_G, this->tmp_Zn);
-    element_mul(tmp_G, skid->get_sk_prime()->getElement("sk_3"), this->tmp_G);
-    dkidt->get_sk_prime_prime()->insertElement("sk_3", "G1", tmp_G);
+    element_mul(tmp_G, skid->get_sk_prime(index_skid)->second.getElement("sk_3"), kut->get_ku_theta(index_kut)->second.getElement("ku_theta_1"));
+    dkidt->get_sk_prime()->insertElement("sk_3", "G1", tmp_G);
 
-    // sk0' = (sk01, sk02, sk03, sk04)
-    dkidt->get_sk0_prime()->insertElement("sk_1", "G2", skid->get_sk0()->getElement("sk0_1"));
-    dkidt->get_sk0_prime()->insertElement("sk_2", "G2", skid->get_sk0()->getElement("sk0_2"));
-    dkidt->get_sk0_prime()->insertElement("sk_3", "G2", skid->get_sk0()->getElement("sk0_3"));
-    // sk04 = h^(rtheta + rtheta')
-    element_pow_zn(tmp_H, mpk->getElement("h"), this->tmp_Zn);
-    dkidt->get_sk0_prime()->insertElement("sk_4", "G2", tmp_H);
+    // TODO kut 是公开的，先直接放入dkidt中
+    dkidt->get_skt1()->insertElement("skt1", "G2", kut->get_ku_theta(index_kut)->second.getElement("ku_theta_2"));
+
+    // sk0 = (sk01, sk02, sk03)
+    dkidt->get_sk0()->insertElement("sk0_1", "G2", skid->get_sk0()->getElement("sk0_1"));
+    dkidt->get_sk0()->insertElement("sk0_2", "G2", skid->get_sk0()->getElement("sk0_2"));
+    dkidt->get_sk0()->insertElement("sk0_3", "G2", skid->get_sk0()->getElement("sk0_3"));
 
     // sky
     for(int i = 0;i < skid->get_sk_y()->size();i++){
@@ -422,8 +439,8 @@ void RABE_TMM::Enc(RABE_TMM_ciphertext *ciphertext, RABE_TMM_mpk *mpk, element_t
     element_pow_zn(tmp_H, mpk->getElement("h"), this->tmp_Zn_2);
     ciphertext->get_ct0()->insertElement("ct0_3", "G2", tmp_H);
     // ct0_4 = H(1t)^(s1+s2)
-    std::string _1t = "1" + std::to_string(ciphertext->getTime());
-    this->Hash(this->tmp_G, _1t);
+    std::string _t = std::to_string(ciphertext->getTime());
+    this->Hash(this->tmp_G, _t);
     element_pow_zn(tmp_G, this->tmp_G, this->tmp_Zn_2);
     ciphertext->get_ct0()->insertElement("ct0_4", "G1", tmp_G);
 
@@ -431,8 +448,10 @@ void RABE_TMM::Enc(RABE_TMM_ciphertext *ciphertext, RABE_TMM_mpk *mpk, element_t
     element_pow_zn(this->tmp_GT, mpk->getElement("T1"), this->s1);
     element_pow_zn(this->tmp_GT_2, mpk->getElement("T2"), this->s2);
     element_mul(this->tmp_GT_3, this->tmp_GT, this->tmp_GT_2);
-    element_mul(tmp_GT_3, this->tmp_GT_3, msg);
-    ciphertext->get_ct_prime()->insertElement("ct_prime", "GT", tmp_GT_3);
+    // H(T1^s1 * T2^s2)
+    this->Hash(this->tmp_Zn_3, this->tmp_GT_3);
+    element_mul(tmp_Zn, this->tmp_Zn_3, msg);
+    ciphertext->get_ct_prime()->insertElement("ct_prime", "Zn", tmp_Zn);
 
     // ct_y
     // for i = 1,2,...,rows
@@ -611,13 +630,12 @@ void RABE_TMM::Dec(element_t res, RABE_TMM_mpk *mpk, RABE_TMM_ciphertext *cipher
         count++;
     }
     // ct_prime * e(tmp_G, sk0_1) * e(tmp_G_2, sk0_2) * e(tmp_G_3, sk0_3) * e(ct0_4, sk0_4)
-    element_pairing(this->tmp_GT, this->tmp_G, dkidt->get_sk0_prime()->getElement("sk_1"));
-    element_pairing(this->tmp_GT_2, this->tmp_G_2, dkidt->get_sk0_prime()->getElement("sk_2"));
-    element_pairing(this->tmp_GT_3, this->tmp_G_3, dkidt->get_sk0_prime()->getElement("sk_3"));
-    element_pairing(this->tmp_GT_4, ciphertext->get_ct0()->getElement("ct0_4"), dkidt->get_sk0_prime()->getElement("sk_4"));
+    element_pairing(this->tmp_GT, this->tmp_G, dkidt->get_sk0()->getElement("sk0_1"));
+    element_pairing(this->tmp_GT_2, this->tmp_G_2, dkidt->get_sk0()->getElement("sk0_2"));
+    element_pairing(this->tmp_GT_3, this->tmp_G_3, dkidt->get_sk0()->getElement("sk0_3"));
+    element_pairing(this->tmp_GT_4, ciphertext->get_ct0()->getElement("ct0_4"), dkidt->get_skt1()->getElement("skt1"));
 
-    element_mul(num, ciphertext->get_ct_prime()->getElement("ct_prime"), this->tmp_GT);
-    element_mul(num, num, this->tmp_GT_2);
+    element_mul(num, this->tmp_GT, this->tmp_GT_2);
     element_mul(num, num, this->tmp_GT_3);
     element_mul(num, num, this->tmp_GT_4);
 
@@ -640,11 +658,11 @@ void RABE_TMM::Dec(element_t res, RABE_TMM_mpk *mpk, RABE_TMM_ciphertext *cipher
         count++;
     }
     // sk_prime_1 * tmp_G
-    element_mul(this->tmp_G, dkidt->get_sk_prime_prime()->getElement("sk_1"), this->tmp_G);
+    element_mul(this->tmp_G, dkidt->get_sk_prime()->getElement("sk_1"), this->tmp_G);
     // sk_prime_2 * tmp_G_2
-    element_mul(this->tmp_G_2, dkidt->get_sk_prime_prime()->getElement("sk_2"), this->tmp_G_2);
+    element_mul(this->tmp_G_2, dkidt->get_sk_prime()->getElement("sk_2"), this->tmp_G_2);
     // sk_prime_3 * tmp_G_3
-    element_mul(this->tmp_G_3, dkidt->get_sk_prime_prime()->getElement("sk_3"), this->tmp_G_3);
+    element_mul(this->tmp_G_3, dkidt->get_sk_prime()->getElement("sk_3"), this->tmp_G_3);
 
     // e(tmp_G, ct01) * e(tmp_G_2, ct02) * e(tmp_G_3, ct03)
     element_pairing(this->tmp_GT, this->tmp_G, ciphertext->get_ct0()->getElement("ct0_1"));
@@ -654,8 +672,11 @@ void RABE_TMM::Dec(element_t res, RABE_TMM_mpk *mpk, RABE_TMM_ciphertext *cipher
     element_mul(den, this->tmp_GT, this->tmp_GT_2);
     element_mul(den, den, this->tmp_GT_3);
 
-    // res = num / den
-    element_div(res, num, den);
+    // res = den / num
+    element_div(this->tmp_GT, den, num);
+    this->Hash(this->tmp_Zn, this->tmp_GT);
+    // res = ct_prime / res
+    element_div(res, ciphertext->get_ct_prime()->getElement("ct_prime"), this->tmp_Zn);
 
     element_clear(num);
     element_clear(den);

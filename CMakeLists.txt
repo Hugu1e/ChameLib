@@ -73,6 +73,7 @@ if(BUILD_TESTS)
     add_test_executable(MA_ABE_test tests/ABE_test/MA_ABE_test.cpp)
     add_test_executable(ABET_test tests/ABE_test/ABET_test.cpp)
     add_test_executable(RABE_XNM_test tests/ABE_test/RABE_XNM_test.cpp)
+    add_test_executable(RABE_TMM_test tests/ABE_test/RABE_TMM_test.cpp)
 endif()
 
 install(TARGETS ChameLib ARCHIVE DESTINATION lib)

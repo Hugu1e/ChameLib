@@ -288,6 +288,19 @@ RABE_XNM_test/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/RABE_XNM_test.dir/build.make CMakeFiles/RABE_XNM_test.dir/build
 .PHONY : RABE_XNM_test/fast
 
+#=============================================================================
+# Target rules for targets named RABE_TMM_test
+
+# Build rule for target.
+RABE_TMM_test: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 RABE_TMM_test
+.PHONY : RABE_TMM_test
+
+# fast build rule for target.
+RABE_TMM_test/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/RABE_TMM_test.dir/build.make CMakeFiles/RABE_TMM_test.dir/build
+.PHONY : RABE_TMM_test/fast
+
 src/ABE/ABET.o: src/ABE/ABET.cpp.o
 .PHONY : src/ABE/ABET.o
 
@@ -407,6 +420,30 @@ src/ABE/Policy_resolution.s: src/ABE/Policy_resolution.cpp.s
 src/ABE/Policy_resolution.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/ChameLib.dir/build.make CMakeFiles/ChameLib.dir/src/ABE/Policy_resolution.cpp.s
 .PHONY : src/ABE/Policy_resolution.cpp.s
+
+src/ABE/RABE_TMM.o: src/ABE/RABE_TMM.cpp.o
+.PHONY : src/ABE/RABE_TMM.o
+
+# target to build an object file
+src/ABE/RABE_TMM.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ChameLib.dir/build.make CMakeFiles/ChameLib.dir/src/ABE/RABE_TMM.cpp.o
+.PHONY : src/ABE/RABE_TMM.cpp.o
+
+src/ABE/RABE_TMM.i: src/ABE/RABE_TMM.cpp.i
+.PHONY : src/ABE/RABE_TMM.i
+
+# target to preprocess a source file
+src/ABE/RABE_TMM.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ChameLib.dir/build.make CMakeFiles/ChameLib.dir/src/ABE/RABE_TMM.cpp.i
+.PHONY : src/ABE/RABE_TMM.cpp.i
+
+src/ABE/RABE_TMM.s: src/ABE/RABE_TMM.cpp.s
+.PHONY : src/ABE/RABE_TMM.s
+
+# target to generate assembly for a file
+src/ABE/RABE_TMM.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ChameLib.dir/build.make CMakeFiles/ChameLib.dir/src/ABE/RABE_TMM.cpp.s
+.PHONY : src/ABE/RABE_TMM.cpp.s
 
 src/ABE/RABE_XNM.o: src/ABE/RABE_XNM.cpp.o
 .PHONY : src/ABE/RABE_XNM.o
@@ -888,6 +925,30 @@ tests/ABE_test/MA_ABE_test.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/MA_ABE_test.dir/build.make CMakeFiles/MA_ABE_test.dir/tests/ABE_test/MA_ABE_test.cpp.s
 .PHONY : tests/ABE_test/MA_ABE_test.cpp.s
 
+tests/ABE_test/RABE_TMM_test.o: tests/ABE_test/RABE_TMM_test.cpp.o
+.PHONY : tests/ABE_test/RABE_TMM_test.o
+
+# target to build an object file
+tests/ABE_test/RABE_TMM_test.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/RABE_TMM_test.dir/build.make CMakeFiles/RABE_TMM_test.dir/tests/ABE_test/RABE_TMM_test.cpp.o
+.PHONY : tests/ABE_test/RABE_TMM_test.cpp.o
+
+tests/ABE_test/RABE_TMM_test.i: tests/ABE_test/RABE_TMM_test.cpp.i
+.PHONY : tests/ABE_test/RABE_TMM_test.i
+
+# target to preprocess a source file
+tests/ABE_test/RABE_TMM_test.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/RABE_TMM_test.dir/build.make CMakeFiles/RABE_TMM_test.dir/tests/ABE_test/RABE_TMM_test.cpp.i
+.PHONY : tests/ABE_test/RABE_TMM_test.cpp.i
+
+tests/ABE_test/RABE_TMM_test.s: tests/ABE_test/RABE_TMM_test.cpp.s
+.PHONY : tests/ABE_test/RABE_TMM_test.s
+
+# target to generate assembly for a file
+tests/ABE_test/RABE_TMM_test.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/RABE_TMM_test.dir/build.make CMakeFiles/RABE_TMM_test.dir/tests/ABE_test/RABE_TMM_test.cpp.s
+.PHONY : tests/ABE_test/RABE_TMM_test.cpp.s
+
 tests/ABE_test/RABE_XNM_test.o: tests/ABE_test/RABE_XNM_test.cpp.o
 .PHONY : tests/ABE_test/RABE_XNM_test.o
 
@@ -997,6 +1058,7 @@ tests/common/CommonTest.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/MA_ABE_test.dir/build.make CMakeFiles/MA_ABE_test.dir/tests/common/CommonTest.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/ABET_test.dir/build.make CMakeFiles/ABET_test.dir/tests/common/CommonTest.cpp.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/RABE_XNM_test.dir/build.make CMakeFiles/RABE_XNM_test.dir/tests/common/CommonTest.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/RABE_TMM_test.dir/build.make CMakeFiles/RABE_TMM_test.dir/tests/common/CommonTest.cpp.o
 .PHONY : tests/common/CommonTest.cpp.o
 
 tests/common/CommonTest.i: tests/common/CommonTest.cpp.i
@@ -1012,6 +1074,7 @@ tests/common/CommonTest.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/MA_ABE_test.dir/build.make CMakeFiles/MA_ABE_test.dir/tests/common/CommonTest.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/ABET_test.dir/build.make CMakeFiles/ABET_test.dir/tests/common/CommonTest.cpp.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/RABE_XNM_test.dir/build.make CMakeFiles/RABE_XNM_test.dir/tests/common/CommonTest.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/RABE_TMM_test.dir/build.make CMakeFiles/RABE_TMM_test.dir/tests/common/CommonTest.cpp.i
 .PHONY : tests/common/CommonTest.cpp.i
 
 tests/common/CommonTest.s: tests/common/CommonTest.cpp.s
@@ -1027,6 +1090,7 @@ tests/common/CommonTest.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/MA_ABE_test.dir/build.make CMakeFiles/MA_ABE_test.dir/tests/common/CommonTest.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/ABET_test.dir/build.make CMakeFiles/ABET_test.dir/tests/common/CommonTest.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/RABE_XNM_test.dir/build.make CMakeFiles/RABE_XNM_test.dir/tests/common/CommonTest.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/RABE_TMM_test.dir/build.make CMakeFiles/RABE_TMM_test.dir/tests/common/CommonTest.cpp.s
 .PHONY : tests/common/CommonTest.cpp.s
 
 tests/signature_test/BLS_test.o: tests/signature_test/BLS_test.cpp.o
@@ -1073,6 +1137,7 @@ help:
 	@echo "... ChameLib"
 	@echo "... Elements_test"
 	@echo "... MA_ABE_test"
+	@echo "... RABE_TMM_test"
 	@echo "... RABE_XNM_test"
 	@echo "... RSA_test"
 	@echo "... src/ABE/ABET.o"
@@ -1090,6 +1155,9 @@ help:
 	@echo "... src/ABE/Policy_resolution.o"
 	@echo "... src/ABE/Policy_resolution.i"
 	@echo "... src/ABE/Policy_resolution.s"
+	@echo "... src/ABE/RABE_TMM.o"
+	@echo "... src/ABE/RABE_TMM.i"
+	@echo "... src/ABE/RABE_TMM.s"
 	@echo "... src/ABE/RABE_XNM.o"
 	@echo "... src/ABE/RABE_XNM.i"
 	@echo "... src/ABE/RABE_XNM.s"
@@ -1150,6 +1218,9 @@ help:
 	@echo "... tests/ABE_test/MA_ABE_test.o"
 	@echo "... tests/ABE_test/MA_ABE_test.i"
 	@echo "... tests/ABE_test/MA_ABE_test.s"
+	@echo "... tests/ABE_test/RABE_TMM_test.o"
+	@echo "... tests/ABE_test/RABE_TMM_test.i"
+	@echo "... tests/ABE_test/RABE_TMM_test.s"
 	@echo "... tests/ABE_test/RABE_XNM_test.o"
 	@echo "... tests/ABE_test/RABE_XNM_test.i"
 	@echo "... tests/ABE_test/RABE_XNM_test.s"

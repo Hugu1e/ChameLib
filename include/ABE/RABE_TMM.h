@@ -35,6 +35,11 @@ class RABE_TMM_skid{
         {
             return &sk_prime;
         }
+        std::pair<Binary_tree_RABE_node*,PbcElements>* get_sk_prime(int i)
+        {
+            return &sk_prime[i];
+        }
+
 };
 class RABE_TMM_revokedPreson: public PbcElements{
     private:
@@ -61,6 +66,10 @@ class RABE_TMM_kut{
         std::vector<std::pair<Binary_tree_RABE_node*,PbcElements>> *get_ku_theta()
         {
             return &ku_theta;
+        }
+        std::pair<Binary_tree_RABE_node*,PbcElements>* get_ku_theta(int i)
+        {
+            return &ku_theta[i];
         }
 };
 class RABE_TMM_dkidt{

@@ -1,4 +1,4 @@
-#include <ABE/RABE_XNM.h>
+#include <ABE/RABE_TMM.h>
 #include <CommonTest.h>
 
 int test_result = 1;
@@ -6,7 +6,7 @@ int test_result = 1;
 void test(std::string test_name, std::string curve){
     CommonTest test(test_name, curve);
 
-    RABE_XNM abe(test.get_G1(), test.get_G2(), test.get_GT(), test.get_Zn());
+    RABE_TMM abe(test.get_G1(), test.get_G2(), test.get_GT(), test.get_Zn());
 
     const int N = 8;  // a binary tree with N leaf nodes
     const int DEPTH = 4;  // log2(N) + 1
@@ -16,14 +16,14 @@ void test(std::string test_name, std::string curve){
     const int SIZE_OF_POLICY = 4;   // Policy的属性个数（不去重）
     const time_t T = TimeUtils::TimeCast(2024, 12, 21, 0, 0, 0);  // present time
 
-    RABE_XNM_mpk mpk;
-    RABE_XNM_msk msk;
-    RABE_XNM_skid skid;
-    RABE_XNM_kut kut;
-    RABE_XNM_dkidt dkidt;
-    RABE_XNM_ciphertext ciphertext;
+    RABE_TMM_mpk mpk;
+    RABE_TMM_msk msk;
+    RABE_TMM_skid skid;
+    RABE_TMM_kut kut;
+    RABE_TMM_dkidt dkidt;
+    RABE_TMM_ciphertext ciphertext;
 
-    std::vector<RABE_XNM_revokedPreson *> rl;
+    std::vector<RABE_TMM_revokedPreson *> rl;
     Binary_tree_RABE *st;
 
     element_t id;
@@ -31,8 +31,8 @@ void test(std::string test_name, std::string curve){
     element_t s1,s2;
 
     element_init_same_as(id, test.get_Zn());
-    element_init_same_as(msg, test.get_GT());
-    element_init_same_as(res, test.get_GT());
+    element_init_same_as(msg, test.get_Zn());
+    element_init_same_as(res, test.get_Zn());
     element_init_same_as(s1, test.get_Zn());
     element_init_same_as(s2, test.get_Zn());
 
