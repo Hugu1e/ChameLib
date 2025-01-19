@@ -1,6 +1,6 @@
 #include <signature/BLS.h>
 
-BLS::BLS(element_s *_G1, element_s *_G2, element_s *_GT, element_s *_Zn) : G1(_G1), G2(_G2), GT(_GT), Zn(_Zn) {}
+BLS::BLS(element_s *_G1, element_s *_G2, element_s *_GT, element_s *_Zn): PbcScheme(_G1,_G2,_GT,_Zn){}
 
 /**
  * @param[out] pp public parameters

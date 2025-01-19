@@ -5,6 +5,7 @@
 #define CHAMELIB_CP_ABE_H
 
 #include <base/PbcElements.h>
+#include <base/PbcScheme.h>
 #include <vector>
 #include <unordered_map>
 #include <ABE/Policy_resolution.h>
@@ -65,12 +66,8 @@ class CP_ABE_ciphertext{
         }
 };
 
-class CP_ABE{
+class CP_ABE:public PbcScheme{
     private:
-        element_s *G1, *G2, *GT, *Zn;
-
-        // temporary variable
-        element_t tmp_G, tmp_G_2, tmp_G_3, tmp_G_4, tmp_H, tmp_H_2, tmp_H_3, tmp_GT, tmp_GT_2, tmp_GT_3, tmp_Zn, tmp_Zn_2, tmp_Zn_3;
         element_t d1, d2, d3;
         element_t r1, r2;
         element_t b1r1a1, b1r1a2, b2r2a1, b2r2a2, r1r2a1, r1r2a2;
@@ -99,7 +96,7 @@ class CP_ABE{
 
         void Decrypt(element_t res, CP_ABE_ciphertext *ciphertext, CP_ABE_mpk *mpk, CP_ABE_sks *sks);
 
-        ~CP_ABE();
+        ~CP_ABE() override;
 };
 
 #endif // CHAMELIB_CP_ABE_H

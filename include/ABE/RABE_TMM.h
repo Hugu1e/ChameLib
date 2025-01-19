@@ -2,6 +2,7 @@
 #define RABE_TMM_H
 
 #include <base/PbcElements.h>
+#include <base/PbcScheme.h>
 #include <vector>
 #include <string>
 #include <unordered_map>
@@ -138,12 +139,8 @@ class RABE_TMM_ciphertext{
         }
 };
 
-class RABE_TMM{
-    protected:
-        element_s *G1, *G2, *GT, *Zn;
-
-        // temporary variable
-        element_t tmp_G,tmp_G_2,tmp_G_3,tmp_G_4,tmp_H,tmp_H_2,tmp_H_3,tmp_GT,tmp_GT_2,tmp_GT_3, tmp_GT_4,tmp_Zn,tmp_Zn_2,tmp_Zn_3;
+class RABE_TMM : public PbcScheme{
+    private:
         element_t d1,d2,d3;
         element_t r1,r2;
         element_t b1r1a1,b1r1a2,b2r2a1,b2r2a2,r1r2a1,r1r2a2;
@@ -156,7 +153,7 @@ class RABE_TMM{
     public:
         RABE_TMM(element_s *_G1, element_s *_G2, element_s *_GT, element_s *_Zn);
 
-        ~RABE_TMM();
+        ~RABE_TMM() override;
 
         void Setup(RABE_TMM_mpk *mpk, RABE_TMM_msk *msk, std::vector<RABE_TMM_revokedPreson *> *rl, Binary_tree_RABE *&st, int n);
 

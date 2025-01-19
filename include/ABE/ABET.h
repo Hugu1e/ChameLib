@@ -5,6 +5,7 @@
 #define CHAMELIB_ABET_H
 
 #include <base/PbcElements.h>
+#include <base/PbcScheme.h>
 #include <utils/Hash.h>
 #include <vector>
 #include <string>
@@ -78,12 +79,8 @@ class ABET_ciphertext{
         }
 };
 
-class ABET{
+class ABET:public PbcScheme{
     private:
-        element_s *G1, *G2, *GT, *Zn;
-
-        // temporary variable
-        element_t tmp_G,tmp_G_2,tmp_G_3,tmp_G_4,tmp_H,tmp_H_2,tmp_H_3,tmp_GT,tmp_GT_2,tmp_GT_3,tmp_Zn,tmp_Zn_2,tmp_Zn_3;
         int k;
         element_t d1,d2,d3;
         element_t r1,r2;
@@ -110,7 +107,7 @@ class ABET{
 
         void Decrypt(element_t res_R, element_t res_r, ABET_mpk *mpk, ABET_ciphertext *ciphertext, ABET_sks *sks);
 
-        ~ABET();
+        ~ABET() override;
 
         const int MODIFIER = 1;
         const int OWNER = 2;

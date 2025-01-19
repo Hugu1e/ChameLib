@@ -2,6 +2,7 @@
 #define CHAMELIB_MA_ABE_H
 
 #include <base/PbcElements.h>
+#include <base/PbcScheme.h>
 #include <vector>
 #include <string>
 #include <unordered_map>
@@ -68,12 +69,8 @@ class MA_ABE_ciphertext{
 };
 
 
-class MA_ABE{
+class MA_ABE: public PbcScheme{
     private:
-        element_s *G1, *G2, *GT, *Zn;
-
-        // temporary variable
-        element_t tmp_G,tmp_G_2,tmp_G_3,tmp_G_4,tmp_H,tmp_H_2,tmp_H_3,tmp_GT,tmp_GT_2,tmp_GT_3,tmp_Zn,tmp_Zn_2,tmp_Zn_3;
         element_t z;
 
         std::unordered_map<unsigned long int, std::string> pai;  // π(i) -> attr
@@ -95,7 +92,7 @@ class MA_ABE{
 
         void Decrypt(element_t res, std::vector<MA_ABE_skgidA *> *skgidAs, MA_ABE_ciphertext *C);
 
-        ~MA_ABE();
+        ~MA_ABE() override;
 };
 
 

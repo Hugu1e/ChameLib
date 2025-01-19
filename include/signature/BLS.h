@@ -2,6 +2,7 @@
 #define CHAMELIB_BLS_H
 
 #include <base/PbcElements.h>
+#include <base/PbcScheme.h>
 #include <utils/Hash.h>
 
 class BLS_pp: public PbcElements{};
@@ -9,10 +10,7 @@ class BLS_pk: public PbcElements{};
 class BLS_sk: public PbcElements{};
 class BLS_signature: public PbcElements{};
 
-class BLS{
-    private:
-        element_s *G1, *G2, *GT, *Zn;
-
+class BLS: public PbcScheme{
     public:
         BLS(element_s *_G1, element_s *_G2, element_s *_GT, element_s *_Zn);
 
@@ -27,7 +25,7 @@ class BLS{
 
         bool Verify(BLS_pp *pp, BLS_pk *pk, std::string message, BLS_signature *signature);
 
-        ~BLS();
+        ~BLS() override;
         
 };
 
