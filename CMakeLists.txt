@@ -27,6 +27,9 @@ file(GLOB LIBRARY_SOURCES
     src/SE/*.cpp
     src/signature/*.cpp
     src/ABE/*.cpp
+    src/scheme/CH/*.cpp
+    src/scheme/IBCH/*.cpp
+    src/scheme/PBCH/*.cpp
 )
 add_library(ChameLib STATIC ${LIBRARY_SOURCES})
 target_link_libraries(ChameLib PUBLIC gmp pbc OpenSSL::SSL)
@@ -74,6 +77,33 @@ if(BUILD_TESTS)
     add_test_executable(ABET_test tests/ABE_test/ABET_test.cpp)
     add_test_executable(RABE_XNM_test tests/ABE_test/RABE_XNM_test.cpp)
     add_test_executable(RABE_TMM_test tests/ABE_test/RABE_TMM_test.cpp)
+
+    add_test_executable(CH_CDK_2017_test tests/scheme_test/CH_test/CH_CDK_2017_test.cpp)
+    add_test_executable(CH_ET_BC_CDK_2017_test tests/scheme_test/CH_test/CH_ET_BC_CDK_2017_test.cpp)
+    add_test_executable(CH_FS_ECC_CCT_2024_test tests/scheme_test/CH_test/CH_FS_ECC_CCT_2024_test.cpp)
+    add_test_executable(CH_KEF_CZK_2004_test tests/scheme_test/CH_test/CH_KEF_CZK_2004_test.cpp)
+    add_test_executable(CH_KEF_DL_CZT_2011_test tests/scheme_test/CH_test/CH_KEF_DL_CZT_2011_test.cpp)
+    add_test_executable(CH_KEF_DLP_LLA_2012_test tests/scheme_test/CH_test/CH_KEF_DLP_LLA_2012_test.cpp)
+    add_test_executable(CH_KEF_MH_RSA_F_AM_2004_test tests/scheme_test/CH_test/CH_KEF_MH_RSA_F_AM_2004_test.cpp)
+    add_test_executable(CH_KEF_MH_SDH_DL_AM_2004_test tests/scheme_test/CH_test/CH_KEF_MH_SDH_DL_AM_2004_test.cpp)
+    add_test_executable(CH_KEF_NoMH_AM_2004_test tests/scheme_test/CH_test/CH_KEF_NoMH_AM_2004_test.cpp)
+    add_test_executable(CHET_RSA_CDK_2017_test tests/scheme_test/CH_test/CHET_RSA_CDK_2017_test.cpp)
+    add_test_executable(CR_CH_DSS_2020_test tests/scheme_test/CH_test/CR_CH_DSS_2020_test.cpp)
+    add_test_executable(FCR_CH_PreQA_DKS_2020_test tests/scheme_test/CH_test/FCR_CH_PreQA_DKS_2020_test.cpp)
+    add_test_executable(MCH_CDK_2017_test tests/scheme_test/CH_test/MCH_CDK_2017_test.cpp)
+
+    add_test_executable(IB_CH_KEF_CZS_2014_test tests/scheme_test/IBCH_test/IB_CH_KEF_CZS_2014_test.cpp)
+    add_test_executable(IB_CH_MD_LSX_2022_test tests/scheme_test/IBCH_test/IB_CH_MD_LSX_2022_test.cpp)
+    add_test_executable(IB_CH_ZSS_S1_2003_test tests/scheme_test/IBCH_test/IB_CH_ZSS_S1_2003_test.cpp)
+    add_test_executable(IB_CH_ZSS_S2_2003_test tests/scheme_test/IBCH_test/IB_CH_ZSS_S2_2003_test.cpp)
+    add_test_executable(ID_B_CollRes_XSL_2021_test tests/scheme_test/IBCH_test/ID_B_CollRes_XSL_2021_test.cpp)
+
+    add_test_executable(DPCH_MXN_2022_test tests/scheme_test/PBCH_test/DPCH_MXN_2022_test.cpp)
+    add_test_executable(MAPCH_ZLW_2021_test tests/scheme_test/PBCH_test/MAPCH_ZLW_2021_test.cpp)
+    add_test_executable(PCH_DSS_2019_test tests/scheme_test/PBCH_test/PCH_DSS_2019_test.cpp)
+    add_test_executable(PCHBA_TLL_2020_test tests/scheme_test/PBCH_test/PCHBA_TLL_2020_test.cpp)
+    add_test_executable(RPCH_TMM_2022_test tests/scheme_test/PBCH_test/RPCH_TMM_2022_test.cpp)
+    add_test_executable(RPCH_XNM_2021_test tests/scheme_test/PBCH_test/RPCH_XNM_2021_test.cpp)
 endif()
 
 install(TARGETS ChameLib ARCHIVE DESTINATION lib)

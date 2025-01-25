@@ -80,7 +80,7 @@ void test(std::string test_name, std::string curve){
     element_random(s2);
 
     test.start("Encrypt");
-    abe.Encrypt(&ciphertext, &mpk, &msk, &r, &R, POLICY, &id, J, &s1, &s2);
+    abe.Encrypt(&ciphertext, &mpk, &msk, r, R, POLICY, &id, J, s1, s2);
     test.end("Encrypt");
     // Logger::PrintPbc("ct0.ct_1", ciphertext.get_ct0()->getElement("ct0_1"));
     // Logger::PrintPbc("ct0.ct_2", ciphertext.get_ct0()->getElement("ct0_2"));

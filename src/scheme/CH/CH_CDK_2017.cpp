@@ -1,108 +1,108 @@
-#include <scheme/CH_CDK_2017.h>
+#include <scheme/CH/CH_CDK_2017.h>
 
-void CH_CDK_2017::H(mpz_t *gs, mpz_t *m, mpz_t *res, mpz_t *n){
-    Hgsm_n(*gs,*m,*res,*n);  
-}
+CH_CDK_2017::CH_CDK_2017(){}
 
-CH_CDK_2017::CH_CDK_2017(mpz_t *n, mpz_t *e, mpz_t *d){
-    this->rsa = new MyRSA(n,e,d);
-}
-
-void CH_CDK_2017::CParGen(){
+void CH_CDK_2017::SetUp(){
     return;
 }
 
-void CH_CDK_2017::CKGen(mpz_t *n, mpz_t *e, mpz_t *d){
-    // Generate two primes p and q using RSAKGen(1λ)
-    this->rsa->rsa_generate_keys(1024);
-    // 输出d的大小(bytes)
-    size_t bits = mpz_sizeinbase(*d, 2);
-    size_t bytes = (bits + 7) / 8;
-    printf("sizeof(d): %zu bytes\n", bytes);
+void CH_CDK_2017::KeyGen(CH_CDK_2017_pk *pk, CH_CDK_2017_sk *sk, short k){
+    mpz_t p,q,n,e;
+    mpz_inits(p,q,n,e,NULL);
+    rsa.KeyGen(p,q,n,e,k);
+    
+    pk->insertElement("n", n);
+    pk->insertElement("e", e);
+    sk->insertElement("p", p);
+    sk->insertElement("q", q);
 }
 
-void CH_CDK_2017::CHash(mpz_t *h, mpz_t *r, mpz_t *n,mpz_t *e, mpz_t *m, mpz_t *tag){
-    // Draw r ← Z∗n
-    gmp_randstate_t state;
-    gmp_randinit_default(state);
-    gmp_randseed_ui(state, time(NULL));
-    mpz_urandomm(*r, state, *n);
-
-    mpz_t g;
-    mpz_init(g);
-
-    // Let g ← Hn(τ, m)
-    this->H(tag, m, &g, n);
-    
-    // h ← gr^e mod n
-    mpz_t tmp;
-    mpz_init(tmp);
-    mpz_powm(tmp, *r, *e, *n);
-    mpz_mul(*h, g, tmp);
-    mpz_mod(*h, *h, *n);
-
-    // 输出h的大小
-    size_t bits = mpz_sizeinbase(*h, 2);
-    size_t bytes = (bits + 7) / 8;
-    printf("sizeof(h): %zu bytes\n", bytes);
-
-    mpz_clear(tmp);
-    mpz_clear(g);
+void CH_CDK_2017::H(mpz_t res, mpz_t m1, mpz_t m2, mpz_t n){
+    HASH::hash_n(res, m1, m2, n);  
 }
 
-bool CH_CDK_2017::CHashCheck(mpz_t *h_, mpz_t *m, mpz_t *tag, mpz_t *n, mpz_t *e, mpz_t *r){
-    mpz_t g;
-    mpz_init(g);
+void CH_CDK_2017::Hash(CH_CDK_2017_h *h, CH_CDK_2017_r *r, mpz_t m, mpz_t tag, CH_CDK_2017_pk *pk){
+    // Draw r ← Zn*
+    mpz_t _r,_h,n,e,g,tmp;
+    mpz_inits(_r,_h,n,e,g,tmp,NULL);
+
+    mpz_set(n, pk->getElement("n"));
+    mpz_set(e, pk->getElement("e"));
+
+    RandomGenerator::RandomCoprimeN(_r, n);
+    r->insertElement("r", _r);
+
     // Let g ← Hn(τ, m)
-    this->H(tag, m, &g, n);
+    this->H(g, tag, m, n);
     
     // h ← gr^e mod n
-    mpz_t tmp;
-    mpz_t tmp_2;
-    mpz_init(tmp);
-    mpz_init(tmp_2);
-    mpz_powm(tmp, *r, *e, *n);
+    mpz_powm(tmp, _r, e, n);
+    mpz_mul(_h, g, tmp);
+    mpz_mod(_h, _h, n);
+    h->insertElement("h", _h);
+
+    mpz_clears(_r,_h,n,e,g,tmp,NULL);
+}
+
+bool CH_CDK_2017::Check(CH_CDK_2017_h *h, CH_CDK_2017_r *r, mpz_t m, mpz_t tag, CH_CDK_2017_pk *pk){
+    bool CheckResult = false;
+
+    mpz_t g,n,tmp,tmp_2,_r,e,_h;
+    mpz_inits(g,n,tmp,tmp_2,_r,e,_h,NULL);
+
+    mpz_set(n, pk->getElement("n"));
+    mpz_set(_r, r->getElement("r"));
+    mpz_set(e, pk->getElement("e"));
+    mpz_set(_h, h->getElement("h"));
+
+
+    // Let g ← Hn(τ, m)
+    this->H(g, tag, m, n);
+    
+    // h ← gr^e mod n
+    mpz_powm(tmp, _r, e, n);
     mpz_mul(tmp_2, g, tmp);
-    mpz_mod(tmp_2, tmp_2, *n);
-    mpz_clear(tmp);
-    mpz_clear(g);
+    mpz_mod(tmp_2, tmp_2, n);
 
-    if(mpz_cmp(tmp_2, *h_) == 0){
-        mpz_clear(tmp_2);
-        return true;
-    }else{
-        mpz_clear(tmp_2);
-        return false;
+    if(mpz_cmp(tmp_2, _h) == 0){
+        CheckResult = true;
     }
+    mpz_clears(g,n,tmp,tmp_2,_r,e,_h,NULL);
+    return CheckResult;
 }
 
-void CH_CDK_2017::Adapt(mpz_t *r_p, mpz_t *m_p, mpz_t *tag_p, mpz_t *m, mpz_t *tag, mpz_t *r, mpz_t *h, mpz_t *n,mpz_t *e,mpz_t *d){
-    mpz_t g,tmp;
-    mpz_init(g);   
-    // 1. Compute g ← Hn(τ, m), and h ← gre mod n.
-    this->H(tag, m, &g, n);
-    mpz_init(tmp);
-    mpz_powm(tmp, *r, *e, *n);
-    mpz_mul(*h, g, tmp);
-    mpz_mod(*h, *h, *n);
-    mpz_clear(tmp);
-    mpz_clear(g);
-    // 2. Draw τ 0 ← {0, 1}λ.
+void CH_CDK_2017::Adapt(CH_CDK_2017_r *r_p, mpz_t tag_p, CH_CDK_2017_h *h, CH_CDK_2017_r *r, mpz_t m_p, CH_CDK_2017_sk *sk, CH_CDK_2017_pk *pk){
+    mpz_t n,_r,e,tmp_1,tmp_2,_h,_r_p, p,q,phi,d;
+    mpz_inits(n,_r,e,tmp_1,tmp_2,_h,_r_p,p,q,phi,d,NULL);
 
+    mpz_set(n, pk->getElement("n"));
+    mpz_set(_r, r->getElement("r"));
+    mpz_set(e, pk->getElement("e"));
+    mpz_set(_h, h->getElement("h"));
+    mpz_set(p, sk->getElement("p"));
+    mpz_set(q, sk->getElement("q"));
 
-    // 3. Compute g0 ← Hn(τ 0, m0) and r0 ← (h(g0−1))d mod n.
-    mpz_t tmp_1;  // g_p
-    mpz_t tmp_2;
-    mpz_init(tmp_1);
-    mpz_init(tmp_2);
-    this->H(tag_p, m_p, &tmp_1, n);
-    mpz_invert(tmp_2, tmp_1, *n);  
-    mpz_mul(tmp_1, *h, tmp_2);
-    mpz_mod(tmp_1, tmp_1, *n);
-    // 4. Return r0.
-    mpz_powm(*r_p, tmp_1, *d, *n);
+    RandomGenerator::RandomN(tag_p, n);
+
+    // compute d
+    mpz_sub_ui(p, p, 1);
+    mpz_sub_ui(q, q, 1);
+    mpz_mul(phi, p, q);
+    mpz_invert(d, e, phi); 
+
+    this->H(tmp_1,tag_p, m_p, n);
+    mpz_invert(tmp_2, tmp_1, n);  
+    mpz_mul(tmp_1, _h, tmp_2);
+    mpz_mod(tmp_1, tmp_1, n);
+    mpz_powm(_r_p, tmp_1, d, n);
+
+    r_p->insertElement("r", _r_p);
+
+    mpz_clears(n,_r,e,tmp_1,tmp_2,_h,_r_p,p,q,phi,d,NULL);
 }
 
-void CH_CDK_2017::CH_CDK_2017_clear(){
-    this->rsa->rsa_clear();
+bool CH_CDK_2017::Verify(CH_CDK_2017_h *h, CH_CDK_2017_r *r_p, mpz_t m_p, mpz_t tag_p, CH_CDK_2017_pk *pk){
+    return Check(h, r_p, m_p, tag_p, pk);
 }
+
+CH_CDK_2017::~CH_CDK_2017(){}

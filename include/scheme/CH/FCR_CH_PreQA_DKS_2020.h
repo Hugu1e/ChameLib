@@ -1,66 +1,44 @@
-#ifndef IMPORT_ELEMENTLIST
-#define IMPORT_ELEMENTLIST
-#include "base/ElementList.h"
-#endif //IMPORT_ELEMENTLIST
-
-#ifndef IMPORT_UTIL_FUNC
-#define IMPORT_UTIL_FUNC
-#include "utils/func.h"
-#endif //IMPORT_UTIL_FUNC
-
-
 #ifndef FCR_CH_PreQA_DKS_2020_H
 #define FCR_CH_PreQA_DKS_2020_H
 
-#include <stdexcept>  // 包含 std::invalid_argument
+#include <base/PbcScheme.h>
+#include <base/PbcElements.h>
+#include <utils/Hash.h>
 
-class FCR_CH_PreQA_DKS_2020 {
-    protected:
-    element_t *G1, *G2, *Zn, *GT;
-    element_t tmp_G1, tmp_G1_2,tmp_G1_3, tmp_G2, tmp_Zn,tmp_Zn_2, tmp_GT,tmp_GT_2,tmp_GT_3;
-    element_t tmp_y;
+class FCR_CH_PreQA_DKS_2020_pp: public PbcElements{};
 
-    element_t g1;
-    element_t g2;
-    element_t x;  // secret x ∈ Zp
+class FCR_CH_PreQA_DKS_2020_pk: public PbcElements{};
 
-    element_t xi,k11,k12,k2,e2,s2;
-    element_t u1,u2,e,e1,s11,s12;
+class FCR_CH_PreQA_DKS_2020_sk: public PbcElements{};
 
-// 
-    
+class FCR_CH_PreQA_DKS_2020_h: public PbcElements{};
 
-    //
-    element_t a;
+class FCR_CH_PreQA_DKS_2020_r: public PbcElements{};
 
+class FCR_CH_PreQA_DKS_2020: public PbcScheme{
+    private:
+        element_t xi,k11,k12,k2,e2,s2;
+        element_t u1,u2,e,e1,s11,s12;
+        element_t a;
 
     public:
-    FCR_CH_PreQA_DKS_2020(element_t *_G1, element_t *_G2, element_t *_Zn, element_t *_GT);
+        FCR_CH_PreQA_DKS_2020(element_s *_G1, element_s *_G2, element_s *_GT, element_s *_Zn);
 
-    void PG();
+        void SetUp(FCR_CH_PreQA_DKS_2020_pp *pp);
 
-    void KG(element_t *y);
+        void KeyGen(FCR_CH_PreQA_DKS_2020_pk *pk, FCR_CH_PreQA_DKS_2020_sk *sk, FCR_CH_PreQA_DKS_2020_pp *pp);
 
-    void H(element_t *y, element_t *h, element_t *m,element_t *u1,element_t *u2, element_t *res);
+        void H(element_t res, element_t y, element_t h, element_t m, element_t u1,element_t u2);
 
-    void Hash(element_t *m, element_t *y, 
-                                element_t *h,
-                                element_t *_e1, element_t *_e2, element_t *_s11, element_t *_s12, element_t *_s2);
+        void Hash(FCR_CH_PreQA_DKS_2020_h *h, FCR_CH_PreQA_DKS_2020_r *r, element_t m, FCR_CH_PreQA_DKS_2020_pk *pk, FCR_CH_PreQA_DKS_2020_pp *pp);
 
-    bool Check(element_t *y, element_t *m, element_t *h,
-                                element_t *_e1, element_t *_e2, element_t *_s11, element_t *_s12, element_t *_s2);
+        bool Check(FCR_CH_PreQA_DKS_2020_h *h, FCR_CH_PreQA_DKS_2020_r *r, element_t m, FCR_CH_PreQA_DKS_2020_pk *pk, FCR_CH_PreQA_DKS_2020_pp *pp);
 
-    void Forge(element_t *m, element_t *m_p, 
-                                element_t *_e1, element_t *_e2, element_t *_s11, element_t *_s12, element_t *_s2,
-                                element_t *h,
-                                element_t *e1_p,element_t *e2_p,element_t *s11_p,element_t *s12_p,element_t *s2_p);
+        void Adapt(FCR_CH_PreQA_DKS_2020_r *r_p, element_t m_p, element_t m, FCR_CH_PreQA_DKS_2020_h *h, FCR_CH_PreQA_DKS_2020_r *r, FCR_CH_PreQA_DKS_2020_sk *sk, FCR_CH_PreQA_DKS_2020_pp *pp);
 
-    bool Verify(element_t *y, element_t *m_p, element_t *h,
-                                 element_t *e1_p,element_t *e2_p,element_t *s11_p,element_t *s12_p,element_t *s2_p);
+        bool Verify(FCR_CH_PreQA_DKS_2020_h *h, FCR_CH_PreQA_DKS_2020_r *r_p, element_t m_p, FCR_CH_PreQA_DKS_2020_pk *pk, FCR_CH_PreQA_DKS_2020_pp *pp);
 
-    bool Verify2(element_t *y, element_t *m, element_t *m_p);
-
-    ~FCR_CH_PreQA_DKS_2020();
+        ~FCR_CH_PreQA_DKS_2020();
 };
 
 

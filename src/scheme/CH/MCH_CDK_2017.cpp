@@ -1,151 +1,124 @@
-#include <scheme/MCH_CDK_2017.h>
+#include <scheme/CH/MCH_CDK_2017.h>
 
-void MCH_CDK_2017::H(mpz_t *m, mpz_t *res, mpz_t *n){
-    Hm_n(*m,*res,*n);  
-}
+MCH_CDK_2017::MCH_CDK_2017(){}
 
-MCH_CDK_2017::MCH_CDK_2017(mpz_t *n, mpz_t *e, mpz_t *d){
-    this->rsa = new MyRSA(n,e,d);
-}
+void MCH_CDK_2017::KeyGen(MCH_CDK_2017_pk *pk, MCH_CDK_2017_sk *sk, short k){
+    mpz_t n, e, d;
+    mpz_inits(n, e, d, NULL);
 
-void MCH_CDK_2017::CParGen(mpz_t *n, mpz_t *e, mpz_t *d){
-    // Call RSAKGen with the restriction e > n, and e prime. Return e.
-    // this->rsa->rsa_generate_keys_2(1024, 1);
-
-    // printf("%d\n",mpz_probab_prime_p(*e, 25));
+    rsa.KeyGen(n, e, d, k, 1);
     
-    // while (mpz_cmp(*e, *n) <= 0 || mpz_probab_prime_p(*e, 25) == 0)  // 素性测试25次
-    // {
-    //     printf("1");
-    //     this->rsa->rsa_generate_keys(1024);
-    // }
+    pk->insertElement("n", n);
+    pk->insertElement("e", e);
+    sk->insertElement("d", d);
 
-    // return e
+    mpz_clears(n, e, d, NULL);
 }
 
-void MCH_CDK_2017::CKGen(mpz_t *n, mpz_t *e, mpz_t *d){
-    // Generate two primes p and q using RSAKGen(1λ)
-    this->rsa->rsa_generate_keys_2(1024, 1);
-    // 输出d的大小(bytes)
-    size_t bits = mpz_sizeinbase(*d, 2);
-    size_t bytes = (bits + 7) / 8;
-    printf("sizeof(d): %zu bytes\n", bytes);
-    // return n,d
+void MCH_CDK_2017::H(mpz_t res, mpz_t m, mpz_t n){
+    HASH::hash_n(res, m, n);  
 }
 
-void MCH_CDK_2017::CHash(mpz_t *h, mpz_t *r, mpz_t *n,mpz_t *e, mpz_t *m){
+void MCH_CDK_2017::Hash(MCH_CDK_2017_h *h, MCH_CDK_2017_r *r, mpz_t m, MCH_CDK_2017_pk *pk){
+    mpz_t _r,_h,g,n,tmp,e;
+    mpz_inits(_r,_h,g,n,tmp,e,NULL);
+
+    mpz_set(n, pk->getElement("n"));
+    mpz_set(e, pk->getElement("e"));
+
     // Draw r ← Zn*
-    gmp_randstate_t state;
-    gmp_randinit_default(state);
-    gmp_randseed_ui(state, time(NULL));
-    mpz_urandomm(*r, state, *n);
+    RandomGenerator::RandomCoprimeN(_r, n);
+    r->insertElement("r", _r);
 
-    mpz_t g;
-    mpz_init(g);
     // Let g ← Hn(m)
-    this->H(m, &g, n);
+    this->H(g, m, n);
     
     // h ← gr^e mod n
-    mpz_t tmp;
-    mpz_init(tmp);
-    mpz_powm(tmp, *r, *e, *n);
-    mpz_mul(*h, g, tmp);
-    mpz_mod(*h, *h, *n);
 
-    // 输出h的大小
-    size_t bits = mpz_sizeinbase(*h, 2);
-    size_t bytes = (bits + 7) / 8;
-    printf("sizeof(h): %zu bytes\n", bytes);
+    mpz_powm(tmp, _r, e, n);
+    mpz_mul(_h, g, tmp);
+    mpz_mod(_h, _h, n);
 
-    mpz_clear(tmp);
-    mpz_clear(g);
+    h->insertElement("h", _h);
+
+    mpz_clears(_r,_h,g,n,tmp,e,NULL);
 }
 
-bool MCH_CDK_2017::CHashCheck(mpz_t *h_, mpz_t *m, mpz_t *n, mpz_t *e, mpz_t *r){
-    // If r ∈ Zn*, return false
-    if(mpz_cmp_ui(*r, 0) <= 0 || mpz_cmp(*r, *n) >= 0){
-        return false;
-    }
-    mpz_t gcd_result;
-    mpz_init(gcd_result);
-    mpz_gcd(gcd_result, *r, *n);
-    if(mpz_cmp_ui(gcd_result, 1) != 0){
-        mpz_clear(gcd_result);
-        return false;
-    }
-    mpz_clear(gcd_result);
+bool MCH_CDK_2017::Check(MCH_CDK_2017_h *h, MCH_CDK_2017_r *r, mpz_t m, MCH_CDK_2017_pk *pk){
+    mpz_t n,e,_r,gcd_result,g,tmp,tmp_2;
+    mpz_inits(n,e,_r,gcd_result,g,tmp,tmp_2,NULL);
 
-    mpz_t g;
-    mpz_init(g);
+    mpz_set(n, pk->getElement("n"));
+    mpz_set(e, pk->getElement("e"));
+    mpz_set(_r, r->getElement("r"));
+
+    // If r ∈ Zn*, return false
+    if(mpz_cmp(_r, n) >= 0){
+        return false;
+    }
+    mpz_gcd(gcd_result, _r, n);
+    if(mpz_cmp_ui(gcd_result, 1) != 0){
+        throw std::invalid_argument("MCH_CDK_2017::Check(): r is not coprime with n");
+    }
+
     // Let g ← Hn(m)
-    this->H(m, &g, n);
+    this->H(g, m, n);
     
     // h ← gr^e mod n
-    mpz_t tmp;
-    mpz_t tmp_2;
-    mpz_init(tmp);
-    mpz_init(tmp_2);
-    mpz_powm(tmp, *r, *e, *n);
+    mpz_powm(tmp, _r, e, n);
     mpz_mul(tmp_2, g, tmp);
-    mpz_mod(tmp_2, tmp_2, *n);
-    mpz_clear(tmp);
-    mpz_clear(g);
+    mpz_mod(tmp_2, tmp_2, n);
 
-    if(mpz_cmp(tmp_2, *h_) == 0){
-        mpz_clear(tmp_2);
+    if(mpz_cmp(tmp_2, h->getElement("h")) == 0){
+        mpz_clears(n,e,_r,gcd_result,g,tmp,tmp_2,NULL);
         return true;
     }else{
-        mpz_clear(tmp_2);
+        mpz_clears(n,e,_r,gcd_result,g,tmp,tmp_2,NULL);
         return false;
     }
 }
 
-void MCH_CDK_2017::Adapt(mpz_t *r_p, mpz_t *m_p, mpz_t *m, mpz_t *r, mpz_t *h, mpz_t *n,mpz_t *e,mpz_t *d){
-    if(this->CHashCheck(h, m, n, e, r) == false){
-        return;
+void MCH_CDK_2017::Adapt(MCH_CDK_2017_r *r_p, mpz_t m_p, mpz_t m, MCH_CDK_2017_r *r, MCH_CDK_2017_h *h, MCH_CDK_2017_sk *sk, MCH_CDK_2017_pk *pk){
+    if(this->Check(h, r, m, pk) == false){
+        throw std::invalid_argument("MCH_CDK_2017::Adapt(): hash check failed");
     }
     // if m = m0, return r.
-    if(mpz_cmp(*m, *m_p) == 0){
-        mpz_set(*r_p, *r);
+    if(mpz_cmp(m, m_p) == 0){
+        r_p->insertElement("r", r->getElement("r"));
         return;
     }
 
-    mpz_t g,tmp,y;
-    mpz_init(g);   
-    mpz_init(tmp);
-    mpz_init(y);
+    mpz_t g,tmp,y,n,e,_r,g_p,tmp_1,tmp_2,_r_p;
+    mpz_inits(g,tmp,y,n,e,_r,g_p,tmp_1,tmp_2,_r_p,NULL);
+
+    mpz_set(n, pk->getElement("n"));
+    mpz_set(e, pk->getElement("e"));
+    mpz_set(_r, r->getElement("r"));
+
     // Let g ← Hn(m), and y ← gre mod n.
-    this->H(m, &g, n);
+    this->H(g, m, n);
     
-    mpz_powm(tmp, *r, *e, *n);
+    mpz_powm(tmp, _r, e, n);
     mpz_mul(y, g, tmp);
-    mpz_mod(y, y, *n);
-    mpz_clear(tmp);
-    mpz_clear(g);
+    mpz_mod(y, y, n);
+
     
     // Let g' ← Hn(m')
-    mpz_t g_p;
-    mpz_init(g_p);
-    this->H(m_p, &g_p, n);
+    this->H(g_p, m_p, n);
 
     // Return r0' ← (y(g'−1))d mod n.
-
-    mpz_t tmp_1;  
-    mpz_t tmp_2;
-    mpz_init(tmp_1);
-    mpz_init(tmp_2);
-    mpz_invert(tmp_1, g_p, *n);  
+    mpz_invert(tmp_1, g_p, n);  
     mpz_mul(tmp_2, y, tmp_1);
-    mpz_mod(tmp_2, tmp_2, *n);
-    mpz_powm(*r_p, tmp_2, *d, *n);
+    mpz_mod(tmp_2, tmp_2, n);
+    mpz_powm(_r_p, tmp_2, sk->getElement("d"), n);
 
-    mpz_clear(tmp_1);
-    mpz_clear(tmp_2);
-    mpz_clear(g_p);
-    mpz_clear(y);
+    r_p->insertElement("r", _r_p);
 
+    mpz_clears(g,tmp,y,n,e,_r,g_p,tmp_1,tmp_2,_r_p,NULL);
 }
 
-void MCH_CDK_2017::MCH_CDK_2017_clear(){
-    this->rsa->rsa_clear();
+bool MCH_CDK_2017::Verify(MCH_CDK_2017_h *h, MCH_CDK_2017_r *r_p, mpz_t m_p, MCH_CDK_2017_pk *pk){
+    return this->Check(h, r_p, m_p, pk);
 }
+
+void MCH_CDK_2017::MCH_CDK_2017_clear(){}

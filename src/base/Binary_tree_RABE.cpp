@@ -104,7 +104,13 @@ void ConstructTree(int curDepth, int totalDepth, Binary_tree_RABE_node *node, Bi
     ConstructTree(curDepth+1, totalDepth, right, node, _G, _Zn);
 }
 
+Binary_tree_RABE::Binary_tree_RABE(){}
+
 Binary_tree_RABE::Binary_tree_RABE(int n, element_t _G, element_t _Zn){
+    buildTree(n, _G, _Zn);
+}
+
+void Binary_tree_RABE::buildTree(int n, element_t _G, element_t _Zn){
     // 构造一个有n个叶子节点的二叉树
     if((n & (n-1)) != 0){
         throw std::invalid_argument("n is not a power of 2");
@@ -118,7 +124,6 @@ Binary_tree_RABE::Binary_tree_RABE(int n, element_t _G, element_t _Zn){
     this->root = new Binary_tree_RABE_node(Binary_tree_RABE_node::INTERNAL, _G, _Zn);
     ConstructTree(1, totalDepth, this->root, nullptr, _G, _Zn);
 }
-
 
 void PrintTree(Binary_tree_RABE_node* node, int depth = 0) {
     if (node == nullptr) {

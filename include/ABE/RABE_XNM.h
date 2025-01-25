@@ -147,7 +147,7 @@ class RABE_XNM: public PbcScheme{
 
         ~RABE_XNM() override;
 
-        void Setup(RABE_XNM_mpk *mpk, RABE_XNM_msk *msk, std::vector<RABE_XNM_revokedPreson *> *rl, Binary_tree_RABE *&st, int n);
+        void Setup(RABE_XNM_mpk *mpk, RABE_XNM_msk *msk, std::vector<RABE_XNM_revokedPreson *> *rl, Binary_tree_RABE *st, int n);
 
         void Hash(element_t res, std::string m);
 

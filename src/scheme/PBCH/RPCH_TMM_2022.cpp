@@ -1,100 +1,60 @@
-#include <scheme/RPCH_TMM_2022.h>
+#include <scheme/PBCH/RPCH_TMM_2022.h>
 
-RPCH_TMM_2022::RPCH_TMM_2022(mpz_t *_n,mpz_t *_e, mpz_t *_d, element_t *_G, element_t *_H, element_t *_Zn, element_t *_GT) 
-    : rabe(_G, _H, _GT, _Zn){
-    
-    this->G = _G;
-    this->H = _H;
-    this->GT = _GT;
-    this->Zn = _Zn;
-
-    element_init_same_as(this->tmp_G, *this->G);
-    element_init_same_as(this->tmp_G_2, *this->G);
-    element_init_same_as(this->tmp_G_3, *this->G);
-    element_init_same_as(this->tmp_G_4, *this->G);
-    element_init_same_as(this->tmp_H, *this->H);
-    element_init_same_as(this->tmp_H_2, *this->H);
-    element_init_same_as(this->tmp_H_3, *this->H);
-    element_init_same_as(this->tmp_GT, *this->GT);
-    element_init_same_as(this->tmp_GT_2, *this->GT);
-    element_init_same_as(this->tmp_GT_3, *this->GT);
-    element_init_same_as(this->tmp_Zn, *this->Zn);
-    element_init_same_as(this->tmp_Zn_2, *this->Zn);
-    element_init_same_as(this->tmp_Zn_3, *this->Zn);
-
-    element_init_same_as(this->s1, *this->Zn);
-    element_init_same_as(this->s2, *this->Zn);
-    element_init_same_as(this->K, *this->GT);
-
-    element_init_same_as(this->R, *this->Zn);
-   
+RPCH_TMM_2022::RPCH_TMM_2022(element_s *_G1, element_s *_G2, element_s *_GT, element_s *_Zn): PbcScheme(_G1, _G2, _GT, _Zn), rabe(_G1, _G2, _GT, _Zn){
+    element_init_same_as(this->s1, Zn);
+    element_init_same_as(this->s2, Zn);
+    element_init_same_as(this->K, GT);
+    element_init_same_as(this->R, Zn);
 }
 
 /**
  * input : k, n
  * output: skRPCH, pkRPCH, _rl, _st
  */
-void RPCH_TMM_2022::PG(int k, int n, skRPCH *skRPCH, pkRPCH *pkRPCH, std::vector<RABE_TMM::revokedPreson *> *rl, binary_tree_RABE *&st) {
+void RPCH_TMM_2022::SetUp(RPCH_TMM_2022_sk *skRPCH, RPCH_TMM_2022_pk *pkRPCH, RPCH_TMM_2022_RevokedPresonList *rl, RPCH_TMM_2022_Binary_tree *st, int k, int n) {
     this->k = k;
     
-    this->rabe.Setup(n, &pkRPCH->mpkRABE, &skRPCH->mskRABE, rl, st);
+    rabe.Setup(pkRPCH->get_mpkRABE(), skRPCH->get_mskRABE(), rl->get_rl(), st->get_st(), n);
 
-    element_random(skRPCH->skCHET.x);
+    element_random(tmp_Zn);
+    skRPCH->get_skCHET()->insertElement("x", "Zn", tmp_Zn);
     // y = g^x
-    element_pow_zn(pkRPCH->pkCHET.y, pkRPCH->mpkRABE.g, skRPCH->skCHET.x);
+    element_pow_zn(tmp_G, pkRPCH->get_mpkRABE()->getElement("g"), skRPCH->get_skCHET()->getElement("x"));
+    pkRPCH->get_pkCHET()->insertElement("y", "G1", tmp_G);
 }
 
 /**
  * input : pkRPCH, skRPCH, _st, id, attr_list
  * output: skidRPCH
  */
-void RPCH_TMM_2022::KG(pkRPCH *pkRPCH, skRPCH *skRPCH, binary_tree_RABE *st, element_t *id, vector<string> *attr_list, skidRPCH *skidRPCH) {
-    this->rabe.KGen(&pkRPCH->mpkRABE, &skRPCH->mskRABE, st, id, attr_list, &skidRPCH->skidRABE);
-    element_set(skidRPCH->skCHET.x, skRPCH->skCHET.x);
+void RPCH_TMM_2022::KeyGen(RPCH_TMM_2022_skid *skidRPCH, RPCH_TMM_2022_pk *pkRPCH, RPCH_TMM_2022_sk *skRPCH, RPCH_TMM_2022_Binary_tree *st, element_t id, std::vector<std::string> *attr_list) {
+    rabe.KGen(skidRPCH->get_skidRABE(), st->get_st(), pkRPCH->get_mpkRABE(), skRPCH->get_mskRABE(), id, attr_list);
+    skidRPCH->get_skCHET()->insertElement("x", "Zn", skRPCH->get_skCHET()->getElement("x"));
 }
 
-void RPCH_TMM_2022::H1(mpz_t *m, mpz_t *N1, mpz_t *N2, mpz_t * n, mpz_t *res){
-    Hgsm_n_2(*m, *N1, *N2, *n, *res);
-}
-void RPCH_TMM_2022::H2(mpz_t *m, mpz_t *N1, mpz_t *N2, mpz_t * n, mpz_t *res){
-    Hgsm_n_2(*m, *N1, *N2, *n, *res);
-}
-
-/**
- * (u1,u2)<-H4((r,A))
- */
-void RPCH_TMM_2022::H4(mpz_t *r, string A, element_t *u1, element_t *u2){
-    // r -> string
-    string r_str = mpz_get_str(NULL, 10, *r);
-    // str -> element_t
-    element_from_hash(this->tmp_Zn, (unsigned char *)r_str.c_str(), r_str.length());
-    element_from_hash(this->tmp_Zn_2, (unsigned char *)A.c_str(), A.length());
-    Hm_1(this->tmp_Zn, *u1);
-    Hm_1(this->tmp_Zn_2, *u2);
-}
 
 /**
  * input : pkRPCH, _st, _rl, t
  * output: kut
  */
-void RPCH_TMM_2022::KUpt(pkRPCH *pkRPCH, binary_tree_RABE *st, std::vector<RABE_TMM::revokedPreson *> *rl, time_t t, RABE_TMM::kut *kut){
-    this->rabe.KUpt(&pkRPCH->mpkRABE, st, rl, t, kut);
+void RPCH_TMM_2022::KUpt(RPCH_TMM_2022_kut *kut, RPCH_TMM_2022_pk *pkRPCH, RPCH_TMM_2022_Binary_tree *st, RPCH_TMM_2022_RevokedPresonList *rl, time_t t){
+    rabe.KUpt(kut->get_kut(), pkRPCH->get_mpkRABE(), st->get_st(), rl->get_rl(), t);
 }
 
 /**
  * input : pkRPCH, skidRPCH, kut
  * output: dkidtRPCH
  */
-void RPCH_TMM_2022::DKGen(pkRPCH *pkRPCH, skidRPCH *skidRPCH, RABE_TMM::kut *kut, dkidtRPCH *dkidtRPCH){
-    this->rabe.DKGen(&pkRPCH->mpkRABE, &skidRPCH->skidRABE, kut, &dkidtRPCH->dkidtRABE);
-    element_set(dkidtRPCH->skCHET.x, skidRPCH->skCHET.x);
+void RPCH_TMM_2022::DKGen(RPCH_TMM_2022_dkidt *dkidtRPCH, RPCH_TMM_2022_pk *pkRPCH, RPCH_TMM_2022_skid *skidRPCH, RPCH_TMM_2022_kut *kut){
+    rabe.DKGen(dkidtRPCH->get_dkidtRABE(), pkRPCH->get_mpkRABE(), skidRPCH->get_skidRABE(), kut->get_kut());
+    dkidtRPCH->get_skCHET()->insertElement("x", "Zn", skidRPCH->get_skCHET()->getElement("x"));
 }
 
 /**
  * input : _rl, id, t
  */
-void RPCH_TMM_2022::Rev(std::vector<RABE_TMM::revokedPreson *> *rl, element_t *id, time_t t){
-    this->rabe.Rev(rl, id, t);
+void RPCH_TMM_2022::Rev(RPCH_TMM_2022_RevokedPresonList *rl, element_t id, time_t t){
+    rabe.Rev(rl->get_rl(), id, t);
 }
 
 
@@ -102,86 +62,77 @@ void RPCH_TMM_2022::Rev(std::vector<RABE_TMM::revokedPreson *> *rl, element_t *i
  * input : pkRPCH, m, policy_str, t
  * output: h, r
  */
-void RPCH_TMM_2022::Hash(pkRPCH *pkRPCH, element_t *m, string policy_str, time_t t, 
-                            element_t *b, element_t *r, element_t *h, RABE_TMM::ciphertext *C) {
-    element_random(*r);
+void RPCH_TMM_2022::Hash(RPCH_TMM_2022_h *h, element_t m, RPCH_TMM_2022_pk *pkRPCH, std::string policy_str, time_t t) {
+    // r
+    element_random(tmp_Zn);
+    h->get_r()->insertElement("r", "Zn", tmp_Zn);
+
     element_random(this->R);
-
     // h = g^R
-    element_pow_zn(*h, pkRPCH->mpkRABE.g, this->R);
+    element_pow_zn(tmp_G, pkRPCH->get_mpkRABE()->getElement("g"), this->R);
+    h->get_r()->insertElement("h", "G1", tmp_G);
+
     // CH b = pk^m * h^r
-    element_pow_zn(this->tmp_G, *h, *r);
-    element_pow_zn(this->tmp_G_2, pkRPCH->pkCHET.y, *m);
-    element_mul(*b, this->tmp_G, this->tmp_G_2);
+    element_pow_zn(this->tmp_G, tmp_G, tmp_Zn);
+    element_pow_zn(this->tmp_G_2, pkRPCH->get_pkCHET()->getElement("y"), m);
+    element_mul(tmp_G, this->tmp_G, this->tmp_G_2);
+    h->get_h()->insertElement("b", "G1", tmp_G);
 
-
-    // TODO s1,s2
     element_random(this->s1);
     element_random(this->s2);
 
-    this->rabe.Enc(&pkRPCH->mpkRABE, &this->R, policy_str, t, &this->s1, &this->s2, C);
+    this->rabe.Enc(h->get_r()->get_C(), pkRPCH->get_mpkRABE(), this->R, policy_str, t, this->s1, this->s2);
 }
 
 /**
  * input : pkRPCH, m, h, r
  * output: bool
  */
-bool RPCH_TMM_2022::Check(pkRPCH *pkRPCH, element_t *m, element_t *b, element_t *r, element_t *h) {
+bool RPCH_TMM_2022::Check(RPCH_TMM_2022_pk *pkRPCH, element_t m, RPCH_TMM_2022_h *h) {
     // CH b = pk^m * h^r
-    element_pow_zn(this->tmp_G, *h, *r);
-    element_pow_zn(this->tmp_G_2, pkRPCH->pkCHET.y, *m);
+    element_pow_zn(this->tmp_G, h->get_r()->getElement("h"), h->get_r()->getElement("r"));
+    element_pow_zn(this->tmp_G_2, pkRPCH->get_pkCHET()->getElement("y"), m);
     element_mul(this->tmp_G, this->tmp_G, this->tmp_G_2);
     
-    return element_cmp(*b, this->tmp_G) == 0;
+    return element_cmp(h->get_h()->getElement("b"), this->tmp_G) == 0;
 }
 
 /**
  * input : pkRPCH, dkidtRPCH, m, m', h, r
  * output: r'
  */
-void RPCH_TMM_2022::Forge(pkRPCH * pkRPCH, dkidtRPCH *dkidtRPCH, element_t *m, element_t *m_p, element_t *b, element_t *r, element_t *h, RABE_TMM::ciphertext *C, element_t *r_p) {
+void RPCH_TMM_2022::Adapt(RPCH_TMM_2022_h *h_p, element_t m_p, element_t m, RPCH_TMM_2022_h *h, RPCH_TMM_2022_pk *pkRPCH, RPCH_TMM_2022_dkidt *dkidtRPCH) {
     // Check
-    if (!this->Check(pkRPCH, m, b, r, h)) {
+    if (!this->Check(pkRPCH, m, h)) {
         printf("Hash Check failed\n");
         return;
     }
 
-    rabe.Dec(&pkRPCH->mpkRABE, C, &dkidtRPCH->dkidtRABE, &this->R);
+    rabe.Dec(this->R, pkRPCH->get_mpkRABE(), h->get_r()->get_C(), dkidtRPCH->get_dkidtRABE());
     
     // r' = r + (m - m')*sk/R
-    element_sub(this->tmp_Zn, *m, *m_p);
-    element_mul(this->tmp_Zn_2, this->tmp_Zn, dkidtRPCH->skCHET.x);
+    element_sub(this->tmp_Zn, m, m_p);
+    element_mul(this->tmp_Zn_2, this->tmp_Zn, dkidtRPCH->get_skCHET()->getElement("x"));
     element_div(this->tmp_Zn_3, this->tmp_Zn_2, this->R);
-    element_add(*r_p, *r, this->tmp_Zn_3);
+    element_add(tmp_Zn, h->get_r()->getElement("r"), this->tmp_Zn_3);
+    h_p->get_r()->insertElement("r", "Zn", tmp_Zn);
+
+    h_p->get_h()->insertElement("b", "G1", h->get_h()->getElement("b"));
+    h_p->get_r()->insertElement("h", "G1", h->get_r()->getElement("h"));
 }
 
 /**
  * input : pkPCH, m', h, r'
  * output: bool
  */
-bool RPCH_TMM_2022::Verify(pkRPCH *pkRPCH, element_t *m_p, element_t *b, element_t *r_p, element_t *h) {
-    return this->Check(pkRPCH, m_p, b, r_p, h);
+bool RPCH_TMM_2022::Verify(RPCH_TMM_2022_pk *pkRPCH, element_t m_p, RPCH_TMM_2022_h *h_p) {
+    return this->Check(pkRPCH, m_p, h_p);
 }
 
 
 RPCH_TMM_2022::~RPCH_TMM_2022() {
-    element_clear(this->tmp_G);
-    element_clear(this->tmp_G_2);
-    element_clear(this->tmp_G_3);
-    element_clear(this->tmp_G_4);
-    element_clear(this->tmp_H);
-    element_clear(this->tmp_H_2);
-    element_clear(this->tmp_H_3);
-    element_clear(this->tmp_GT);
-    element_clear(this->tmp_GT_2);
-    element_clear(this->tmp_GT_3);
-    element_clear(this->tmp_Zn);
-    element_clear(this->tmp_Zn_2);
-    element_clear(this->tmp_Zn_3);
-
     element_clear(this->s1);
     element_clear(this->s2);
     element_clear(this->K);
     element_clear(this->R);
-   
 }

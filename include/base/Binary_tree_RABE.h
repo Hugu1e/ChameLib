@@ -50,7 +50,10 @@ class Binary_tree_RABE {
         Binary_tree_RABE_node *root;
 
     public:
+        Binary_tree_RABE();
         Binary_tree_RABE(int n, element_t _G, element_t _Zn);
+
+        void buildTree(int n, element_t _G, element_t _Zn);
 
         void printTree();
 

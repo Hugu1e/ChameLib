@@ -103,7 +103,7 @@ class ABET:public PbcScheme{
         void Hash2(element_t res, element_t m);
 
 
-        void Encrypt(ABET_ciphertext *ciphertext, ABET_mpk *mpk, ABET_msk *msk,  element_t *r, element_t *R, std::string policy_str, ABET_ID *ID, int oj,  element_t *s1, element_t *s2);
+        void Encrypt(ABET_ciphertext *ciphertext, ABET_mpk *mpk, ABET_msk *msk,  element_t r, element_t R, std::string policy_str, ABET_ID *ID, int oj,  element_t s1, element_t s2);
 
         void Decrypt(element_t res_R, element_t res_r, ABET_mpk *mpk, ABET_ciphertext *ciphertext, ABET_sks *sks);
 

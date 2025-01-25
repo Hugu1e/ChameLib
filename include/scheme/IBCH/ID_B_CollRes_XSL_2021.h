@@ -1,58 +1,56 @@
-#ifndef IMPORT_ELEMENTLIST
-#define IMPORT_ELEMENTLIST
-#include "base/ElementList.h"
-#endif //IMPORT_ELEMENTLIST
-
-#ifndef IMPORT_UTIL_FUNC
-#define IMPORT_UTIL_FUNC
-#include "utils/func.h"
-#endif //IMPORT_UTIL_FUNC
-
-
 #ifndef ID_B_CollRes_XSL_2021_H
 #define ID_B_CollRes_XSL_2021_H
 
-#include <stdexcept>  // 包含 std::invalid_argument
+#include <base/PbcElements.h>
+#include <base/PbcScheme.h>
+#include <utils/Hash.h>
 
-class ID_B_CollRes_XSL_2021 {
-    protected:
-    element_t *G1, *G2, *Zn, *GT;
-    element_t tmp_G1, tmp_G1_2, tmp_G2, tmp_Zn,tmp_Zn_2, tmp_GT,tmp_GT_2,tmp_GT_3;
+class ID_B_CollRes_XSL_2021_pp: public PbcElements{};
 
-    element_t g;  // 生成元g
-    element_t a;  // secret α ∈ Zp
-    element_t g1,g2;  // g1= g^α, g2 ∈ G
+class ID_B_CollRes_XSL_2021_msk: public PbcElements{};
 
-    unsigned long int n; // n>=1
-    element_t *array_u;  // u0,u1,...,un
+class ID_B_CollRes_XSL_2021_tk: public PbcElements{};
 
-    element_t t;  // t ∈ Zp
+class ID_B_CollRes_XSL_2021_h{
+    private:
+        PbcElements h;
+        PbcElements r;
+    public:
+        PbcElements *get_h(){
+            return &h;
+        }
+        PbcElements *get_r(){
+            return &r;
+        }
+};
 
-    element_t tmp;  // u0*(u1^I1 * u2^I2 * ... * un^In)
+
+class ID_B_CollRes_XSL_2021: public PbcScheme{
+    private:
+        element_t a;  // secret α ∈ Zp
+
+        unsigned long int n; // n>=1
+        element_t t;  // t ∈ Zp
 
 
     public:
-    ID_B_CollRes_XSL_2021(element_t *_G1, element_t *_G2, element_t *_Zn, element_t *_GT);
+        ID_B_CollRes_XSL_2021(element_s *_G1, element_s *_G2, element_s *_GT, element_s *_Zn);
 
-    void PG(unsigned long int n, element_t *msk);
+        void SetUp(ID_B_CollRes_XSL_2021_pp *pp, ID_B_CollRes_XSL_2021_msk *msk, unsigned long int n);
 
-    void KG(element_t *msk, element_t *I, element_t *tk1, element_t *tk2);
+        void KeyGen(ID_B_CollRes_XSL_2021_tk *tk, ID_B_CollRes_XSL_2021_msk *msk, element_t I, ID_B_CollRes_XSL_2021_pp *pp);
 
-    bool getBit(element_t *element, unsigned long int index);
+        bool getBit(element_t element, unsigned long int index);
 
-    void Hash(element_t *I, element_t *m, element_t *h, element_t *r1, element_t *r2);
+        void Hash(ID_B_CollRes_XSL_2021_h *h, element_t m, element_t I, ID_B_CollRes_XSL_2021_pp *pp);
 
-    void hash_with_r(element_t *I, element_t *m, element_t *r1, element_t *r2, element_t *h);
+        bool Check(ID_B_CollRes_XSL_2021_h *h, element_t m, element_t I, ID_B_CollRes_XSL_2021_pp *pp);
 
-    void Forge(element_t *tk1, element_t *tk2, 
-                                    element_t *h, element_t *m,
-                                    element_t *r1, element_t *r2, 
-                                    element_t *m_p,
-                                    element_t *r1_p, element_t *r2_p);
+        void Adapt(ID_B_CollRes_XSL_2021_h *h_p, element_t m_p, ID_B_CollRes_XSL_2021_h *h, element_t m, ID_B_CollRes_XSL_2021_tk *tk);
+                                        
+        bool Verify(ID_B_CollRes_XSL_2021_h *h_p, element_t m_p, element_t I, ID_B_CollRes_XSL_2021_pp *pp);
 
-    bool Verify(element_t *I, element_t *m_p, element_t *r1_p, element_t *r2_p, element_t *h);
-
-    ~ID_B_CollRes_XSL_2021();
+        ~ID_B_CollRes_XSL_2021();
 };
 
 

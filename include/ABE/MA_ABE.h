@@ -22,6 +22,13 @@ class MA_ABE_pkTheta: public PbcElements{
         std::string getA(){
             return this->A;
         }
+        MA_ABE_pkTheta &operator=(const MA_ABE_pkTheta &other){
+            if(this != &other){
+                PbcElements::operator=(other);
+                this->A = other.A;
+            }
+            return *this;
+        }
 };
 
 class MA_ABE_skTheta: public PbcElements{};
@@ -42,6 +49,14 @@ class MA_ABE_skgidA: public PbcElements{
         }
         std::string getA(){
             return this->A;
+        }
+        MA_ABE_skgidA &operator=(const MA_ABE_skgidA &other){
+            if(this != &other){
+                PbcElements::operator=(other);
+                this->gid = other.gid;
+                this->A = other.A;
+            }
+            return *this;
         }
 };
 
@@ -65,6 +80,14 @@ class MA_ABE_ciphertext{
         }
         std::vector<PbcElements> *getCi(){
             return &ci;
+        }
+        MA_ABE_ciphertext &operator=(const MA_ABE_ciphertext &other){
+            if(this != &other){
+                this->policy = other.policy;
+                this->c0 = other.c0;
+                this->ci = other.ci;
+            }
+            return *this;
         }
 };
 

@@ -1,47 +1,33 @@
-#ifndef IMPORT_ELEMENTLIST
-#define IMPORT_ELEMENTLIST
-#include "base/ElementList.h"
-#endif //IMPORT_ELEMENTLIST
-
-#ifndef IMPORT_UTIL_FUNC
-#define IMPORT_UTIL_FUNC
-#include "utils/func.h"
-#endif //IMPORT_UTIL_FUNC
-
-
 #ifndef CH_KEF_MH_SDH_DL_AM_2004_H
 #define CH_KEF_MH_SDH_DL_AM_2004_H
 
-#include <stdexcept>  // 包含 std::invalid_argument
+#include <stdexcept>
+#include <base/PbcScheme.h>
+#include <base/PbcElements.h>
+#include <utils/Hash.h>
 
-class CH_KEF_MH_SDH_DL_AM_2004 {
-    protected:
-    element_t *G1, *G2, *Zn, *GT;
-    element_t tmp_G1, tmp_G1_2, tmp_G2, tmp_Zn,tmp_Zn_2, tmp_GT,tmp_GT_2,tmp_GT_3;
+class CH_KEF_MH_SDH_DL_AM_2004_pp : public PbcElements{};
+class CH_KEF_MH_SDH_DL_AM_2004_pk : public PbcElements{};
+class CH_KEF_MH_SDH_DL_AM_2004_sk : public PbcElements{};
 
-    element_t g;  // 生成元g
-    element_t x;  // secret x ∈ Zp
-
-    //
-    element_t a;
-
-
+class CH_KEF_MH_SDH_DL_AM_2004: public PbcScheme{
     public:
-    CH_KEF_MH_SDH_DL_AM_2004(element_t *_G1, element_t *_G2, element_t *_Zn, element_t *_GT);
+        CH_KEF_MH_SDH_DL_AM_2004(element_s *_G1, element_s *_G2, element_s *_GT, element_s *_Zn);
+        void SetUp(CH_KEF_MH_SDH_DL_AM_2004_pp *pp);
 
-    void PG();
+        void KeyGen(CH_KEF_MH_SDH_DL_AM_2004_pk *pk, CH_KEF_MH_SDH_DL_AM_2004_sk *sk, CH_KEF_MH_SDH_DL_AM_2004_pp *pp);
 
-    void KG(element_t *y);
+        void H(element_t res, element_t m);
 
-    void H(element_t *m, element_t *res);
+        void Hash(element_t h, element_t r, element_t label, element_t m, CH_KEF_MH_SDH_DL_AM_2004_pk *pk,  CH_KEF_MH_SDH_DL_AM_2004_pp *pp);
 
-    void Hash(element_t *label, element_t *m, element_t *r, element_t *y, element_t *h);
+        bool Check(element_t m, element_t r, CH_KEF_MH_SDH_DL_AM_2004_pk *pk, element_t h, element_t label, CH_KEF_MH_SDH_DL_AM_2004_pp *pp);
 
-    void Forge(element_t *h, element_t *m, element_t *label, element_t *r, element_t *m_p, element_t *r_p);
+        void Adapt(element_t r_p, element_t h, element_t m, element_t label, element_t r, element_t m_p, CH_KEF_MH_SDH_DL_AM_2004_sk *sk);
 
-    bool Verify(element_t *label, element_t *m_p, element_t *r_p, element_t *y, element_t *h);
+        bool Verify(element_t m_p, element_t r_p, CH_KEF_MH_SDH_DL_AM_2004_pk *pk, element_t h, element_t label, CH_KEF_MH_SDH_DL_AM_2004_pp *pp);
 
-    ~CH_KEF_MH_SDH_DL_AM_2004();
+        ~CH_KEF_MH_SDH_DL_AM_2004();
 };
 
 

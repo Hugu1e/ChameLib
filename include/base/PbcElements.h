@@ -19,6 +19,7 @@ class PbcElements{
         ~PbcElements();
 
         PbcElements(const PbcElements &other);
+        PbcElements &operator=(const PbcElements &other);
         
         element_s* getElement(std::string s, std::string group);
         element_s* getElement(std::string s);

@@ -1,114 +1,160 @@
 #ifndef DPCH_MXN_2022_H
 #define DPCH_MXN_2022_H
 
-#include <stdexcept>  // 包含 std::invalid_argument
-#include "utils/func.h"
+#include <utils/Hash.h>
+#include <base/PbcScheme.h>
+#include <base/GmpElements.h>
+
 #include <ABE/MA_ABE.h>
 #include <SE/AES.h>
 #include <signature/BLS.h>
-#include <scheme/CH_ET_BC_CDK_2017.h>
+#include <scheme/CH/CH_ET_BC_CDK_2017.h>
+
+class DPCH_MXN_2022_pp{
+    private:
+        MA_ABE_gpk gpkMA_ABE;
+        CH_ET_BC_CDK_2017_pp ppCH;
+        BLS_pp ppBLS;
+    public:
+        MA_ABE_gpk *getGpkMA_ABE(){
+            return &gpkMA_ABE;
+        }
+        CH_ET_BC_CDK_2017_pp *getPPCH(){
+            return &ppCH;
+        }
+        BLS_pp *getPPBLS(){
+            return &ppBLS;
+        }
+};
+
+class DPCH_MXN_2022_pk{
+    private:
+        CH_ET_BC_CDK_2017_pk pkCH;
+        BLS_pk pkBLS;
+    public:
+        CH_ET_BC_CDK_2017_pk *getPkCH(){
+            return &pkCH;
+        }
+        BLS_pk *getPkBLS(){
+            return &pkBLS;
+        }
+};
+
+class DPCH_MXN_2022_sk{
+    private:
+        CH_ET_BC_CDK_2017_sk skCH;
+        BLS_sk skBLS;
+    public:
+        CH_ET_BC_CDK_2017_sk *getSkCH(){
+            return &skCH;
+        }
+        BLS_sk *getSkBLS(){
+            return &skBLS;
+        }
+};
+
+class DPCH_MXN_2022_skGid{
+    private:
+        CH_ET_BC_CDK_2017_sk skCH;
+    public:
+        CH_ET_BC_CDK_2017_sk *getSkCH(){
+            return &skCH;
+        }
+};
+class DPCH_MXN_2022_sigmaGid {
+    private:
+        BLS_signature signature;
+    public:
+        BLS_signature *getSignature() {
+            return &signature;
+        }
+};
+
+class DPCH_MXN_2022_pkTheta {
+    private:
+        MA_ABE_pkTheta pk;
+    public:
+        MA_ABE_pkTheta *getPk() {
+            return &pk;
+        }
+};
+
+class DPCH_MXN_2022_skTheta {
+    private:
+        MA_ABE_skTheta sk;
+    public:
+        MA_ABE_skTheta *getSk() {
+            return &sk;
+        }
+};
+
+class DPCH_MXN_2022_skGidA {
+    private:
+        MA_ABE_skgidA sk;
+    public:
+        MA_ABE_skgidA *getSk() {
+            return &sk;
+        }
+};
+
+class DPCH_MXN_2022_h {
+    private:
+        CH_ET_BC_CDK_2017_h h;
+    public:
+        CH_ET_BC_CDK_2017_h *getH() {
+            return &h;
+        }
+};
+
+class DPCH_MXN_2022_r {
+    private:
+        CH_ET_BC_CDK_2017_r r;
+    public:
+        CH_ET_BC_CDK_2017_r *getR() {
+            return &r;
+        }
+};
+
+class DPCH_MXN_2022_c {
+    private:
+        GmpElements c_etd;
+        MA_ABE_ciphertext c_abe;
+    public:
+        GmpElements *getC_etd() {
+            return &c_etd;
+        }
+        MA_ABE_ciphertext *getC_abe() {
+            return &c_abe;
+        }
+};
 
 
-class DPCH_MXN_2022 {
+
+class DPCH_MXN_2022: public PbcScheme{
     protected:
         MA_ABE ma_abe;
         AES aes;
         BLS bls;
         CH_ET_BC_CDK_2017 ch_et;
 
-        element_t *G1, *G2, *GT, *Zn;
-        element_t tmp_G,tmp_G_2,tmp_G_3,tmp_G_4,tmp_H,tmp_H_2,tmp_H_3,tmp_GT,tmp_GT_2,tmp_GT_3,tmp_Zn,tmp_Zn_2,tmp_Zn_3;
-    
-
     public:
-        struct pp{
-            MA_ABE::gpk gpkMA_ABE;
-            CH_ET_BC_CDK_2017::pp ppCH;
-            BLS::pp ppBLS;
-            void Init(element_t *_G){
-                gpkMA_ABE.Init(_G);
-                ppBLS.Init(_G);
-            }
-        };
-        struct pkDPCH{
-            CH_ET_BC_CDK_2017::pk pkCH;
-            BLS::pk pkBLS;
-            void Init(element_t *_G){
-                pkBLS.Init(_G);
-            }
-        };
-        struct skDPCH{
-            CH_ET_BC_CDK_2017::sk skCH;
-            BLS::sk skBLS;
-            void Init(element_t *_Zn){
-                skBLS.Init(_Zn);
-            }
-        };
-        struct skGid{
-            CH_ET_BC_CDK_2017::sk skCH;
-        };
-        struct sigmaGid{
-            BLS::signature signature;
-            void Init(element_t *_H){
-                signature.Init(_H);
-            }
-        };
-        struct pkTheta{
-            MA_ABE::pkTheta pk;
-            void Init(element_t *_G, element_t *_GT){
-                pk.Init(_G, _GT);
-            }
-        };
-        struct skTheta{
-            MA_ABE::skTheta sk;
-            void Init(element_t *_Zn){
-                sk.Init(_Zn);
-            }
-        };
-        struct skGidA{
-            MA_ABE::skgidA sk;
-            void Init(element_t *_G){
-                sk.Init(_G);
-            }
-        };
-        struct h{
-            CH_ET_BC_CDK_2017::h h;
-        };
-        struct r{
-            CH_ET_BC_CDK_2017::r r;
-        };
-        struct c{
-            mpz_t c_etd;
-            MA_ABE::ciphertext c_abe;
-            void Init(element_t *_G, element_t *_GT, int rows){
-                mpz_init(c_etd);
-                c_abe.Init(_G, _GT, rows);
-            }
-            ~c(){
-                mpz_clear(c_etd);
-            }
-        };
-        
+        DPCH_MXN_2022(element_s *_G1, element_s *_G2, element_s *_GT, element_s *_Zn);
 
-        
-        
-        DPCH_MXN_2022(element_t *_G, element_t *_H, element_t *_Zn, element_t *_GT);
+        void SetUp(DPCH_MXN_2022_pp *pp, DPCH_MXN_2022_pk *pkDPCH, DPCH_MXN_2022_sk *skDPCH, int k);
 
-        void SetUp(pp *pp, pkDPCH *pkDPCH, skDPCH *skDPCH, int k);
+        void ModSetUp(DPCH_MXN_2022_skGid *skGid, DPCH_MXN_2022_sigmaGid *sigmaGid, DPCH_MXN_2022_sk *skDPCH, std::string gid);
 
-        void ModSetUp(skGid *skGid, sigmaGid *sigmaGid, skDPCH *skDPCH, string gid);
+        void AuthSetUp(DPCH_MXN_2022_pkTheta *pkTheta, DPCH_MXN_2022_skTheta *skTheta, DPCH_MXN_2022_pp *pp, std::string A);
 
-        void AuthSetUp(pkTheta *pkTheta, skTheta *skTheta, pp *pp, string A);
+        void ModKeyGen(DPCH_MXN_2022_skGidA *skGidA, DPCH_MXN_2022_pp *pp, DPCH_MXN_2022_pk *pkDPCH, std::string gid, DPCH_MXN_2022_sigmaGid *sigmaGid, DPCH_MXN_2022_skTheta *skTheta, std::string A);
 
-        void ModKeyGen(skGidA *skGidA, pp *pp, pkDPCH *pkDPCH, string gid, sigmaGid *sigmaGid, skTheta *skTheta, string A);
+        void Hash(DPCH_MXN_2022_h *h, DPCH_MXN_2022_r *r, DPCH_MXN_2022_c *c, DPCH_MXN_2022_pp *pp, DPCH_MXN_2022_pk *pkDPCH, std::string m, std::vector<DPCH_MXN_2022_pkTheta *> *pkThetas, std::string polocy);
 
-        void Hash(h *h, r *r, c *c, pp *pp, pkDPCH *pkDPCH, string m, vector<DPCH_MXN_2022::pkTheta *> *pkThetas, string polocy);
+        bool Check(DPCH_MXN_2022_pk *pkDPCH, std::string m, DPCH_MXN_2022_h *h, DPCH_MXN_2022_r *r);
 
-        bool Check(pkDPCH *pkDPCH, string m, h *h, r *r);
+        void Adapt(DPCH_MXN_2022_r *r_p, DPCH_MXN_2022_pk *pkDPCH, DPCH_MXN_2022_skGid *skGid, std::vector<DPCH_MXN_2022_skGidA *> *skGidAs, DPCH_MXN_2022_c *c, std::string m, std::string m_p, DPCH_MXN_2022_h *h, DPCH_MXN_2022_r *r);
 
-        void Forge(r *r_p, pkDPCH *pkDPCH, skGid *skGid, vector<DPCH_MXN_2022::skGidA *> *skGidAs, c *c, string m, string m_p, h *h, r *r);
-
-        bool Verify(pkDPCH *pkDPCH, string m_p, h *h, r *r_p);
+        bool Verify(DPCH_MXN_2022_pk *pkDPCH, std::string m_p, DPCH_MXN_2022_h *h, DPCH_MXN_2022_r *r_p);
 
 
         ~DPCH_MXN_2022();

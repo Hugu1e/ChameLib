@@ -1,40 +1,33 @@
-#ifndef IMPORT_ELEMENTLIST
-#define IMPORT_ELEMENTLIST
-#include "base/ElementList.h"
-#endif //IMPORT_ELEMENTLIST
-
-#ifndef IMPORT_UTIL_FUNC
-#define IMPORT_UTIL_FUNC
-#include "utils/func.h"
-#endif //IMPORT_UTIL_FUNC
-
-
 #ifndef IB_CH_MD_LSX_2022_H
 #define IB_CH_MD_LSX_2022_H
 
-class IB_CH_MD_LSX_2022 {
-    protected:
-    element_t *G1, *G2, *Zn, *GT;
-    element_t tmp_G1, tmp_G1_2, tmp_G2, tmp_Zn, tmp_Zn_2, tmp_Zn_3, tmp_GT,tmp_GT_2,tmp_GT_3,tmp_GT_hash;
-    element_t g;  // 生成元
-    element_t a,b;  // α,β ∈ Zp
-    element_t g1,g2;
-    element_t egg,eg2g;
+#include <base/PbcElements.h>
+#include <base/PbcScheme.h>
+#include <utils/Hash.h>
 
+class IB_CH_MD_LSX_2022_pp: public PbcElements {};
+class IB_CH_MD_LSX_2022_msk: public PbcElements {};
+class IB_CH_MD_LSX_2022_td : public PbcElements {};
+class IB_CH_MD_LSX_2022_h : public PbcElements {};
+class IB_CH_MD_LSX_2022_r : public PbcElements {};
+
+class IB_CH_MD_LSX_2022: public PbcScheme {
     public:
-    IB_CH_MD_LSX_2022(element_t *_G1, element_t *_G2, element_t *_Zn, element_t *_GT);
+        IB_CH_MD_LSX_2022(element_s *_G1, element_s *_G2, element_s *_GT, element_s *_Zn);
 
-    void PG();
+        void SetUp(IB_CH_MD_LSX_2022_pp *pp, IB_CH_MD_LSX_2022_msk *msk);
 
-    void KG(element_t *L, element_t *t, element_t *td1, element_t *td2);
+        void KeyGen(IB_CH_MD_LSX_2022_td *td, element_t ID, IB_CH_MD_LSX_2022_msk *msk, IB_CH_MD_LSX_2022_pp *pp);
 
-    void Hash(element_t *h, element_t *L, element_t *m, element_t *r_1, element_t *r_2);
+        void Hash(IB_CH_MD_LSX_2022_h *h, IB_CH_MD_LSX_2022_r *r, element_t ID, element_t m, IB_CH_MD_LSX_2022_pp *pp);
 
-    void Forge(element_t *h, element_t *m, element_t *r_1, element_t *r_2, element_t *m_p, element_t *r_1_p, element_t *r_2_p, element_t *td1, element_t *td2);
+        bool Check(IB_CH_MD_LSX_2022_h h, IB_CH_MD_LSX_2022_r *r, element_t ID, element_t m, IB_CH_MD_LSX_2022_pp *pp);
 
-    bool Verify(element_t *h, element_t *m_p, element_t *r_1_p, element_t *r_2_p, element_t *L);
+        void Adapt(IB_CH_MD_LSX_2022_r *r_p, IB_CH_MD_LSX_2022_h *h, element_t m, IB_CH_MD_LSX_2022_r *r, element_t m_p, IB_CH_MD_LSX_2022_td *td);
 
-    ~IB_CH_MD_LSX_2022();
+        bool Verify(IB_CH_MD_LSX_2022_h h, IB_CH_MD_LSX_2022_r *r_p, element_t ID, element_t m_p, IB_CH_MD_LSX_2022_pp *pp);
+
+        ~IB_CH_MD_LSX_2022();
 };
 
 

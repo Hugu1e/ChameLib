@@ -5,6 +5,46 @@ GmpElements::GmpElements()
     elements_gmp = new std::unordered_map<std::string, MP_INT *>();
 }
 
+GmpElements::GmpElements(const GmpElements &other){
+    elements_gmp = new std::unordered_map<std::string, MP_INT *>();
+
+    std::unordered_map<std::string, MP_INT *>::iterator it;
+    for(it = other.elements_gmp->begin(); it != other.elements_gmp->end(); ++it){
+        MP_INT *element = new MP_INT();
+        mpz_init(element);
+        mpz_set(element, it->second);
+        elements_gmp->insert(std::pair<std::string, MP_INT *>(it->first, element));
+    }
+}
+
+GmpElements &GmpElements::operator=(const GmpElements &other)
+{
+    if (this == &other)
+        return *this;
+
+    // Clear existing elements
+    std::unordered_map<std::string, MP_INT *>::iterator it;
+    for (it = elements_gmp->begin(); it != elements_gmp->end(); ++it)
+    {
+        mpz_clear(it->second);
+        // TODO whether necessary ?
+        delete it->second;
+    }
+    delete elements_gmp;
+
+    // Copy elements from other
+    elements_gmp = new std::unordered_map<std::string, MP_INT *>();
+    for (it = other.elements_gmp->begin(); it != other.elements_gmp->end(); ++it)
+    {
+        MP_INT *element = new MP_INT();
+        mpz_init(element);
+        mpz_set(element, it->second);
+        elements_gmp->insert(std::pair<std::string, MP_INT *>(it->first, element));
+    }
+
+    return *this;
+}
+
 MP_INT *GmpElements::getElement(std::string s)
 {
     std::unordered_map<std::string, MP_INT *>::iterator it;

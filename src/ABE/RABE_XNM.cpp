@@ -33,7 +33,7 @@ void RABE_XNM::Hash(element_t res, std::string m){
  * input: n
  * output: mpk, msk, st, rl
  */
-void RABE_XNM::Setup(RABE_XNM_mpk *mpk, RABE_XNM_msk *msk, std::vector<RABE_XNM_revokedPreson *> *rl, Binary_tree_RABE *&st, int n){
+void RABE_XNM::Setup(RABE_XNM_mpk *mpk, RABE_XNM_msk *msk, std::vector<RABE_XNM_revokedPreson *> *rl, Binary_tree_RABE *st, int n){
     element_random(tmp_G);
     msk->insertElement("g", "G1", tmp_G);
     element_random(tmp_H);
@@ -78,11 +78,12 @@ void RABE_XNM::Setup(RABE_XNM_mpk *mpk, RABE_XNM_msk *msk, std::vector<RABE_XNM_
     element_pow_zn(tmp_GT, this->tmp_GT, this->tmp_Zn);
     mpk->insertElement("T2", "GT", tmp_GT);
 
+
     // initialize rl
     rl->clear();
-
+    
     // initialize st
-    st = new Binary_tree_RABE(n, this->G1, this->Zn);
+    st->buildTree(n, this->G1, this->Zn);
 }
 
 /**

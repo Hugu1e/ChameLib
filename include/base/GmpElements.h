@@ -14,6 +14,9 @@ class GmpElements{
     public:
         GmpElements();
         ~GmpElements();
+
+        GmpElements(const GmpElements &other);
+        GmpElements &operator=(const GmpElements &other);
         
         MP_INT* getElement(std::string s);
         

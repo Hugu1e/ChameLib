@@ -61,3 +61,25 @@ void Logger::PrintPbcWithSize(std::string pbc_name, element_t element){
     PrintPbc(pbc_name, element);
     PrintPbcsize(pbc_name, element);
 }
+
+/**
+ * @brief Print PbcElements
+ * 
+ * @param[in] pbcElements_name name of PbcElements
+ * @param[in] pbcElements PbcElements
+ */
+void Logger::PrintPbcElements(std::string pbcElements_name, PbcElements &pbcElements){
+    printf("%s:\n", pbcElements_name.c_str());
+    pbcElements.printElement();
+}
+
+/**
+ * @brief Print GmpElements
+ * 
+ * @param[in] GmpElements_name name of GmpElements
+ * @param[in] gmpElements GmpElements
+ */
+void PrintGmpElements(std::string GmpElements_name, GmpElements &gmpElements){
+    printf("%s:\n", GmpElements_name.c_str());
+    gmpElements.printElement();
+}

@@ -1,30 +1,40 @@
 #ifndef CHET_RSA_CDK_2017_H
 #define CHET_RSA_CDK_2017_H
 
-#include <stdio.h>
-#include <gmp.h>
-#include <utils/func.h>
-#include <RSA/RSA.h>
+#include <utils/Hash.h>
+#include <base/GmpElements.h>
+#include <AE/RSA.h>
+
+class CHET_RSA_CDK_2017_pk: public GmpElements{};
+class CHET_RSA_CDK_2017_sk: public GmpElements{};
+class CHET_RSA_CDK_2017_h: public GmpElements{};
+class CHET_RSA_CDK_2017_etd: public GmpElements{};
 
 class CHET_RSA_CDK_2017{
     private:
-        MyRSA *rsa;
+        AE_RSA rsa;
         mpz_t phi;
 
     public:
-        CHET_RSA_CDK_2017(mpz_t *n, mpz_t *e, mpz_t *d);
+        CHET_RSA_CDK_2017();
 
-        void H(mpz_t *m, mpz_t *res, mpz_t *n);
+        void SetUp();
 
-        void CParGen(mpz_t *n, mpz_t *e, mpz_t *d);
-        void CKGen(mpz_t *n, mpz_t *e, mpz_t *d);
-        void CHash(mpz_t *h, mpz_t *etd_n, mpz_t *r,mpz_t *etd_p, mpz_t *etd_q, mpz_t *n,mpz_t *e, mpz_t *m);
-        bool CHashCheck(mpz_t *h_, mpz_t *m, mpz_t *n, mpz_t *etd_n,mpz_t *e, mpz_t *r);
-        bool Adapt(mpz_t *r_p, mpz_t *m_p, mpz_t *m, mpz_t *r, mpz_t *h, mpz_t *n,mpz_t *etd_n,mpz_t *etd_p,mpz_t *etd_q,mpz_t *e);
+        void KeyGen(CHET_RSA_CDK_2017_pk *pk, CHET_RSA_CDK_2017_sk *sk, short k);
 
-        void CHET_RSA_CDK_2017_clear();
+        void H(mpz_t res ,mpz_t m, mpz_t n);
 
-};
+        void Hash(CHET_RSA_CDK_2017_h *h, mpz_t r, CHET_RSA_CDK_2017_etd *etd, mpz_t m, CHET_RSA_CDK_2017_pk *pk);
+
+        bool Check(CHET_RSA_CDK_2017_h *h, mpz_t r, mpz_t m, CHET_RSA_CDK_2017_pk *pk);
+
+        void Adapt(mpz_t r_p, mpz_t m_p, mpz_t m, mpz_t r, CHET_RSA_CDK_2017_h *h, CHET_RSA_CDK_2017_sk *sk, CHET_RSA_CDK_2017_etd *etd, CHET_RSA_CDK_2017_pk *pk);
+
+        bool Verify(CHET_RSA_CDK_2017_h *h, mpz_t r_p, mpz_t m_p, CHET_RSA_CDK_2017_pk *pk);
+
+        ~CHET_RSA_CDK_2017();
+
+};;
 
 
 

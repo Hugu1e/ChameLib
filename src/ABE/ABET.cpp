@@ -334,7 +334,7 @@ void ABET::Hash2(element_t res, element_t m){
  * input: mpk, msk,msg(r,R), policy_str, ID, oj, s1, s2
  * output: ct
  */
-void ABET::Encrypt(ABET_ciphertext *ciphertext, ABET_mpk *mpk, ABET_msk *msk,  element_t *r, element_t *R, std::string policy_str, ABET_ID *ID, int oj,  element_t *s1, element_t *s2){
+void ABET::Encrypt(ABET_ciphertext *ciphertext, ABET_mpk *mpk, ABET_msk *msk,  element_t r, element_t R, std::string policy_str, ABET_ID *ID, int oj,  element_t s1, element_t s2){
     this->policy_str = policy_str;
 
     Policy_resolution pr;
@@ -362,8 +362,8 @@ void ABET::Encrypt(ABET_ciphertext *ciphertext, ABET_mpk *mpk, ABET_msk *msk,  e
     }
 
     // s1,s2
-    element_set(this->s1, *s1);
-    element_set(this->s2, *s2);
+    element_set(this->s1, s1);
+    element_set(this->s2, s2);
 
     // ct0
     // ct0_1 = H1^s1
@@ -385,7 +385,7 @@ void ABET::Encrypt(ABET_ciphertext *ciphertext, ABET_mpk *mpk, ABET_msk *msk,  e
     element_pow_zn(this->tmp_GT_2, mpk->getElement("T2"), this->s2);
     element_mul(this->tmp_GT, this->tmp_GT, this->tmp_GT_2);
     this->Hash2(this->tmp_Zn, this->tmp_GT);
-    element_mul(tmp_Zn, *r, this->tmp_Zn);
+    element_mul(tmp_Zn, r, this->tmp_Zn);
     ciphertext->get_ct_()->insertElement("ct_", "Zn", tmp_Zn);
 
     // ct_prime = (R || 0^(l-|R|)) xor H2(e(g,h^(d/a))^s)
@@ -394,7 +394,7 @@ void ABET::Encrypt(ABET_ciphertext *ciphertext, ABET_mpk *mpk, ABET_msk *msk,  e
     element_add(this->tmp_Zn, this->s1, this->s2);
     element_pow_zn(this->tmp_GT, this->tmp_GT, this->tmp_Zn);
     this->Hash2(this->tmp_Zn, this->tmp_GT);
-    element_mul(tmp_Zn, *R, this->tmp_Zn);
+    element_mul(tmp_Zn, R, this->tmp_Zn);
     ciphertext->get_ct_prime()->insertElement("ct_prime", "Zn", tmp_Zn);
 
     // ct1 = IDj^(a*s)

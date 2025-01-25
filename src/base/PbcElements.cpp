@@ -41,6 +41,74 @@ PbcElements::PbcElements(const PbcElements &other){
     }
 }
 
+PbcElements &PbcElements::operator=(const PbcElements &other)
+{
+    if (this == &other)
+        return *this;
+
+    // Clear existing elements
+    std::unordered_map<std::string, element_s *>::iterator it;
+    for (it = elements_G1->begin(); it != elements_G1->end(); ++it)
+    {
+        element_clear(it->second);
+    }
+    for (it = elements_G2->begin(); it != elements_G2->end(); ++it)
+    {
+        element_clear(it->second);
+    }
+    for (it = elements_GT->begin(); it != elements_GT->end(); ++it)
+    {
+        element_clear(it->second);
+    }
+    for (it = elements_Zn->begin(); it != elements_Zn->end(); ++it)
+    {
+        element_clear(it->second);
+    }
+
+    delete elements_G1;
+    delete elements_G2;
+    delete elements_GT;
+    delete elements_Zn;
+
+    // Allocate new maps
+    elements_G1 = new std::unordered_map<std::string, element_s *>();
+    elements_G2 = new std::unordered_map<std::string, element_s *>();
+    elements_GT = new std::unordered_map<std::string, element_s *>();
+    elements_Zn = new std::unordered_map<std::string, element_s *>();
+
+    // Copy elements from other
+    for (it = other.elements_G1->begin(); it != other.elements_G1->end(); ++it)
+    {
+        element_s *element = new element_s();
+        element_init_same_as(element, it->second);
+        element_set(element, it->second);
+        elements_G1->insert(std::pair<std::string, element_s *>(it->first, element));
+    }
+    for (it = other.elements_G2->begin(); it != other.elements_G2->end(); ++it)
+    {
+        element_s *element = new element_s();
+        element_init_same_as(element, it->second);
+        element_set(element, it->second);
+        elements_G2->insert(std::pair<std::string, element_s *>(it->first, element));
+    }
+    for (it = other.elements_GT->begin(); it != other.elements_GT->end(); ++it)
+    {
+        element_s *element = new element_s();
+        element_init_same_as(element, it->second);
+        element_set(element, it->second);
+        elements_GT->insert(std::pair<std::string, element_s *>(it->first, element));
+    }
+    for (it = other.elements_Zn->begin(); it != other.elements_Zn->end(); ++it)
+    {
+        element_s *element = new element_s();
+        element_init_same_as(element, it->second);
+        element_set(element, it->second);
+        elements_Zn->insert(std::pair<std::string, element_s *>(it->first, element));
+    }
+
+    return *this;
+}
+
 element_s *PbcElements::getElement(std::string s, std::string group)
 {
     std::unordered_map<std::string, element_s *>::iterator it;

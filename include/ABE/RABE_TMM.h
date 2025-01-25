@@ -155,7 +155,7 @@ class RABE_TMM : public PbcScheme{
 
         ~RABE_TMM() override;
 
-        void Setup(RABE_TMM_mpk *mpk, RABE_TMM_msk *msk, std::vector<RABE_TMM_revokedPreson *> *rl, Binary_tree_RABE *&st, int n);
+        void Setup(RABE_TMM_mpk *mpk, RABE_TMM_msk *msk, std::vector<RABE_TMM_revokedPreson *> *rl, Binary_tree_RABE *st, int n);
 
         void Hash(element_t res, std::string m);
         void Hash(element_t res, element_t m);

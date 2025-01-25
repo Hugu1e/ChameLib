@@ -24,7 +24,7 @@ void test(std::string test_name, std::string curve){
     RABE_XNM_ciphertext ciphertext;
 
     std::vector<RABE_XNM_revokedPreson *> rl;
-    Binary_tree_RABE *st;
+    Binary_tree_RABE st;
 
     element_t id;
     element_t msg,res;
@@ -37,7 +37,7 @@ void test(std::string test_name, std::string curve){
     element_init_same_as(s2, test.get_Zn());
 
     test.start("Setup");
-    abe.Setup(&mpk, &msk, &rl, st, N);
+    abe.Setup(&mpk, &msk, &rl, &st, N);
     test.end("Setup");
     // st->printTree();
     // Logger::PrintPbc("g", msk.getElement("g"));
@@ -56,7 +56,7 @@ void test(std::string test_name, std::string curve){
     // Logger::PrintPbc("T2", mpk.getElement("T2"));
 
     test.start("KeyGen");
-    abe.KGen(&skid, st, &mpk, &msk, id, &attr_list);
+    abe.KGen(&skid, &st, &mpk, &msk, id, &attr_list);
     test.end("KeyGen");
     // Logger::PrintPbc("sk0.sk_1", skid.get_sk0()->getElement("sk0_1"));
     // Logger::PrintPbc("sk0.sk_2", skid.get_sk0()->getElement("sk0_2"));
@@ -71,7 +71,7 @@ void test(std::string test_name, std::string curve){
     // Logger::PrintPbc("sk_prime.sk_3", skid.get_sk_prime()->getElement("sk_3"));
 
     test.start("KUpt");
-    abe.KUpt(&kut, &mpk, st, &rl, T);
+    abe.KUpt(&kut, &mpk, &st, &rl, T);
     test.end("KUpt");
     printf("size of kut.ku_theta: %ld\n", kut.get_ku_theta()->size());
 

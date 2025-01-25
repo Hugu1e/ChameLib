@@ -39,6 +39,108 @@ void AE_RSA::KeyGen(RSA_pk *pk, RSA_sk *sk, short k) {
     mpz_clears(p, q, phi, n, e, d, NULL);
 }
 
+void AE_RSA::KeyGen(mpz_t p, mpz_t q, mpz_t n, mpz_t e, short k) {
+    RandomGenerator::RandomInLength(p, k / 2);
+    mpz_nextprime(p, p); 
+
+    RandomGenerator::RandomInLength(q, k / 2);
+    mpz_nextprime(q, q);
+    
+    // n = p * q
+    mpz_mul(n, p, q);
+
+    // TODO
+    // e = 65537
+    mpz_set_ui(e, 65537);
+}
+
+/**
+ * @brief Generate RSA p,q only
+ */
+void AE_RSA::KeyGen(mpz_t p, mpz_t q, short k) {
+    RandomGenerator::RandomInLength(p, k / 2);
+    mpz_nextprime(p, p); 
+
+    RandomGenerator::RandomInLength(q, k / 2);
+    mpz_nextprime(q, q);
+}
+
+/**
+ * @brief Generate RSA key pair s.t. e > n^exponent
+ */
+void AE_RSA::KeyGen(mpz_t p, mpz_t q, mpz_t n, mpz_t e, short k, short exponent) {
+    mpz_t nk;
+    mpz_init(nk);
+
+    RandomGenerator::RandomInLength(p, k / 2);
+    mpz_nextprime(p, p); 
+
+    RandomGenerator::RandomInLength(q, k / 2);
+    mpz_nextprime(q, q);
+    
+    // n = p * q
+    mpz_mul(n, p, q);
+
+    mpz_pow_ui(nk, n, exponent);
+    mpz_nextprime(e, nk);
+
+    mpz_clear(nk);
+}
+
+/**
+ * @brief Generate RSA key pair s.t. e > n^exponent
+ */
+void AE_RSA::KeyGen(mpz_t n, mpz_t e, mpz_t d, short k, short exponent) {
+    mpz_t nk,p,q,phi;
+    mpz_inits(nk,p,q,phi,NULL);
+
+    RandomGenerator::RandomInLength(p, k / 2);
+    mpz_nextprime(p, p); 
+
+    RandomGenerator::RandomInLength(q, k / 2);
+    mpz_nextprime(q, q);
+    
+    // n = p * q
+    mpz_mul(n, p, q);
+
+    // φ(n) = (p-1)*(q-1)
+    mpz_sub_ui(p, p, 1);
+    mpz_sub_ui(q, q, 1);
+    mpz_mul(phi, p, q);
+
+    mpz_pow_ui(nk, n, exponent);
+    mpz_nextprime(e, nk);
+
+    // d = e^(-1) mod φ(n)
+    mpz_invert(d, e, phi); 
+
+    mpz_clears(nk,p,q,phi,NULL);
+}
+
+
+void AE_RSA::KeyGen_E(mpz_t n, mpz_t d, mpz_t e, short k){
+    mpz_t p, q, phi;
+    mpz_inits(p, q, phi, NULL);
+
+    RandomGenerator::RandomInLength(p, k / 2);
+    mpz_nextprime(p, p); 
+
+    RandomGenerator::RandomInLength(q, k / 2);
+    mpz_nextprime(q, q);
+
+    // n = p * q
+    mpz_mul(n, p, q);
+
+    // φ(n) = (p-1)*(q-1)
+    mpz_sub_ui(p, p, 1);
+    mpz_sub_ui(q, q, 1);
+    mpz_mul(phi, p, q);
+
+    mpz_invert(d, e, phi);  
+
+    mpz_clears(p, q, phi, NULL);
+}
+
 /**
  * @brief Encrypt plaintext
  * 

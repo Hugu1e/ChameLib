@@ -7,6 +7,7 @@
 #include <chrono>
 #include <iostream>
 #include <string>
+#include <utils/Logger.h>
 
 class CommonTest{
     private :

@@ -40,7 +40,7 @@ void RABE_TMM::Hash(element_t res, element_t m){
  * input: n
  * output: mpk, msk, st, rl
  */
-void RABE_TMM::Setup(RABE_TMM_mpk *mpk, RABE_TMM_msk *msk, std::vector<RABE_TMM_revokedPreson *> *rl, Binary_tree_RABE *&st, int n){
+void RABE_TMM::Setup(RABE_TMM_mpk *mpk, RABE_TMM_msk *msk, std::vector<RABE_TMM_revokedPreson *> *rl, Binary_tree_RABE *st, int n){
     element_random(tmp_G);
     mpk->insertElement("g", "G1", tmp_G);
     element_random(tmp_H);
@@ -88,7 +88,7 @@ void RABE_TMM::Setup(RABE_TMM_mpk *mpk, RABE_TMM_msk *msk, std::vector<RABE_TMM_
     rl->clear();
 
     // initialize st
-    st = new Binary_tree_RABE(n, this->G1, this->Zn);
+    st->buildTree(n, this->G1, this->Zn);
 }
 
 /**
