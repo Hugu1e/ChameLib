@@ -14,7 +14,7 @@ class CH_KEF_DLP_LLA_2012_label : public PbcElements{};
 class CH_KEF_DLP_LLA_2012: public PbcScheme{
     private:
         element_t y;
-        element_t y1,w1;
+        element_t y1;
         element_t t;
    
 
