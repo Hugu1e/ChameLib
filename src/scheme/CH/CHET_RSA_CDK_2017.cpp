@@ -21,19 +21,17 @@ void CHET_RSA_CDK_2017::H(mpz_t res ,mpz_t m, mpz_t n){
 }
 
 void CHET_RSA_CDK_2017::Hash(CHET_RSA_CDK_2017_h *h, mpz_t r, CHET_RSA_CDK_2017_etd *etd, mpz_t m, CHET_RSA_CDK_2017_pk *pk){
-    mpz_t etd_p, etd_q, etd_n, gcd_result, n, tmp_nn, g, tmp, e, hash;
-    mpz_inits(etd_p, etd_q, etd_n, gcd_result, n, tmp_nn, g, tmp, e, hash, NULL);
+    mpz_t etd_p, etd_q, etd_n, gcd_result, phi_etd, tmp_etd_p, tmp_etd_q, gcd_result_2, n, tmp_nn, g, tmp, e, hash;
+    mpz_inits(etd_p, etd_q, etd_n, gcd_result, phi_etd, tmp_etd_p, tmp_etd_q, gcd_result_2, n, tmp_nn, g, tmp, e, hash, NULL);
     
     mpz_set(n, pk->getElement("n"));
     mpz_set(e, pk->getElement("e"));
 
-    rsa.KeyGen(etd_p, etd_q, 1024);
-    mpz_mul(etd_n, etd_p, etd_q);
+    rsa.KeyGen_E(etd_p, etd_q, etd_n, e, 1024);
     mpz_gcd(gcd_result, n, etd_n);
     while (mpz_cmp_ui(gcd_result, 1) != 0)
     {
-        rsa.KeyGen(etd_p, etd_q, 1024);
-        mpz_mul(etd_n, etd_p, etd_q);
+        rsa.KeyGen_E(etd_p, etd_q, etd_n, e, 1024);
         mpz_gcd(gcd_result, n, etd_n);
     }
     etd->insertElement("p", etd_p);
@@ -54,7 +52,7 @@ void CHET_RSA_CDK_2017::Hash(CHET_RSA_CDK_2017_h *h, mpz_t r, CHET_RSA_CDK_2017_
     h->insertElement("h", hash);
     h->insertElement("n_", etd_n);
 
-    mpz_clears(etd_p, etd_q, etd_n, gcd_result, n, tmp_nn, g, tmp, e, hash, NULL);
+    mpz_clears(etd_p, etd_q, etd_n, gcd_result, phi_etd, tmp_etd_p, tmp_etd_q, gcd_result_2, n, tmp_nn, g, tmp, e, hash, NULL);
 }
 
 bool CHET_RSA_CDK_2017::Check(CHET_RSA_CDK_2017_h *h, mpz_t r, mpz_t m, CHET_RSA_CDK_2017_pk *pk){

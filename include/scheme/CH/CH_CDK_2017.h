@@ -6,9 +6,23 @@
 #include <AE/RSA.h>
 #include <base/GmpElements.h>
 
-class CH_CDK_2017_pk: public GmpElements{};
+class CH_CDK_2017_pk{
+    private:
+        RSA_pk rsa_pk;
+    public:
+        RSA_pk* get_rsa_pk(){
+            return &this->rsa_pk;
+        }
+};
 
-class CH_CDK_2017_sk: public GmpElements{};
+class CH_CDK_2017_sk{
+    private:
+        RSA_sk rsa_sk;
+    public:
+        RSA_sk* get_rsa_sk(){
+            return &this->rsa_sk;
+        }
+};
 
 class CH_CDK_2017_h: public GmpElements{};
 
@@ -24,7 +38,6 @@ class CH_CDK_2017{
 
         void H(mpz_t res, mpz_t m1, mpz_t m2, mpz_t n);
 
-        void SetUp();
         void KeyGen(CH_CDK_2017_pk *pk, CH_CDK_2017_sk *sk, short k);
         void Hash(CH_CDK_2017_h *h, CH_CDK_2017_r *r, mpz_t m, mpz_t tag, CH_CDK_2017_pk *pk);
         bool Check(CH_CDK_2017_h *h, CH_CDK_2017_r *r, mpz_t m, mpz_t tag, CH_CDK_2017_pk *pk);
