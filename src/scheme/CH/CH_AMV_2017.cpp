@@ -79,51 +79,50 @@ void CH_AMV_2017::Hash(CH_AMV_2017_h *h, element_t m, CH_AMV_2017_pk *pk){
     element_add(tmp_Zn_2, tmp_Zn_2, tmp_Zn);
     h->get_r()->get_pai()->insertElement("pai_2_3", "Zn", tmp_Zn_2);
 
-    // TODO verify failed
-    // // 4.pai_3
-    // // a31
-    // element_random(tmp_Zn);
-    // // a32
-    // element_random(tmp_Zn_2);
-    // // pai_3_1 = y1^a31 * y2^a32
-    // element_pow_zn(tmp_G, pk->get_PKE_CCA_pk()->getElement("y1"),tmp_Zn);
-    // element_pow_zn(tmp_G_2, pk->get_PKE_CCA_pk()->getElement("y2"),tmp_Zn_2);
-    // element_mul(tmp_G, tmp_G, tmp_G_2);
-    // h->get_r()->get_pai()->insertElement("pai_3_1", "G1", tmp_G);
-    // // b3
-    // HASH::hash(tmp_Zn_3, h->get_r()->get_c2()->getElement("c4"), pk->get_PKE_CCA_pk()->getElement("y1"), pk->get_PKE_CCA_pk()->getElement("y2"),tmp_G);
-    // // pai_3_2 = b3rho2 + a31
-    // element_mul(tmp_Zn_4, tmp_Zn_3, h->get_r()->get_c2()->getElement("rho"));
-    // element_add(tmp_Zn_4, tmp_Zn_4, tmp_Zn);
-    // h->get_r()->get_pai()->insertElement("pai_3_2","Zn",tmp_Zn_4);
-    // // pai_3_3 = b3rho2t + a32
-    // element_mul(tmp_Zn_4, tmp_Zn_3, h->get_r()->get_c2()->getElement("rho"));
-    // HASH::hash(tmp_Zn_3, h->get_r()->get_c2()->getElement("c1"), h->get_r()->get_c2()->getElement("c2"), h->get_r()->get_c2()->getElement("c3"));
-    // element_mul(tmp_Zn_4, tmp_Zn_4, tmp_Zn_3);
-    // element_add(tmp_Zn_4, tmp_Zn_4, tmp_Zn_2);
-    // h->get_r()->get_pai()->insertElement("pai_3_3","Zn",tmp_Zn_4);
+    // 4.pai_3
+    // a31
+    element_random(tmp_Zn);
+    // a32
+    element_random(tmp_Zn_2);
+    // pai_3_1 = y1^a31 * y2^a32
+    element_pow_zn(tmp_G, pk->get_PKE_CCA_pk()->getElement("y1"),tmp_Zn);
+    element_pow_zn(tmp_G_2, pk->get_PKE_CCA_pk()->getElement("y2"),tmp_Zn_2);
+    element_mul(tmp_G, tmp_G, tmp_G_2);
+    h->get_r()->get_pai()->insertElement("pai_3_1", "G1", tmp_G);
+    // b3
+    HASH::hash(tmp_Zn_3, h->get_r()->get_c2()->getElement("c4"), pk->get_PKE_CCA_pk()->getElement("y1"), pk->get_PKE_CCA_pk()->getElement("y2"),tmp_G);
+    // pai_3_2 = b3rho2 + a31
+    element_mul(tmp_Zn_4, tmp_Zn_3, h->get_r()->get_c2()->getElement("rho"));
+    element_add(tmp_Zn_4, tmp_Zn_4, tmp_Zn);
+    h->get_r()->get_pai()->insertElement("pai_3_2","Zn",tmp_Zn_4);
+    // pai_3_3 = b3rho2t + a32
+    element_mul(tmp_Zn_4, tmp_Zn_3, h->get_r()->get_c2()->getElement("rho"));
+    HASH::hash(tmp_Zn_3, h->get_r()->get_c2()->getElement("c1"), h->get_r()->get_c2()->getElement("c2"), h->get_r()->get_c2()->getElement("c3"));
+    element_mul(tmp_Zn_4, tmp_Zn_4, tmp_Zn_3);
+    element_add(tmp_Zn_4, tmp_Zn_4, tmp_Zn_2);
+    h->get_r()->get_pai()->insertElement("pai_3_3","Zn",tmp_Zn_4);
 
-    // // 5.pai_4
-    // // a41
-    // element_random(tmp_Zn);
-    // // a42
-    // element_random(tmp_Zn_2);
-    // // pai_4_1 = y^a41 y3^a42
-    // element_pow_zn(tmp_G, pk->get_PKE_CPA_pk()->getElement("y"), tmp_Zn);
-    // element_pow_zn(tmp_G_2, pk->get_PKE_CCA_pk()->getElement("y3"), tmp_Zn_2);
-    // element_mul(tmp_G, tmp_G, tmp_G_2);
-    // h->get_r()->get_pai()->insertElement("pai_4_1", "G1", tmp_G);
-    // // b4
-    // element_div(tmp_G_2, h->get_r()->get_c1()->getElement("c2"), h->get_r()->get_c2()->getElement("c3"));
-    // HASH::hash(tmp_Zn_3, tmp_G_2, pk->get_PKE_CPA_pk()->getElement("y"), pk->get_PKE_CCA_pk()->getElement("y3"), tmp_G);
-    // // y41 = b4rho1 + a41
-    // element_mul(tmp_Zn_4, tmp_Zn_3, h->get_r()->get_c1()->getElement("rho"));
-    // element_add(tmp_Zn_4, tmp_Zn_4, tmp_Zn);
-    // h->get_r()->get_pai()->insertElement("pai_4_2", "Zn", tmp_Zn_4);
-    // // y42 = -b4rho2 + a42
-    // element_mul(tmp_Zn_4, tmp_Zn_3, h->get_r()->get_c2()->getElement("rho"));
-    // element_sub(tmp_Zn_4, tmp_Zn_2, tmp_Zn_4);
-    // h->get_r()->get_pai()->insertElement("pai_4_3", "Zn", tmp_Zn_4);
+    // 5.pai_4
+    // a41
+    element_random(tmp_Zn);
+    // a42
+    element_random(tmp_Zn_2);
+    // pai_4_1 = y^a41 y3^a42
+    element_pow_zn(tmp_G, pk->get_PKE_CPA_pk()->getElement("y"), tmp_Zn);
+    element_pow_zn(tmp_G_2, pk->get_PKE_CCA_pk()->getElement("y3"), tmp_Zn_2);
+    element_mul(tmp_G, tmp_G, tmp_G_2);
+    h->get_r()->get_pai()->insertElement("pai_4_1", "G1", tmp_G);
+    // b4
+    element_div(tmp_G_2, h->get_r()->get_c1()->getElement("c2_"), h->get_r()->get_c2()->getElement("c3_"));
+    HASH::hash(tmp_Zn_3, tmp_G_2, pk->get_PKE_CPA_pk()->getElement("y"), pk->get_PKE_CCA_pk()->getElement("y3"), tmp_G);
+    // y41 = b4rho1 + a41
+    element_mul(tmp_Zn_4, tmp_Zn_3, h->get_r()->get_c1()->getElement("rho"));
+    element_add(tmp_Zn_4, tmp_Zn_4, tmp_Zn);
+    h->get_r()->get_pai()->insertElement("pai_4_2", "Zn", tmp_Zn_4);
+    // y42 = -b4rho2 + a42
+    element_mul(tmp_Zn_4, tmp_Zn_3, h->get_r()->get_c2()->getElement("rho"));
+    element_sub(tmp_Zn_4, tmp_Zn_2, tmp_Zn_4);
+    h->get_r()->get_pai()->insertElement("pai_4_3", "Zn", tmp_Zn_4);
 
 
 }
@@ -175,37 +174,36 @@ bool CH_AMV_2017::Check(CH_AMV_2017_h *h, element_t m, CH_AMV_2017_pk *pk){
         return false;
     }
 
-    // // 4.
-    // // y1^y31 y2^y32 / a3
-    // element_pow_zn(tmp_G, pk->get_PKE_CCA_pk()->getElement("y1"), h->get_r()->get_pai()->getElement("pai_3_2"));
-    // element_pow_zn(tmp_G_2, pk->get_PKE_CCA_pk()->getElement("y2"), h->get_r()->get_pai()->getElement("pai_3_3"));
-    // element_mul(tmp_G, tmp_G,tmp_G_2);
-    // element_div(tmp_G, tmp_G, h->get_r()->get_pai()->getElement("pai_3_1"));
-    // // c24^b3
-    // // b3
-    // HASH::hash(tmp_Zn_3, h->get_r()->get_c2()->getElement("c4"), pk->get_PKE_CCA_pk()->getElement("y1"), pk->get_PKE_CCA_pk()->getElement("y2"),h->get_r()->get_pai()->getElement("pai_3_1"));
-    // element_pow_zn(tmp_G_2, tmp_G_2, tmp_Zn_3);
-    // Logger::PrintPbc("tmp_G",tmp_G);
-    // Logger::PrintPbc("tmp_G_2",tmp_G_2);
-    // if(element_cmp(tmp_G, tmp_G_2) != 0){
-    //     return false;
-    // }
+    // 4.
+    // y1^y31 y2^y32 / a3
+    element_pow_zn(tmp_G, pk->get_PKE_CCA_pk()->getElement("y1"), h->get_r()->get_pai()->getElement("pai_3_2"));
+    element_pow_zn(tmp_G_2, pk->get_PKE_CCA_pk()->getElement("y2"), h->get_r()->get_pai()->getElement("pai_3_3"));
+    element_mul(tmp_G, tmp_G,tmp_G_2);
+    element_div(tmp_G, tmp_G, h->get_r()->get_pai()->getElement("pai_3_1"));
+    // c24^b3
+    // b3
+    HASH::hash(tmp_Zn_3, h->get_r()->get_c2()->getElement("c4"), pk->get_PKE_CCA_pk()->getElement("y1"), pk->get_PKE_CCA_pk()->getElement("y2"),h->get_r()->get_pai()->getElement("pai_3_1"));
+    element_pow_zn(tmp_G_2, h->get_r()->get_c2()->getElement("c4"), tmp_Zn_3);
+    if(element_cmp(tmp_G, tmp_G_2) != 0){
+        return false;
+    }
 
-    // // 5.
-    // // y^y41 y3^y42 / a4
-    // element_pow_zn(tmp_G, pk->get_PKE_CPA_pk()->getElement("y"), h->get_r()->get_pai()->getElement("pai_4_2"));
-    // element_pow_zn(tmp_G_2, pk->get_PKE_CCA_pk()->getElement("y3"), h->get_r()->get_pai()->getElement("pai_4_3"));
-    // element_mul(tmp_G, tmp_G, tmp_G_2);
-    // element_div(tmp_G, tmp_G, h->get_r()->get_pai()->getElement("pai_4_1"));
-    // // c12/c23 ^b4
-    // // b4
-    // element_div(tmp_G_2, h->get_r()->get_c1()->getElement("c2"), h->get_r()->get_c2()->getElement("c3"));
-    // HASH::hash(tmp_Zn_3, tmp_G_2, pk->get_PKE_CPA_pk()->getElement("y"), pk->get_PKE_CCA_pk()->getElement("y3"), h->get_r()->get_pai()->getElement("pai_4_1"));
-    // element_div(tmp_G_3, h->get_r()->get_c1()->getElement("c2"),  h->get_r()->get_c2()->getElement("c3"));
-    // element_pow_zn(tmp_G_2, tmp_G_3, tmp_Zn_3);
-    // if(element_cmp(tmp_G, tmp_G_2) != 0){
-    //     return false;
-    // }
+    // 5.
+    // y^y41 y3^y42 / a4
+    element_pow_zn(tmp_G, pk->get_PKE_CPA_pk()->getElement("y"), h->get_r()->get_pai()->getElement("pai_4_2"));
+    element_pow_zn(tmp_G_2, pk->get_PKE_CCA_pk()->getElement("y3"), h->get_r()->get_pai()->getElement("pai_4_3"));
+    element_mul(tmp_G, tmp_G, tmp_G_2);
+    element_div(tmp_G, tmp_G, h->get_r()->get_pai()->getElement("pai_4_1"));
+    // c12/c23 ^b4
+    // b4
+    element_div(tmp_G_2, h->get_r()->get_c1()->getElement("c2_"), h->get_r()->get_c2()->getElement("c3_"));
+    HASH::hash(tmp_Zn_3, tmp_G_2, pk->get_PKE_CPA_pk()->getElement("y"), pk->get_PKE_CCA_pk()->getElement("y3"), h->get_r()->get_pai()->getElement("pai_4_1"));
+    element_pow_zn(tmp_G_2, tmp_G_2, tmp_Zn_3);
+    Logger::PrintPbc("tmp_G",tmp_G);
+    Logger::PrintPbc("tmp_G_2",tmp_G_2);
+    if(element_cmp(tmp_G, tmp_G_2) != 0){
+        return false;
+    }
 
     return true;
 }
@@ -273,51 +271,50 @@ void CH_AMV_2017::Adapt(CH_AMV_2017_h *h_p, element_t m_p, CH_AMV_2017_h *h, ele
     element_add(tmp_Zn_2, tmp_Zn_2, tmp_Zn);
     h_p->get_r()->get_pai()->insertElement("pai_2_3", "Zn", tmp_Zn_2);
 
-    // TODO verify failed
-    // // 4.pai_3
-    // // a31
-    // element_random(tmp_Zn);
-    // // a32
-    // element_random(tmp_Zn_2);
-    // // pai_3_1 = y1^a31 * y2^a32
-    // element_pow_zn(tmp_G, pk->get_PKE_CCA_pk()->getElement("y1"),tmp_Zn);
-    // element_pow_zn(tmp_G_2, pk->get_PKE_CCA_pk()->getElement("y2"),tmp_Zn_2);
-    // element_mul(tmp_G, tmp_G, tmp_G_2);
-    // h_p->get_r()->get_pai()->insertElement("pai_3_1", "G1", tmp_G);
-    // // b3
-    // HASH::hash(tmp_Zn_3, h_p->get_r()->get_c2()->getElement("c4"), pk->get_PKE_CCA_pk()->getElement("y1"), pk->get_PKE_CCA_pk()->getElement("y2"),tmp_G);
-    // // pai_3_2 = b3rho2 + a31
-    // element_mul(tmp_Zn_4, tmp_Zn_3, h_p->get_r()->get_c2()->getElement("rho"));
-    // element_add(tmp_Zn_4, tmp_Zn_4, tmp_Zn);
-    // h_p->get_r()->get_pai()->insertElement("pai_3_2","Zn",tmp_Zn_4);
-    // // pai_3_3 = b3rho2t + a32
-    // element_mul(tmp_Zn_4, tmp_Zn_3, h_p->get_r()->get_c2()->getElement("rho"));
-    // HASH::hash(tmp_Zn_3, h_p->get_r()->get_c2()->getElement("c1"), h_p->get_r()->get_c2()->getElement("c2"), h_p->get_r()->get_c2()->getElement("c3"));
-    // element_mul(tmp_Zn_4, tmp_Zn_4, tmp_Zn_3);
-    // element_add(tmp_Zn_4, tmp_Zn_4, tmp_Zn_2);
-    // h_p->get_r()->get_pai()->insertElement("pai_3_3","Zn",tmp_Zn_4);
+    // 4.pai_3
+    // a31
+    element_random(tmp_Zn);
+    // a32
+    element_random(tmp_Zn_2);
+    // pai_3_1 = y1^a31 * y2^a32
+    element_pow_zn(tmp_G, pk->get_PKE_CCA_pk()->getElement("y1"),tmp_Zn);
+    element_pow_zn(tmp_G_2, pk->get_PKE_CCA_pk()->getElement("y2"),tmp_Zn_2);
+    element_mul(tmp_G, tmp_G, tmp_G_2);
+    h_p->get_r()->get_pai()->insertElement("pai_3_1", "G1", tmp_G);
+    // b3
+    HASH::hash(tmp_Zn_3, h_p->get_r()->get_c2()->getElement("c4"), pk->get_PKE_CCA_pk()->getElement("y1"), pk->get_PKE_CCA_pk()->getElement("y2"),tmp_G);
+    // pai_3_2 = b3rho2 + a31
+    element_mul(tmp_Zn_4, tmp_Zn_3, h_p->get_r()->get_c2()->getElement("rho"));
+    element_add(tmp_Zn_4, tmp_Zn_4, tmp_Zn);
+    h_p->get_r()->get_pai()->insertElement("pai_3_2","Zn",tmp_Zn_4);
+    // pai_3_3 = b3rho2t + a32
+    element_mul(tmp_Zn_4, tmp_Zn_3, h_p->get_r()->get_c2()->getElement("rho"));
+    HASH::hash(tmp_Zn_3, h_p->get_r()->get_c2()->getElement("c1"), h_p->get_r()->get_c2()->getElement("c2"), h_p->get_r()->get_c2()->getElement("c3"));
+    element_mul(tmp_Zn_4, tmp_Zn_4, tmp_Zn_3);
+    element_add(tmp_Zn_4, tmp_Zn_4, tmp_Zn_2);
+    h_p->get_r()->get_pai()->insertElement("pai_3_3","Zn",tmp_Zn_4);
 
-    // // 5.pai_4
-    // // a41
-    // element_random(tmp_Zn);
-    // // a42
-    // element_random(tmp_Zn_2);
-    // // pai_4_1 = y^a41 y3^a42
-    // element_pow_zn(tmp_G, pk->get_PKE_CPA_pk()->getElement("y"), tmp_Zn);
-    // element_pow_zn(tmp_G_2, pk->get_PKE_CCA_pk()->getElement("y3"), tmp_Zn_2);
-    // element_mul(tmp_G, tmp_G, tmp_G_2);
-    // h_p->get_r()->get_pai()->insertElement("pai_4_1", "G1", tmp_G);
-    // // b4
-    // element_div(tmp_G_2, h_p->get_r()->get_c1()->getElement("c2"), h_p->get_r()->get_c2()->getElement("c3"));
-    // HASH::hash(tmp_Zn_3, tmp_G_2, pk->get_PKE_CPA_pk()->getElement("y"), pk->get_PKE_CCA_pk()->getElement("y3"), tmp_G);
-    // // y41 = b4rho1 + a41
-    // element_mul(tmp_Zn_4, tmp_Zn_3, h_p->get_r()->get_c1()->getElement("rho"));
-    // element_add(tmp_Zn_4, tmp_Zn_4, tmp_Zn);
-    // h_p->get_r()->get_pai()->insertElement("pai_4_2", "Zn", tmp_Zn_4);
-    // // y42 = -b4rho2 + a42
-    // element_mul(tmp_Zn_4, tmp_Zn_3, h_p->get_r()->get_c2()->getElement("rho"));
-    // element_sub(tmp_Zn_4, tmp_Zn_2, tmp_Zn_4);
-    // h_p->get_r()->get_pai()->insertElement("pai_4_3", "Zn", tmp_Zn_4);
+    // 5.pai_4
+    // a41
+    element_random(tmp_Zn);
+    // a42
+    element_random(tmp_Zn_2);
+    // pai_4_1 = y^a41 y3^a42
+    element_pow_zn(tmp_G, pk->get_PKE_CPA_pk()->getElement("y"), tmp_Zn);
+    element_pow_zn(tmp_G_2, pk->get_PKE_CCA_pk()->getElement("y3"), tmp_Zn_2);
+    element_mul(tmp_G, tmp_G, tmp_G_2);
+    h_p->get_r()->get_pai()->insertElement("pai_4_1", "G1", tmp_G);
+    // b4
+    element_div(tmp_G_2, h_p->get_r()->get_c1()->getElement("c2_"), h_p->get_r()->get_c2()->getElement("c3_"));
+    HASH::hash(tmp_Zn_3, tmp_G_2, pk->get_PKE_CPA_pk()->getElement("y"), pk->get_PKE_CCA_pk()->getElement("y3"), tmp_G);
+    // y41 = b4rho1 + a41
+    element_mul(tmp_Zn_4, tmp_Zn_3, h_p->get_r()->get_c1()->getElement("rho"));
+    element_add(tmp_Zn_4, tmp_Zn_4, tmp_Zn);
+    h_p->get_r()->get_pai()->insertElement("pai_4_2", "Zn", tmp_Zn_4);
+    // y42 = -b4rho2 + a42
+    element_mul(tmp_Zn_4, tmp_Zn_3, h_p->get_r()->get_c2()->getElement("rho"));
+    element_sub(tmp_Zn_4, tmp_Zn_2, tmp_Zn_4);
+    h_p->get_r()->get_pai()->insertElement("pai_4_3", "Zn", tmp_Zn_4);
 
 }
 

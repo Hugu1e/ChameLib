@@ -53,12 +53,17 @@ void PKE_CCA_AMV_2017::Encrypt(PKE_CCA_AMV_2017_c *c, element_t m, PKE_CCA_AMV_2
     TypeConverter::element_g_from_element_zn(tmp_G_4, m);
     element_mul(tmp_G_3, tmp_G_3, tmp_G_4);
     c->insertElement("c3","G1",tmp_G_3);
+    // TODO use c3' = y^rho * m to avoid type convertion of m
+    element_pow_zn(tmp_G_4, pk->getElement("y3"), tmp_Zn);
+    element_mul(tmp_G_4, tmp_G_4, m);
+    c->insertElement("c3_","G1",tmp_G_4);
+
 
     // c4 = y1^rho * y2^rho*t
-    HASH::hash(tmp_G_4, tmp_G, tmp_G_2, tmp_G_3);
+    HASH::hash(tmp_Zn_2, tmp_G, tmp_G_2, tmp_G_3);
     element_pow_zn(tmp_G, pk->getElement("y1"), tmp_Zn);
     element_pow_zn(tmp_G_2, pk->getElement("y2"), tmp_Zn);
-    element_pow_zn(tmp_G_2, tmp_G_2, tmp_G_4);
+    element_pow_zn(tmp_G_2, tmp_G_2, tmp_Zn_2);
     element_mul(tmp_G, tmp_G, tmp_G_2);
     c->insertElement("c4","G1",tmp_G);
 }

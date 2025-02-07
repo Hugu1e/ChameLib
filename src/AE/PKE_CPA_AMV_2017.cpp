@@ -28,6 +28,11 @@ void PKE_CPA_AMV_2017::Encrypt(PKE_CPA_AMV_2017_c *c, element_t m, PKE_CPA_AMV_2
     TypeConverter::element_g_from_element_zn(tmp_G_2, m);
     element_mul(tmp_G, tmp_G, tmp_G_2);
     c->insertElement("c2","G1",tmp_G);
+    // TODO use c2' = y^rho * m to avoid type convertion of m
+    // c2' = y^rho * m
+    element_pow_zn(tmp_G_3, pk->getElement("y"), tmp_Zn);
+    element_mul(tmp_G_3, tmp_G_3, m);
+    c->insertElement("c2_","G1",tmp_G_3);
 }
 
 void PKE_CPA_AMV_2017::Decrypt(element_t m, PKE_CPA_AMV_2017_c *c, PKE_CPA_AMV_2017_sk *sk){
