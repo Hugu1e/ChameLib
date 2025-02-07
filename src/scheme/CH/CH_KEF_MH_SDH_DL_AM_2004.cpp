@@ -85,7 +85,6 @@ void CH_KEF_MH_SDH_DL_AM_2004::Adapt(element_t r_p, element_t h, element_t m, el
     element_div(this->tmp_Zn, this->tmp_Zn, this->tmp_Zn_2);
     // r_p = r + ( H(m) - H(m')) / (x + e)
     element_add(r_p, r, this->tmp_Zn);
-    element_printf("r_p = %B\n", r_p);
 }
 
 /**
