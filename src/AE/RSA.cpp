@@ -215,7 +215,7 @@ void AE_RSA::KeyGen_E(mpz_t p, mpz_t q, mpz_t n, mpz_t e, short k){
 
     // gcd(phi, e) == 1
     mpz_gcd(gcdResult, e, phi);
-    if(mpz_cmp_ui(gcdResult, 1) != 0){
+    while(mpz_cmp_ui(gcdResult, 1) != 0){
         RandomGenerator::RandomInLength(p, k / 2);
         mpz_nextprime(p, p); 
         RandomGenerator::RandomInLength(q, k / 2);
