@@ -20,20 +20,21 @@ void test(std::string test_name, std::string curve){
 
     element_random(m);
 
+    test.start("Setup");
+    pke.Setup(pk, sk, c);
+    test.end("Setup");
+
     test.start("KeyGen");
-    pke.KeyGen(&pk, &sk);
+    pke.KeyGen(pk, sk);
     test.end("KeyGen");
-    Logger::PrintPbcElements("pk", pk);
-    Logger::PrintPbcElements("sk", sk);
 
     Logger::PrintPbc("m", m);
     test.start("Encrypt");
-    pke.Encrypt(&c, m, &pk);
+    pke.Encrypt(c, m, pk);
     test.end("Encrypt");
-    Logger::PrintPbcElements("c", c);
 
     test.start("Decrypt");
-    pke.Decrypt(res, &c, &sk);
+    pke.Decrypt(res, c, sk);
     test.end("Decrypt");
     Logger::PrintPbc("res", res);
 

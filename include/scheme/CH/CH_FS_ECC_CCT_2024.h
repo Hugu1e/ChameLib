@@ -6,12 +6,6 @@
 #include <base/PbcScheme.h>
 #include <utils/Hash.h>
 
-enum{g};
-enum{y};
-enum{x};
-enum{z1, z2, c1};
-
-
 class CH_FS_ECC_CCT_2024_pp: public PbcElements_copy{};
 class CH_FS_ECC_CCT_2024_pk: public PbcElements_copy{};
 class CH_FS_ECC_CCT_2024_sk: public PbcElements_copy{};
@@ -41,6 +35,24 @@ class CH_FS_ECC_CCT_2024: public PbcScheme{
         bool Verify(CH_FS_ECC_CCT_2024_pk &pk, element_t m_p, element_t h, CH_FS_ECC_CCT_2024_r &r_p, CH_FS_ECC_CCT_2024_pp &pp);
 
         ~CH_FS_ECC_CCT_2024();
+
+        enum{
+            g
+        };
+
+        enum{
+            y
+        };
+
+        enum{
+            x
+        };
+
+        enum{
+            z1, 
+            z2, 
+            c1
+        };
 };
 
 #endif  //CH_FS_ECC_CCT_2024_H

@@ -16,24 +16,29 @@ void test(std::string test_name, std::string curve){
     element_init_same_as(m, test.get_Zn());
     element_init_same_as(m_p, test.get_Zn());
 
+    test.start("SetUp");
+    ch.SetUp(pk, sk, h, h_p);
+    test.end("SetUp");
+
 
     test.start("KeyGen");
-    ch.KeyGen(&pk, &sk);
+    ch.KeyGen(pk, sk);
     test.end("KeyGen");
-    Logger::PrintPbcElements("pk_ch", *pk.get_CH_pk());
-    Logger::PrintPbcElements("sk_ch", *sk.get_CH_sk());
+    Logger::PrintPbc("g", pk.get_CH_pk()[CH_AMV_2017::g]);
+    Logger::PrintPbc("y", pk.get_CH_pk()[CH_AMV_2017::y]);
+    Logger::PrintPbc("x", sk.get_CH_sk()[CH_AMV_2017::x]);
 
 
     element_random(m);
     Logger::PrintPbc("m", m);
     test.start("Hash");
-    ch.Hash(&h, m, &pk);
+    ch.Hash(h, m, pk);
     test.end("Hash");
-    Logger::PrintPbc("Hash value", h.get_h()->getElement("h"));
+    Logger::PrintPbc("Hash value", h.get_h()[CH_AMV_2017::hash]);
 
 
     test.start("Check");
-    bool check_result = ch.Check(&h, m, &pk);
+    bool check_result = ch.Check(h, m, pk);
     test.end("Check");
 
     if(check_result){
@@ -45,7 +50,7 @@ void test(std::string test_name, std::string curve){
     element_random(m_p);
     Logger::PrintPbc("m_p", m_p);
     test.start("Adapt");
-    ch.Adapt(&h_p, m_p, &h, m, &sk, &pk);
+    ch.Adapt(h_p, m_p, h, m, sk, pk);
     test.end("Adapt");
     // Logger::PrintPbcElements("h_p.h", *h_p.get_h());
     // Logger::PrintPbcElements("h_p.r.c1", *h_p.get_r()->get_c1());
@@ -55,7 +60,7 @@ void test(std::string test_name, std::string curve){
 
 
     test.start("Verify");
-    bool verify_result = ch.Verify(&h_p, m_p, &pk);
+    bool verify_result = ch.Verify(h_p, m_p, pk);
     test.end("Verify");
 
     if(verify_result){

@@ -3,6 +3,10 @@
 PbcElements_copy::PbcElements_copy() : size(0), elements(nullptr){}
 
 void PbcElements_copy::init(int n){
+    if(size > 0){
+        // already initialized
+        return;
+    }
     size = n;
     elements = new element_s*[n];
     for(int i=0; i<n; i++){

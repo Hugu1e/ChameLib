@@ -3,6 +3,10 @@
 GmpElements_copy::GmpElements_copy() : size(0), elements(nullptr){}
 
 void GmpElements_copy::init(int n){
+    if(size > 0){
+        // already initialized
+        return;
+    }
     size = n;
     elements = new MP_INT*[n];
     for(int i=0; i<n; i++){

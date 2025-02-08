@@ -33,9 +33,9 @@ void test(std::string test_name, std::string curve){
     test.start("Hash");
     ch.Hash(h, r, pk, m, pp);
     test.end("Hash");
-    r.print(c1);
-    r.print(z1);
-    r.print(z2);
+    r.print(CH_FS_ECC_CCT_2024::c1);
+    r.print(CH_FS_ECC_CCT_2024::z1);
+    r.print(CH_FS_ECC_CCT_2024::z2);
     Logger::PrintPbc("h", h);
 
     test.start("Check");
