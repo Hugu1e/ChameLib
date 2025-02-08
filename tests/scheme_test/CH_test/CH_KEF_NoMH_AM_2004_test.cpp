@@ -22,25 +22,27 @@ void test(std::string test_name, std::string curve){
     element_init_same_as(s_p, test.get_Zn());
     element_init_same_as(h, test.get_G1());
 
+    test.start("Setup");
+    ch.Setup(pk, sk);
+    test.end("Setup");
 
     test.start("KeyGen");
-    ch.KeyGen(&pk, &sk);
+    ch.KeyGen(pk, sk);
     test.end("KeyGen");
-    pk.printElement("g");
-    pk.printElement("y");
-    sk.printElement("x");
+    pk.print();
+    sk.print();
 
     element_random(m);
     Logger::PrintPbc("m", m);
     test.start("Hash");
-    ch.Hash(h, r, s, &pk, m);
+    ch.Hash(h, r, s, pk, m);
     test.end("Hash");
     Logger::PrintPbc("Hash value", h);
     Logger::PrintPbc("r", r);
     Logger::PrintPbc("s", s);
 
     test.start("Check");
-    bool check_result = ch.Check(&pk, m, r, s, h);
+    bool check_result = ch.Check(pk, m, r, s, h);
     test.end("Check");
 
     if(check_result){
@@ -52,13 +54,13 @@ void test(std::string test_name, std::string curve){
     element_random(m_p);
     Logger::PrintPbc("m_p", m_p);
     test.start("Adapt");
-    ch.Adapt(r_p, s_p, &pk, &sk, m_p, h);
+    ch.Adapt(r_p, s_p, pk, sk, m_p, h);
     test.end("Adapt");
     Logger::PrintPbc("r_p", r_p);
     Logger::PrintPbc("s_p", s_p);
 
     test.start("Verify");
-    bool verify_result = ch.Verify(&pk, m_p, r_p, s_p, h);
+    bool verify_result = ch.Verify(pk, m_p, r_p, s_p, h);
     test.end("Verify");
 
     if(verify_result){
