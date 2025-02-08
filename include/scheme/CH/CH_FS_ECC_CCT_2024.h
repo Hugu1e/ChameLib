@@ -6,10 +6,10 @@
 #include <base/PbcScheme.h>
 #include <utils/Hash.h>
 
-enum{PP_G};
-enum{PK_Y};
-enum{SK_X};
-enum{R_Z1, R_Z2, R_C1};
+enum{g};
+enum{y};
+enum{x};
+enum{z1, z2, c1};
 
 
 class CH_FS_ECC_CCT_2024_pp: public PbcElements_copy{};
@@ -25,20 +25,20 @@ class CH_FS_ECC_CCT_2024: public PbcScheme{
     public:
         CH_FS_ECC_CCT_2024(element_s *_G1, element_s *_G2, element_s *_GT, element_s *_Zn);
 
-        void SetUp(CH_FS_ECC_CCT_2024_pp *pp);
-
-        void KeyGen(CH_FS_ECC_CCT_2024_pk *pk, CH_FS_ECC_CCT_2024_sk *sk,CH_FS_ECC_CCT_2024_pp *pp);
+        void SetUp(CH_FS_ECC_CCT_2024_pp &pp, CH_FS_ECC_CCT_2024_pk &pk, CH_FS_ECC_CCT_2024_sk &sk, CH_FS_ECC_CCT_2024_r &r, CH_FS_ECC_CCT_2024_r &r_p);
+        
+        void KeyGen(CH_FS_ECC_CCT_2024_pk &pk, CH_FS_ECC_CCT_2024_sk &sk, CH_FS_ECC_CCT_2024_pp &pp);
 
         void H(element_t res, element_t m);
         void H(element_t res, element_t m1, element_t m2, element_t m3, element_t m4);
 
-        void Hash(element_t h, CH_FS_ECC_CCT_2024_r *r, CH_FS_ECC_CCT_2024_pk *pk, element_t m, CH_FS_ECC_CCT_2024_pp *pp);
+        void Hash(element_t h, CH_FS_ECC_CCT_2024_r &r, CH_FS_ECC_CCT_2024_pk &pk, element_t m, CH_FS_ECC_CCT_2024_pp &pp);
 
-        bool Check(CH_FS_ECC_CCT_2024_pk *pk, element_t m, element_t h, CH_FS_ECC_CCT_2024_r *r,CH_FS_ECC_CCT_2024_pp *pp);
+        bool Check(CH_FS_ECC_CCT_2024_pk &pk, element_t m, element_t h, CH_FS_ECC_CCT_2024_r &r, CH_FS_ECC_CCT_2024_pp &pp);
         
-        void Adapt(CH_FS_ECC_CCT_2024_r *r_p, CH_FS_ECC_CCT_2024_pk *pk, CH_FS_ECC_CCT_2024_sk *sk, element_t m, element_t m_p, element_t h, CH_FS_ECC_CCT_2024_r *r,CH_FS_ECC_CCT_2024_pp *pp);
+        void Adapt(CH_FS_ECC_CCT_2024_r &r_p, CH_FS_ECC_CCT_2024_pk &pk, CH_FS_ECC_CCT_2024_sk &sk, element_t m, element_t m_p, element_t h, CH_FS_ECC_CCT_2024_r &r, CH_FS_ECC_CCT_2024_pp &pp);
 
-        bool Verify(CH_FS_ECC_CCT_2024_pk *pk, element_t m_p, element_t h, CH_FS_ECC_CCT_2024_r *r_p, CH_FS_ECC_CCT_2024_pp *pp);
+        bool Verify(CH_FS_ECC_CCT_2024_pk &pk, element_t m_p, element_t h, CH_FS_ECC_CCT_2024_r &r_p, CH_FS_ECC_CCT_2024_pp &pp);
 
         ~CH_FS_ECC_CCT_2024();
 };

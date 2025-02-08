@@ -1,92 +1,62 @@
 #include <base/PbcElements_copy.h>
 
-PbcElements_copy::PbcElements_copy(){}
+PbcElements_copy::PbcElements_copy() : size(0), elements(nullptr){}
+
+void PbcElements_copy::init(int n){
+    size = n;
+    elements = new element_s*[n];
+    for(int i=0; i<n; i++){
+        element_s *element = new element_s();
+        elements[i] = element;
+    }
+}
 
 PbcElements_copy::PbcElements_copy(const PbcElements_copy &other){
     if (this == &other)
         return;
-
-    for (auto elem : other.elements) {
-        element_s *element = new element_s();
-        element_init_same_as(element, elem);
-        element_set(element, elem);
-        elements.push_back(element);
-    }
-}
-
-PbcElements_copy &PbcElements_copy::operator=(const PbcElements_copy &other){
-    if (this == &other)
-        return *this;
-
-    // Clear existing elements
-    for (auto elem : elements) {
-        element_clear(elem);
-    }
-    elements.clear();
     
-    for (auto elem : other.elements) {
+    elements = new element_s*[other.size];
+    for(int i = 0; i < other.size; i++){
         element_s *element = new element_s();
-        element_init_same_as(element, elem);
-        element_set(element, elem);
-        elements.push_back(element);
+        element_init_same_as(element, other.elements[i]);
+        element_set(element, other.elements[i]);
+        elements[i] = element;
     }
 }
 
-element_s *PbcElements_copy::get(int index){
-    if(index < 0 || index >= elements.size()){
-        return NULL;
-    }
+element_s* PbcElements_copy::operator[](int index){
     return elements[index];
 }
 
-void PbcElements_copy::insert(int index, element_s *element){
-    if(get(index) != NULL){
-        throw std::invalid_argument("PbcElements_copy::insertElement(): Element[" + std::to_string(index) + "] already exists");
-    }
-
-    element_s *insertElement = new element_s();
-    element_init_same_as(insertElement, element);
-    element_set(insertElement, element);
-
-    if(index < elements.size()){
-        elements[index] = insertElement;
-    }else{
-        int nulls = index - elements.size();
-        while(nulls > 0){
-            elements.push_back(NULL);
-            nulls--;
-        }
-        elements.push_back(insertElement);
-    }
-}
-
 void PbcElements_copy::print(){
-    if (!elements.empty()){
-        std::cout << "PbcElements_copy: " << elements.size() << " elements" << std::endl;
-        for(int i = 0; i < elements.size(); i++){
-            if(get(i) != NULL){
-                std::cout << "Element[" << i << "]: " << std::endl;
+    if (size > 0){
+        printf("PbcElements_copy: %d elements\n", size);
+        for(int i = 0; i < size; i++){
+            if(elements[i] != nullptr){
+                printf("Element[%d]: \n", i);
                 element_printf("%B\n", elements[i]);
             }
         }
     }else{
-        std::cout << "No elements" << std::endl;
+        printf("No elements\n");
     }
 }
 
 void PbcElements_copy::print(int index){
-    if(get(index) != NULL){
-        std::cout << "Element[" << index << "]: " << std::endl;
+    if(elements[index] != nullptr){
+        printf("Element[%d]: \n", index);
         element_printf("%B\n", elements[index]);
     }else{
-        std::cout << "Element[" << index << "] does not exist" << std::endl;
+        printf("Element[%d] does not exist\n", index);
     }
 }
 
-PbcElements_copy::~PbcElements_copy()
-{
-    for (auto elem : elements) {
-        element_clear(elem);
+PbcElements_copy::~PbcElements_copy(){
+    if (elements != nullptr){
+        for (int i = 0; i < size; i++){
+            element_clear(elements[i]);
+        }
+        delete[] elements;
     }
 }
 
