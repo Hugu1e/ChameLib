@@ -34,25 +34,25 @@ void test(std::string test_name, std::string curve){
 
 
     test.start("SetUp");
-    ch.SetUp(&pp);
+    ch.SetUp(pp, pk, sk, label);
     test.end("SetUp");
     // pp.printElement("g");
 
     test.start("KeyGen");
-    ch.KeyGen(&sk, &pk, &label, &pp);
+    ch.KeyGen(sk, pk, label, pp);
     test.end("KeyGen");
     // sk.printElement("a");
     // sk.printElement("x1");
     // sk.printElement("x2");
 
     test.start("Hash");
-    ch.Hash(h, r, &pk, m, &label, &pp);
+    ch.Hash(h, r, pk, m, label, pp);
     test.end("Hash");
     Logger::PrintPbc("Hash value", h);
     Logger::PrintPbc("r", r);
 
     test.start("Check");
-    bool check_result = ch.Check(m, r, &pk, &label, h, &pp);
+    bool check_result = ch.Check(m, r, pk, label, h, pp);
     test.end("Check");
 
     if(check_result){
@@ -62,21 +62,21 @@ void test(std::string test_name, std::string curve){
     }
 
     test.start("UForge");
-    ch.UForge(r_p, &sk, &pk, &label, h, m, m_p, r, &pp);
+    ch.UForge(r_p, sk, pk, label, h, m, m_p, r, pp);
     test.end("UForge");
     Logger::PrintPbc("r_p", r_p);
 
     test.start("Verify");
-    bool verify_result_1 = ch.Verify(m_p, r_p, &pk, &label, h, &pp);
+    bool verify_result_1 = ch.Verify(m_p, r_p, pk, label, h, pp);
     test.end("Verify");
 
     test.start("IForge");
-    ch.IForge(r_pp, &label, m, m_p, r, r_p, m_pp);
+    ch.IForge(r_pp, label, m, m_p, r, r_p, m_pp);
     test.end("IForge");
     Logger::PrintPbc("r_pp", r_pp);
 
     test.start("Verify");
-    bool verify_result_2 = ch.Verify(m_pp, r_pp, &pk, &label, h, &pp);
+    bool verify_result_2 = ch.Verify(m_pp, r_pp, pk, label, h, pp);
     test.end("Verify");
 
     if(verify_result_1){
