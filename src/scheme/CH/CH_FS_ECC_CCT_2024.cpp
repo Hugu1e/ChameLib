@@ -9,26 +9,16 @@ CH_FS_ECC_CCT_2024::CH_FS_ECC_CCT_2024(element_s *_G1, element_s *_G2, element_s
     element_init_same_as(this->c2, Zn);
 }
 
+
 void CH_FS_ECC_CCT_2024::SetUp(CH_FS_ECC_CCT_2024_pp &pp, CH_FS_ECC_CCT_2024_pk &pk, CH_FS_ECC_CCT_2024_sk &sk, CH_FS_ECC_CCT_2024_r &r, CH_FS_ECC_CCT_2024_r &r_p){
     pp.init(1);
-    element_init_same_as(pp[g], G1);
-
     pk.init(1);
-    element_init_same_as(pk[y], G1);
-
     sk.init(1);
-    element_init_same_as(sk[x], Zn);
-
     r.init(3);
-    element_init_same_as(r[z1], Zn);
-    element_init_same_as(r[z2], Zn);
-    element_init_same_as(r[c1], Zn);
     r_p.init(3);
-    element_init_same_as(r_p[z1], Zn);
-    element_init_same_as(r_p[z2], Zn);
-    element_init_same_as(r_p[c1], Zn);
     
-    element_random(pp[g]);
+    element_random(tmp_G);
+    pp.set(g, tmp_G);
 }
 
 /**
@@ -37,10 +27,12 @@ void CH_FS_ECC_CCT_2024::SetUp(CH_FS_ECC_CCT_2024_pp &pp, CH_FS_ECC_CCT_2024_pk 
  * @param sk secret key
  */
 void CH_FS_ECC_CCT_2024::KeyGen(CH_FS_ECC_CCT_2024_pk &pk, CH_FS_ECC_CCT_2024_sk &sk, CH_FS_ECC_CCT_2024_pp &pp) {
-    element_random(sk[x]);
+    element_random(tmp_Zn);
+    sk.set(x, tmp_Zn);
 
     // y = g^x
-    element_pow_zn(pk[y], pp[g], sk[x]);
+    element_pow_zn(tmp_G, pp[g], tmp_Zn);
+    pk.set(y, tmp_G);
 }
 
 
@@ -62,11 +54,13 @@ void CH_FS_ECC_CCT_2024::Hash(element_t h, CH_FS_ECC_CCT_2024_r &r, CH_FS_ECC_CC
 
     // compute a NIZK proof r
     element_random(this->t2);
-    element_random(r[z1]);
+    element_random(tmp_Zn);
+    r.set(z1, tmp_Zn);
     // T2 = g^t2
     element_pow_zn(this->T2, pp[g], this->t2);
     // c1 = H'(T2, pkch, g^rho, m)
-    this->H(r[c1], this->T2, pk[y], this->tmp_G_2, m);
+    this->H(tmp_Zn, this->T2, pk[y], this->tmp_G_2, m);
+    r.set(c1, tmp_Zn);
     // T1 = g^z1 * pkch^c1
     element_pow_zn(this->T1, pp[g], r[z1]);
     element_pow_zn(this->tmp_G, pk[y], r[c1]);
@@ -76,7 +70,8 @@ void CH_FS_ECC_CCT_2024::Hash(element_t h, CH_FS_ECC_CCT_2024_r &r, CH_FS_ECC_CC
     this->H(this->c2, this->T1, pk[y], this->tmp_G_2, m);
     // z2 = t2 - c2 * rho
     element_mul(this->tmp_Zn, this->c2, this->rho);
-    element_sub(r[z2], this->t2, this->tmp_Zn);
+    element_sub(tmp_Zn, this->t2, this->tmp_Zn);
+    r.set(z2, tmp_Zn);
 }
 
 /**
@@ -151,7 +146,8 @@ void CH_FS_ECC_CCT_2024::Adapt(CH_FS_ECC_CCT_2024_r &r_p, CH_FS_ECC_CCT_2024_pk 
     
     // random t1',z2'
     element_random(this->t1);
-    element_random(r_p[z2]);
+    element_random(tmp_Zn);
+    r_p.set(z2, tmp_Zn);
 
     // T1' = g^t1'
     element_pow_zn(this->T1, pp[g], this->t1);
@@ -165,11 +161,13 @@ void CH_FS_ECC_CCT_2024::Adapt(CH_FS_ECC_CCT_2024_r &r_p, CH_FS_ECC_CCT_2024_pk 
     element_mul(this->T2, this->T2, this->tmp_G_2);
 
     // c1' = H'(T2', pkch, y', m')
-    this->H(r_p[c1], this->T2, pk[y], this->tmp_G, m_p);
+    this->H(tmp_Zn, this->T2, pk[y], this->tmp_G, m_p);
+    r_p.set(c1, tmp_Zn);
 
     // z1' = t1' - c1' * x
-    element_mul(this->tmp_Zn, r_p[c1], sk[x]);
-    element_sub(r_p[z1], this->t1, this->tmp_Zn);
+    element_mul(this->tmp_Zn, tmp_Zn, sk[x]);
+    element_sub(tmp_Zn, this->t1, this->tmp_Zn);
+    r_p.set(z1, tmp_Zn);
 }
 
 

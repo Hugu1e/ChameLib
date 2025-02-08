@@ -28,9 +28,14 @@ element_s* PbcElements_copy::operator[](int index){
     return elements[index];
 }
 
+void PbcElements_copy::set(int index, element_s *element){
+    element_init_same_as(elements[index], element);
+    element_set(elements[index], element);
+}
+
 void PbcElements_copy::print(){
     if (size > 0){
-        printf("PbcElements_copy: %d elements\n", size);
+        printf("PbcElements: %d elements\n", size);
         for(int i = 0; i < size; i++){
             if(elements[i] != nullptr){
                 printf("Element[%d]: \n", i);

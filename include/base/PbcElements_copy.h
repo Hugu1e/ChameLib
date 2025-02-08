@@ -18,6 +18,8 @@ class PbcElements_copy{
         PbcElements_copy(const PbcElements_copy &other);
         
         element_s* operator[](int index);
+
+        void set(int index, element_s *element);
                 
         void print();
         void print(int index);
