@@ -12,7 +12,7 @@ CH_FS_ECC_CCT_2024::CH_FS_ECC_CCT_2024(element_s *_G1, element_s *_G2, element_s
 
 void CH_FS_ECC_CCT_2024::SetUp(CH_FS_ECC_CCT_2024_pp *pp){
     element_random(tmp_G);
-    pp->insertElement("g", "G1", tmp_G);
+    pp->insert(PP_G, tmp_G);
 }
 
 /**
@@ -22,11 +22,11 @@ void CH_FS_ECC_CCT_2024::SetUp(CH_FS_ECC_CCT_2024_pp *pp){
  */
 void CH_FS_ECC_CCT_2024::KeyGen(CH_FS_ECC_CCT_2024_pk *pk, CH_FS_ECC_CCT_2024_sk *sk, CH_FS_ECC_CCT_2024_pp *pp) {
     element_random(tmp_Zn);
-    sk->insertElement("x", "Zn", tmp_Zn);
+    sk->insert(SK_X, tmp_Zn);
 
     // y = g^x
-    element_pow_zn(tmp_G, pp->getElement("g"), tmp_Zn);
-    pk->insertElement("y", "G1", tmp_G);
+    element_pow_zn(tmp_G, pp->get(PP_G), tmp_Zn);
+    pk->insert(PK_Y, tmp_G);
 }
 
 
@@ -43,29 +43,29 @@ void CH_FS_ECC_CCT_2024::Hash(element_t h, CH_FS_ECC_CCT_2024_r *r, CH_FS_ECC_CC
 
     // h = g^𝜌 * H(m)
     this->H(this->tmp_G, m);
-    element_pow_zn(this->tmp_G_2, pp->getElement("g"), this->rho);
+    element_pow_zn(this->tmp_G_2, pp->get(PP_G), this->rho);
     element_mul(h, this->tmp_G, this->tmp_G_2);
 
     // compute a NIZK proof r
     element_random(this->t2);
     element_random(tmp_Zn);
-    r->insertElement("z1", "Zn", tmp_Zn);
+    r->insert(R_Z1, tmp_Zn);
     // T2 = g^t2
-    element_pow_zn(this->T2, pp->getElement("g"), this->t2);
+    element_pow_zn(this->T2, pp->get(PP_G), this->t2);
     // c1 = H'(T2, pkch, g^rho, m)
-    this->H(tmp_Zn, this->T2, pk->getElement("y"), this->tmp_G_2, m);
-    r->insertElement("c1", "Zn", tmp_Zn);
+    this->H(tmp_Zn, this->T2, pk->get(PK_Y), this->tmp_G_2, m);
+    r->insert(R_C1, tmp_Zn);
     // T1 = g^z1 * pkch^c1
-    element_pow_zn(this->T1, pp->getElement("g"), r->getElement("z1"));
-    element_pow_zn(this->tmp_G, pk->getElement("y"), r->getElement("c1"));
+    element_pow_zn(this->T1, pp->get(PP_G), r->get(R_Z1));
+    element_pow_zn(this->tmp_G, pk->get(PK_Y), r->get(R_C1));
     element_mul(this->T1, this->T1, this->tmp_G);
 
     // c2 = H'(T1, pkch, g^pho, m)
-    this->H(this->c2, this->T1, pk->getElement("y"), this->tmp_G_2, m);
+    this->H(this->c2, this->T1, pk->get(PK_Y), this->tmp_G_2, m);
     // z2 = t2 - c2 * rho
     element_mul(this->tmp_Zn, this->c2, this->rho);
     element_sub(tmp_Zn, this->t2, this->tmp_Zn);
-    r->insertElement("z2", "Zn", tmp_Zn);
+    r->insert(R_Z2, tmp_Zn);
 }
 
 /**
@@ -102,19 +102,19 @@ bool CH_FS_ECC_CCT_2024::Check(CH_FS_ECC_CCT_2024_pk *pk, element_t m, element_t
     element_div(this->tmp_G, h, this->tmp_G);
 
     // T1 = g^z1 * pkch^c1
-    element_pow_zn(this->T1, pp->getElement("g"), r->getElement("z1"));
-    element_pow_zn(this->tmp_G_2, pk->getElement("y"), r->getElement("c1"));
+    element_pow_zn(this->T1, pp->get(PP_G), r->get(R_Z1));
+    element_pow_zn(this->tmp_G_2, pk->get(PK_Y), r->get(R_C1));
     element_mul(this->T1, this->T1, this->tmp_G_2);
     // c2 = H'(T1, pkch, y', m)
-    this->H(this->c2, this->T1, pk->getElement("y"), this->tmp_G, m);
+    this->H(this->c2, this->T1, pk->get(PK_Y), this->tmp_G, m);
     // T2 = g^z2 * y'^c2
-    element_pow_zn(this->T2, pp->getElement("g"), r->getElement("z2"));
+    element_pow_zn(this->T2, pp->get(PP_G), r->get(R_Z2));
     element_pow_zn(this->tmp_G_2, this->tmp_G, this->c2);
     element_mul(this->T2, this->T2, this->tmp_G_2);
     // c1 = H'(T2, pkch, y', m)
-    this->H(this->tmp_Zn, this->T2, pk->getElement("y"), this->tmp_G, m);
+    this->H(this->tmp_Zn, this->T2, pk->get(PK_Y), this->tmp_G, m);
 
-    return element_cmp(r->getElement("c1"), this->tmp_Zn) == 0;
+    return element_cmp(r->get(R_C1), this->tmp_Zn) == 0;
 }
 
 
@@ -141,27 +141,27 @@ void CH_FS_ECC_CCT_2024::Adapt(CH_FS_ECC_CCT_2024_r *r_p, CH_FS_ECC_CCT_2024_pk 
     // random t1',z2'
     element_random(this->t1);
     element_random(tmp_Zn);
-    r_p->insertElement("z2", "Zn", tmp_Zn);
+    r_p->insert(R_Z2, tmp_Zn);
 
     // T1' = g^t1'
-    element_pow_zn(this->T1, pp->getElement("g"), this->t1);
+    element_pow_zn(this->T1, pp->get(PP_G), this->t1);
 
     // c2' = H'(T1', pkch, y', m')
-    this->H(this->c2, this->T1, pk->getElement("y"), this->tmp_G, m_p);
+    this->H(this->c2, this->T1, pk->get(PK_Y), this->tmp_G, m_p);
 
     // T2' = g^z2' * y'^c2' 
-    element_pow_zn(this->T2, pp->getElement("g"), r_p->getElement("z2"));
+    element_pow_zn(this->T2, pp->get(PP_G), r_p->get(R_Z2));
     element_pow_zn(this->tmp_G_2, this->tmp_G, this->c2);
     element_mul(this->T2, this->T2, this->tmp_G_2);
 
     // c1' = H'(T2', pkch, y', m')
-    this->H(tmp_Zn, this->T2, pk->getElement("y"), this->tmp_G, m_p);
-    r_p->insertElement("c1", "Zn", tmp_Zn);
+    this->H(tmp_Zn, this->T2, pk->get(PK_Y), this->tmp_G, m_p);
+    r_p->insert(R_C1, tmp_Zn);
 
     // z1' = t1' - c1' * x
-    element_mul(this->tmp_Zn, tmp_Zn, sk->getElement("x"));
+    element_mul(this->tmp_Zn, tmp_Zn, sk->get(SK_X));
     element_sub(tmp_Zn, this->t1, this->tmp_Zn);
-    r_p->insertElement("z1", "Zn", tmp_Zn);
+    r_p->insert(R_Z1, tmp_Zn);
 }
 
 

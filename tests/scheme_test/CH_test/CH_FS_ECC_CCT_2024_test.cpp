@@ -33,9 +33,9 @@ void test(std::string test_name, std::string curve){
     test.start("Hash");
     ch.Hash(h, &r, &pk, m, &pp);
     test.end("Hash");
-    r.printElement("c1");
-    r.printElement("z1");
-    r.printElement("z2");
+    r.print(R_C1);
+    r.print(R_Z1);
+    r.print(R_Z2);
     Logger::PrintPbc("h", h);
 
     test.start("Check");
