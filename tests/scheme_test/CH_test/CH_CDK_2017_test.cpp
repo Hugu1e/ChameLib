@@ -15,23 +15,27 @@ void test(std::string test_name, std::string curve){
     mpz_t m, tag, m_p, tag_p;
     mpz_inits(m, tag, m_p, tag_p, NULL);
 
+    test.start("SetUp");
+    ch.SetUp(pk, sk, h, r, r_p);
+    test.end("SetUp");
+
 
     test.start("KeyGen");
-    ch.KeyGen(&pk, &sk, 1024);
+    ch.KeyGen(pk, sk, 1024);
     test.end("KeyGen");
 
-    RandomGenerator::RandomN(m, pk.get_rsa_pk()->getElement("n"));
-    RandomGenerator::RandomN(tag, pk.get_rsa_pk()->getElement("n"));
+    RandomGenerator::RandomN(m, pk.get_rsa_pk()[AE_RSA::n]);
+    RandomGenerator::RandomN(tag, pk.get_rsa_pk()[AE_RSA::n]);
     Logger::PrintGmp("m", m);
     Logger::PrintGmp("tag", tag);
     test.start("Hash");
-    ch.Hash(&h, &r, m, tag, &pk);
+    ch.Hash(h, r, m, tag, pk);
     test.end("Hash");
-    Logger::PrintGmp("h", h.getElement("h"));
-    Logger::PrintGmp("r", r.getElement("r"));
+    h.print();
+    r.print();
 
     test.start("Check");
-    bool check_result = ch.Check(&h, &r, m, tag, &pk);
+    bool check_result = ch.Check(h, r, m, tag, pk);
     test.end("Check");
     if(check_result){
         printf("Hash check successful!\n");
@@ -39,16 +43,16 @@ void test(std::string test_name, std::string curve){
         printf("Hash check failed.\n");
     }
 
-    RandomGenerator::RandomN(m_p, pk.get_rsa_pk()->getElement("n"));
+    RandomGenerator::RandomN(m_p, pk.get_rsa_pk()[AE_RSA::n]);
     Logger::PrintGmp("m_p", m_p);
     test.start("Adapt");
-    ch.Adapt(&r_p, tag_p, &h, &r, m_p, &sk, &pk);
+    ch.Adapt(r_p, tag_p, h, r, m_p, sk, pk);
     test.end("Adapt");
-    Logger::PrintGmp("r_p", r_p.getElement("r"));
+    r_p.print();
     Logger::PrintGmp("tag_p", tag_p);
 
     test.start("Verify");
-    bool verify_result = ch.Verify(&h, &r_p, m_p, tag_p, &pk);
+    bool verify_result = ch.Verify(h, r_p, m_p, tag_p, pk);
     test.end("Verify");
     if(verify_result){
         printf("Verify successful!\n");

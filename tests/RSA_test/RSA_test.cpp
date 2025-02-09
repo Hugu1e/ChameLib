@@ -13,21 +13,24 @@ void test(std::string test_name, std::string curve){
     mpz_t m,c,m2;
     mpz_inits(m,c,m2,NULL);
 
+    test.start("SetUp");
+    rsa.SetUp(pk, sk);
+    test.end("SetUp");
+
     test.start("KeyGen");
-    rsa.KeyGen(&pk, &sk, 1024);
+    rsa.KeyGen(pk, sk, 1024);
     test.end("KeyGen");
-    pk.printElement("n");
-    pk.printElement("e");
-    sk.printElement("d");
+    pk.print();
+    sk.print();
 
     mpz_set_ui(m, 123456);
     test.start("Encrypt");
-    rsa.Encrypt(c, m, &pk);
+    rsa.Encrypt(c, m, pk);
     test.end("Encrypt");
     gmp_printf("Ciphertext: %Zd\n", c);
 
     test.start("Decrypt");
-    rsa.Decrypt(m2, c, &sk, &pk);
+    rsa.Decrypt(m2, c, sk, pk);
     test.end("Decrypt");
     gmp_printf("Decrypted Plaintext: %Zd\n", m);
 
