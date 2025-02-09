@@ -28,27 +28,26 @@ void test(std::string test_name, std::string curve){
     std::cout << "Bit length of m: " << m_bit_length << std::endl;
 
     test.start("SetUp");
-    ch.SetUp(&pp, &msk, m_bit_length);
+    ch.SetUp(pp, msk, tk, h, h_p, m_bit_length);
     test.end("SetUp");
-    // Logger::PrintPbcElements("pp", pp);
-    Logger::PrintPbcElements("msk", msk);
+    // pp.print();
+    msk.print();
 
     Logger::PrintPbc("I", I);
     test.start("KeyGen");
-    ch.KeyGen(&tk, &msk, I, &pp);
+    ch.KeyGen(tk, msk, I, pp);
     test.end("KeyGen");
-    Logger::PrintPbcElements("tk", tk);
+    tk.print();
 
     Logger::PrintPbc("m", m);
     test.start("Hash");
-    ch.Hash(&h, m, I, &pp);
+    ch.Hash(h, m, I, pp);
     test.end("Hash");
-    h.get_h()->printElement("h");
-    h.get_r()->printElement("r1");
-    h.get_r()->printElement("r2");
+    h.get_h().print();
+    h.get_r().print();
 
     test.start("Check");
-    bool check_result = ch.Check(&h, m, I, &pp);
+    bool check_result = ch.Check(h, m, I, pp);
     test.end("Check");
 
     if(check_result){
@@ -59,14 +58,13 @@ void test(std::string test_name, std::string curve){
 
     Logger::PrintPbc("m_p", m_p);
     test.start("Adapt");
-    ch.Adapt(&h_p, m_p, &h, m, &tk);
+    ch.Adapt(h_p, m_p, h, m, tk);
     test.end("Adapt");
-    h_p.get_h()->printElement("h");
-    h_p.get_r()->printElement("r1");
-    h_p.get_r()->printElement("r2");
+    h_p.get_h().print();
+    h_p.get_r().print();
     
     test.start("Verify");
-    bool verify_result = ch.Verify(&h_p, m_p, I, &pp);
+    bool verify_result = ch.Verify(h_p, m_p, I, pp);
     test.end("Verify");
 
     if(verify_result){

@@ -9,28 +9,35 @@ ID_B_CollRes_XSL_2021::ID_B_CollRes_XSL_2021(element_s *_G1, element_s *_G2, ele
  * input : n
  * output: msk
  */
-void ID_B_CollRes_XSL_2021::SetUp(ID_B_CollRes_XSL_2021_pp *pp, ID_B_CollRes_XSL_2021_msk *msk, unsigned long int n) {
+void ID_B_CollRes_XSL_2021::SetUp(ID_B_CollRes_XSL_2021_pp &pp, ID_B_CollRes_XSL_2021_msk &msk, ID_B_CollRes_XSL_2021_tk &tk, ID_B_CollRes_XSL_2021_h &h, ID_B_CollRes_XSL_2021_h &h_p, unsigned long int n) {
+    pp.init(4+n);
+    msk.init(1);
+    tk.init(2);
+    h.get_r().init(2);
+    h.get_h().init(1);
+    h_p.get_r().init(2);
+    h_p.get_h().init(1);
+    
     element_random(tmp_G);
-    pp->insertElement("g", "G1", tmp_G);
+    pp.set(g, tmp_G);
 
     element_random(this->a);
     // g1 = g^a
     element_pow_zn(tmp_G, tmp_G, this->a);
-    pp->insertElement("g1", "G1", tmp_G);
+    pp.set(g1, tmp_G);
 
     // g2 ∈ G
     element_random(tmp_G);
-    pp->insertElement("g2", "G1", tmp_G);
+    pp.set(g2, tmp_G);
 
     // msk
     element_pow_zn(tmp_G, tmp_G, this->a);
-    msk->insertElement("msk", "G1", tmp_G);
+    msk.set(s, tmp_G);
      
-    
     this->n = n;
-    for(unsigned long int i = 0;i <= n;i++) {
+    for(unsigned long int i = 0; i <= n; i++) {
         element_random(tmp_G);
-        pp->insertElement("u"+std::to_string(i), "G1", tmp_G);
+        pp.set(u + i, tmp_G);
     }
 }
 
@@ -38,7 +45,7 @@ void ID_B_CollRes_XSL_2021::SetUp(ID_B_CollRes_XSL_2021_pp *pp, ID_B_CollRes_XSL
  * input : msk, I
  * output: tk1, tk2
  */
-void ID_B_CollRes_XSL_2021::KeyGen(ID_B_CollRes_XSL_2021_tk *tk, ID_B_CollRes_XSL_2021_msk *msk, element_t I,ID_B_CollRes_XSL_2021_pp *pp) {
+void ID_B_CollRes_XSL_2021::KeyGen(ID_B_CollRes_XSL_2021_tk &tk, ID_B_CollRes_XSL_2021_msk &msk, element_t I, ID_B_CollRes_XSL_2021_pp &pp) {
     unsigned long int I_bit_length = element_length_in_bytes(I) * 8;
     if(I_bit_length != this->n) {
         throw std::invalid_argument("The bit length of I(identity) must be equal to m(message).");
@@ -48,19 +55,19 @@ void ID_B_CollRes_XSL_2021::KeyGen(ID_B_CollRes_XSL_2021_tk *tk, ID_B_CollRes_XS
 
     // compute tk1
     // tmp_G1 = u0
-    element_set(this->tmp_G, pp->getElement("u0"));
-    for(unsigned long int i = 1;i <= this->n;i++) {
+    element_set(this->tmp_G, pp[u]);
+    for(unsigned long int i = 1; i <= this->n; i++) {
         if(getBit(I, i-1)) {
-            element_mul(this->tmp_G, this->tmp_G, pp->getElement("u"+std::to_string(i)));
+            element_mul(this->tmp_G, this->tmp_G, pp[u + i]);
         }
     }
     element_pow_zn(tmp_G_2, this->tmp_G, this->t);
-    element_mul(tmp_G_2, msk->getElement("msk"), tmp_G_2);
-    tk->insertElement("tk1", "G1", tmp_G_2);
+    element_mul(tmp_G_2, msk[s], tmp_G_2);
+    tk.set(tk1, tmp_G_2);
 
     // compute tk2
-    element_pow_zn(tmp_G_2, pp->getElement("g"), this->t);
-    tk->insertElement("tk2", "G1", tmp_G_2);
+    element_pow_zn(tmp_G_2, pp[g], this->t);
+    tk.set(tk2, tmp_G_2);
 }
  
 /**
@@ -78,79 +85,78 @@ bool ID_B_CollRes_XSL_2021::getBit(element_t element, unsigned long int index) {
  * input : I, m
  * output: h, r1, r2
  */
-void ID_B_CollRes_XSL_2021::Hash(ID_B_CollRes_XSL_2021_h *h, element_t m, element_t I, ID_B_CollRes_XSL_2021_pp *pp) {
+void ID_B_CollRes_XSL_2021::Hash(ID_B_CollRes_XSL_2021_h &h, element_t m, element_t I, ID_B_CollRes_XSL_2021_pp &pp) {
     element_random(tmp_G);
-    h->get_r()->insertElement("r1", "G1", tmp_G);
+    h.get_r().set(r1, tmp_G);
     element_random(tmp_G_2);
-    h->get_r()->insertElement("r2", "G1", tmp_G_2);
-
+    h.get_r().set(r2, tmp_G_2);
 
     // compute h
-    element_pairing(this->tmp_GT, pp->getElement("g1"), pp->getElement("g2"));
+    element_pairing(this->tmp_GT, pp[g1], pp[g2]);
     element_pow_zn(this->tmp_GT, this->tmp_GT, m);
-    element_pairing(this->tmp_GT_2, tmp_G, pp->getElement("g"));
+    element_pairing(this->tmp_GT_2, tmp_G, pp[g]);
 
-    element_set(this->tmp_G_3, pp->getElement("u0"));
-    for(unsigned long int i = 1;i <= this->n;i++) {
+    element_set(this->tmp_G_3, pp[u]);
+    for(unsigned long int i = 1; i <= this->n; i++) {
         if(getBit(I, i-1)) {
-            element_mul(this->tmp_G_3, this->tmp_G_3, pp->getElement("u"+std::to_string(i)));
+            element_mul(this->tmp_G_3, this->tmp_G_3, pp[u+i]);
         }
     }
     element_pairing(this->tmp_GT_3, tmp_G_2, this->tmp_G_3);
 
     element_mul(tmp_GT, this->tmp_GT, this->tmp_GT_2);
     element_div(tmp_GT, tmp_GT, this->tmp_GT_3);
-    h->get_h()->insertElement("h", "GT", tmp_GT);
+    h.get_h().set(h1, tmp_GT);
 }
 
 /**
  * input : I, m, r1, r2
  * output: h
  */
-bool ID_B_CollRes_XSL_2021::Check(ID_B_CollRes_XSL_2021_h *h, element_t m, element_t I, ID_B_CollRes_XSL_2021_pp *pp) {
+bool ID_B_CollRes_XSL_2021::Check(ID_B_CollRes_XSL_2021_h &h, element_t m, element_t I, ID_B_CollRes_XSL_2021_pp &pp) {
     // compute h
-    element_pairing(this->tmp_GT, pp->getElement("g1"), pp->getElement("g2"));
+    element_pairing(this->tmp_GT, pp[g1], pp[g2]);
     element_pow_zn(this->tmp_GT, this->tmp_GT, m);
-    element_pairing(this->tmp_GT_2, h->get_r()->getElement("r1"), pp->getElement("g"));
+    element_pairing(this->tmp_GT_2, h.get_r()[r1], pp[g]);
 
-    element_set(this->tmp_G_3, pp->getElement("u0"));
-    for(unsigned long int i = 1;i <= this->n;i++) {
+    element_set(this->tmp_G_3, pp[u]);
+    for(unsigned long int i = 1; i <= this->n; i++) {
         if(getBit(I, i-1)) {
-            element_mul(this->tmp_G_3, this->tmp_G_3, pp->getElement("u"+std::to_string(i)));
+            element_mul(this->tmp_G_3, this->tmp_G_3, pp[u + i]);
         }
     }
 
-    element_pairing(this->tmp_GT_3, h->get_r()->getElement("r2"), this->tmp_G_3);
+    element_pairing(this->tmp_GT_3, h.get_r()[r2], this->tmp_G_3);
     element_mul(tmp_GT, this->tmp_GT, this->tmp_GT_2);
     element_div(tmp_GT, tmp_GT, this->tmp_GT_3);
 
-    return element_cmp(h->get_h()->getElement("h"), this->tmp_GT) == 0;
+    return element_cmp(h.get_h()[h1], this->tmp_GT) == 0;
 }
 
 /**
  * input : tk1, tk2, h, m, r1, r2, m_p
  * output: r1_p, r2_p
  */
-void ID_B_CollRes_XSL_2021::Adapt(ID_B_CollRes_XSL_2021_h *h_p, element_t m_p, ID_B_CollRes_XSL_2021_h *h, element_t m, ID_B_CollRes_XSL_2021_tk *tk) {
+void ID_B_CollRes_XSL_2021::Adapt(ID_B_CollRes_XSL_2021_h &h_p, element_t m_p, ID_B_CollRes_XSL_2021_h &h, element_t m, ID_B_CollRes_XSL_2021_tk &tk) {
     // compute r1_p
     element_sub(this->tmp_Zn, m, m_p);
-    element_pow_zn(tmp_G, tk->getElement("tk1"), this->tmp_Zn);
-    element_mul(tmp_G, h->get_r()->getElement("r1"), tmp_G);
-    h_p->get_r()->insertElement("r1", "G1", tmp_G);
+    element_pow_zn(tmp_G, tk[tk1], this->tmp_Zn);
+    element_mul(tmp_G, h.get_r()[r1], tmp_G);
+    h_p.get_r().set(r1, tmp_G);
     
     // compute r2_p
-    element_pow_zn(tmp_G, tk->getElement("tk2"), this->tmp_Zn);
-    element_mul(tmp_G, h->get_r()->getElement("r2"), tmp_G);
-    h_p->get_r()->insertElement("r2", "G1", tmp_G);
+    element_pow_zn(tmp_G, tk[tk2], this->tmp_Zn);
+    element_mul(tmp_G, h.get_r()[r2], tmp_G);
+    h_p.get_r().set(r2, tmp_G);
 
-    h_p->get_h()->insertElement("h", "GT", h->get_h()->getElement("h"));
+    h_p.get_h().set(h1, h.get_h()[h1]);
 }
 
 /**
  * input : I, m_p, r1_p, r2_p, h
  * output: bool
  */
-bool ID_B_CollRes_XSL_2021::Verify(ID_B_CollRes_XSL_2021_h *h_p, element_t m_p, element_t I, ID_B_CollRes_XSL_2021_pp *pp) {
+bool ID_B_CollRes_XSL_2021::Verify(ID_B_CollRes_XSL_2021_h &h_p, element_t m_p, element_t I, ID_B_CollRes_XSL_2021_pp &pp) {
     return Check(h_p, m_p, I, pp);
 }
 

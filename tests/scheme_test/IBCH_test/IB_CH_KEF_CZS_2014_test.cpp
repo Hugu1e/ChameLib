@@ -24,28 +24,26 @@ void test(std::string test_name, std::string curve){
     element_random(m_p);
 
     test.start("SetUp");
-    ch.SetUp(&pp);
+    ch.SetUp(pp, td, h, r, r_p);
     test.end("SetUp");
-    pp.printElement("P");
-    pp.printElement("Ppub");
+    pp.print();
 
     test.start("Extract");
-    ch.Extract(&td, ID);
+    ch.Extract(td, ID);
     test.end("Extract");
-    td.printElement("SID");
+    td.print();
 
 
     Logger::PrintPbc("m", m);
     test.start("Hash");
-    ch.Hash(&h, &r, ID, L, m, &pp);
+    ch.Hash(h, r, ID, L, m, pp);
     test.end("Hash");
-    h.printElement("h");
-    r.printElement("r1");
-    r.printElement("r2");
+    h.print();
+    r.print();
 
 
     test.start("Check");
-    bool check_result = ch.Check(&h, &r, L, m, &td);
+    bool check_result = ch.Check(h, r, L, m, td);
     test.end("Check");
 
     if(check_result){
@@ -56,14 +54,13 @@ void test(std::string test_name, std::string curve){
 
     Logger::PrintPbc("m_p", m_p);
     test.start("Adapt");
-    ch.Adapt(&r_p, m_p, &h, &r, L, m, &td);
+    ch.Adapt(r_p, m_p, h, r, L, m, td);
     test.end("Adapt");
-    r_p.printElement("r1");
-    r_p.printElement("r2");
+    r_p.print();
 
 
     test.start("Verify");
-    bool verify_result = ch.Verify(&h, &r_p, L, m_p, &td);
+    bool verify_result = ch.Verify(h, r_p, L, m_p, td);
     test.end("Verify");
 
     if(verify_result){

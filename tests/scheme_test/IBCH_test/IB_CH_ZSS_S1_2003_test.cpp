@@ -26,30 +26,29 @@ void test(std::string test_name, std::string curve){
     element_random(ID);
 
     test.start("SetUp");
-    ch.SetUp(&pp, &msk);
+    ch.SetUp(pp, msk, pk, sk, h, h_p);
     test.end("SetUp");
-    pp.printElement("P");
-    pp.printElement("Ppub");
-    msk.printElement("s");
+    pp.print();
+    msk.print();
 
     Logger::PrintPbc("ID", ID);
     test.start("Extract");
-    ch.Extract(&pk, &sk, &msk, ID);
+    ch.Extract(pk, sk, msk, ID);
     test.end("Extract");
-    pk.printElement("QID");
-    sk.printElement("SID");
+    pk.print();
+    sk.print();
 
 
     Logger::PrintPbc("m", m);
     test.start("Hash");
-    ch.Hash(&h, m, ID, &pp);
+    ch.Hash(h, m, ID, pp);
     test.end("Hash");
-    h.get_h()->printElement("h");
-    h.get_r()->printElement("r");
+    h.get_h().print();
+    h.get_r().print();
 
 
     test.start("Check");
-    bool check_result = ch.Check(&h, m, ID, &pp);
+    bool check_result = ch.Check(h, m, ID, pp);
     test.end("Check");
 
     if(check_result){
@@ -60,14 +59,14 @@ void test(std::string test_name, std::string curve){
 
     Logger::PrintPbc("m_p", m_p);
     test.start("Adapt");
-    ch.Adapt(&h_p, m_p, &h, m, ID, &sk, &pp);
+    ch.Adapt(h_p, m_p, h, m, ID, sk, pp);
     test.end("Adapt");
-    h_p.get_h()->printElement("h");
-    h_p.get_r()->printElement("r");
+    h_p.get_h().print();
+    h_p.get_r().print();
 
 
     test.start("Verify");
-    bool verify_result = ch.Verify(&h_p, m_p, ID, &pp);
+    bool verify_result = ch.Verify(h_p, m_p, ID, pp);
     test.end("Verify");
 
     if(verify_result){

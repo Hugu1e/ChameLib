@@ -4,6 +4,7 @@
 #include <pbc.h>
 #include <string>
 #include <exception/ElementException.h>
+#include <stdexcept>
 
 class PbcElements_copy{
     private:
