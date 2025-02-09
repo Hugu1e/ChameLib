@@ -20,6 +20,8 @@ GmpElements_copy::GmpElements_copy(const GmpElements_copy &other){
     if (this == &other)
         return;
     
+    size = other.size;
+    
     elements = new MP_INT*[other.size];
     for(int i = 0; i < other.size; i++){
         MP_INT *element = new MP_INT();
@@ -27,6 +29,30 @@ GmpElements_copy::GmpElements_copy(const GmpElements_copy &other){
         mpz_set(element, other.elements[i]);
         elements[i] = element;
     }
+}
+
+GmpElements_copy &GmpElements_copy::operator=(const GmpElements_copy &other){
+    if (this == &other)
+        return *this;
+
+    // Clear existing elements
+    for (int i = 0; i < size; i++){
+        mpz_clear(elements[i]);
+    }
+    delete[] elements;
+
+    size = other.size;
+
+    // Copy elements from other
+    elements = new MP_INT*[other.size];
+    for(int i = 0; i < other.size; i++){
+        MP_INT *element = new MP_INT();
+        mpz_init(element);
+        mpz_set(element, other.elements[i]);
+        elements[i] = element;
+    }
+
+    return *this;
 }
 
 MP_INT* GmpElements_copy::operator[](int index){

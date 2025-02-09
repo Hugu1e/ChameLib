@@ -35,23 +35,21 @@ void test(std::string test_name, std::string curve){
     printf("k = %d\n", K);
         
     test.start("SetUp");
-    ch.SetUp(&pp, &mhks, &mtks, K, &As);
+    ch.SetUp(pp, mhks, mtks, K, As, h, h_p);
     test.end("SetUp");
 
     test.start("KeyGen");
-    ch.KeyGen(&mskis, &mtks, &mhks, &As, GID);
+    ch.KeyGen(mskis, mtks, mhks, As, GID);
     test.end("KeyGen");
 
     test.start("Hash");
-    ch.Hash(&h, &pp, &mhks, m, POLICY);
+    ch.Hash(h, pp, mhks, m, POLICY);
     test.end("Hash");
-    h.getH()->printElement("h0");
-    h.getH()->printElement("h1");
-    h.getR()->printElement("r0");
-    h.getR()->printElement("r1");
+    h.getH().print();
+    h.getR().print();
 
     test.start("Check");
-    bool check_result = ch.Check(&mhks, m, &h);
+    bool check_result = ch.Check(mhks, m, h);
     test.end("Check");
 
     if(check_result){
@@ -62,15 +60,14 @@ void test(std::string test_name, std::string curve){
 
     // mskis.pop_back();
     test.start("Adapt");
-    ch.Adapt(&h_p, &mhks, &mskis, m, m_p, &h);
+    ch.Adapt(h_p, mhks, mskis, m, m_p, h);
     test.end("Adapt");
-    h_p.getH()->printElement("h0");
-    h_p.getH()->printElement("h1");
-    h_p.getR()->printElement("r0");
-    h_p.getR()->printElement("r1");
+    // h0, h1, r0, r1
+    h_p.getH().print();
+    h_p.getR().print();
 
     test.start("Verify");
-    bool verify_result = ch.Verify(&mhks, m_p, &h_p);
+    bool verify_result = ch.Verify(mhks, m_p, h_p);
     test.end("Verify");
 
     if(verify_result){

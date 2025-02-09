@@ -15,6 +15,7 @@ class GmpElements_copy{
         void init(int n);
 
         GmpElements_copy(const GmpElements_copy &other);
+        GmpElements_copy &operator=(const GmpElements_copy &other);
         
         MP_INT* operator[](int index);
 
