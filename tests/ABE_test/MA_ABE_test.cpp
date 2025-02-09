@@ -34,7 +34,7 @@ void test(std::string test_name, std::string curve){
     element_init_same_as(res, test.get_GT());
 
     test.start("GlobalSetup");
-    abe.GlobalSetup(&gpk);
+    abe.GlobalSetup(gpk);
     test.end("GlobalSetup");
     // Logger::PrintPbc("gpk.g", gpk.getElement("g"));
 
@@ -43,7 +43,7 @@ void test(std::string test_name, std::string curve){
         MA_ABE_skTheta *skTheta = new MA_ABE_skTheta();
 
         test.start("AuthSetup");
-        abe.AuthSetup(pkTheta, skTheta, &gpk, ATTRIBUTES[_]);
+        abe.AuthSetup(*pkTheta, *skTheta, gpk, ATTRIBUTES[_]);
         test.end("AuthSetup");
 
         // Logger::PrintPbc("pkTheta.pkTheta_1", pkTheta->getElement("pkTheta_1"));
@@ -59,7 +59,7 @@ void test(std::string test_name, std::string curve){
         MA_ABE_skgidA *skgidA = new MA_ABE_skgidA();
 
         test.start("KeyGen");
-        abe.KeyGen(skgidA, &gpk, skThetas[_], GID, ATTRIBUTES[_]);
+        abe.KeyGen(*skgidA, gpk, *skThetas[_], GID, ATTRIBUTES[_]);
         test.end("KeyGen");
 
         // Logger::PrintPbc("skgidA.skgidA_0", skgidA->getElement("skgidA_0"));
@@ -72,7 +72,7 @@ void test(std::string test_name, std::string curve){
     Logger::PrintPbc("msg", msg);
 
     test.start("Encrypt");
-    abe.Encrypt(&c, &gpk, &pkThetas, POLICY, msg);
+    abe.Encrypt(c, gpk, pkThetas, POLICY, msg);
     test.end("Encrypt");
     // Logger::PrintPbc("c0", c.getC0()->getElement("c0"));
     // for(int i = 0;i < SIZE_OF_POLICY;i++){
@@ -88,7 +88,7 @@ void test(std::string test_name, std::string curve){
     }
 
     test.start("Decrypt");
-    abe.Decrypt(res, &_skgidAs, &c);
+    abe.Decrypt(res, _skgidAs, c);
     test.end("Decrypt");
 
     Logger::PrintPbc("msg", msg);

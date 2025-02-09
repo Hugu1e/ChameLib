@@ -13,24 +13,24 @@ void test(std::string test_name, std::string curve){
     BLS_signature signature;
     
     test.start("Setup");
-    bls.Setup(&pp);
+    bls.Setup(pp, pk, sk, signature);
     test.end("Setup");
 
     test.start("KeyGen");
-    bls.KeyGen(&pk, &sk, &pp);
+    bls.KeyGen(pk, sk, pp);
     test.end("KeyGen");
-    pk.printElement();
-    sk.printElement();
-    pp.printElement();
+    pk.print();
+    sk.print();
+    pp.print();
 
     std::string message = "Hello, BLS!";
     test.start("Sign");
-    bls.Sign(&signature, &sk, message);
+    bls.Sign(signature, sk, message);
     test.end("Sign");
-    signature.printElement();
+    signature.print();
 
     test.start("Verify");
-    bool verify_result = bls.Verify(&pp, &pk, message, &signature);
+    bool verify_result = bls.Verify(pp, pk, message, signature);
     test.end("Verify");
 
     if(verify_result){

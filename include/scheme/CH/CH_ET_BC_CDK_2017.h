@@ -39,6 +39,7 @@ class CH_ET_BC_CDK_2017{
         CH_ET_BC_CDK_2017();
 
         void SetUp(CH_ET_BC_CDK_2017_pp &pp, CH_ET_BC_CDK_2017_pk &pk, CH_ET_BC_CDK_2017_sk &sk, CH_ET_BC_CDK_2017_h &h, CH_ET_BC_CDK_2017_r &r, CH_ET_BC_CDK_2017_r &r_p, CH_ET_BC_CDK_2017_etd &etd, int k);
+        void SetUp(CH_ET_BC_CDK_2017_pp &pp, CH_ET_BC_CDK_2017_pk &pk, CH_ET_BC_CDK_2017_sk &sk, CH_ET_BC_CDK_2017_h &h, CH_ET_BC_CDK_2017_r &r, CH_ET_BC_CDK_2017_r &r_p, int k);
 
         void KeyGen(CH_ET_BC_CDK_2017_pk &pk, CH_ET_BC_CDK_2017_sk &sk, CH_ET_BC_CDK_2017_pp &pp);
 

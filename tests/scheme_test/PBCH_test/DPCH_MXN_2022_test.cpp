@@ -36,21 +36,20 @@ void test(std::string test_name, std::string curve){
 
     printf("k = %d\n", k);
     test.start("SetUp");
-    ch.SetUp(&ppDPCH, &pkDPCH, &skDPCH, k);
+    ch.SetUp(ppDPCH, pkDPCH, skDPCH, h, r, r_p, c, sigmaGid, skGid, k);
     test.end("SetUp");
-    ppDPCH.getGpkMA_ABE()->printElement("g");
-    pkDPCH.getPkCH()->printElement("n0");
-    pkDPCH.getPkCH()->printElement("e0");
-    skDPCH.getSkCH()->printElement("d0");
-    pkDPCH.getPkBLS()->printElement("y");
-    skDPCH.getSkBLS()->printElement("a");
+    ppDPCH.getGpkMA_ABE().print();
+    pkDPCH.getPkCH().print();
+    skDPCH.getSkCH().print();
+    pkDPCH.getPkBLS().print();
+    skDPCH.getSkBLS().print();
 
 
     test.start("ModSetUp");
-    ch.ModSetUp(&skGid, &sigmaGid, &skDPCH, GID);
+    ch.ModSetUp(skGid, sigmaGid, skDPCH, GID);
     test.end("ModSetUp");
-    skGid.getSkCH()->printElement("d0");
-    sigmaGid.getSignature()->printElement("sigma");
+    skGid.getSkCH().print();
+    sigmaGid.getSignature().print();
 
 
     for(int _ = 0;_ < SIZE_OF_ATTRIBUTES;_++) {
@@ -58,43 +57,40 @@ void test(std::string test_name, std::string curve){
         DPCH_MXN_2022_skTheta *skTheta = new DPCH_MXN_2022_skTheta;
 
         test.start("AuthSetUp");
-        ch.AuthSetUp(pkTheta, skTheta, &ppDPCH, ATTRIBUTES[_]);
+        ch.AuthSetUp(*pkTheta, *skTheta, ppDPCH, ATTRIBUTES[_]);
         test.end("AuthSetUp");
         pkThetas.push_back(pkTheta);
         skThetas.push_back(skTheta);
 
-        pkTheta->getPk()->printElement("pkTheta_1");
-        pkTheta->getPk()->printElement("pkTheta_2");
-        skTheta->getSk()->printElement("aTheta");
-        skTheta->getSk()->printElement("yTheta");
+        pkTheta->getPk().print();
+        skTheta->getSk().print();
     }
 
     for(int _ = 0;_ < SIZE_OF_ATTRIBUTES;_++) {
         DPCH_MXN_2022_skGidA *skGidA = new DPCH_MXN_2022_skGidA;
 
         test.start("ModKeyGen");
-        ch.ModKeyGen(skGidA, &ppDPCH, &pkDPCH, GID, &sigmaGid, skThetas[_], ATTRIBUTES[_]);
+        ch.ModKeyGen(*skGidA, ppDPCH, pkDPCH, GID, sigmaGid, *skThetas[_], ATTRIBUTES[_]);
         test.end("ModKeyGen");
 
         skGidAs.push_back(skGidA);
 
-        printf("skGidA->gid: %s\n", skGidA->getSk()->getGid().c_str());
-        printf("skGidA->A: %s\n", skGidA->getSk()->getA().c_str());
-        skGidA->getSk()->printElement("skgidA_0");
-        skGidA->getSk()->printElement("skgidA_1");
+        printf("skGidA->gid: %s\n", skGidA->getSk().getGid().c_str());
+        printf("skGidA->A: %s\n", skGidA->getSk().getA().c_str());
+        skGidA->getSk().print();
+        skGidA->getSk().print();
     }
 
     test.start("Hash");
-    ch.Hash(&h, &r, &c, &ppDPCH, &pkDPCH, m, &pkThetas, POLICY);
+    ch.Hash(h, r, c, ppDPCH, pkDPCH, m, pkThetas, POLICY);
     test.end("Hash");
-    h.getH()->printElement("h0");
-    h.getH()->printElement("h1");
-    r.getR()->printElement("r0");
-    r.getR()->printElement("r1");
+    // h0, h1, r0, r1
+    h.getH().print();
+    r.getR().print();
 
 
     test.start("Check");
-    bool check_result = ch.Check(&pkDPCH, m, &h, &r);
+    bool check_result = ch.Check(pkDPCH, m, h, r);
     test.end("Check");
     if(check_result){
         printf("Hash check successful!\n");
@@ -105,15 +101,15 @@ void test(std::string test_name, std::string curve){
 
     // skGidAs.pop_back();
     test.start("Adapt");
-    ch.Adapt(&r_p, &pkDPCH, &skGid, &skGidAs, &c, m, m_p, &h, &r);
+    ch.Adapt(r_p, pkDPCH, skGid, skGidAs, c, m, m_p, h, r);
     test.end("Adapt");
-    r_p.getR()->printElement("r0");
-    r_p.getR()->printElement("r1");
+    // r0, r1
+    r_p.getR().print();
 
 
 
     test.start("Verify");
-    bool verify_result = ch.Verify(&pkDPCH, m_p, &h, &r_p);
+    bool verify_result = ch.Verify(pkDPCH, m_p, h, r_p);
     test.end("Verify");
     if(verify_result){
         printf("Verify successful!\n");

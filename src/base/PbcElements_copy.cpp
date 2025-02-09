@@ -18,6 +18,8 @@ void PbcElements_copy::init(int n){
 PbcElements_copy::PbcElements_copy(const PbcElements_copy &other){
     if (this == &other)
         return;
+
+    size = other.size;
     
     elements = new element_s*[other.size];
     for(int i = 0; i < other.size; i++){
@@ -28,7 +30,32 @@ PbcElements_copy::PbcElements_copy(const PbcElements_copy &other){
     }
 }
 
+PbcElements_copy &PbcElements_copy::operator=(const PbcElements_copy &other){
+    if (this == &other)
+        return *this;
+
+    // Clear existing elements
+    for (int i = 0; i < size; i++){
+        element_clear(elements[i]);
+    }
+    delete[] elements;
+
+    size = other.size;
+
+    elements = new element_s*[other.size];
+    for(int i = 0; i < other.size; i++){
+        element_s *element = new element_s();
+        element_init_same_as(element, other.elements[i]);
+        element_set(element, other.elements[i]);
+        elements[i] = element;
+    }
+}
+
 element_s* PbcElements_copy::operator[](int index){
+    return elements[index];
+}
+
+element_s* PbcElements_copy::get(int index){
     return elements[index];
 }
 

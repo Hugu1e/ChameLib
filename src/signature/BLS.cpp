@@ -5,21 +5,28 @@ BLS::BLS(element_s *_G1, element_s *_G2, element_s *_GT, element_s *_Zn): PbcSch
 /**
  * @param[out] pp public parameters
  */
-void BLS::Setup(BLS_pp *pp)
+void BLS::Setup(BLS_pp &pp, BLS_pk &pk, BLS_sk &sk, BLS_signature &signature)
 {
-    element_t g;
-    element_init_same_as(g, G1);
-    element_random(g);
-    pp->insertElement("g", "G1", g);
-    element_clear(g);
+    pp.init(1);
+    pk.init(1);
+    sk.init(1);
+    signature.init(1);
+
+    element_random(tmp_G);
+    pp.set(g, tmp_G);
 }
 /**
  * @param[out] pp public parameters
  * @param[in] g generator g
  */
-void BLS::Setup(BLS_pp *pp, element_t g)
+void BLS::Setup(BLS_pp &pp, BLS_pk &pk, BLS_sk &sk, BLS_signature &signature, element_t _g)
 {
-    pp->insertElement("g", "G1", g);
+    pp.init(1);
+    pk.init(1);
+    sk.init(1);
+    signature.init(1);
+    
+    pp.set(g, _g);
 }
 
 /**
@@ -27,19 +34,13 @@ void BLS::Setup(BLS_pp *pp, element_t g)
  * @param[out] sk secret key
  * @param[in] pp public parameters
  */
-void BLS::KeyGen(BLS_pk *pk, BLS_sk *sk, BLS_pp *pp)
+void BLS::KeyGen(BLS_pk &pk, BLS_sk &sk, BLS_pp &pp)
 {
-    element_t a;
-    element_init_same_as(a, Zn);
-    element_random(a);
-    sk->insertElement("a", "Zn", a);
+    element_random(tmp_Zn);
+    sk.set(a, tmp_Zn);
     // g^a
-    element_t y;
-    element_init_same_as(y, G1);
-    element_pow_zn(y, pp->getElement("g"), sk->getElement("a"));
-    pk->insertElement("y", "G1", y);
-    element_clear(y);
-    element_clear(a);
+    element_pow_zn(tmp_G, pp[g], sk[a]);
+    pk.set(y, tmp_G);
 }
 
 void BLS::H(element_t res, std::string m)
@@ -54,17 +55,11 @@ void BLS::H(element_t res, std::string m)
  * @param[in] sk: secret key
  * @param[in] message: message to sign
  */
-void BLS::Sign(BLS_signature *signature, BLS_sk *sk, std::string message)
+void BLS::Sign(BLS_signature &signature, BLS_sk &sk, std::string message)
 {
-    element_t tmp_H;
-    element_init_same_as(tmp_H, G2);
     H(tmp_H, message);
-    element_t sigma;
-    element_init_same_as(sigma, G2);
-    element_pow_zn(sigma, tmp_H, sk->getElement("a"));
-    signature->insertElement("sigma", "G2", sigma);
-    element_clear(tmp_H);
-    element_clear(sigma);
+    element_pow_zn(tmp_H_2, tmp_H, sk[a]);
+    signature.set(sigma, tmp_H_2);
 }
 
 /**
@@ -76,15 +71,15 @@ void BLS::Sign(BLS_signature *signature, BLS_sk *sk, std::string message)
  * @param[in] signature: signature of message
  * @return true if signature is valid
  */
-bool BLS::Verify(BLS_pp *pp, BLS_pk *pk, std::string message, BLS_signature *signature)
+bool BLS::Verify(BLS_pp &pp, BLS_pk &pk, std::string message, BLS_signature &signature)
 {
     element_t tmp_GT, tmp_H, tmp_GT_2;
     element_init_same_as(tmp_GT, GT);
     element_init_same_as(tmp_H, G2);
     element_init_same_as(tmp_GT_2, GT);
-    element_pairing(tmp_GT, pp->getElement("g"), signature->getElement("sigma"));
+    element_pairing(tmp_GT, pp[g], signature[sigma]);
     H(tmp_H, message);
-    element_pairing(tmp_GT_2, pk->getElement("y"), tmp_H);
+    element_pairing(tmp_GT_2, pk[y], tmp_H);
     bool res = element_cmp(tmp_GT, tmp_GT_2) == 0;
     element_clear(tmp_GT);
     element_clear(tmp_H);

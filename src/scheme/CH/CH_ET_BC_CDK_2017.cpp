@@ -23,6 +23,15 @@ void CH_ET_BC_CDK_2017::SetUp(CH_ET_BC_CDK_2017_pp &pp, CH_ET_BC_CDK_2017_pk &pk
     
     pp.setK(k);
 }
+void CH_ET_BC_CDK_2017::SetUp(CH_ET_BC_CDK_2017_pp &pp, CH_ET_BC_CDK_2017_pk &pk, CH_ET_BC_CDK_2017_sk &sk, CH_ET_BC_CDK_2017_h &h, CH_ET_BC_CDK_2017_r &r, CH_ET_BC_CDK_2017_r &r_p, int k){
+    pk.init(2);
+    sk.init(1);
+    h.init(4);
+    r.init(2);
+    r_p.init(2);
+    
+    pp.setK(k);
+}
 
 /**
  * @param pk: public key
