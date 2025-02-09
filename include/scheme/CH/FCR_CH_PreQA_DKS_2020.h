@@ -54,7 +54,7 @@ class FCR_CH_PreQA_DKS_2020: public PbcScheme{
         };
 
         enum {
-            hash
+            h1
         };
 
         enum {

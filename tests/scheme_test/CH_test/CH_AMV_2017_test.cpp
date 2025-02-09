@@ -34,7 +34,7 @@ void test(std::string test_name, std::string curve){
     test.start("Hash");
     ch.Hash(h, m, pk);
     test.end("Hash");
-    Logger::PrintPbc("Hash value", h.get_h()[CH_AMV_2017::hash]);
+    Logger::PrintPbc("Hash value", h.get_h()[CH_AMV_2017::h1]);
 
 
     test.start("Check");

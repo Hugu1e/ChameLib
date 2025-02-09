@@ -17,15 +17,19 @@ void test(std::string test_name, std::string curve){
     mpz_t r, r_p;
     mpz_inits(h, B, r, m, label, r_p, m_p, NULL);
 
+    test.start("SetUp");
+    ch.SetUp(pk, sk);
+    test.end("SetUp");
+
     test.start("KeyGen");
-    ch.KeyGen(&pk, &sk, 1024, 500);
+    ch.KeyGen(pk, sk, 1024, 500);
     test.end("KeyGen");
 
     
     mpz_set_ui(m, 42525346346746);
     mpz_set_ui(label, 424253532414);
     test.start("Hash");
-    ch.Hash(h, r, B, &pk, &sk, m, label);
+    ch.Hash(h, r, B, pk, sk, m, label);
     test.end("Hash");
     Logger::PrintGmp("h", h);
     Logger::PrintGmp("r", r);
@@ -33,7 +37,7 @@ void test(std::string test_name, std::string curve){
     
 
     test.start("Check");
-    bool check_result = ch.Check(&pk, m, label, h, r);
+    bool check_result = ch.Check(pk, m, label, h, r);
     test.end("Check");
 
     if(check_result){
@@ -44,12 +48,12 @@ void test(std::string test_name, std::string curve){
 
     mpz_set_ui(m_p, 96725346346246);
     test.start("Adapt");
-    ch.Adapt(r_p, &pk, m, m_p, label, h, B, r);
+    ch.Adapt(r_p, pk, m, m_p, label, h, B, r);
     test.end("Adapt");
     Logger::PrintGmp("r_p", r_p);
 
     test.start("Verify");
-    bool verify_result = ch.Verify(&pk, m_p, label, h, r_p);
+    bool verify_result = ch.Verify(pk, m_p, label, h, r_p);
     test.end("Verify");
 
     if(verify_result){

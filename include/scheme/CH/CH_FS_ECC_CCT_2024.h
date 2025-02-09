@@ -16,15 +16,15 @@ class CH_FS_ECC_CCT_2024: public PbcScheme{
         element_t rho;
         element_t t1,t2,T1,T2,c2;
 
+        void H(element_t res, element_t m);
+        void H(element_t res, element_t m1, element_t m2, element_t m3, element_t m4);
+
     public:
         CH_FS_ECC_CCT_2024(element_s *_G1, element_s *_G2, element_s *_GT, element_s *_Zn);
 
         void SetUp(CH_FS_ECC_CCT_2024_pp &pp, CH_FS_ECC_CCT_2024_pk &pk, CH_FS_ECC_CCT_2024_sk &sk, CH_FS_ECC_CCT_2024_r &r, CH_FS_ECC_CCT_2024_r &r_p);
         
         void KeyGen(CH_FS_ECC_CCT_2024_pk &pk, CH_FS_ECC_CCT_2024_sk &sk, CH_FS_ECC_CCT_2024_pp &pp);
-
-        void H(element_t res, element_t m);
-        void H(element_t res, element_t m1, element_t m2, element_t m3, element_t m4);
 
         void Hash(element_t h, CH_FS_ECC_CCT_2024_r &r, CH_FS_ECC_CCT_2024_pk &pk, element_t m, CH_FS_ECC_CCT_2024_pp &pp);
 

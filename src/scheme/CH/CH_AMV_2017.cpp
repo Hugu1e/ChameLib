@@ -39,7 +39,7 @@ void CH_AMV_2017::Hash(CH_AMV_2017_h &h, element_t m, CH_AMV_2017_pk &pk){
     element_pow_zn(tmp_G, pk.get_CH_pk()[g], tmp_Zn);
     element_pow_zn(tmp_G_2, pk.get_CH_pk()[y], m);
     element_div(tmp_G, tmp_G, tmp_G_2);
-    h.get_h().set(hash, tmp_G);
+    h.get_h().set(h1, tmp_G);
 
     PKE_CPA.Encrypt(h.get_r().get_c1(), tmp_Zn, pk.get_PKE_CPA_pk());
     PKE_CCA.Encrypt(h.get_r().get_c2(), tmp_Zn, pk.get_PKE_CCA_pk());
@@ -143,7 +143,7 @@ bool CH_AMV_2017::Check(CH_AMV_2017_h &h, element_t m, CH_AMV_2017_pk &pk){
     // (hy^m)^b
     // b
     element_pow_zn(tmp_G_2, pk.get_CH_pk()[y], m);
-    element_mul(tmp_G_2, h.get_h()[hash], tmp_G_2);
+    element_mul(tmp_G_2, h.get_h()[h1], tmp_G_2);
     HASH::hash(tmp_Zn, tmp_G_2, h.get_r().get_pai()[pai_0_1]);
     element_pow_zn(tmp_G_2, tmp_G_2, tmp_Zn);
     if(element_cmp(tmp_G, tmp_G_2) != 0){
@@ -228,7 +228,7 @@ void CH_AMV_2017::Adapt(CH_AMV_2017_h &h_p, element_t m_p, CH_AMV_2017_h &h, ele
     element_mul(tmp_Zn_2, tmp_Zn_2, sk.get_CH_sk()[x]);
     element_sub(tmp_Zn, tmp_Zn, tmp_Zn_2);
     
-    h_p.get_h().set(hash, h.get_h()[hash]);
+    h_p.get_h().set(h1, h.get_h()[h1]);
 
     PKE_CPA.Encrypt(h_p.get_r().get_c1(), tmp_Zn, pk.get_PKE_CPA_pk());
     PKE_CCA.Encrypt(h_p.get_r().get_c2(), tmp_Zn, pk.get_PKE_CCA_pk());
@@ -242,7 +242,7 @@ void CH_AMV_2017::Adapt(CH_AMV_2017_h &h_p, element_t m_p, CH_AMV_2017_h &h, ele
     h_p.get_r().get_pai().set(pai_0_1, tmp_G_2);
     // b
     element_pow_zn(tmp_G_3, pk.get_CH_pk()[y], m_p);
-    element_mul(tmp_G_3, h_p.get_h()[hash], tmp_G_3);
+    element_mul(tmp_G_3, h_p.get_h()[h1], tmp_G_3);
     HASH::hash(tmp_Zn_3, tmp_G_3, tmp_G_2);
     // pai_0_2 = br + a
     element_mul(tmp_Zn, tmp_Zn_3, tmp_Zn);

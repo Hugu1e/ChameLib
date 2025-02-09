@@ -121,7 +121,7 @@ class CH_AMV_2017: public PbcScheme{
         };
         
         enum {
-            hash
+            h1
         };
 };
 

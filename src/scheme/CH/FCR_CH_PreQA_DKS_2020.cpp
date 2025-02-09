@@ -65,7 +65,7 @@ void FCR_CH_PreQA_DKS_2020::Hash(FCR_CH_PreQA_DKS_2020_h &h, FCR_CH_PreQA_DKS_20
     element_pow_zn(this->tmp_G, pp[g1], m);
     element_pow_zn(this->tmp_G_2, pp[g2], this->xi);
     element_mul(tmp_G, this->tmp_G, this->tmp_G_2);
-    h.set(hash, tmp_G);
+    h.set(h1, tmp_G);
     
     
     // e = H((y,h,m),(u1,u2))
@@ -87,7 +87,7 @@ bool FCR_CH_PreQA_DKS_2020::Check(FCR_CH_PreQA_DKS_2020_h &h, FCR_CH_PreQA_DKS_2
     // (g1^s11)*(g2^s12)*(h^-e1)
     element_pow_zn(this->tmp_G, pp[g1], r[s11]);
     element_pow_zn(this->tmp_G_2, pp[g2], r[s12]);
-    element_pow_zn(this->tmp_G_3, h[hash], r[e1]);
+    element_pow_zn(this->tmp_G_3, h[h1], r[e1]);
     element_mul(this->tmp_G, this->tmp_G, this->tmp_G_2);
     element_div(this->tmp_G, this->tmp_G, this->tmp_G_3);
     
@@ -97,7 +97,7 @@ bool FCR_CH_PreQA_DKS_2020::Check(FCR_CH_PreQA_DKS_2020_h &h, FCR_CH_PreQA_DKS_2
     element_div(this->tmp_G_2, this->tmp_G_2, this->tmp_G_3);
 
     // H((y,h,m),(tmp_G1, tmp_G1_2))
-    this->H(this->tmp_Zn_2, pk[y], h[hash], m, this->tmp_G, this->tmp_G_2);
+    this->H(this->tmp_Zn_2, pk[y], h[h1], m, this->tmp_G, this->tmp_G_2);
 
     return element_cmp(this->tmp_Zn, this->tmp_Zn_2) == 0;
 }
@@ -128,13 +128,13 @@ void FCR_CH_PreQA_DKS_2020::Adapt(FCR_CH_PreQA_DKS_2020_r &r_p, element_t m_p, e
     // u1 = (g1^s11) *(g2^s12) * (h^-e1)
     element_pow_zn(this->tmp_G, pp[g1], r_p[s11]);
     element_pow_zn(this->tmp_G_2, pp[g2], r_p[s12]);
-    element_pow_zn(this->tmp_G_3, h[hash], r_p[e1]);
+    element_pow_zn(this->tmp_G_3, h[h1], r_p[e1]);
     element_mul(this->u1, this->tmp_G, this->tmp_G_2);
     element_div(this->u1, this->u1, this->tmp_G_3);
     // ? u2 = (g1^k12)
     element_pow_zn(this->u2, pp[g1], this->k12);
     // e = H((y,h,m_p),(u1,u2))
-    this->H(this->e, tmp_pk[y], h[hash], m_p, this->u1, this->u2);
+    this->H(this->e, tmp_pk[y], h[h1], m_p, this->u1, this->u2);
     // e2 = e - e1
     element_sub(r_p[e2], this->e, r_p[e1]);
     // s2 = k12 + e2 * x

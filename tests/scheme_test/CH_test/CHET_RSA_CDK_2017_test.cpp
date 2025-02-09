@@ -17,30 +17,26 @@ void test(std::string test_name, std::string curve){
     mpz_inits(r, r_p, m, m_p, NULL);
 
     test.start("SetUp");
-    ch.SetUp();
+    ch.SetUp(pk, sk, h, etd);
     test.end("SetUp");
 
     test.start("KeyGen");
-    ch.KeyGen(&pk, &sk, 1024);
+    ch.KeyGen(pk, sk, 1024);
     test.end("KeyGen");
-    pk.printElement("n");
-    pk.printElement("e");
-    sk.printElement("p");
-    sk.printElement("q");
+    pk.print();
+    sk.print();
 
     RandomGenerator::RandomInLength(m, 100);
     Logger::PrintGmp("m", m);
     test.start("Hash");
-    ch.Hash(&h, r, &etd, m, &pk);
+    ch.Hash(h, r, etd, m, pk);
     test.end("Hash");
-    h.printElement("h");
-    h.printElement("n_");
+    h.print();
     Logger::PrintGmp("r", r);
-    etd.printElement("p");
-    etd.printElement("q");
+    etd.print();
 
     test.start("Check");
-    bool check_result = ch.Check(&h, r, m, &pk);
+    bool check_result = ch.Check(h, r, m, pk);
     test.end("Check");
 
     if(check_result){
@@ -52,12 +48,12 @@ void test(std::string test_name, std::string curve){
     RandomGenerator::RandomInLength(m_p, 100);
     Logger::PrintGmp("m_p", m_p);
     test.start("Adapt");
-    ch.Adapt(r_p, m_p, m, r, &h, &sk, &etd, &pk);
+    ch.Adapt(r_p, m_p, m, r, h, sk, etd, pk);
     test.end("Adapt");
     Logger::PrintGmp("r_p", r_p);
 
     test.start("Verify");
-    bool verify_result = ch.Verify(&h, r_p, m_p, &pk);
+    bool verify_result = ch.Verify(h, r_p, m_p, pk);
     test.end("Verify");
 
     if(verify_result){
