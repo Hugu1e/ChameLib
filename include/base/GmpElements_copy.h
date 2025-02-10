@@ -20,6 +20,8 @@ class GmpElements_copy{
         MP_INT* operator[](int index);
 
         void set(int index, MP_INT *element);
+
+        int getSize();
                 
         void print();
         void print(int index);

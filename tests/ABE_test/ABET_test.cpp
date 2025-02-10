@@ -25,15 +25,16 @@ void test(std::string test_name, std::string curve){
     element_t s1,s2;
     ABET_ciphertext ciphertext;
 
+    id.init(K);
     for(int i = 1;i<=K;i++){
         element_t tmp_Zn;
         element_init_same_as(tmp_Zn, test.get_Zn());
         element_random(tmp_Zn);
 
-        id.insertElement("I"+std::to_string(i), "Zn", tmp_Zn);
+        id.set(i-1, tmp_Zn);
         element_clear(tmp_Zn);
     }
-    id.printElement();
+    id.print();
 
     element_init_same_as(r, test.get_Zn());
     element_init_same_as(R, test.get_Zn());
@@ -44,13 +45,13 @@ void test(std::string test_name, std::string curve){
     element_init_same_as(s2, test.get_Zn());
 
     test.start("Setup");
-    abe.Setup(&msk, &mpk, K);
+    abe.Setup(msk, mpk, sks, ciphertext, K);
     test.end("Setup");
     // msk.printElement();
     // mpk.printElement();
 
     test.start("KeyGen");
-    abe.KeyGen(&sks, &msk, &mpk, &attr_list, &id, I);
+    abe.KeyGen(sks, msk, mpk, attr_list, id, I);
     test.end("KeyGen");
     // Logger::PrintPbc("sk0.sk0_1", sks.get_sk0()->getElement("sk0_1"));
     // Logger::PrintPbc("sk0.sk0_2", sks.get_sk0()->getElement("sk0_2"));
@@ -80,7 +81,7 @@ void test(std::string test_name, std::string curve){
     element_random(s2);
 
     test.start("Encrypt");
-    abe.Encrypt(&ciphertext, &mpk, &msk, r, R, POLICY, &id, J, s1, s2);
+    abe.Encrypt(ciphertext, mpk, msk, r, R, POLICY, id, J, s1, s2);
     test.end("Encrypt");
     // Logger::PrintPbc("ct0.ct_1", ciphertext.get_ct0()->getElement("ct0_1"));
     // Logger::PrintPbc("ct0.ct_2", ciphertext.get_ct0()->getElement("ct0_2"));
@@ -98,7 +99,7 @@ void test(std::string test_name, std::string curve){
     // Logger::PrintPbc("ct3", ciphertext.get_ct3()->getElement("ct3"));
 
     test.start("Decrypt");
-    abe.Decrypt(res_R, res_r, &mpk, &ciphertext, &sks);
+    abe.Decrypt(res_R, res_r, mpk, ciphertext, sks);
     test.end("Decrypt");
     Logger::PrintPbc("res_R", res_R);
     Logger::PrintPbc("res_r", res_r);

@@ -4,7 +4,7 @@
 #ifndef CHAMELIB_ABET_H
 #define CHAMELIB_ABET_H
 
-#include <base/PbcElements.h>
+#include <base/PbcElements_copy.h>
 #include <base/PbcScheme.h>
 #include <utils/Hash.h>
 #include <vector>
@@ -13,69 +13,99 @@
 #include <ABE/Policy_resolution.h>
 #include <ABE/Policy_generation.h>
 
-class ABET_mpk: public PbcElements{};
-class ABET_msk: public PbcElements{};
-class ABET_ID: public PbcElements{};
+class ABET_mpk: public PbcElements_copy{
+    private:
+        PbcElements_copy gk;  // g^z1, g^z2,...g^zk
+        PbcElements_copy gk_pow_a;  // (g^z1)^a, (g^z2)^a,...(g^zk)^a
+        PbcElements_copy hk;  // h^z1, h^z2,...h^zk
+    public:
+        PbcElements_copy& get_gk(){
+            return gk;
+        }
+        PbcElements_copy& get_gk_pow_a(){
+            return gk_pow_a;
+        }
+        PbcElements_copy& get_hk(){
+            return hk;
+        }
+};
+class ABET_msk: public PbcElements_copy{
+    private:
+        PbcElements_copy zk;  // z1,z2,...zk
+    public:
+        PbcElements_copy& get_zk(){
+            return zk;
+        }
+};
+class ABET_ID: public PbcElements_copy{};
 class ABET_sks{
     private:
-        PbcElements sk0;
-        std::vector<PbcElements> sk_y;
-        PbcElements sk_prime;
-        PbcElements sk1;
-        PbcElements sk2;
+        PbcElements_copy sk0;
+        std::vector<PbcElements_copy> sk_y;
+        PbcElements_copy sk_prime;
+        PbcElements_copy sk1;
+        PbcElements_copy sk2;
     public:
-        PbcElements *get_sk0(){
-            return &sk0;
+        PbcElements_copy& get_sk0(){
+            return sk0;
         }
-        PbcElements *get_sk_y(int i){
-            return &sk_y[i];
+        PbcElements_copy& get_sk_y(int i){
+            return sk_y[i];
         }
-        std::vector<PbcElements> *get_sk_y(){
-            return &sk_y;
+        std::vector<PbcElements_copy>& get_sk_y(){
+            return sk_y;
         }
-        PbcElements *get_sk_prime(){
-            return &sk_prime;
+        PbcElements_copy& get_sk_prime(){
+            return sk_prime;
         }
-        PbcElements *get_sk1(){
-            return &sk1;
+        PbcElements_copy& get_sk1(){
+            return sk1;
         }
-        PbcElements *get_sk2(){
-            return &sk2;
+        PbcElements_copy& get_sk2(){
+            return sk2;
         }
 };
 class ABET_ciphertext{
     private:
-        PbcElements ct0;
-        std::vector<PbcElements> ct_y;
-        PbcElements ct_;  // use ct_ to avoid conflict with ct(ct_1, ct_2, ct_3)
-        PbcElements ct_prime;
-        PbcElements ct1;
-        PbcElements ct2;
-        PbcElements ct3;
+        PbcElements_copy ct0;
+        std::vector<PbcElements_copy> ct_y;
+        PbcElements_copy ct_;  // use ct_ to avoid conflict with ct(ct_1, ct_2, ct_3)
+        PbcElements_copy ct_prime;
+        PbcElements_copy ct1;
+        PbcElements_copy ct2;
+        PbcElements_copy ct3;
     public:
-        PbcElements *get_ct0(){
-            return &ct0;
+        PbcElements_copy& get_ct0(){
+            return ct0;
         }
-        PbcElements *get_ct_y(int i){
-            return &ct_y[i];
+        PbcElements_copy& get_ct_y(int i){
+            return ct_y[i];
         }
-        std::vector<PbcElements> *get_ct_y(){
-            return &ct_y;
+        std::vector<PbcElements_copy>& get_ct_y(){
+            return ct_y;
         }
-        PbcElements *get_ct_(){
-            return &ct_;
+        PbcElements_copy& get_ct_(){
+            return ct_;
         }
-        PbcElements *get_ct_prime(){
-            return &ct_prime;
+        PbcElements_copy& get_ct_prime(){
+            return ct_prime;
         }
-        PbcElements *get_ct1(){
-            return &ct1;
+        PbcElements_copy& get_ct1(){
+            return ct1;
         }
-        PbcElements *get_ct2(){
-            return &ct2;
+        PbcElements_copy& get_ct2(){
+            return ct2;
         }
-        PbcElements *get_ct3(){
-            return &ct3;
+        PbcElements_copy& get_ct3(){
+            return ct3;
+        }
+        void init_same_as(ABET_ciphertext &other){
+            ct0.init(other.get_ct0().getSize());
+            ct_.init(other.get_ct_().getSize());
+            ct_prime.init(other.get_ct_prime().getSize());
+            ct1.init(other.get_ct1().getSize());
+            ct2.init(other.get_ct2().getSize());
+            ct3.init(other.get_ct3().getSize());
         }
 };
 
@@ -92,26 +122,54 @@ class ABET:public PbcScheme{
         std::unordered_map<std::string, unsigned long int> attr_map;  // attr -> index of attr_list
         std::string policy_str;
 
+
+
     public:
         ABET(element_s *_G1, element_s *_G2, element_s *_GT, element_s *_Zn);
 
-        void Setup(ABET_msk *msk, ABET_mpk *mpk, int k);
+        void Setup(ABET_msk &msk, ABET_mpk &mpk, ABET_sks &sks, ABET_ciphertext &ciphertext, int k);
 
-        void KeyGen(ABET_sks *sks, ABET_msk *msk, ABET_mpk *mpk, std::vector<std::string> *attr_list, ABET_ID *ID, int mi);
+        void KeyGen(ABET_sks &sks, ABET_msk &msk, ABET_mpk &mpk, std::vector<std::string> &attr_list, ABET_ID &ID, int mi);
+
+        void Encrypt(ABET_ciphertext &ciphertext, ABET_mpk &mpk, ABET_msk &msk, element_t r, element_t R, std::string policy_str, ABET_ID &ID, int oj, element_t s1, element_t s2);
+
+        void Decrypt(element_t res_R, element_t res_r, ABET_mpk &mpk, ABET_ciphertext &ciphertext, ABET_sks &sks);
 
         void Hash(element_t res, std::string m);
         void Hash2(element_t res, element_t m);
-
-
-        void Encrypt(ABET_ciphertext *ciphertext, ABET_mpk *mpk, ABET_msk *msk,  element_t r, element_t R, std::string policy_str, ABET_ID *ID, int oj,  element_t s1, element_t s2);
-
-        void Decrypt(element_t res_R, element_t res_r, ABET_mpk *mpk, ABET_ciphertext *ciphertext, ABET_sks *sks);
 
         ~ABET() override;
 
         const int MODIFIER = 1;
         const int OWNER = 2;
-        void GetID_(element_t ID_, ABET_mpk *mpk, ABET_ID *ID, int mi_oj, int type);
+        void GetID_(element_t ID_, ABET_mpk &mpk, ABET_ID &ID, int mi_oj, int type);
+
+        enum{
+            a1, a2, b1, b2, a, b, g_pow_d1, g_pow_d2, g_pow_d3
+        };
+
+        enum{
+            g, h, H1, H2, T1, T2, g_pow_a, h_pow_d_div_a, h_pow_1_div_a, h_pow_b_div_a
+        };
+
+        enum{
+            sk0_1, sk0_2, sk0_3, sk0_4, sk0_5, sk0_6
+        };
+
+        enum{
+            sk_1, sk_2, sk_3
+        };
+
+        enum{
+            ct0_1, ct0_2, ct0_3, ct0_4
+        };
+
+        enum{
+            ct_1, ct_2, ct_3
+        };
+
+
+
 };
 
 

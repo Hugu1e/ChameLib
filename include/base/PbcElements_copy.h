@@ -23,6 +23,8 @@ class PbcElements_copy{
         element_s* get(int index);
 
         void set(int index, element_s *element);
+
+        int getSize();
                 
         void print();
         void print(int index);

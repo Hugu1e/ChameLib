@@ -64,6 +64,10 @@ void PbcElements_copy::set(int index, element_s *element){
     element_set(elements[index], element);
 }
 
+int PbcElements_copy::getSize(){
+    return size;
+}
+
 void PbcElements_copy::print(){
     if (size > 0){
         printf("PbcElements: %d elements\n", size);

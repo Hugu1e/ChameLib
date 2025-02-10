@@ -63,6 +63,10 @@ void GmpElements_copy::set(int index, MP_INT *element){
     mpz_set(elements[index], element);
 }
 
+int GmpElements_copy::getSize(){
+    return size;
+}
+
 void GmpElements_copy::print(){
     if (size > 0){
         printf("GmpElements: %d elements\n", size);

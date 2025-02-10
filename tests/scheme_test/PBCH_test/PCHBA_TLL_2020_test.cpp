@@ -24,15 +24,16 @@ void test(std::string test_name, std::string curve){
 
     element_t m,m_p;
 
+    ID.get_IDABET().init(K);
     for(int i = 1;i<=K;i++){
         element_t tmp_Zn;
         element_init_same_as(tmp_Zn, test.get_Zn());
         element_random(tmp_Zn);
 
-        ID.get_IDABET()->insertElement("I"+std::to_string(i), "Zn", tmp_Zn);
+        ID.get_IDABET().set(i-1, tmp_Zn);
         element_clear(tmp_Zn);
     }
-    ID.get_IDABET()->printElement();
+    ID.get_IDABET().print();
 
     element_init_same_as(m, test.get_Zn());
     element_init_same_as(m_p, test.get_Zn());
@@ -40,19 +41,19 @@ void test(std::string test_name, std::string curve){
     element_random(m_p);
 
     test.start("SetUp");
-    ch.SetUp(&pkPCHBA, &skPCHBA, K);
+    ch.SetUp(pkPCHBA, skPCHBA, sksPCHBA, h, h_p, K);
     test.end("SetUp");
     
     test.start("KeyGen");
-    ch.KeyGen(&sksPCHBA, &pkPCHBA, &skPCHBA, &attr_list, &ID, I);
+    ch.KeyGen(sksPCHBA, pkPCHBA, skPCHBA, attr_list, ID, I);
     test.end("KeyGen");
     
     test.start("Hash");
-    ch.Hash(&h, m, &pkPCHBA, &skPCHBA, POLICY, &ID, J);
+    ch.Hash(h, m, pkPCHBA, skPCHBA, POLICY, ID, J);
     test.end("Hash");
     
     test.start("Check");
-    bool check_result = ch.Check(&h, m, &pkPCHBA);
+    bool check_result = ch.Check(h, m, pkPCHBA);
     test.end("Check");
 
     if(check_result){
@@ -62,11 +63,11 @@ void test(std::string test_name, std::string curve){
     }
     
     test.start("Adapt");
-    ch.Adapt(&h_p, m_p, &h, m, POLICY, &ID, I, &pkPCHBA, &skPCHBA, &sksPCHBA);
+    ch.Adapt(h_p, m_p, h, m, POLICY, ID, I, pkPCHBA, skPCHBA, sksPCHBA);
     test.end("Adapt");
 
     test.start("Verify");
-    bool verify_result = ch.Verify(&h_p, m_p, &pkPCHBA);
+    bool verify_result = ch.Verify(h_p, m_p, pkPCHBA);
     test.end("Verify");
 
     if(verify_result){
@@ -77,7 +78,7 @@ void test(std::string test_name, std::string curve){
     }
     
     test.start("Judge");
-    bool judgeRes = ch.Judge(m, &h, m_p, &h_p, &ID, I, &pkPCHBA, &skPCHBA);
+    bool judgeRes = ch.Judge(m, h, m_p, h_p, ID, I, pkPCHBA, skPCHBA);
     test.end("Judge");
     
 
