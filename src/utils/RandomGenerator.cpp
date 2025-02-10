@@ -20,6 +20,17 @@ void RandomGenerator::RandomInLength(mpz_t res, short length){
 }
 
 /**
+ * @brief Generate a random prime number in length
+ * 
+ * @param res random prime number
+ * @param length length of random prime number
+ */
+void RandomGenerator::RandomPrimeInLength(mpz_t res, short length){
+    RandomInLength(res, length);
+    mpz_nextprime(res, res);
+}
+
+/**
  * @brief Generate a random number ∈ N
  * 
  * @param res random number

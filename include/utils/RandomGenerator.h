@@ -7,6 +7,7 @@
 class RandomGenerator{
     public:
         static void RandomInLength(mpz_t res, short length);
+        static void RandomPrimeInLength(mpz_t res, short length);
         static void RandomN(mpz_t res, mpz_t n);
         static void RandomCoprimeN(mpz_t res, mpz_t n);
 };
