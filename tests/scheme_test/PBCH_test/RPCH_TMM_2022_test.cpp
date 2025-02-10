@@ -44,31 +44,31 @@ void test(std::string test_name, std::string curve){
     printf("k = %d\n", k);
     
     test.start("SetUp");
-    ch.SetUp(&skRPCH, &pkRPCH, &rl, &st, k, N);
+    ch.SetUp(skRPCH, pkRPCH, rl, st, k, N);
     test.end("SetUp");
     
     test.start("KeyGen");
-    ch.KeyGen(&skidRPCH, &pkRPCH, &skRPCH, &st, id, &attr_list);
+    ch.KeyGen(skidRPCH, pkRPCH, skRPCH, st, id, attr_list);
     test.end("KeyGen");
     
     test.start("KUpt");
-    ch.KUpt(&kut, &pkRPCH, &st, &rl, T);
+    ch.KUpt(kut, pkRPCH, st, rl, T);
     test.end("KUpt");
     
     test.start("DKGen");
-    ch.DKGen(&dkidtRPCH, &pkRPCH, &skidRPCH, &kut);
+    ch.DKGen(dkidtRPCH, pkRPCH, skidRPCH, kut);
     test.end("DKGen");
     
     test.start("Rev");
-    ch.Rev(&rl, id, T);
+    ch.Rev(rl, id, T);
     test.end("Rev");
 
     test.start("Hash");
-    ch.Hash(&h, m, &pkRPCH, POLICY, T);
+    ch.Hash(h, m, pkRPCH, POLICY, T);
     test.end("Hash");
     
     test.start("Check");
-    bool check = ch.Check(&pkRPCH, m, &h);
+    bool check = ch.Check(pkRPCH, m, h);
     test.end("Check");
             
     if(check){
@@ -80,11 +80,11 @@ void test(std::string test_name, std::string curve){
         
         
     test.start("Adapt");
-    ch.Adapt(&h_p, m_p, m, &h, &pkRPCH, &dkidtRPCH);
+    ch.Adapt(h_p, m_p, m, h, pkRPCH, dkidtRPCH);
     test.end("Adapt");
     
     test.start("Verify");
-    bool verify = ch.Verify(&pkRPCH, m_p, &h_p);
+    bool verify = ch.Verify(pkRPCH, m_p, h_p);
     test.end("Verify");
 
     if(verify){
