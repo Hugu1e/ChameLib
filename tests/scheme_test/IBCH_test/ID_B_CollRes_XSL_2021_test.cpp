@@ -11,43 +11,41 @@ void test(std::string test_name, std::string curve){
     ID_B_CollRes_XSL_2021_pp pp;
     ID_B_CollRes_XSL_2021_msk msk;
     ID_B_CollRes_XSL_2021_tk tk;
-    ID_B_CollRes_XSL_2021_h h,h_p;
+    ID_B_CollRes_XSL_2021_h h;
+    ID_B_CollRes_XSL_2021_r r,r_p;
 
     element_t m,m_p;  // message
-    element_t I;  // identity
+    std::string I = "IDENTITY";
+    int n = I.length() * 8;
+    std::cout << "Bit length of m: " << n << std::endl;
 
     element_init_same_as(m, test.get_Zn());  
     element_init_same_as(m_p, test.get_Zn()); 
-    element_init_same_as(I, test.get_Zn()); 
 
     element_random(m);
-    element_random(I);
     element_random(m_p);
-
-    unsigned long int m_bit_length = element_length_in_bytes(m) * 8;
-    std::cout << "Bit length of m: " << m_bit_length << std::endl;
+    
 
     test.start("SetUp");
-    ch.SetUp(pp, msk, tk, h, h_p, m_bit_length);
+    ch.SetUp(pp, msk, tk, h, r, r_p, n);
     test.end("SetUp");
     // pp.print();
     msk.print();
 
-    Logger::PrintPbc("I", I);
     test.start("KeyGen");
-    ch.KeyGen(tk, msk, I, pp);
+    ch.KeyGen(tk, msk, I.c_str(), pp);
     test.end("KeyGen");
     tk.print();
 
     Logger::PrintPbc("m", m);
     test.start("Hash");
-    ch.Hash(h, m, I, pp);
+    ch.Hash(h, r, m, I.c_str(), pp);
     test.end("Hash");
-    h.get_h().print();
-    h.get_r().print();
+    h.print();
+    r.print();
 
     test.start("Check");
-    bool check_result = ch.Check(h, m, I, pp);
+    bool check_result = ch.Check(h, m, r, I.c_str(), pp);
     test.end("Check");
 
     if(check_result){
@@ -58,13 +56,13 @@ void test(std::string test_name, std::string curve){
 
     Logger::PrintPbc("m_p", m_p);
     test.start("Adapt");
-    ch.Adapt(h_p, m_p, h, m, tk);
+    ch.Adapt(r_p, m_p, h, m, r, tk);
     test.end("Adapt");
-    h_p.get_h().print();
-    h_p.get_r().print();
+    h.print();
+    r.print();
     
     test.start("Verify");
-    bool verify_result = ch.Verify(h_p, m_p, I, pp);
+    bool verify_result = ch.Verify(h, m_p, r_p, I.c_str(), pp);
     test.end("Verify");
 
     if(verify_result){
