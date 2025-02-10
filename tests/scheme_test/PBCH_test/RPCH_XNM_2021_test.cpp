@@ -41,39 +41,36 @@ void test(std::string test_name, std::string curve){
     printf("k = %d\n", k);
     
     test.start("SetUp");
-    ch.SetUp(&skRPCH, &pkRPCH, &rl, &st, k, N);
+    ch.SetUp(skRPCH, pkRPCH, rl, st, k, N);
     test.end("SetUp");
 
     test.start("KeyGen");
-    ch.KeyGen(&skidRPCH, &pkRPCH, &skRPCH, &st, id, &attr_list);
+    ch.KeyGen(skidRPCH, pkRPCH, skRPCH, st, id, attr_list);
     test.end("KeyGen");
 
     test.start("KUpt");
-    ch.KUpt(&kut, &pkRPCH, &st, &rl, T);
+    ch.KUpt(kut, pkRPCH, st, rl, T);
     test.end("KUpt");
-    printf("size of kut.ku_theta: %ld\n", kut.get_kut()->get_ku_theta()->size());
+    printf("size of kut.ku_theta: %ld\n", kut.get_kut().get_ku_theta().size());
 
     test.start("DKGen");
-    ch.DKGen(&dkidtRPCH, &pkRPCH, &skidRPCH, &kut);
+    ch.DKGen(dkidtRPCH, pkRPCH, skidRPCH, kut);
     test.end("DKGen");
 
     test.start("Rev");
-    ch.Rev(&rl, id, T);
+    ch.Rev(rl, id, T);
     test.end("Rev");
 
     Logger::PrintGmp("m", m);
     test.start("Hash");
-    ch.Hash(&h, m, &pkRPCH, POLICY, T);
+    ch.Hash(h, m, pkRPCH, POLICY, T);
     test.end("Hash");
-    h.get_h()->printElement("h1");
-    h.get_h()->printElement("h2");
-    h.get_r()->printElement("r1");
-    h.get_r()->printElement("r2");
-    h.get_r()->printElement("N2");
-    h.get_r()->printElement("cSE");
+    // h1 h2 r1 r2 N2 cSE
+    h.get_h().print();
+    h.get_r().print();
 
     test.start("Check");
-    bool check = ch.Check(&pkRPCH, m, &h);
+    bool check = ch.Check(pkRPCH, m, h);
     test.end("Check");
 
     if(check){
@@ -84,18 +81,15 @@ void test(std::string test_name, std::string curve){
 
     Logger::PrintGmp("m_p", m_p);
     test.start("Adapt");
-    ch.Adapt(&h_p, m_p, m, &h, &pkRPCH, &dkidtRPCH);
+    ch.Adapt(h_p, m_p, m, h, pkRPCH, dkidtRPCH);
     test.end("Adapt");
-    h_p.get_h()->printElement("h1");
-    h_p.get_h()->printElement("h2");
-    h_p.get_r()->printElement("r1");
-    h_p.get_r()->printElement("r2");
-    h_p.get_r()->printElement("N2");
-    h_p.get_r()->printElement("cSE");
+    // h1 h2 r1 r2 N2 cSE
+    h_p.get_h().print();
+    h_p.get_r().print();
 
 
     test.start("Verify");
-    bool verify = ch.Verify(&pkRPCH, m_p, &h_p);
+    bool verify = ch.Verify(pkRPCH, m_p, h_p);
     test.end("Verify");
 
     if(verify){
