@@ -34,22 +34,21 @@ void test(std::string test_name, std::string curve){
 
     
     test.start("SetUp");
-    ch.SetUp(&pkPCH, &skPCH, k);
+    ch.SetUp(pkPCH, skPCH, h, r, r_p, k);
     test.end("SetUp");
 
     test.start("KeyGen");
-    ch.KeyGen(&skPCH, &pkPCH, &attr_list, &sksPCH);
+    ch.KeyGen(skPCH, pkPCH, attr_list, sksPCH);
     test.end("KeyGen");
 
     test.start("Hash");
-    ch.Hash(&pkPCH, m, POLICY, &h, &r);
+    ch.Hash(pkPCH, m, POLICY, h, r);
     test.end("Hash");
-    h.getH()->printElement("h1");
-    h.getH()->printElement("h2");
-    h.getH()->printElement("N2");
+    // h1 h2 N2
+    h.getH().print();
 
     test.start("Check");
-    bool check_result = ch.Check(&pkPCH, m, &h, &r);
+    bool check_result = ch.Check(pkPCH, m, h, r);
     test.end("Check");
     if(check_result){
         printf("Check success\n");
@@ -59,13 +58,12 @@ void test(std::string test_name, std::string curve){
     }
     
     test.start("Adapt");
-    ch.Adapt(&pkPCH, &sksPCH, m, m_p, &h, &r, &r_p);
+    ch.Adapt(pkPCH, sksPCH, m, m_p, h, r, r_p);
     test.end("Adapt");
-    r_p.printElement("r1");
-    r_p.printElement("r2");
+    r_p.print();
 
     test.start("Verify");
-    bool verify_result = ch.Verify(&pkPCH, m_p, &h, &r_p);
+    bool verify_result = ch.Verify(pkPCH, m_p, h, r_p);
     test.end("Verify");
     
     if(verify_result){
