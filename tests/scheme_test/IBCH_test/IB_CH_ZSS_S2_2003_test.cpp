@@ -11,7 +11,8 @@ void test(std::string test_name, std::string curve){
     IB_CH_ZSS_S2_2003_pp pp;
     IB_CH_ZSS_S2_2003_msk msk;
     IB_CH_ZSS_S2_2003_sk sk;
-    IB_CH_ZSS_S2_2003_h h, h_p;
+    IB_CH_ZSS_S2_2003_h h;
+    IB_CH_ZSS_S2_2003_r r,r_p;
 
     element_t m,m_p;  // message
     element_t ID;
@@ -25,7 +26,7 @@ void test(std::string test_name, std::string curve){
     element_random(ID);
 
     test.start("SetUp");
-    ch.SetUp(msk, pp, sk, h, h_p);
+    ch.SetUp(pp, msk, sk, h, r, r_p);
     test.end("SetUp");
     pp.print();
     msk.print();
@@ -39,14 +40,16 @@ void test(std::string test_name, std::string curve){
 
     Logger::PrintPbc("m", m);
     test.start("Hash");
-    ch.Hash(h, m, ID, pp);
+    ch.Hash(h, r, m, ID, pp);
     test.end("Hash");
-    h.get_h().print();
-    h.get_r().print();
+    // h
+    h.print();
+    // r
+    r.print();
 
 
     test.start("Check");
-    bool check_result = ch.Check(h, m, ID, pp);
+    bool check_result = ch.Check(h, m, r, ID, pp);
     test.end("Check");
 
     if(check_result){
@@ -57,14 +60,14 @@ void test(std::string test_name, std::string curve){
 
     Logger::PrintPbc("m_p", m_p);
     test.start("Adapt");
-    ch.Adapt(h_p, m_p, h, m, ID, sk, pp);
+    ch.Adapt(r_p, m_p, h, m, r, ID, sk, pp);
     test.end("Adapt");
-    h_p.get_h().print();
-    h_p.get_r().print();
+    // r_p
+    r_p.print();
 
 
     test.start("Verify");
-    bool verify_result = ch.Verify(h_p, m_p, ID, pp);
+    bool verify_result = ch.Verify(h, m_p, r_p, ID, pp);
     test.end("Verify");
 
     if(verify_result){
