@@ -2,13 +2,13 @@
 #define CH_KEF_CZK_2004_H
 
 #include <stdexcept>
-#include <base/PbcElements_copy.h>
+#include <base/PbcElements.h>
 #include <base/PbcScheme.h>
 
-class CH_KEF_CZK_2004_pp : public PbcElements_copy{};
-class CH_KEF_CZK_2004_pk : public PbcElements_copy{};
-class CH_KEF_CZK_2004_sk : public PbcElements_copy{};
-class CH_KEF_CZK_2004_r : public PbcElements_copy{};
+class CH_KEF_CZK_2004_pp : public PbcElements{};
+class CH_KEF_CZK_2004_pk : public PbcElements{};
+class CH_KEF_CZK_2004_sk : public PbcElements{};
+class CH_KEF_CZK_2004_r : public PbcElements{};
 
 class CH_KEF_CZK_2004: public PbcScheme {
     public:

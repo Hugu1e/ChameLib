@@ -3,19 +3,19 @@
 
 #include <utils/Hash.h>
 #include <base/PbcScheme.h>
-#include <base/PbcElements_copy.h>
+#include <base/PbcElements.h>
 
 #include <ABE/ABET.h>
 
 class PCHBA_TLL_2020_sk{
     private:
         ABET_msk skABET;
-        PbcElements_copy skCHET;
+        PbcElements skCHET;
     public:
         ABET_msk& get_skABET(){
             return skABET;
         }
-        PbcElements_copy& get_skCHET(){
+        PbcElements& get_skCHET(){
             return skCHET;
         }
 };
@@ -23,22 +23,22 @@ class PCHBA_TLL_2020_sk{
 class PCHBA_TLL_2020_pk{
     private:
         ABET_mpk pkABET;
-        PbcElements_copy pkCHET;
+        PbcElements pkCHET;
     public:
         ABET_mpk& get_pkABET(){
             return pkABET;
         }
-        PbcElements_copy& get_pkCHET(){
+        PbcElements& get_pkCHET(){
             return pkCHET;
         }
 };
 
 class PCHBA_TLL_2020_sks{
     private:
-        PbcElements_copy skCHET;
+        PbcElements skCHET;
         ABET_sks sksABET;
     public:
-        PbcElements_copy& get_skCHET(){
+        PbcElements& get_skCHET(){
             return skCHET;
         }
         ABET_sks& get_sksABET(){
@@ -56,7 +56,7 @@ class PCHBA_TLL_2020_ID{
 };
 
 
-class PCHBA_TLL_2020_r: public PbcElements_copy{
+class PCHBA_TLL_2020_r: public PbcElements{
     private:
         // element_t p, h_, c, epk, sigma
         // C
@@ -70,10 +70,10 @@ class PCHBA_TLL_2020_r: public PbcElements_copy{
 
 class PCHBA_TLL_2020_h{
     private:
-        PbcElements_copy h;
+        PbcElements h;
         PCHBA_TLL_2020_r r;
     public:
-        PbcElements_copy& get_h(){
+        PbcElements& get_h(){
             return h;
         }
         PCHBA_TLL_2020_r& get_r(){

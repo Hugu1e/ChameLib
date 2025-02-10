@@ -2,19 +2,19 @@
 #define FCR_CH_PreQA_DKS_2020_H
 
 #include <base/PbcScheme.h>
-#include <base/PbcElements_copy.h>
+#include <base/PbcElements.h>
 #include <utils/Hash.h>
 #include <stdexcept>
 
-class FCR_CH_PreQA_DKS_2020_pp: public PbcElements_copy{};
+class FCR_CH_PreQA_DKS_2020_pp: public PbcElements{};
 
-class FCR_CH_PreQA_DKS_2020_pk: public PbcElements_copy{};
+class FCR_CH_PreQA_DKS_2020_pk: public PbcElements{};
 
-class FCR_CH_PreQA_DKS_2020_sk: public PbcElements_copy{};
+class FCR_CH_PreQA_DKS_2020_sk: public PbcElements{};
 
-class FCR_CH_PreQA_DKS_2020_h: public PbcElements_copy{};
+class FCR_CH_PreQA_DKS_2020_h: public PbcElements{};
 
-class FCR_CH_PreQA_DKS_2020_r: public PbcElements_copy{};
+class FCR_CH_PreQA_DKS_2020_r: public PbcElements{};
 
 class FCR_CH_PreQA_DKS_2020: public PbcScheme{
     private:

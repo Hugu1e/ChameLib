@@ -1,8 +1,8 @@
-#include <base/PbcElements_copy.h>
+#include <base/PbcElements.h>
 
-PbcElements_copy::PbcElements_copy() : size(0), elements(nullptr){}
+PbcElements::PbcElements() : size(0), elements(nullptr){}
 
-void PbcElements_copy::init(int n){
+void PbcElements::init(int n){
     if(size > 0){
         // already initialized
         return;
@@ -15,7 +15,7 @@ void PbcElements_copy::init(int n){
     }
 }
 
-PbcElements_copy::PbcElements_copy(const PbcElements_copy &other){
+PbcElements::PbcElements(const PbcElements &other){
     if (this == &other)
         return;
 
@@ -30,7 +30,7 @@ PbcElements_copy::PbcElements_copy(const PbcElements_copy &other){
     }
 }
 
-PbcElements_copy &PbcElements_copy::operator=(const PbcElements_copy &other){
+PbcElements &PbcElements::operator=(const PbcElements &other){
     if (this == &other)
         return *this;
 
@@ -51,24 +51,24 @@ PbcElements_copy &PbcElements_copy::operator=(const PbcElements_copy &other){
     }
 }
 
-element_s* PbcElements_copy::operator[](int index){
+element_s* PbcElements::operator[](int index){
     return elements[index];
 }
 
-element_s* PbcElements_copy::get(int index){
+element_s* PbcElements::get(int index){
     return elements[index];
 }
 
-void PbcElements_copy::set(int index, element_s *element){
+void PbcElements::set(int index, element_s *element){
     element_init_same_as(elements[index], element);
     element_set(elements[index], element);
 }
 
-int PbcElements_copy::getSize(){
+int PbcElements::getSize(){
     return size;
 }
 
-void PbcElements_copy::print(){
+void PbcElements::print(){
     if (size > 0){
         printf("PbcElements: %d elements\n", size);
         for(int i = 0; i < size; i++){
@@ -82,7 +82,7 @@ void PbcElements_copy::print(){
     }
 }
 
-void PbcElements_copy::print(int index){
+void PbcElements::print(int index){
     if(elements[index] != nullptr){
         printf("Element[%d]: \n", index);
         element_printf("%B\n", elements[index]);
@@ -91,7 +91,7 @@ void PbcElements_copy::print(int index){
     }
 }
 
-PbcElements_copy::~PbcElements_copy(){
+PbcElements::~PbcElements(){
     if (elements != nullptr){
         for (int i = 0; i < size; i++){
             element_clear(elements[i]);

@@ -2,14 +2,14 @@
 #define CH_KEF_DLP_LLA_2012_H
 
 #include <stdexcept>
-#include <base/PbcElements_copy.h>
+#include <base/PbcElements.h>
 #include <base/PbcScheme.h>
 #include <utils/Hash.h>
 
-class CH_KEF_DLP_LLA_2012_pp : public PbcElements_copy{};
-class CH_KEF_DLP_LLA_2012_pk : public PbcElements_copy{};
-class CH_KEF_DLP_LLA_2012_sk : public PbcElements_copy{};
-class CH_KEF_DLP_LLA_2012_label : public PbcElements_copy{};
+class CH_KEF_DLP_LLA_2012_pp : public PbcElements{};
+class CH_KEF_DLP_LLA_2012_pk : public PbcElements{};
+class CH_KEF_DLP_LLA_2012_sk : public PbcElements{};
+class CH_KEF_DLP_LLA_2012_label : public PbcElements{};
 
 class CH_KEF_DLP_LLA_2012: public PbcScheme{
     private:

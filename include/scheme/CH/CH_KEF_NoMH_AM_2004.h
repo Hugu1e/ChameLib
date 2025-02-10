@@ -2,10 +2,10 @@
 #define CH_KEF_NoMH_AM_2004_H
 #include <utils/Hash.h>
 #include <base/PbcScheme.h>
-#include <base/PbcElements_copy.h>
+#include <base/PbcElements.h>
 
-class CH_KEF_NoMH_AM_2004_pk : public PbcElements_copy{};
-class CH_KEF_NoMH_AM_2004_sk : public PbcElements_copy{};
+class CH_KEF_NoMH_AM_2004_pk : public PbcElements{};
+class CH_KEF_NoMH_AM_2004_sk : public PbcElements{};
 
 class CH_KEF_NoMH_AM_2004: public PbcScheme{
     private:

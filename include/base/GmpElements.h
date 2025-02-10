@@ -2,28 +2,31 @@
 #define CHAMELIB_GMPELEMENT_H
 
 #include <gmp.h>
-#include <iostream>
 #include <string>
-#include <unordered_map>
-#include <exception/ElementException.h>
 
 class GmpElements{
     private:
-        std::unordered_map<std::string, MP_INT *> *elements_gmp;
+        int size;
+        MP_INT ** elements;
     
     public:
         GmpElements();
-        ~GmpElements();
+            
+        void init(int n);
 
         GmpElements(const GmpElements &other);
         GmpElements &operator=(const GmpElements &other);
         
-        MP_INT* getElement(std::string s);
-        
-        void insertElement(std::string s, MP_INT *element);
-        
-        void printElement();
-        void printElement(std::string s);
+        MP_INT* operator[](int index);
+
+        void set(int index, MP_INT *element);
+
+        int getSize();
+                
+        void print();
+        void print(int index);
+
+        ~GmpElements();
 };
 
 #endif  // CHAMELIB_GMPELEMENT_H

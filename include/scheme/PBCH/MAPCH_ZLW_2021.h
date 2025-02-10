@@ -3,7 +3,7 @@
 
 #include <utils/Hash.h>
 #include <base/PbcScheme.h>
-#include <base/GmpElements_copy.h>
+#include <base/GmpElements.h>
 #include <utils/TypeConverter.h>
 
 #include <ABE/MA_ABE.h>

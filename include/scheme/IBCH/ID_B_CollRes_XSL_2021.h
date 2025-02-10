@@ -1,25 +1,25 @@
 #ifndef ID_B_CollRes_XSL_2021_H
 #define ID_B_CollRes_XSL_2021_H
 
-#include <base/PbcElements_copy.h>
+#include <base/PbcElements.h>
 #include <base/PbcScheme.h>
 #include <utils/Hash.h>
 
-class ID_B_CollRes_XSL_2021_pp: public PbcElements_copy{};
+class ID_B_CollRes_XSL_2021_pp: public PbcElements{};
 
-class ID_B_CollRes_XSL_2021_msk: public PbcElements_copy{};
+class ID_B_CollRes_XSL_2021_msk: public PbcElements{};
 
-class ID_B_CollRes_XSL_2021_tk: public PbcElements_copy{};
+class ID_B_CollRes_XSL_2021_tk: public PbcElements{};
 
 class ID_B_CollRes_XSL_2021_h{
     private:
-        PbcElements_copy h;
-        PbcElements_copy r;
+        PbcElements h;
+        PbcElements r;
     public:
-        PbcElements_copy& get_h(){
+        PbcElements& get_h(){
             return h;
         }
-        PbcElements_copy& get_r(){
+        PbcElements& get_r(){
             return r;
         }
 };

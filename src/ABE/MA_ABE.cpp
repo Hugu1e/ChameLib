@@ -242,7 +242,7 @@ void MA_ABE::Encrypt(MA_ABE_ciphertext &C, MA_ABE_gpk &gpk, std::vector<MA_ABE_p
         }
         element_mul(tmp_GT, tmp_GT, tmp_GT_2);
         
-        PbcElements_copy tmp_ci;
+        PbcElements tmp_ci;
         tmp_ci.init(4);
 
         tmp_ci.set(ci_1, tmp_GT);

@@ -1,27 +1,27 @@
 #ifndef IB_CH_ZSS_S1_2003_H
 #define IB_CH_ZSS_S1_2003_H
 
-#include <base/PbcElements_copy.h>
+#include <base/PbcElements.h>
 #include <base/PbcScheme.h>
 #include <utils/Hash.h>
 
-class IB_CH_ZSS_S1_2003_msk:public PbcElements_copy{};
+class IB_CH_ZSS_S1_2003_msk:public PbcElements{};
 
-class IB_CH_ZSS_S1_2003_pp:public PbcElements_copy{};
+class IB_CH_ZSS_S1_2003_pp:public PbcElements{};
 
-class IB_CH_ZSS_S1_2003_pk:public PbcElements_copy{};
+class IB_CH_ZSS_S1_2003_pk:public PbcElements{};
 
-class IB_CH_ZSS_S1_2003_sk:public PbcElements_copy{};
+class IB_CH_ZSS_S1_2003_sk:public PbcElements{};
 
 class IB_CH_ZSS_S1_2003_h{
     private:
-        PbcElements_copy h;
-        PbcElements_copy r;
+        PbcElements h;
+        PbcElements r;
     public:
-        PbcElements_copy& get_h(){
+        PbcElements& get_h(){
             return h;
         }
-        PbcElements_copy& get_r(){
+        PbcElements& get_r(){
             return r;
         }
 };

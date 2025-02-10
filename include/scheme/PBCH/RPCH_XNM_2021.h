@@ -3,7 +3,7 @@
 
 #include <utils/Hash.h>
 #include <base/PbcScheme.h>
-#include <base/GmpElements_copy.h>
+#include <base/GmpElements.h>
 
 #include <AE/RSA.h>
 #include <ABE/RABE_XNM.h>
@@ -12,12 +12,12 @@
 class RPCH_XNM_2021_sk{
     private:
         RABE_XNM_msk mskRABE;
-        GmpElements_copy skCHET;
+        GmpElements skCHET;
     public:
         RABE_XNM_msk& get_mskRABE(){
             return mskRABE;
         }
-        GmpElements_copy& get_skCHET(){
+        GmpElements& get_skCHET(){
             return skCHET;
         }
 };
@@ -25,22 +25,22 @@ class RPCH_XNM_2021_sk{
 class RPCH_XNM_2021_pk{
     private:
         RABE_XNM_mpk mpkRABE;
-        GmpElements_copy pkCHET;
+        GmpElements pkCHET;
     public:
         RABE_XNM_mpk& get_mpkRABE(){
             return mpkRABE;
         }
-        GmpElements_copy& get_pkCHET(){
+        GmpElements& get_pkCHET(){
             return pkCHET;
         }
 };
 
 class RPCH_XNM_2021_skid{
     private:
-        GmpElements_copy skCHET;
+        GmpElements skCHET;
         RABE_XNM_skid skidRABE;
     public:
-        GmpElements_copy& get_skCHET(){
+        GmpElements& get_skCHET(){
             return skCHET;
         }
         RABE_XNM_skid& get_skidRABE(){
@@ -50,10 +50,10 @@ class RPCH_XNM_2021_skid{
 
 class RPCH_XNM_2021_dkidt{
     private:
-        GmpElements_copy skCHET;
+        GmpElements skCHET;
         RABE_XNM_dkidt dkidtRABE;
     public:
-        GmpElements_copy& get_skCHET(){
+        GmpElements& get_skCHET(){
             return skCHET;
         }
         RABE_XNM_dkidt& get_dkidtRABE(){
@@ -61,7 +61,7 @@ class RPCH_XNM_2021_dkidt{
         }
 };
 
-class RPCH_XNM_2021_r: public GmpElements_copy{
+class RPCH_XNM_2021_r: public GmpElements{
     private:
         // r1, r2, N2, cSE
         RABE_XNM_ciphertext ct;
@@ -73,10 +73,10 @@ class RPCH_XNM_2021_r: public GmpElements_copy{
 
 class RPCH_XNM_2021_h{
     private:
-        GmpElements_copy h;
+        GmpElements h;
         RPCH_XNM_2021_r r;
     public:
-        GmpElements_copy& get_h(){
+        GmpElements& get_h(){
             return h;
         }
         RPCH_XNM_2021_r& get_r(){

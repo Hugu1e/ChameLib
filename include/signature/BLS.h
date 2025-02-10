@@ -1,13 +1,13 @@
 #ifndef CHAMELIB_BLS_H
 #define CHAMELIB_BLS_H
-#include <base/PbcElements_copy.h>
+#include <base/PbcElements.h>
 #include <base/PbcScheme.h>
 #include <utils/Hash.h>
 
-class BLS_pp: public PbcElements_copy{};
-class BLS_pk: public PbcElements_copy{};
-class BLS_sk: public PbcElements_copy{};
-class BLS_signature: public PbcElements_copy{};
+class BLS_pp: public PbcElements{};
+class BLS_pk: public PbcElements{};
+class BLS_sk: public PbcElements{};
+class BLS_signature: public PbcElements{};
 
 class BLS: public PbcScheme{
     private:

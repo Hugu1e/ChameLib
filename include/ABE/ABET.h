@@ -4,7 +4,7 @@
 #ifndef CHAMELIB_ABET_H
 #define CHAMELIB_ABET_H
 
-#include <base/PbcElements_copy.h>
+#include <base/PbcElements.h>
 #include <base/PbcScheme.h>
 #include <utils/Hash.h>
 #include <vector>
@@ -13,90 +13,90 @@
 #include <ABE/Policy_resolution.h>
 #include <ABE/Policy_generation.h>
 
-class ABET_mpk: public PbcElements_copy{
+class ABET_mpk: public PbcElements{
     private:
-        PbcElements_copy gk;  // g^z1, g^z2,...g^zk
-        PbcElements_copy gk_pow_a;  // (g^z1)^a, (g^z2)^a,...(g^zk)^a
-        PbcElements_copy hk;  // h^z1, h^z2,...h^zk
+        PbcElements gk;  // g^z1, g^z2,...g^zk
+        PbcElements gk_pow_a;  // (g^z1)^a, (g^z2)^a,...(g^zk)^a
+        PbcElements hk;  // h^z1, h^z2,...h^zk
     public:
-        PbcElements_copy& get_gk(){
+        PbcElements& get_gk(){
             return gk;
         }
-        PbcElements_copy& get_gk_pow_a(){
+        PbcElements& get_gk_pow_a(){
             return gk_pow_a;
         }
-        PbcElements_copy& get_hk(){
+        PbcElements& get_hk(){
             return hk;
         }
 };
-class ABET_msk: public PbcElements_copy{
+class ABET_msk: public PbcElements{
     private:
-        PbcElements_copy zk;  // z1,z2,...zk
+        PbcElements zk;  // z1,z2,...zk
     public:
-        PbcElements_copy& get_zk(){
+        PbcElements& get_zk(){
             return zk;
         }
 };
-class ABET_ID: public PbcElements_copy{};
+class ABET_ID: public PbcElements{};
 class ABET_sks{
     private:
-        PbcElements_copy sk0;
-        std::vector<PbcElements_copy> sk_y;
-        PbcElements_copy sk_prime;
-        PbcElements_copy sk1;
-        PbcElements_copy sk2;
+        PbcElements sk0;
+        std::vector<PbcElements> sk_y;
+        PbcElements sk_prime;
+        PbcElements sk1;
+        PbcElements sk2;
     public:
-        PbcElements_copy& get_sk0(){
+        PbcElements& get_sk0(){
             return sk0;
         }
-        PbcElements_copy& get_sk_y(int i){
+        PbcElements& get_sk_y(int i){
             return sk_y[i];
         }
-        std::vector<PbcElements_copy>& get_sk_y(){
+        std::vector<PbcElements>& get_sk_y(){
             return sk_y;
         }
-        PbcElements_copy& get_sk_prime(){
+        PbcElements& get_sk_prime(){
             return sk_prime;
         }
-        PbcElements_copy& get_sk1(){
+        PbcElements& get_sk1(){
             return sk1;
         }
-        PbcElements_copy& get_sk2(){
+        PbcElements& get_sk2(){
             return sk2;
         }
 };
 class ABET_ciphertext{
     private:
-        PbcElements_copy ct0;
-        std::vector<PbcElements_copy> ct_y;
-        PbcElements_copy ct_;  // use ct_ to avoid conflict with ct(ct_1, ct_2, ct_3)
-        PbcElements_copy ct_prime;
-        PbcElements_copy ct1;
-        PbcElements_copy ct2;
-        PbcElements_copy ct3;
+        PbcElements ct0;
+        std::vector<PbcElements> ct_y;
+        PbcElements ct_;  // use ct_ to avoid conflict with ct(ct_1, ct_2, ct_3)
+        PbcElements ct_prime;
+        PbcElements ct1;
+        PbcElements ct2;
+        PbcElements ct3;
     public:
-        PbcElements_copy& get_ct0(){
+        PbcElements& get_ct0(){
             return ct0;
         }
-        PbcElements_copy& get_ct_y(int i){
+        PbcElements& get_ct_y(int i){
             return ct_y[i];
         }
-        std::vector<PbcElements_copy>& get_ct_y(){
+        std::vector<PbcElements>& get_ct_y(){
             return ct_y;
         }
-        PbcElements_copy& get_ct_(){
+        PbcElements& get_ct_(){
             return ct_;
         }
-        PbcElements_copy& get_ct_prime(){
+        PbcElements& get_ct_prime(){
             return ct_prime;
         }
-        PbcElements_copy& get_ct1(){
+        PbcElements& get_ct1(){
             return ct1;
         }
-        PbcElements_copy& get_ct2(){
+        PbcElements& get_ct2(){
             return ct2;
         }
-        PbcElements_copy& get_ct3(){
+        PbcElements& get_ct3(){
             return ct3;
         }
         void init_same_as(ABET_ciphertext &other){

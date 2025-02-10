@@ -204,7 +204,7 @@ void ABET::KeyGen(ABET_sks &sks, ABET_msk &msk, ABET_mpk &mpk, std::vector<std::
         element_mul(tmp_G, tmp_G, this->tmp_G_3);
         element_mul(tmp_G, tmp_G, this->tmp_G_4);
 
-        PbcElements_copy sk_y;
+        PbcElements sk_y;
         sk_y.init(3);
         sk_y.set(sk_1, tmp_G);
 
@@ -462,7 +462,7 @@ void ABET::Encrypt(ABET_ciphertext &ciphertext, ABET_mpk &mpk, ABET_msk &msk, el
             element_mul(tmp_G_4, tmp_G_4, this->tmp_G_3);
         }
 
-        PbcElements_copy ct_y;
+        PbcElements ct_y;
         ct_y.init(3);
         ct_y.set(ct_1, tmp_G_4);
     

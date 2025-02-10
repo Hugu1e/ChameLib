@@ -1,15 +1,15 @@
 #ifndef IB_CH_MD_LSX_2022_H
 #define IB_CH_MD_LSX_2022_H
 
-#include <base/PbcElements_copy.h>
+#include <base/PbcElements.h>
 #include <base/PbcScheme.h>
 #include <utils/Hash.h>
 
-class IB_CH_MD_LSX_2022_pp: public PbcElements_copy {};
-class IB_CH_MD_LSX_2022_msk: public PbcElements_copy {};
-class IB_CH_MD_LSX_2022_td : public PbcElements_copy {};
-class IB_CH_MD_LSX_2022_h : public PbcElements_copy {};
-class IB_CH_MD_LSX_2022_r : public PbcElements_copy {};
+class IB_CH_MD_LSX_2022_pp: public PbcElements {};
+class IB_CH_MD_LSX_2022_msk: public PbcElements {};
+class IB_CH_MD_LSX_2022_td : public PbcElements {};
+class IB_CH_MD_LSX_2022_h : public PbcElements {};
+class IB_CH_MD_LSX_2022_r : public PbcElements {};
 
 class IB_CH_MD_LSX_2022: public PbcScheme {
     public:

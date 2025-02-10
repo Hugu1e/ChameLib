@@ -153,7 +153,7 @@ void RABE_TMM::KGen(RABE_TMM_skid &skid, Binary_tree_RABE &st, RABE_TMM_mpk &mpk
         element_mul(tmp_G, tmp_G, this->tmp_G_3);
         element_mul(tmp_G, tmp_G, this->tmp_G_4);
 
-        PbcElements_copy sk_y;
+        PbcElements sk_y;
         sk_y.init(3);
         sk_y.set(sk_1, tmp_G);
 
@@ -269,7 +269,7 @@ void RABE_TMM::KGen(RABE_TMM_skid &skid, Binary_tree_RABE &st, RABE_TMM_mpk &mpk
         // sk'3 = g^d3 * g^(-sigma_prime) / gtheta
         element_div(this->tmp_G_2, tmp_sk_prime_sk_3, this->tmp_G);
 
-        PbcElements_copy tmp_sk_theta;
+        PbcElements tmp_sk_theta;
         tmp_sk_theta.init(3);
 
         tmp_sk_theta.set(sk_1, tmp_sk_prime_sk_1);
@@ -314,7 +314,7 @@ void RABE_TMM::KUpt(RABE_TMM_kut &kut, RABE_TMM_mpk &mpk, Binary_tree_RABE &st, 
         // h^rtheta
         element_pow_zn(this->tmp_H, mpk[h], this->tmp_Zn);
 
-        PbcElements_copy tmp_ku_theta;
+        PbcElements tmp_ku_theta;
         tmp_ku_theta.init(2);
 
         tmp_ku_theta.set(ku_theta_1, this->tmp_G);
@@ -368,7 +368,7 @@ void RABE_TMM::DKGen(RABE_TMM_dkidt &dkidt, RABE_TMM_mpk &mpk, RABE_TMM_skid &sk
 
     // sky
     for(int i = 0; i < skid.get_sk_y().size(); i++){
-        PbcElements_copy tmp_sk_y;
+        PbcElements tmp_sk_y;
         tmp_sk_y.init(3);
         tmp_sk_y.set(sk_1, skid.get_sk_y(i).get(sk_1));
         tmp_sk_y.set(sk_2, skid.get_sk_y(i).get(sk_2));
@@ -480,7 +480,7 @@ void RABE_TMM::Enc(RABE_TMM_ciphertext &ciphertext, RABE_TMM_mpk &mpk, element_t
             element_mul(tmp_G_4, tmp_G_4, this->tmp_G_3);
         }
 
-        PbcElements_copy tmp_ct_y;
+        PbcElements tmp_ct_y;
         tmp_ct_y.init(3);
         tmp_ct_y.set(ct_1, tmp_G_4);
     

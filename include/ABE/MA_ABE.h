@@ -1,7 +1,7 @@
 #ifndef CHAMELIB_MA_ABE_H
 #define CHAMELIB_MA_ABE_H
 
-#include <base/PbcElements_copy.h>
+#include <base/PbcElements.h>
 #include <base/PbcScheme.h>
 #include <vector>
 #include <string>
@@ -10,9 +10,9 @@
 #include <ABE/Policy_generation.h>
 #include <utils/Hash.h>
 
-class MA_ABE_gpk: public PbcElements_copy{};
+class MA_ABE_gpk: public PbcElements{};
 
-class MA_ABE_pkTheta: public PbcElements_copy{
+class MA_ABE_pkTheta: public PbcElements{
     private:
         std::string A;
     public: 
@@ -24,16 +24,16 @@ class MA_ABE_pkTheta: public PbcElements_copy{
         }
         MA_ABE_pkTheta &operator=(const MA_ABE_pkTheta &other){
             if(this != &other){
-                PbcElements_copy::operator=(other);
+                PbcElements::operator=(other);
                 this->A = other.A;
             }
             return *this;
         }
 };
 
-class MA_ABE_skTheta: public PbcElements_copy{};
+class MA_ABE_skTheta: public PbcElements{};
 
-class MA_ABE_skgidA: public PbcElements_copy{
+class MA_ABE_skgidA: public PbcElements{
     private:
         std::string gid;
         std::string A;
@@ -52,7 +52,7 @@ class MA_ABE_skgidA: public PbcElements_copy{
         }
         MA_ABE_skgidA &operator=(const MA_ABE_skgidA &other){
             if(this != &other){
-                PbcElements_copy::operator=(other);
+                PbcElements::operator=(other);
                 this->gid = other.gid;
                 this->A = other.A;
             }
@@ -63,8 +63,8 @@ class MA_ABE_skgidA: public PbcElements_copy{
 class MA_ABE_ciphertext{
     private:
         std::string policy;
-        PbcElements_copy c0;
-        std::vector<PbcElements_copy> ci;
+        PbcElements c0;
+        std::vector<PbcElements> ci;
     public:
         void setPolicy(std::string policy){
             this->policy = policy;
@@ -72,13 +72,13 @@ class MA_ABE_ciphertext{
         std::string getPolicy(){
             return this->policy;
         }
-        PbcElements_copy& getC0(){
+        PbcElements& getC0(){
             return c0;
         }
-        PbcElements_copy& getCi(int i){
+        PbcElements& getCi(int i){
             return ci[i];
         }
-        std::vector<PbcElements_copy>& getCi(){
+        std::vector<PbcElements>& getCi(){
             return ci;
         }
         MA_ABE_ciphertext &operator=(const MA_ABE_ciphertext &other){

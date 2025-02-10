@@ -3,12 +3,12 @@
 
 #include <stdexcept>
 #include <base/PbcScheme.h>
-#include <base/PbcElements_copy.h>
+#include <base/PbcElements.h>
 #include <utils/Hash.h>
 
-class CH_KEF_MH_SDH_DL_AM_2004_pp : public PbcElements_copy{};
-class CH_KEF_MH_SDH_DL_AM_2004_pk : public PbcElements_copy{};
-class CH_KEF_MH_SDH_DL_AM_2004_sk : public PbcElements_copy{};
+class CH_KEF_MH_SDH_DL_AM_2004_pp : public PbcElements{};
+class CH_KEF_MH_SDH_DL_AM_2004_pk : public PbcElements{};
+class CH_KEF_MH_SDH_DL_AM_2004_sk : public PbcElements{};
 
 class CH_KEF_MH_SDH_DL_AM_2004: public PbcScheme{
     private:

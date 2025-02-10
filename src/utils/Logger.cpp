@@ -70,7 +70,7 @@ void Logger::PrintPbcWithSize(std::string pbc_name, element_t element){
  */
 void Logger::PrintPbcElements(std::string pbcElements_name, PbcElements &pbcElements){
     printf("%s:\n", pbcElements_name.c_str());
-    pbcElements.printElement();
+    pbcElements.print();
 }
 
 /**
@@ -81,5 +81,5 @@ void Logger::PrintPbcElements(std::string pbcElements_name, PbcElements &pbcElem
  */
 void PrintGmpElements(std::string GmpElements_name, GmpElements &gmpElements){
     printf("%s:\n", GmpElements_name.c_str());
-    gmpElements.printElement();
+    gmpElements.print();
 }

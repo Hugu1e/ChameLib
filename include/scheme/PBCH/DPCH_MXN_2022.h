@@ -3,7 +3,7 @@
 
 #include <utils/Hash.h>
 #include <base/PbcScheme.h>
-#include <base/GmpElements_copy.h>
+#include <base/GmpElements.h>
 
 #include <ABE/MA_ABE.h>
 #include <SE/AES.h>
@@ -117,10 +117,10 @@ class DPCH_MXN_2022_r {
 
 class DPCH_MXN_2022_c {
     private:
-        GmpElements_copy c_etd;
+        GmpElements c_etd;
         MA_ABE_ciphertext c_abe;
     public:
-        GmpElements_copy &getC_etd() {
+        GmpElements &getC_etd() {
             return c_etd;
         }
         MA_ABE_ciphertext &getC_abe() {

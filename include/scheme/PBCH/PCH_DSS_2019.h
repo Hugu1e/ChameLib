@@ -3,7 +3,7 @@
 
 #include <utils/Hash.h>
 #include <base/PbcScheme.h>
-#include <base/GmpElements_copy.h>
+#include <base/GmpElements.h>
 
 #include <ABE/CP_ABE.h>
 #include <SE/AES.h>
@@ -12,12 +12,12 @@
 class PCH_DSS_2019_sk{
     private:
         CP_ABE_msk mskABE;
-        GmpElements_copy skCHET;
+        GmpElements skCHET;
     public:
         CP_ABE_msk& getMskABE(){
             return mskABE;
         }
-        GmpElements_copy& getSkCHET(){
+        GmpElements& getSkCHET(){
             return skCHET;
         }
 };
@@ -25,22 +25,22 @@ class PCH_DSS_2019_sk{
 class PCH_DSS_2019_pk{
     private:
         CP_ABE_mpk mpkABE;
-        GmpElements_copy pkCHET;
+        GmpElements pkCHET;
     public:
         CP_ABE_mpk& getMpkABE(){
             return mpkABE;
         }
-        GmpElements_copy& getPkCHET(){
+        GmpElements& getPkCHET(){
             return pkCHET;
         }
 };
 
 class PCH_DSS_2019_sks{
     private:
-        GmpElements_copy skCHET;
+        GmpElements skCHET;
         CP_ABE_sks sksABE;
     public:
-        GmpElements_copy& getSkCHET(){
+        GmpElements& getSkCHET(){
             return skCHET;
         }
         CP_ABE_sks& getSksABE(){
@@ -48,21 +48,21 @@ class PCH_DSS_2019_sks{
         }
 };
 
-class PCH_DSS_2019_r: public GmpElements_copy{};
+class PCH_DSS_2019_r: public GmpElements{};
 
 class PCH_DSS_2019_h{
     private:
-        GmpElements_copy h;  // h1,h2,N2
+        GmpElements h;  // h1,h2,N2
         CP_ABE_ciphertext ct;
-        GmpElements_copy ct_;
+        GmpElements ct_;
     public:
-        GmpElements_copy& getH(){
+        GmpElements& getH(){
             return h;
         }
         CP_ABE_ciphertext& getCt(){
             return ct;
         }
-        GmpElements_copy& getCt_(){
+        GmpElements& getCt_(){
             return ct_;
         }
 };

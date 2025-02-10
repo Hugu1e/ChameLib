@@ -2,14 +2,14 @@
 #define CH_FS_ECC_CCT_2024_H
 
 #include <stdio.h>
-#include <base/PbcElements_copy.h>
+#include <base/PbcElements.h>
 #include <base/PbcScheme.h>
 #include <utils/Hash.h>
 
-class CH_FS_ECC_CCT_2024_pp: public PbcElements_copy{};
-class CH_FS_ECC_CCT_2024_pk: public PbcElements_copy{};
-class CH_FS_ECC_CCT_2024_sk: public PbcElements_copy{};
-class CH_FS_ECC_CCT_2024_r: public PbcElements_copy{};
+class CH_FS_ECC_CCT_2024_pp: public PbcElements{};
+class CH_FS_ECC_CCT_2024_pk: public PbcElements{};
+class CH_FS_ECC_CCT_2024_sk: public PbcElements{};
+class CH_FS_ECC_CCT_2024_r: public PbcElements{};
 
 class CH_FS_ECC_CCT_2024: public PbcScheme{
     private:

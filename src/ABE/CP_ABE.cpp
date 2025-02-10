@@ -147,7 +147,7 @@ void CP_ABE::KeyGen(CP_ABE_sks &sks, CP_ABE_msk &msk, CP_ABE_mpk &mpk, std::vect
         element_mul(sk_1_G, sk_1_G, this->tmp_G_3);
         element_mul(sk_1_G, sk_1_G, this->tmp_G_4);
 
-        PbcElements_copy tmp_sky;
+        PbcElements tmp_sky;
         tmp_sky.init(3);
         tmp_sky.set(sk_1, sk_1_G);
 
@@ -360,7 +360,7 @@ void CP_ABE::Encrypt(CP_ABE_ciphertext &ciphertext, CP_ABE_mpk &mpk, element_t m
             element_pow_zn(this->tmp_G_4, this->tmp_G_3, M->getElement(i, j));
             element_mul(ct_1_G, ct_1_G, this->tmp_G_4);
         }
-        PbcElements_copy tmp_ct_y;
+        PbcElements tmp_ct_y;
         tmp_ct_y.init(3);
         tmp_ct_y.set(ct_1, ct_1_G);
 

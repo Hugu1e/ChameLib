@@ -4,7 +4,7 @@
 #include <gmp.h>
 #include <utils/Hash.h>
 #include <AE/RSA.h>
-#include <base/GmpElements_copy.h>
+#include <base/GmpElements.h>
 #include <stdexcept>
 
 class CH_ET_BC_CDK_2017_pp{
@@ -19,15 +19,15 @@ class CH_ET_BC_CDK_2017_pp{
         }
 };
 
-class CH_ET_BC_CDK_2017_pk: public GmpElements_copy{};
+class CH_ET_BC_CDK_2017_pk: public GmpElements{};
 
-class CH_ET_BC_CDK_2017_sk: public GmpElements_copy{};
+class CH_ET_BC_CDK_2017_sk: public GmpElements{};
 
-class CH_ET_BC_CDK_2017_h: public GmpElements_copy{};
+class CH_ET_BC_CDK_2017_h: public GmpElements{};
 
-class CH_ET_BC_CDK_2017_r: public GmpElements_copy{};
+class CH_ET_BC_CDK_2017_r: public GmpElements{};
 
-class CH_ET_BC_CDK_2017_etd: public GmpElements_copy{};
+class CH_ET_BC_CDK_2017_etd: public GmpElements{};
 
 class CH_ET_BC_CDK_2017{
     private:

@@ -1,7 +1,7 @@
 #ifndef CHAMELIB_CP_ABE_H
 #define CHAMELIB_CP_ABE_H
 
-#include <base/PbcElements_copy.h>
+#include <base/PbcElements.h>
 #include <base/PbcScheme.h>
 #include <vector>
 #include <unordered_map>
@@ -10,30 +10,30 @@
 #include <utils/Hash.h>
 
 
-class CP_ABE_mpk : public PbcElements_copy{};
+class CP_ABE_mpk : public PbcElements{};
 
-class CP_ABE_msk : public PbcElements_copy{};
+class CP_ABE_msk : public PbcElements{};
 
 class CP_ABE_sks{
     private:
-        PbcElements_copy sk0;
-        std::vector<PbcElements_copy> sk_y;
-        PbcElements_copy sk_prime;
+        PbcElements sk0;
+        std::vector<PbcElements> sk_y;
+        PbcElements sk_prime;
 
     public:
-        PbcElements_copy &get_sk0()
+        PbcElements &get_sk0()
         {
             return sk0;
         }
-        PbcElements_copy &get_sk_y(int i)
+        PbcElements &get_sk_y(int i)
         {
             return sk_y[i];
         }
-        std::vector<PbcElements_copy> &get_sk_y()
+        std::vector<PbcElements> &get_sk_y()
         {
             return sk_y;
         }
-        PbcElements_copy &get_sk_prime()
+        PbcElements &get_sk_prime()
         {
             return sk_prime;
         }
@@ -41,24 +41,24 @@ class CP_ABE_sks{
 
 class CP_ABE_ciphertext{
     private:
-        PbcElements_copy ct0;
-        std::vector<PbcElements_copy> ct_y;
-        PbcElements_copy ct_prime;
+        PbcElements ct0;
+        std::vector<PbcElements> ct_y;
+        PbcElements ct_prime;
 
     public:
-        PbcElements_copy &get_ct0()
+        PbcElements &get_ct0()
         {
             return ct0;
         }
-        PbcElements_copy &get_ct_y(int i)
+        PbcElements &get_ct_y(int i)
         {
             return ct_y[i];
         }
-        std::vector<PbcElements_copy> &get_ct_y()
+        std::vector<PbcElements> &get_ct_y()
         {
             return ct_y;
         }
-        PbcElements_copy &get_ct_prime()
+        PbcElements &get_ct_prime()
         {
             return ct_prime;
         }

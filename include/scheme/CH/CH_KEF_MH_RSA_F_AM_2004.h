@@ -6,11 +6,11 @@
 #include <utils/Hash.h>
 #include <utils/RandomGenerator.h>
 #include <AE/RSA.h>
-#include <base/GmpElements_copy.h>
+#include <base/GmpElements.h>
 
-class CH_KEF_MH_RSA_F_AM_2004_pk: public GmpElements_copy{};
+class CH_KEF_MH_RSA_F_AM_2004_pk: public GmpElements{};
 
-class CH_KEF_MH_RSA_F_AM_2004_sk: public GmpElements_copy{};
+class CH_KEF_MH_RSA_F_AM_2004_sk: public GmpElements{};
 
 class CH_KEF_MH_RSA_F_AM_2004{
     private:

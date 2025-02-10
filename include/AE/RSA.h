@@ -1,12 +1,12 @@
 #ifndef CHAMELIB_RSA_H
 #define CHAMELIB_RSA_H
 
-#include <base/GmpElements_copy.h>
+#include <base/GmpElements.h>
 #include <utils/RandomGenerator.h>
 
-class RSA_pk: public GmpElements_copy{};
+class RSA_pk: public GmpElements{};
 
-class RSA_sk: public GmpElements_copy{};
+class RSA_sk: public GmpElements{};
 
 class AE_RSA{
     public:

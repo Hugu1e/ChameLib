@@ -1,8 +1,8 @@
-#include <base/GmpElements_copy.h>
+#include <base/GmpElements.h>
 
-GmpElements_copy::GmpElements_copy() : size(0), elements(nullptr){}
+GmpElements::GmpElements() : size(0), elements(nullptr){}
 
-void GmpElements_copy::init(int n){
+void GmpElements::init(int n){
     if(size > 0){
         // already initialized
         return;
@@ -16,7 +16,7 @@ void GmpElements_copy::init(int n){
     }
 }
 
-GmpElements_copy::GmpElements_copy(const GmpElements_copy &other){
+GmpElements::GmpElements(const GmpElements &other){
     if (this == &other)
         return;
     
@@ -31,7 +31,7 @@ GmpElements_copy::GmpElements_copy(const GmpElements_copy &other){
     }
 }
 
-GmpElements_copy &GmpElements_copy::operator=(const GmpElements_copy &other){
+GmpElements &GmpElements::operator=(const GmpElements &other){
     if (this == &other)
         return *this;
 
@@ -55,19 +55,19 @@ GmpElements_copy &GmpElements_copy::operator=(const GmpElements_copy &other){
     return *this;
 }
 
-MP_INT* GmpElements_copy::operator[](int index){
+MP_INT* GmpElements::operator[](int index){
     return elements[index];
 }
 
-void GmpElements_copy::set(int index, MP_INT *element){
+void GmpElements::set(int index, MP_INT *element){
     mpz_set(elements[index], element);
 }
 
-int GmpElements_copy::getSize(){
+int GmpElements::getSize(){
     return size;
 }
 
-void GmpElements_copy::print(){
+void GmpElements::print(){
     if (size > 0){
         printf("GmpElements: %d elements\n", size);
         for(int i = 0; i < size; i++){
@@ -81,7 +81,7 @@ void GmpElements_copy::print(){
     }
 }
 
-void GmpElements_copy::print(int index){
+void GmpElements::print(int index){
     if(elements[index] != nullptr){
         printf("Element[%d]: \n", index);
         gmp_printf("%Zd\n", elements[index]);
@@ -90,7 +90,7 @@ void GmpElements_copy::print(int index){
     }
 }
 
-GmpElements_copy::~GmpElements_copy(){
+GmpElements::~GmpElements(){
     if (elements != nullptr){
         for (int i = 0; i < size; i++){
             mpz_clear(elements[i]);

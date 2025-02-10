@@ -2,17 +2,17 @@
 #define MCH_CDK_2017_H
 
 #include <utils/Hash.h>
-#include <base/GmpElements_copy.h>
+#include <base/GmpElements.h>
 #include <AE/RSA.h>
 #include <stdexcept>
 
-class MCH_CDK_2017_pk : public GmpElements_copy{};
+class MCH_CDK_2017_pk : public GmpElements{};
 
-class MCH_CDK_2017_sk : public GmpElements_copy{};
+class MCH_CDK_2017_sk : public GmpElements{};
 
-class MCH_CDK_2017_h : public GmpElements_copy{};
+class MCH_CDK_2017_h : public GmpElements{};
 
-class MCH_CDK_2017_r : public GmpElements_copy{};
+class MCH_CDK_2017_r : public GmpElements{};
 
 class MCH_CDK_2017{
     private:

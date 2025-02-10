@@ -3,7 +3,7 @@
 
 #include <utils/Hash.h>
 #include <base/PbcScheme.h>
-#include <base/PbcElements_copy.h>
+#include <base/PbcElements.h>
 
 #include <AE/RSA.h>
 #include <ABE/RABE_TMM.h>
@@ -12,12 +12,12 @@
 class RPCH_TMM_2022_sk{
     private:
         RABE_TMM_msk mskRABE;
-        PbcElements_copy skCHET;
+        PbcElements skCHET;
     public:
         RABE_TMM_msk &get_mskRABE(){
             return mskRABE;
         }
-        PbcElements_copy &get_skCHET(){
+        PbcElements &get_skCHET(){
             return skCHET;
         }
 };
@@ -25,22 +25,22 @@ class RPCH_TMM_2022_sk{
 class RPCH_TMM_2022_pk{
     private:
         RABE_TMM_mpk mpkRABE;
-        PbcElements_copy pkCHET;
+        PbcElements pkCHET;
     public:
         RABE_TMM_mpk &get_mpkRABE(){
             return mpkRABE;
         }
-        PbcElements_copy &get_pkCHET(){
+        PbcElements &get_pkCHET(){
             return pkCHET;
         }
 };
 
 class RPCH_TMM_2022_skid{
     private:
-        PbcElements_copy skCHET;
+        PbcElements skCHET;
         RABE_TMM_skid skidRABE;
     public:
-        PbcElements_copy &get_skCHET(){
+        PbcElements &get_skCHET(){
             return skCHET;
         }
         RABE_TMM_skid &get_skidRABE(){
@@ -50,10 +50,10 @@ class RPCH_TMM_2022_skid{
 
 class RPCH_TMM_2022_dkidt{
     private:
-        PbcElements_copy skCHET;
+        PbcElements skCHET;
         RABE_TMM_dkidt dkidtRABE;
     public:
-        PbcElements_copy &get_skCHET(){
+        PbcElements &get_skCHET(){
             return skCHET;
         }
         RABE_TMM_dkidt &get_dkidtRABE(){
@@ -61,7 +61,7 @@ class RPCH_TMM_2022_dkidt{
         }
 };
 
-class RPCH_TMM_2022_r: public PbcElements_copy{
+class RPCH_TMM_2022_r: public PbcElements{
     private:
         // h,r
         // C
@@ -74,10 +74,10 @@ class RPCH_TMM_2022_r: public PbcElements_copy{
 
 class RPCH_TMM_2022_h{
     private:
-        PbcElements_copy h;
+        PbcElements h;
         RPCH_TMM_2022_r r;
     public:
-        PbcElements_copy &get_h(){
+        PbcElements &get_h(){
             return h;
         }
         RPCH_TMM_2022_r &get_r(){

@@ -1,7 +1,7 @@
 #ifndef RABE_TMM_H
 #define RABE_TMM_H
 
-#include <base/PbcElements_copy.h>
+#include <base/PbcElements.h>
 #include <base/PbcScheme.h>
 #include <vector>
 #include <string>
@@ -12,41 +12,41 @@
 #include <utils/TimeUtils.h>
 #include <base/Binary_tree_RABE.h>
 
-class RABE_TMM_mpk: public PbcElements_copy{};
-class RABE_TMM_msk: public PbcElements_copy{};
+class RABE_TMM_mpk: public PbcElements{};
+class RABE_TMM_msk: public PbcElements{};
 class RABE_TMM_skid{
     private:
-        PbcElements_copy sk0;
-        std::vector<PbcElements_copy> sk_y;
-        std::vector<std::pair<Binary_tree_RABE_node*,PbcElements_copy>> sk_prime;
+        PbcElements sk0;
+        std::vector<PbcElements> sk_y;
+        std::vector<std::pair<Binary_tree_RABE_node*,PbcElements>> sk_prime;
     public:
-        PbcElements_copy& get_sk0()
+        PbcElements& get_sk0()
         {
             return sk0;
         }
-        PbcElements_copy& get_sk_y(int i)
+        PbcElements& get_sk_y(int i)
         {
             return sk_y[i];
         }
-        std::vector<PbcElements_copy>& get_sk_y()
+        std::vector<PbcElements>& get_sk_y()
         {
             return sk_y;
         }
-        std::vector<std::pair<Binary_tree_RABE_node*,PbcElements_copy>>& get_sk_prime()
+        std::vector<std::pair<Binary_tree_RABE_node*,PbcElements>>& get_sk_prime()
         {
             return sk_prime;
         }
-        std::pair<Binary_tree_RABE_node*,PbcElements_copy>& get_sk_prime(int i)
+        std::pair<Binary_tree_RABE_node*,PbcElements>& get_sk_prime(int i)
         {
             return sk_prime[i];
         }
 };
-class RABE_TMM_revokedPreson: public PbcElements_copy{
+class RABE_TMM_revokedPreson: public PbcElements{
     private:
         time_t time;
     public:
-        RABE_TMM_revokedPreson(): PbcElements_copy(){}
-        RABE_TMM_revokedPreson(const RABE_TMM_revokedPreson &other) : PbcElements_copy(other), time(other.time){}
+        RABE_TMM_revokedPreson(): PbcElements(){}
+        RABE_TMM_revokedPreson(const RABE_TMM_revokedPreson &other) : PbcElements(other), time(other.time){}
         void setTime(time_t time){
             this->time = time;
         }
@@ -57,7 +57,7 @@ class RABE_TMM_revokedPreson: public PbcElements_copy{
 class RABE_TMM_kut{
     private:
         time_t t;
-        std::vector<std::pair<Binary_tree_RABE_node*,PbcElements_copy>> ku_theta;
+        std::vector<std::pair<Binary_tree_RABE_node*,PbcElements>> ku_theta;
     public:
         void setTime(time_t t){
             this->t = t;
@@ -65,11 +65,11 @@ class RABE_TMM_kut{
         time_t getTime(){
             return this->t;
         }
-        std::vector<std::pair<Binary_tree_RABE_node*,PbcElements_copy>>& get_ku_theta()
+        std::vector<std::pair<Binary_tree_RABE_node*,PbcElements>>& get_ku_theta()
         {
             return ku_theta;
         }
-        std::pair<Binary_tree_RABE_node*,PbcElements_copy>& get_ku_theta(int i)
+        std::pair<Binary_tree_RABE_node*,PbcElements>& get_ku_theta(int i)
         {
             return ku_theta[i];
         }
@@ -77,10 +77,10 @@ class RABE_TMM_kut{
 class RABE_TMM_dkidt{
     private:
         time_t t;
-        PbcElements_copy sk0;
-        std::vector<PbcElements_copy> sk_y;
-        PbcElements_copy sk_prime;
-        PbcElements_copy skt1;  // sk(t,1)
+        PbcElements sk0;
+        std::vector<PbcElements> sk_y;
+        PbcElements sk_prime;
+        PbcElements skt1;  // sk(t,1)
     public:
         void setTime(time_t t){
             this->t = t;
@@ -88,23 +88,23 @@ class RABE_TMM_dkidt{
         time_t getTime(){
             return this->t;
         }
-        PbcElements_copy& get_sk0()
+        PbcElements& get_sk0()
         {
             return sk0;
         }
-        PbcElements_copy& get_sk_y(int i)
+        PbcElements& get_sk_y(int i)
         {
             return sk_y[i];
         }
-        std::vector<PbcElements_copy>& get_sk_y()
+        std::vector<PbcElements>& get_sk_y()
         {
             return sk_y;
         }
-        PbcElements_copy& get_sk_prime()
+        PbcElements& get_sk_prime()
         {
             return sk_prime;
         }
-        PbcElements_copy& get_skt1()
+        PbcElements& get_skt1()
         {
             return skt1;
         }
@@ -112,9 +112,9 @@ class RABE_TMM_dkidt{
 class RABE_TMM_ciphertext{
     private:
         time_t t;
-        PbcElements_copy ct0;
-        std::vector<PbcElements_copy> ct_y;
-        PbcElements_copy ct_prime;
+        PbcElements ct0;
+        std::vector<PbcElements> ct_y;
+        PbcElements ct_prime;
     public:
         void setTime(time_t t){
             this->t = t;
@@ -122,19 +122,19 @@ class RABE_TMM_ciphertext{
         time_t getTime(){
             return this->t;
         }
-        PbcElements_copy& get_ct0()
+        PbcElements& get_ct0()
         {
             return ct0;
         }
-        PbcElements_copy& get_ct_y(int i)
+        PbcElements& get_ct_y(int i)
         {
             return ct_y[i];
         }
-        std::vector<PbcElements_copy>& get_ct_y()
+        std::vector<PbcElements>& get_ct_y()
         {
             return ct_y;
         }
-        PbcElements_copy& get_ct_prime()
+        PbcElements& get_ct_prime()
         {
             return ct_prime;
         }

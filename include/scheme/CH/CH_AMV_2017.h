@@ -2,7 +2,7 @@
 #define CH_AMV_2017_H
 
 #include <base/PbcScheme.h>
-#include <base/PbcElements_copy.h>
+#include <base/PbcElements.h>
 #include <utils/Hash.h>
 #include <utils/Logger.h>
 #include <AE/PKE_CCA_AMV_2017.h>
@@ -10,11 +10,11 @@
 
 class CH_AMV_2017_pk{
     private:
-        PbcElements_copy CH_pk;
+        PbcElements CH_pk;
         PKE_CCA_AMV_2017_pk PKE_CCA_pk;
         PKE_CPA_AMV_2017_pk PKE_CPA_pk;
     public:
-        PbcElements_copy& get_CH_pk(){
+        PbcElements& get_CH_pk(){
             return CH_pk;
         }
         PKE_CCA_AMV_2017_pk& get_PKE_CCA_pk(){
@@ -27,11 +27,11 @@ class CH_AMV_2017_pk{
 
 class CH_AMV_2017_sk{
     private:
-        PbcElements_copy CH_sk;
+        PbcElements CH_sk;
         PKE_CCA_AMV_2017_sk PKE_CCA_sk;
         PKE_CPA_AMV_2017_sk PKE_CPA_sk;
     public:
-        PbcElements_copy& get_CH_sk(){
+        PbcElements& get_CH_sk(){
             return CH_sk;
         }
         PKE_CCA_AMV_2017_sk& get_PKE_CCA_sk(){
@@ -46,7 +46,7 @@ class CH_AMV_2017_r{
     private:
         PKE_CPA_AMV_2017_c c1;
         PKE_CCA_AMV_2017_c c2;
-        PbcElements_copy pai;
+        PbcElements pai;
     public:
         PKE_CPA_AMV_2017_c& get_c1(){
             return c1;
@@ -54,17 +54,17 @@ class CH_AMV_2017_r{
         PKE_CCA_AMV_2017_c& get_c2(){
             return c2;
         }
-        PbcElements_copy& get_pai(){
+        PbcElements& get_pai(){
             return pai;
         }
 };
 
 class CH_AMV_2017_h{
     private:
-        PbcElements_copy h;
+        PbcElements h;
         CH_AMV_2017_r r;
     public:
-        PbcElements_copy& get_h(){
+        PbcElements& get_h(){
             return h;
         }
         CH_AMV_2017_r& get_r(){

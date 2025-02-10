@@ -1,15 +1,15 @@
 #ifndef IB_CH_KEF_CZS_2014_H
 #define IB_CH_KEF_CZS_2014_H
 
-#include <base/PbcElements_copy.h>
+#include <base/PbcElements.h>
 #include <base/PbcScheme.h>
 #include <utils/Hash.h>
 #include <stdexcept>
 
-class IB_CH_KEF_CZS_2014_pp: public PbcElements_copy {};
-class IB_CH_KEF_CZS_2014_td: public PbcElements_copy {};
-class IB_CH_KEF_CZS_2014_h: public PbcElements_copy {};
-class IB_CH_KEF_CZS_2014_r: public PbcElements_copy {};
+class IB_CH_KEF_CZS_2014_pp: public PbcElements {};
+class IB_CH_KEF_CZS_2014_td: public PbcElements {};
+class IB_CH_KEF_CZS_2014_h: public PbcElements {};
+class IB_CH_KEF_CZS_2014_r: public PbcElements {};
 
 
 class IB_CH_KEF_CZS_2014 : public PbcScheme {

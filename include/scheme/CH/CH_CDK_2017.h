@@ -3,7 +3,7 @@
 #include <gmp.h>
 #include <utils/Hash.h>
 #include <AE/RSA.h>
-#include <base/GmpElements_copy.h>
+#include <base/GmpElements.h>
 
 class CH_CDK_2017_pk{
     private:
@@ -23,9 +23,9 @@ class CH_CDK_2017_sk{
         }
 };
 
-class CH_CDK_2017_h: public GmpElements_copy{};
+class CH_CDK_2017_h: public GmpElements{};
 
-class CH_CDK_2017_r: public GmpElements_copy{};
+class CH_CDK_2017_r: public GmpElements{};
 
 class CH_CDK_2017{
     private:
