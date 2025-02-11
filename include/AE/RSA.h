@@ -8,12 +8,18 @@ class RSA_pk: public GmpElements{};
 
 class RSA_sk: public GmpElements{};
 
+class RSA_m: public GmpElements{};
+
 class AE_RSA{
     public:
         void SetUp(RSA_pk &pk, RSA_sk &sk);
         void KeyGen(RSA_pk &pk, RSA_sk &sk, short k);
         void Encrypt(mpz_t ciphertext, mpz_t plaintext, RSA_pk &pk);
         void Decrypt(mpz_t plaintext, mpz_t ciphertext, RSA_sk &sk, RSA_pk &pk);
+
+        void SetUp(RSA_pk &pk, RSA_sk &sk, RSA_m &m);
+        void Encrypt(RSA_m &ciphertext, mpz_t plaintext, RSA_pk &pk);
+        void Decrypt(mpz_t plaintext, RSA_m &ciphertext, RSA_sk &sk, RSA_pk &pk);
 
         // void KeyGen(mpz_t p, mpz_t q, short k);
         void KeyGen(mpz_t p, mpz_t q, mpz_t n, mpz_t e, short k, short exponent);

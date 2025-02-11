@@ -16,7 +16,16 @@ void GmpElements::init(int n){
     }
 }
 
-GmpElements::GmpElements(const GmpElements &other){
+void GmpElements::init_same_as(const GmpElements &other){
+    if(size > 0){
+        // already initialized
+        return;
+    }
+    init(other.size);
+}
+
+GmpElements::GmpElements(const GmpElements &other)
+{
     if (this == &other)
         return;
     

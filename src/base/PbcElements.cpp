@@ -15,7 +15,16 @@ void PbcElements::init(int n){
     }
 }
 
-PbcElements::PbcElements(const PbcElements &other){
+void PbcElements::init_same_as(const PbcElements &other){
+    if(size > 0){
+        // already initialized
+        return;
+    }
+    init(other.size);
+}
+
+PbcElements::PbcElements(const PbcElements &other)
+{
     if (this == &other)
         return;
 

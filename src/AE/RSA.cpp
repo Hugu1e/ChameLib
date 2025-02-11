@@ -5,6 +5,12 @@ void AE_RSA::SetUp(RSA_pk &pk, RSA_sk &sk){
     sk.init(1);
 }
 
+void AE_RSA::SetUp(RSA_pk &pk, RSA_sk &sk, RSA_m &m){
+    pk.init(2);
+    sk.init(1);
+    m.init(1);
+}
+
 /**
  * @param pk public key
  * @param sk private key
@@ -240,6 +246,10 @@ void AE_RSA::Encrypt(mpz_t ciphertext, mpz_t plaintext, RSA_pk &pk) {
     mpz_clear(c);
 }
 
+void AE_RSA::Encrypt(RSA_m &ciphertext, mpz_t plaintext, RSA_pk &pk){
+    Encrypt(ciphertext[0], plaintext, pk);
+}
+
 /**
  * @brief Decrypt ciphertext
  * 
@@ -255,4 +265,8 @@ void AE_RSA::Decrypt(mpz_t plaintext, mpz_t ciphertext, RSA_sk &sk, RSA_pk &pk) 
     mpz_powm(m, ciphertext, sk[d], pk[n]);
     mpz_set(plaintext, m);
     mpz_clear(m);
+}
+
+void AE_RSA::Decrypt(mpz_t plaintext, RSA_m &ciphertext, RSA_sk &sk, RSA_pk &pk){
+    Decrypt(plaintext, ciphertext[0], sk, pk);
 }

@@ -15,6 +15,7 @@ class PbcElements{
         PbcElements();
         
         void init(int n);
+        void init_same_as(const PbcElements &other);
 
         PbcElements(const PbcElements &other);
         PbcElements &operator=(const PbcElements &other);

@@ -13,6 +13,7 @@ class GmpElements{
         GmpElements();
             
         void init(int n);
+        void init_same_as(const GmpElements &other);
 
         GmpElements(const GmpElements &other);
         GmpElements &operator=(const GmpElements &other);
