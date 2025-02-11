@@ -1,41 +1,51 @@
 #ifndef CH_KEF_NoMH_AM_2004_H
 #define CH_KEF_NoMH_AM_2004_H
+
 #include <utils/Hash.h>
-#include <base/PbcScheme.h>
-#include <base/PbcElements.h>
+#include <base/GmpElements.h>
+#include <utils/RandomGenerator.h>
 
-class CH_KEF_NoMH_AM_2004_pk : public PbcElements{};
-class CH_KEF_NoMH_AM_2004_sk : public PbcElements{};
+class CH_KEF_NoMH_AM_2004_pk : public GmpElements{};
 
-class CH_KEF_NoMH_AM_2004: public PbcScheme{
-    private:
-        void H(element_t res, element_t m1, element_t m2);
+class CH_KEF_NoMH_AM_2004_sk : public GmpElements{};
 
+class CH_KEF_NoMH_AM_2004_h: public GmpElements{};
+
+class CH_KEF_NoMH_AM_2004_r: public GmpElements{};
+
+class CH_KEF_NoMH_AM_2004{
     public:
-        CH_KEF_NoMH_AM_2004(element_s *_G1, element_s *_G2, element_s *_GT, element_s *_Zn);
+        CH_KEF_NoMH_AM_2004();
 
-        void Setup(CH_KEF_NoMH_AM_2004_pk &pk, CH_KEF_NoMH_AM_2004_sk &sk);
+        void Setup(CH_KEF_NoMH_AM_2004_pk &pk, CH_KEF_NoMH_AM_2004_sk &sk, CH_KEF_NoMH_AM_2004_h &h, CH_KEF_NoMH_AM_2004_r &r, CH_KEF_NoMH_AM_2004_r &r_p);
 
-        void KeyGen(CH_KEF_NoMH_AM_2004_pk &pk, CH_KEF_NoMH_AM_2004_sk &sk);
+        void KeyGen(CH_KEF_NoMH_AM_2004_pk &pk, CH_KEF_NoMH_AM_2004_sk &sk, int k);
        
-        void Hash(element_t h, element_t r, element_t s, CH_KEF_NoMH_AM_2004_pk &pk, element_t m);
+        void Hash(CH_KEF_NoMH_AM_2004_h &h, CH_KEF_NoMH_AM_2004_r &r, mpz_t m, CH_KEF_NoMH_AM_2004_pk &pk);
 
-        bool Check(CH_KEF_NoMH_AM_2004_pk &pk, element_t m, element_t r, element_t s, element_t h);
+        bool Check(CH_KEF_NoMH_AM_2004_h &h, CH_KEF_NoMH_AM_2004_r &r, mpz_t m, CH_KEF_NoMH_AM_2004_pk &pk);
 
-        void Adapt(element_t r_p,  element_t s_p, CH_KEF_NoMH_AM_2004_pk &pk, CH_KEF_NoMH_AM_2004_sk &sk, element_t m_p, element_t h);
+        void Adapt(CH_KEF_NoMH_AM_2004_r &r_p, mpz_t m_p, CH_KEF_NoMH_AM_2004_h &h, CH_KEF_NoMH_AM_2004_r &r, mpz_t m, CH_KEF_NoMH_AM_2004_pk &pk, CH_KEF_NoMH_AM_2004_sk &sk);
         
-        bool Verify(CH_KEF_NoMH_AM_2004_pk &pk, element_t m_p, element_t r_p, element_t s_p, element_t h);
+        bool Verify(CH_KEF_NoMH_AM_2004_h &h, CH_KEF_NoMH_AM_2004_r &r_p, mpz_t m_p, CH_KEF_NoMH_AM_2004_pk &pk);
 
         ~CH_KEF_NoMH_AM_2004();
 
         enum {
-            g,
-            y
-        };
+            g, y, p, q
+        };  // pk
 
         enum {
             x
-        };
+        };  // sk
+
+        enum{
+            h1
+        };  // h
+
+        enum{
+            r1, s1
+        };  // r
 };
 
 

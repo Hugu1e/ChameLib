@@ -6,43 +6,39 @@ int test_result = 1;
 void test(std::string test_name, std::string curve){
     CommonTest test(test_name, curve);
 
-    CH_KEF_NoMH_AM_2004 ch = CH_KEF_NoMH_AM_2004(test.get_G1(), test.get_G2(), test.get_GT(), test.get_Zn());
+    CH_KEF_NoMH_AM_2004 ch = CH_KEF_NoMH_AM_2004();
 
     CH_KEF_NoMH_AM_2004_pk pk;
     CH_KEF_NoMH_AM_2004_sk sk;
-    element_t m,m_p;
-    element_t r,r_p,s,s_p;
-    element_t h;
+    CH_KEF_NoMH_AM_2004_h h;
+    CH_KEF_NoMH_AM_2004_r r, r_p;
 
-    element_init_same_as(m, test.get_G1());
-    element_init_same_as(m_p, test.get_G1());
-    element_init_same_as(r, test.get_G1());
-    element_init_same_as(r_p, test.get_G1());
-    element_init_same_as(s, test.get_Zn());
-    element_init_same_as(s_p, test.get_Zn());
-    element_init_same_as(h, test.get_G1());
+    mpz_t m,m_p;
+    mpz_inits(m, m_p, NULL);
+    RandomGenerator::RandomInLength(m, 1024);
+    RandomGenerator::RandomInLength(m_p, 1024);
+
 
     test.start("Setup");
-    ch.Setup(pk, sk);
+    ch.Setup(pk, sk, h, r, r_p);
     test.end("Setup");
 
     test.start("KeyGen");
-    ch.KeyGen(pk, sk);
+    ch.KeyGen(pk, sk, 512);
     test.end("KeyGen");
     pk.print();
     sk.print();
 
-    element_random(m);
-    Logger::PrintPbc("m", m);
+    Logger::PrintGmp("m", m);
     test.start("Hash");
-    ch.Hash(h, r, s, pk, m);
+    ch.Hash(h, r, m, pk);
     test.end("Hash");
-    Logger::PrintPbc("Hash value", h);
-    Logger::PrintPbc("r", r);
-    Logger::PrintPbc("s", s);
+    h.print();
+    r.print();
+
 
     test.start("Check");
-    bool check_result = ch.Check(pk, m, r, s, h);
+    bool check_result = ch.Check(h, r, m, pk);
     test.end("Check");
 
     if(check_result){
@@ -51,16 +47,14 @@ void test(std::string test_name, std::string curve){
         printf("Hash check failed.\n");
     }
 
-    element_random(m_p);
-    Logger::PrintPbc("m_p", m_p);
+    Logger::PrintGmp("m_p", m_p);
     test.start("Adapt");
-    ch.Adapt(r_p, s_p, pk, sk, m_p, h);
+    ch.Adapt(r_p, m_p, h, r, m, pk, sk);
     test.end("Adapt");
-    Logger::PrintPbc("r_p", r_p);
-    Logger::PrintPbc("s_p", s_p);
+    r_p.print();
 
     test.start("Verify");
-    bool verify_result = ch.Verify(pk, m_p, r_p, s_p, h);
+    bool verify_result = ch.Verify(h, r_p, m_p, pk);
     test.end("Verify");
 
     if(verify_result){

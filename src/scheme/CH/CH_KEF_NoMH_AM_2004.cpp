@@ -1,119 +1,118 @@
 #include <scheme/CH/CH_KEF_NoMH_AM_2004.h>
 
-CH_KEF_NoMH_AM_2004::CH_KEF_NoMH_AM_2004(element_s *_G1, element_s *_G2, element_s *_GT, element_s *_Zn): PbcScheme(_G1, _G2, _GT, _Zn) {}
+CH_KEF_NoMH_AM_2004::CH_KEF_NoMH_AM_2004() {}
 
-void CH_KEF_NoMH_AM_2004::Setup(CH_KEF_NoMH_AM_2004_pk &pk, CH_KEF_NoMH_AM_2004_sk &sk){
-    pk.init(2);
+
+void CH_KEF_NoMH_AM_2004::Setup(CH_KEF_NoMH_AM_2004_pk &pk, CH_KEF_NoMH_AM_2004_sk &sk, 
+    CH_KEF_NoMH_AM_2004_h &h, CH_KEF_NoMH_AM_2004_r &r, CH_KEF_NoMH_AM_2004_r &r_p){
+    pk.init(4);
     sk.init(1); 
+    h.init(1);
+    r.init(2);
+    r_p.init(2);
 }
 
 
-/**
- * GenKey() -> (pk, sk)
- * @param pk: public key
- * @param sk: secret key
- */
-void CH_KEF_NoMH_AM_2004::KeyGen(CH_KEF_NoMH_AM_2004_pk &pk, CH_KEF_NoMH_AM_2004_sk &sk) {
-    element_random(tmp_Zn);
-    sk.set(x, tmp_Zn);
-    element_random(tmp_G);
-    pk.set(g, tmp_G);
+void CH_KEF_NoMH_AM_2004::KeyGen(CH_KEF_NoMH_AM_2004_pk &pk, CH_KEF_NoMH_AM_2004_sk &sk, int k) {
+    RandomGenerator::RandomPrimeInLength(pk[q], k);
+    // p = 2q + 1
+    mpz_mul_ui(pk[p], pk[q], 2);
+    mpz_add_ui(pk[p], pk[p], 1);
+    while(!mpz_probab_prime_p(pk[p], 25)){
+        RandomGenerator::RandomPrimeInLength(pk[q], k);
+        // p = 2q + 1
+        mpz_mul_ui(pk[p], pk[q], 2);
+        mpz_add_ui(pk[p], pk[p], 1);
+    }
+    // random g until pow(g, q, p) = 1
+    mpz_t tmp;
+    mpz_init(tmp);
+    RandomGenerator::RandomN(pk[g], pk[p]);
+    mpz_powm(tmp, pk[g], pk[q], pk[p]);
+    while(mpz_cmp_ui(tmp, 1) != 0){
+        RandomGenerator::RandomN(pk[g], pk[p]);
+        mpz_powm(tmp, pk[g], pk[q], pk[p]);
+    }
 
     // y = g^x
-    element_pow_zn(tmp_G, tmp_G, tmp_Zn);
-    pk.set(y, tmp_G);
+    RandomGenerator::RandomN(sk[x], pk[q]);
+    mpz_powm(pk[y], pk[g], sk[x], pk[p]);
 }
 
 
-/**
- * H(m1,m2) -> res
- * @param m1: message 1
- * @param m2: message 2
- * @param res: hash value
- */
-void CH_KEF_NoMH_AM_2004::H(element_t res, element_t m1, element_t m2){
-    HASH::hash(res, m1, m2);
-}
-
-/**
- * Hash(pk, m, r, s) -> h
- * @param pk: public key
- * @param m: message
- * @param r: random number r
- * @param s: random number s
- * @param h: hash value
- */
-void CH_KEF_NoMH_AM_2004::Hash(element_t h, element_t r, element_t s, CH_KEF_NoMH_AM_2004_pk &pk, element_t m) {
+void CH_KEF_NoMH_AM_2004::Hash(CH_KEF_NoMH_AM_2004_h &h, CH_KEF_NoMH_AM_2004_r &r, mpz_t m, CH_KEF_NoMH_AM_2004_pk &pk) {
+    mpz_t e, tmp, tmp_2;
+    mpz_inits(e, tmp, tmp_2, NULL);
+    
     // random r,s
-    element_random(r);
-    element_random(s);
+    RandomGenerator::RandomN(r[r1], pk[q]);
+    RandomGenerator::RandomN(r[s1], pk[q]);
 
     // e = H(m,r)
-    this->H(this->tmp_Zn, m, r);
+    HASH::hash_n(e, m, r[r1], pk[q]);
 
     // h = r - ((y^e)(g^s) mod p)mod q
-    element_pow_zn(this->tmp_G, pk[y], this->tmp_Zn);
-    element_pow_zn(this->tmp_G_2, pk[g], s);
-    element_mul(this->tmp_G, this->tmp_G, this->tmp_G_2);
-    element_sub(h, r, this->tmp_G);
+    mpz_powm(tmp, pk[y], e, pk[p]);
+    mpz_powm(tmp_2, pk[g], r[s1], pk[p]);
+    mpz_mul(tmp, tmp, tmp_2);
+    mpz_mod(tmp, tmp, pk[p]);
+    mpz_sub(h[h1], r[r1], tmp);
+    mpz_mod(h[h1], h[h1], pk[q]);
+
+    mpz_clears(e, tmp, tmp_2, NULL);
 }
 
 
-/**
- * Check(pk, m, r, s, h) -> bool
- * @param pk: public key
- * @param m: message
- * @param r: random number r
- * @param s: random number s
- * @param h: hash value
- */
-bool CH_KEF_NoMH_AM_2004::Check(CH_KEF_NoMH_AM_2004_pk &pk, element_t m, element_t r, element_t s, element_t h){
+bool CH_KEF_NoMH_AM_2004::Check(CH_KEF_NoMH_AM_2004_h &h, CH_KEF_NoMH_AM_2004_r &r, mpz_t m, CH_KEF_NoMH_AM_2004_pk &pk){
+    mpz_t e, tmp, tmp_2;
+    mpz_inits(e, tmp, tmp_2, NULL);
+    
     // e = H(m,r)
-    this->H(this->tmp_Zn, m, r);
+    HASH::hash_n(e, m, r[r1], pk[q]);
 
     // h = r - ((y^e)(g^s) mod p)mod q
-    element_pow_zn(this->tmp_G, pk[y], this->tmp_Zn);
-    element_pow_zn(this->tmp_G_2, pk[g], s);
-    element_mul(this->tmp_G, this->tmp_G, this->tmp_G_2);
-    element_sub(this->tmp_G, r, this->tmp_G);
+    mpz_powm(tmp, pk[y], e, pk[p]);
+    mpz_powm(tmp_2, pk[g], r[s1], pk[p]);
+    mpz_mul(tmp, tmp, tmp_2);
+    mpz_mod(tmp, tmp, pk[p]);
+    mpz_sub(tmp_2, r[r1], tmp);
+    mpz_mod(tmp_2, tmp_2, pk[q]);
 
-    return element_cmp(h, this->tmp_G) == 0;
+    bool result = mpz_cmp(tmp_2, h[h1]) == 0;
+
+    mpz_clears(e, tmp, tmp_2, NULL);
+    return result;
 }
 
 
-/**
- * Forge(pk, sk, m_p, h) -> (r_p, s_p)
- * @param pk: public key
- * @param sk: secret key
- * @param m_p: modified message'
- * @param h: hash value
- * @param r_p: random number r'
- * @param s_p: random number s'
- */
-void CH_KEF_NoMH_AM_2004::Adapt(element_t r_p,  element_t s_p, CH_KEF_NoMH_AM_2004_pk &pk, CH_KEF_NoMH_AM_2004_sk &sk, element_t m_p, element_t h){
+
+void CH_KEF_NoMH_AM_2004::Adapt(CH_KEF_NoMH_AM_2004_r &r_p, mpz_t m_p, 
+    CH_KEF_NoMH_AM_2004_h &h, CH_KEF_NoMH_AM_2004_r &r, mpz_t m, CH_KEF_NoMH_AM_2004_pk &pk, CH_KEF_NoMH_AM_2004_sk &sk){
+    
+    mpz_t k_, e, tmp;
+    mpz_inits(k_, e, tmp, NULL);
     // k'
-    element_random(this->tmp_Zn);
-    // r_p = h + (g^k_p mod p) mod q
-    element_pow_zn(this->tmp_G, pk[g], this->tmp_Zn);
+    RandomGenerator::RandomN(k_, pk[q]);
 
-    element_add(r_p, h, this->tmp_G);
+    // r_p = h + (g^k_p mod p) mod q
+    mpz_powm(tmp, pk[g], k_, pk[p]);
+    mpz_add(r_p[r1], h[h1], tmp);
+    mpz_mod(r_p[r1], r_p[r1], pk[q]);
 
     // e_p = H(m_p, r_p)
-    this->H(this->tmp_Zn_2, m_p, r_p);
+    HASH::hash_n(e, m_p, r_p[r1], pk[q]);
 
     // s_p = k_p - e_p*x mod q
-    element_mul(this->tmp_Zn_3, this->tmp_Zn_2, sk[x]);
-    element_sub(s_p, this->tmp_Zn, this->tmp_Zn_3);
+    mpz_mul(tmp, e, sk[x]);
+    mpz_sub(r_p[s1], k_, tmp);
+    mpz_mod(r_p[s1], r_p[s1], pk[q]);
+
+    mpz_clears(k_, e, tmp, NULL);
 }
 
 
-
-/**
- * input: pk, m_p, r_p, s_p, h
- * ouput: bool
- */
-bool CH_KEF_NoMH_AM_2004::Verify(CH_KEF_NoMH_AM_2004_pk &pk, element_t m_p, element_t r_p, element_t s_p, element_t h){
-    return this->Check(pk, m_p, r_p, s_p, h);
+bool CH_KEF_NoMH_AM_2004::Verify(CH_KEF_NoMH_AM_2004_h &h, CH_KEF_NoMH_AM_2004_r &r_p, mpz_t m_p, CH_KEF_NoMH_AM_2004_pk &pk){
+    return this->Check(h, r_p, m_p, pk);
 }
 
 CH_KEF_NoMH_AM_2004::~CH_KEF_NoMH_AM_2004() {}
