@@ -92,8 +92,8 @@ bool CH_KEF_MH_RSANN_F_AM_2004::Check(CH_KEF_MH_RSANN_F_AM_2004_h &h, mpz_t m, C
 }
 
 void CH_KEF_MH_RSANN_F_AM_2004::Adapt(CH_KEF_MH_RSANN_F_AM_2004_r &r_p, mpz_t m_p, CH_KEF_MH_RSANN_F_AM_2004_h &h, mpz_t m, CH_KEF_MH_RSANN_F_AM_2004_r &r, mpz_t Label, CH_KEF_MH_RSANN_F_AM_2004_sk &sk, CH_KEF_MH_RSANN_F_AM_2004_pk &pk){
-    mpz_t tmp, tmp_2, tmp_3, c, lamuda, n_pow_2, h_;
-    mpz_inits(tmp, tmp_2, tmp_3, c, lamuda, n_pow_2, h_, NULL);
+    mpz_t tmp, tmp_2, tmp_3, tmp_4, c, lamuda, n_pow_2, h_;
+    mpz_inits(tmp, tmp_2, tmp_3, tmp_4, c, lamuda, n_pow_2, h_, NULL);
 
     // n^2
     mpz_mul(n_pow_2, pk[n], pk[n]);
@@ -120,16 +120,20 @@ void CH_KEF_MH_RSANN_F_AM_2004::Adapt(CH_KEF_MH_RSANN_F_AM_2004_r &r_p, mpz_t m_
     mpz_powm(tmp, h_, lamuda, n_pow_2);
     L(tmp_3, tmp, pk[n]);
     // a = r1' = L(c^lamuda mod n^2) / L(h_^lamuda mod n^2) mod n
-    mpz_div(tmp, tmp_2, tmp_3);
-    mpz_mod(r_p[r1], tmp, pk[n]);
+    mpz_invert(tmp_4, tmp_3, pk[n]);
+    mpz_mul(r_p[r1], tmp_2, tmp_4);
+    mpz_mod(r_p[r1], r_p[r1], pk[n]);
 
     // c * (h_^-r1') mod n
     mpz_powm(tmp, h_, r_p[r1], pk[n]);
-    mpz_div(tmp, c, tmp);
+    mpz_invert(tmp, tmp, pk[n]);
+    mpz_mul(tmp, c, tmp);
     mpz_mod(tmp, tmp, pk[n]);
     // b = r2' = (c * (h_^-r1'))^(n^-1 mod lamuda)  mod n
     mpz_invert(tmp_2, pk[n], lamuda);
     mpz_powm(r_p[r2], tmp, tmp_2, pk[n]);
+
+    mpz_clears(tmp, tmp_2, tmp_3, tmp_4, c, lamuda, n_pow_2, h_, NULL);
 }
 
 bool CH_KEF_MH_RSANN_F_AM_2004::Verify(CH_KEF_MH_RSANN_F_AM_2004_h &h, mpz_t m_p, CH_KEF_MH_RSANN_F_AM_2004_r &r_p, mpz_t Label, CH_KEF_MH_RSANN_F_AM_2004_pk &pk){
