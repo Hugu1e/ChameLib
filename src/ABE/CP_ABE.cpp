@@ -282,10 +282,10 @@ void CP_ABE::Encrypt(CP_ABE_ciphertext &ciphertext, CP_ABE_mpk &mpk, element_t m
     element_random(this->tmp_Zn);
 
     std::vector<std::string>* postfix_expression = pr.infixToPostfix(policy_str);
-    for(int i = 0; i < postfix_expression->size(); i++){
-        printf("%s ", postfix_expression->at(i).c_str());
-    }
-    printf("\n");
+    // for(int i = 0; i < postfix_expression->size(); i++){
+    //     printf("%s ", postfix_expression->at(i).c_str());
+    // }
+    // printf("\n");
 
     Binary_tree_policy* binary_tree_expression = pr.postfixToBinaryTree(postfix_expression, this->tmp_Zn);
     pg.generatePolicyInMatrixForm(binary_tree_expression);
@@ -294,13 +294,13 @@ void CP_ABE::Encrypt(CP_ABE_ciphertext &ciphertext, CP_ABE_mpk &mpk, element_t m
     unsigned long int rows = M->row();
     unsigned long int cols = M->col();
 
-    printf("rows: %ld, cols: %ld\n", rows, cols);
-    for(int i = 0; i < rows; i++){
-        for(int j = 0; j < cols; j++){
-            element_printf("%B ", M->getElement(i, j));
-        }
-        printf("\n");
-    }
+    // printf("rows: %ld, cols: %ld\n", rows, cols);
+    // for(int i = 0; i < rows; i++){
+    //     for(int j = 0; j < cols; j++){
+    //         element_printf("%B ", M->getElement(i, j));
+    //     }
+    //     printf("\n");
+    // }
 
     // s1, s2
     element_set(this->s1, s1);
@@ -323,7 +323,7 @@ void CP_ABE::Encrypt(CP_ABE_ciphertext &ciphertext, CP_ABE_mpk &mpk, element_t m
     element_pow_zn(this->tmp_GT_2, mpk[T2], this->s2);
     element_mul(this->tmp_GT_3, this->tmp_GT, this->tmp_GT_2);
     element_mul(tmp_GT_3, this->tmp_GT_3, msg);
-    ciphertext.get_ct_prime().set(ct_prime, tmp_GT_3);
+    ciphertext.get_ct_prime().set(0, tmp_GT_3);
 
     // ct_y
     // for i = 1, 2, ..., rows
@@ -457,13 +457,13 @@ void CP_ABE::Decrypt(element_t res, CP_ABE_ciphertext &ciphertext, CP_ABE_mpk &m
 
     unsigned long int r = inverse_attributesMatrix->row();
     unsigned long int c = inverse_attributesMatrix->col();
-    printf("rows: %ld, cols: %ld\n", r, c);
-    for(int i = 0;i < r;i++){
-        for(int j = 0;j < c;j++){
-            element_printf("%B ", inverse_attributesMatrix->getElement(i, j));
-        }
-        printf("\n");
-    }
+    // printf("rows: %ld, cols: %ld\n", r, c);
+    // for(int i = 0;i < r;i++){
+    //     for(int j = 0;j < c;j++){
+    //         element_printf("%B ", inverse_attributesMatrix->getElement(i, j));
+    //     }
+    //     printf("\n");
+    // }
     Element_t_vector* unit = inverse_attributesMatrix->getCoordinateAxisUnitVector();
 
     Element_t_vector* x= new Element_t_vector(inverse_attributesMatrix->col(), inverse_attributesMatrix->getElement(0, 0));
@@ -472,26 +472,10 @@ void CP_ABE::Decrypt(element_t res, CP_ABE_ciphertext &ciphertext, CP_ABE_mpk &m
     if (-1 == type) {
         throw std::runtime_error("POLICY_NOT_SATISFIED");
     }
-    printf("type: %ld\n", type);
-    // print x
-    printf("Yi:\n");
-    x->printVector();
-
-    // // 验算 inverse_attributesMatrix * x = unit
-    // element_t_vector* test = new element_t_vector();
-    // for (unsigned long int i = 0; i < inverse_attributesMatrix->row(); ++i) {
-    //     element_set0(this->tmp_Zn);
-    //     PrintElement("add0",this->tmp_Zn);
-    //     for (unsigned long int j = 0; j < inverse_attributesMatrix->col(); ++j) {
-    //         element_mul(this->tmp_Zn_2,inverse_attributesMatrix->getElement(i, j), x->getElement(j));
-    //         PrintElement("mul1",this->tmp_Zn_2);
-    //         element_add(this->tmp_Zn, this->tmp_Zn, this->tmp_Zn_2);
-    //     }
-    //     PrintElement("res0",this->tmp_Zn);
-    //     test->pushBack(this->tmp_Zn);
-    // }
-    // printf("test:\n");
-    // test->printVector();
+    // printf("type: %ld\n", type);
+    // // print x
+    // printf("Yi:\n");
+    // x->printVector();
 
     // num
     element_t num,den;
@@ -522,7 +506,7 @@ void CP_ABE::Decrypt(element_t res, CP_ABE_ciphertext &ciphertext, CP_ABE_mpk &m
     element_pairing(this->tmp_GT_2, this->tmp_G_2, sks.get_sk0()[sk_2]);
     element_pairing(this->tmp_GT_3, this->tmp_G_3, sks.get_sk0()[sk_3]);
 
-    element_mul(num, ciphertext.get_ct_prime()[ct_prime], this->tmp_GT);
+    element_mul(num, ciphertext.get_ct_prime()[0], this->tmp_GT);
     element_mul(num, num, this->tmp_GT_2);
     element_mul(num, num, this->tmp_GT_3);
 

@@ -57,7 +57,7 @@ void test(std::string test_name, std::string curve){
         Logger::PrintPbc("ct_y[" + std::to_string(i) + "].ct_2", ciphertext.get_ct_y(i)[CP_ABE::ct_2]);
         Logger::PrintPbc("ct_y[" + std::to_string(i) + "].ct_3", ciphertext.get_ct_y(i)[CP_ABE::ct_3]);
     }
-    Logger::PrintPbc("ct_prime", ciphertext.get_ct_prime()[CP_ABE::ct_prime]);
+    Logger::PrintPbc("ct_prime", ciphertext.get_ct_prime()[0]);
 
     test.start("Decrypt");
     abe.Decrypt(res, ciphertext, mpk, sks);

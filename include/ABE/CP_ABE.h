@@ -16,14 +16,14 @@ class CP_ABE_msk : public PbcElements{};
 
 class CP_ABE_sks{
     private:
-        PbcElements sk0;
+        PbcElements sk_0;
         std::vector<PbcElements> sk_y;
         PbcElements sk_prime;
 
     public:
         PbcElements &get_sk0()
         {
-            return sk0;
+            return sk_0;
         }
         PbcElements &get_sk_y(int i)
         {
@@ -41,14 +41,14 @@ class CP_ABE_sks{
 
 class CP_ABE_ciphertext{
     private:
-        PbcElements ct0;
+        PbcElements ct_0;
         std::vector<PbcElements> ct_y;
         PbcElements ct_prime;
 
     public:
         PbcElements &get_ct0()
         {
-            return ct0;
+            return ct_0;
         }
         PbcElements &get_ct_y(int i)
         {
@@ -64,7 +64,7 @@ class CP_ABE_ciphertext{
         }
         bool operator==(const CP_ABE_ciphertext &other) const
         {
-            return ct0 == other.ct0 &&
+            return ct_0 == other.ct_0 &&
                    ct_y == other.ct_y &&
                    ct_prime == other.ct_prime;
         }
@@ -116,10 +116,6 @@ class CP_ABE:public PbcScheme{
 
         enum{
             ct_1, ct_2, ct_3
-        };
-
-        enum{
-            ct_prime
         };
 };
 
