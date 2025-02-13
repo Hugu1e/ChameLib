@@ -21,7 +21,7 @@ class CP_ABE_sks{
         PbcElements sk_prime;
 
     public:
-        PbcElements &get_sk0()
+        PbcElements &get_sk_0()
         {
             return sk_0;
         }
@@ -46,7 +46,7 @@ class CP_ABE_ciphertext{
         PbcElements ct_prime;
 
     public:
-        PbcElements &get_ct0()
+        PbcElements &get_ct_0()
         {
             return ct_0;
         }

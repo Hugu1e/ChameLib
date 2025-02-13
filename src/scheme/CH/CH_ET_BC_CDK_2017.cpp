@@ -79,8 +79,6 @@ void CH_ET_BC_CDK_2017::Hash(CH_ET_BC_CDK_2017_h &h, CH_ET_BC_CDK_2017_r &r, CH_
     h.set(e1, rsa_pk[AE_RSA::e]);
     etd.set(d1, rsa_sk[AE_RSA::d]);
 
-    // test
-    pk.print();
 
     // r0,r1
     RandomGenerator::RandomCoprimeN(r[r0], pk[n0]);

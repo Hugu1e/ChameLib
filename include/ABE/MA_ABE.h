@@ -16,10 +16,10 @@ class MA_ABE_pkTheta: public PbcElements{
     private:
         std::string A;
     public: 
-        void setA(std::string A){
+        void set_A(std::string A){
             this->A = A;
         }
-        std::string getA(){
+        std::string get_A(){
             return this->A;
         }
         MA_ABE_pkTheta &operator=(const MA_ABE_pkTheta &other){
@@ -38,16 +38,16 @@ class MA_ABE_skgidA: public PbcElements{
         std::string gid;
         std::string A;
     public:
-        void setGid(std::string gid){
+        void set_gid(std::string gid){
             this->gid = gid;
         }
-        void setA(std::string A){
+        void set_A(std::string A){
             this->A = A;
         }
-        std::string getGid(){
+        std::string get_gid(){
             return this->gid;
         }
-        std::string getA(){
+        std::string get_A(){
             return this->A;
         }
         MA_ABE_skgidA &operator=(const MA_ABE_skgidA &other){
@@ -63,31 +63,34 @@ class MA_ABE_skgidA: public PbcElements{
 class MA_ABE_ciphertext{
     private:
         std::string policy;
-        PbcElements c0;
-        std::vector<PbcElements> ci;
+        PbcElements ct_0;
+        std::vector<PbcElements> ct_i;
     public:
         void setPolicy(std::string policy){
             this->policy = policy;
         }
-        std::string getPolicy(){
+        std::string get_policy(){
             return this->policy;
         }
-        PbcElements& getC0(){
-            return c0;
+        PbcElements& get_ct_0(){
+            return ct_0;
         }
-        PbcElements& getCi(int i){
-            return ci[i];
+        PbcElements& get_ct_i(int i){
+            return ct_i[i];
         }
-        std::vector<PbcElements>& getCi(){
-            return ci;
+        std::vector<PbcElements>& get_ct_i(){
+            return ct_i;
         }
         MA_ABE_ciphertext &operator=(const MA_ABE_ciphertext &other){
             if(this != &other){
                 this->policy = other.policy;
-                this->c0 = other.c0;
-                this->ci = other.ci;
+                this->ct_0 = other.ct_0;
+                this->ct_i = other.ct_i;
             }
             return *this;
+        }
+        bool operator==(const MA_ABE_ciphertext &other){
+            return this->policy == other.policy && this->ct_0 == other.ct_0 && this->ct_i == other.ct_i;
         }
 };
 
@@ -100,6 +103,7 @@ class MA_ABE: public PbcScheme{
 
         void HGID(element_t res, bool bit, std::string gid);
         void Hu(element_t res, std::string u);
+        void Ht(element_t res, element_t rt, std::string A);
 
     public:
         MA_ABE(element_s *_G1, element_s *_G2, element_s *_GT, element_s *_Zn);
@@ -111,7 +115,7 @@ class MA_ABE: public PbcScheme{
 
         void KeyGen(MA_ABE_skgidA &skgidA, MA_ABE_gpk &gpk, MA_ABE_skTheta &skTheta, std::string gid, std::string A);        
 
-        void Encrypt(MA_ABE_ciphertext &C, MA_ABE_gpk &gpk, std::vector<MA_ABE_pkTheta *> &pkThetas, std::string policy, element_t m);
+        void Encrypt(MA_ABE_ciphertext &C, element_t m, element_t rt, MA_ABE_gpk &gpk, std::vector<MA_ABE_pkTheta *> &pkThetas, std::string policy);
 
         void Decrypt(element_t res, std::vector<MA_ABE_skgidA *> &skgidAs, MA_ABE_ciphertext &C);
 
@@ -133,12 +137,8 @@ class MA_ABE: public PbcScheme{
             skgidA_0, skgidA_1
         };
 
-        enum {
-            c0
-        };
-
         enum{
-            ci_1, ci_2, ci_3, ci_4
+            ct_1, ct_2, ct_3, ct_4
         };
 };
 

@@ -41,6 +41,26 @@ void HASH::hash(element_t res, element_t m1, element_t m2){
 }
 
 /**
+ * @brief Hash(m1, m2) -> res
+ * 
+ * @param[out] res result of hash
+ * @param[in] m1 message 1
+ * @param[in] m2 message 2
+ */
+void HASH::hash(element_t res, element_t m1, std::string m2){
+    // SHA-256
+    unsigned char hash[SHA256_DIGEST_LENGTH];
+    SHA256_CTX sha256;
+    SHA256_Init(&sha256);
+    unsigned char bytes1[element_length_in_bytes(m1)];
+    element_to_bytes(bytes1, m1);
+    SHA256_Update(&sha256, bytes1, sizeof(bytes1));
+    SHA256_Update(&sha256, m2.c_str(), m2.length());
+    SHA256_Final(hash, &sha256);
+    element_from_hash(res, hash, SHA256_DIGEST_LENGTH);
+}
+
+/**
  * @brief Hash(m1, m2, m3) -> res
  * 
  * @param[out] res result of hash

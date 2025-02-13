@@ -10,6 +10,7 @@ class HASH{
     public:
         static void hash(element_t res, element_t m);
         static void hash(element_t res, element_t m1, element_t m2);
+        static void hash(element_t res, element_t m1, std::string m2);
         static void hash(element_t res, element_t m1, element_t m2, element_t m3);
         static void hash(element_t res, element_t m1, element_t m2, element_t m3, element_t m4);
         static void hash(element_t res, element_t m1, element_t m2, element_t m3, element_t m4, element_t m5);

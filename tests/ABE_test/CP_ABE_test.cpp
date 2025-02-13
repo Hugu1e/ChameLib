@@ -49,9 +49,9 @@ void test(std::string test_name, std::string curve){
     test.start("Encrypt");
     abe.Encrypt(ciphertext, mpk, msg, POLICY);
     test.end("Encrypt");
-    Logger::PrintPbc("ct0.ct_1", ciphertext.get_ct0()[CP_ABE::ct_1]);
-    Logger::PrintPbc("ct0.ct_2", ciphertext.get_ct0()[CP_ABE::ct_2]);
-    Logger::PrintPbc("ct0.ct_3", ciphertext.get_ct0()[CP_ABE::ct_3]);
+    Logger::PrintPbc("ct0.ct_1", ciphertext.get_ct_0()[CP_ABE::ct_1]);
+    Logger::PrintPbc("ct0.ct_2", ciphertext.get_ct_0()[CP_ABE::ct_2]);
+    Logger::PrintPbc("ct0.ct_3", ciphertext.get_ct_0()[CP_ABE::ct_3]);
     for(int i = 0;i < SIZE_OF_POLICY;i++){
         Logger::PrintPbc("ct_y[" + std::to_string(i) + "].ct_1", ciphertext.get_ct_y(i)[CP_ABE::ct_1]);
         Logger::PrintPbc("ct_y[" + std::to_string(i) + "].ct_2", ciphertext.get_ct_y(i)[CP_ABE::ct_2]);

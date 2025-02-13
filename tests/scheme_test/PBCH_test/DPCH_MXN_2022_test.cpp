@@ -30,26 +30,25 @@ void test(std::string test_name, std::string curve){
     DPCH_MXN_2022_sigmaGid sigmaGid;
     DPCH_MXN_2022_h h;
     DPCH_MXN_2022_r r,r_p;
-    DPCH_MXN_2022_c c;
     std::string m = "message";
     std::string m_p = "message_p";
 
     printf("k = %d\n", k);
     test.start("SetUp");
-    ch.SetUp(ppDPCH, pkDPCH, skDPCH, h, r, r_p, c, sigmaGid, skGid, k);
+    ch.SetUp(ppDPCH, pkDPCH, skDPCH, h, r, r_p, sigmaGid, skGid, k);
     test.end("SetUp");
-    ppDPCH.getGpkMA_ABE().print();
-    pkDPCH.getPkCH().print();
-    skDPCH.getSkCH().print();
-    pkDPCH.getPkBLS().print();
-    skDPCH.getSkBLS().print();
+    ppDPCH.get_gpk_MA_ABE().print();
+    pkDPCH.get_pk_CH().print();
+    skDPCH.get_sk_CH().print();
+    pkDPCH.get_pk_BLS().print();
+    skDPCH.get_sk_BLS().print();
 
 
     test.start("ModSetUp");
     ch.ModSetUp(skGid, sigmaGid, skDPCH, GID);
     test.end("ModSetUp");
-    skGid.getSkCH().print();
-    sigmaGid.getSignature().print();
+    skGid.get_sk_CH().print();
+    sigmaGid.get_signature().print();
 
 
     for(int _ = 0;_ < SIZE_OF_ATTRIBUTES;_++) {
@@ -62,8 +61,8 @@ void test(std::string test_name, std::string curve){
         pkThetas.push_back(pkTheta);
         skThetas.push_back(skTheta);
 
-        pkTheta->getPk().print();
-        skTheta->getSk().print();
+        pkTheta->get_pk().print();
+        skTheta->get_sk().print();
     }
 
     for(int _ = 0;_ < SIZE_OF_ATTRIBUTES;_++) {
@@ -75,18 +74,18 @@ void test(std::string test_name, std::string curve){
 
         skGidAs.push_back(skGidA);
 
-        printf("skGidA->gid: %s\n", skGidA->getSk().getGid().c_str());
-        printf("skGidA->A: %s\n", skGidA->getSk().getA().c_str());
-        skGidA->getSk().print();
-        skGidA->getSk().print();
+        printf("skGidA->gid: %s\n", skGidA->get_sk().get_gid().c_str());
+        printf("skGidA->A: %s\n", skGidA->get_sk().get_A().c_str());
+        skGidA->get_sk().print();
+    skGidA->get_sk().print();
     }
 
     test.start("Hash");
-    ch.Hash(h, r, c, ppDPCH, pkDPCH, m, pkThetas, POLICY);
+    ch.Hash(h, r, m, ppDPCH, pkDPCH, pkThetas, POLICY);
     test.end("Hash");
     // h0, h1, r0, r1
-    h.getH().print();
-    r.getR().print();
+    h.get_h().print();
+    r.get_r().print();
 
 
     test.start("Check");
@@ -101,10 +100,10 @@ void test(std::string test_name, std::string curve){
 
     // skGidAs.pop_back();
     test.start("Adapt");
-    ch.Adapt(r_p, pkDPCH, skGid, skGidAs, c, m, m_p, h, r);
+    ch.Adapt(r_p, m_p, h, r, m, pkDPCH, skGid, skGidAs, ppDPCH, pkThetas, POLICY);
     test.end("Adapt");
     // r0, r1
-    r_p.getR().print();
+    r_p.get_r().print();
 
 
 

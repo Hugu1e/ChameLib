@@ -28,10 +28,12 @@ void test(std::string test_name, std::string curve){
     MA_ABE_gpk gpk;
 
     element_t msg,res;
+    element_t rt;
     MA_ABE_ciphertext c;
 
     element_init_same_as(msg, test.get_GT());
     element_init_same_as(res, test.get_GT());
+    element_init_same_as(rt, test.get_Zn());
 
     test.start("GlobalSetup");
     abe.GlobalSetup(gpk);
@@ -70,9 +72,11 @@ void test(std::string test_name, std::string curve){
 
     element_random(msg);
     Logger::PrintPbc("msg", msg);
+    element_random(rt);
+    Logger::PrintPbc("rt", rt);
 
     test.start("Encrypt");
-    abe.Encrypt(c, gpk, pkThetas, POLICY, msg);
+    abe.Encrypt(c, msg, rt, gpk, pkThetas, POLICY);
     test.end("Encrypt");
     // Logger::PrintPbc("c0", c.getC0()->getElement("c0"));
     // for(int i = 0;i < SIZE_OF_POLICY;i++){

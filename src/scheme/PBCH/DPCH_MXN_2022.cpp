@@ -4,24 +4,68 @@ DPCH_MXN_2022::DPCH_MXN_2022(element_s *_G1, element_s *_G2, element_s *_GT, ele
 
 
 /**
+ * @brief Encode two messages into one element
+ */
+void DPCH_MXN_2022::Encode(element_t res, element_t m1, element_t m2){
+    int len_1 = element_length_in_bytes(m1);
+    int len_2 = element_length_in_bytes(m2);
+    unsigned char *str_1 = (unsigned char *)malloc(len_1);
+    element_to_bytes(str_1, m1);
+    unsigned char *str_2 = (unsigned char *)malloc(len_2);
+    element_to_bytes(str_2, m2);
+    
+    unsigned char *str_res = (unsigned char *)malloc(len_1 + len_2 + 1);
+    str_res[0] = len_1;
+    memcpy(str_res + 1, str_1, len_1);
+    memcpy(str_res + 1 + len_1, str_2, len_2);
+    element_from_bytes(res, str_res);
+
+    free(str_1);
+    free(str_2);
+    free(str_res);
+}
+/**
+ * @brief Decode two messages from one element
+ */
+void DPCH_MXN_2022::Decode(element_t res1, element_t res2, element_t m){
+    int len_m = element_length_in_bytes(m);
+    unsigned char *str_m = (unsigned char *)malloc(len_m);
+    element_to_bytes(str_m, m);
+
+    int len_1 = str_m[0];
+    unsigned char *str_1 = (unsigned char *)malloc(len_1);
+    memcpy(str_1, str_m + 1, len_1);
+    element_from_bytes(res1, str_1);
+
+    int len_2 = len_m - len_1 - 1;
+    unsigned char *str_2 = (unsigned char *)malloc(len_2);
+    memcpy(str_2, str_m + 1 + len_1, len_2);
+    element_from_bytes(res2, str_2);
+
+    free(str_m);
+    free(str_1);
+    free(str_2);
+}
+
+/**
  * @param pp: public parameters
  * @param pkDPCH: public key of DPCH
  * @param skDPCH: secret key of DPCH
  * @param k: key size
  */
-void DPCH_MXN_2022::SetUp(DPCH_MXN_2022_pp &pp, DPCH_MXN_2022_pk &pkDPCH, DPCH_MXN_2022_sk &skDPCH, DPCH_MXN_2022_h &h, DPCH_MXN_2022_r &r, DPCH_MXN_2022_r &r_p, DPCH_MXN_2022_c &c, DPCH_MXN_2022_sigmaGid &sigmaGid, DPCH_MXN_2022_skGid &skGid, int k) {
-    skGid.getSkCH().init(1);
-    c.getC_etd().init(1);
+void DPCH_MXN_2022::SetUp(DPCH_MXN_2022_pp &pp, DPCH_MXN_2022_pk &pkDPCH, DPCH_MXN_2022_sk &skDPCH, DPCH_MXN_2022_h &h, DPCH_MXN_2022_r &r, DPCH_MXN_2022_r &r_p, DPCH_MXN_2022_sigmaGid &sigmaGid, DPCH_MXN_2022_skGid &skGid, int k) {
+    skGid.get_sk_CH().init(1);
+    r.get_c_etd().init(1);
     
     element_random(tmp_G);
 
-    ch_et.SetUp(pp.getPPCH(), pkDPCH.getPkCH(), skDPCH.getSkCH(), h.getH(), r.getR(), r_p.getR(), k);
-    ch_et.KeyGen(pkDPCH.getPkCH(), skDPCH.getSkCH(), pp.getPPCH());
+    ch_et.SetUp(pp.get_pp_CH(), pkDPCH.get_pk_CH(), skDPCH.get_sk_CH(), h.get_h(), r.get_r(), r_p.get_r(), k);
+    ch_et.KeyGen(pkDPCH.get_pk_CH(), skDPCH.get_sk_CH(), pp.get_pp_CH());
 
-    ma_abe.GlobalSetup(pp.getGpkMA_ABE(), tmp_G);
+    ma_abe.GlobalSetup(pp.get_gpk_MA_ABE(), tmp_G);
 
-    bls.Setup(pp.getPPBLS(), pkDPCH.getPkBLS(), skDPCH.getSkBLS(), sigmaGid.getSignature(), tmp_G);
-    bls.KeyGen(pkDPCH.getPkBLS(), skDPCH.getSkBLS(), pp.getPPBLS());
+    bls.Setup(pp.get_pp_BLS(), pkDPCH.get_pk_BLS(), skDPCH.get_sk_BLS(), sigmaGid.get_signature(), tmp_G);
+    bls.KeyGen(pkDPCH.get_pk_BLS(), skDPCH.get_sk_BLS(), pp.get_pp_BLS());
 }
 
 /**
@@ -31,8 +75,8 @@ void DPCH_MXN_2022::SetUp(DPCH_MXN_2022_pp &pp, DPCH_MXN_2022_pk &pkDPCH, DPCH_M
  * @param gid: global id
  */
 void DPCH_MXN_2022::ModSetUp(DPCH_MXN_2022_skGid &skGid, DPCH_MXN_2022_sigmaGid &sigmaGid, DPCH_MXN_2022_sk &skDPCH, std::string gid){
-    skGid.getSkCH().set(CH_ET_BC_CDK_2017::d0, skDPCH.getSkCH()[CH_ET_BC_CDK_2017::d0]);
-    bls.Sign(sigmaGid.getSignature(), skDPCH.getSkBLS(), gid);
+    skGid.get_sk_CH().set(CH_ET_BC_CDK_2017::d0, skDPCH.get_sk_CH()[CH_ET_BC_CDK_2017::d0]);
+    bls.Sign(sigmaGid.get_signature(), skDPCH.get_sk_BLS(), gid);
 }
 
 /**
@@ -42,7 +86,7 @@ void DPCH_MXN_2022::ModSetUp(DPCH_MXN_2022_skGid &skGid, DPCH_MXN_2022_sigmaGid 
  * @param A: attribute
  */
 void DPCH_MXN_2022::AuthSetUp(DPCH_MXN_2022_pkTheta &pkTheta, DPCH_MXN_2022_skTheta &skTheta, DPCH_MXN_2022_pp &pp, std::string A){
-    ma_abe.AuthSetup(pkTheta.getPk(), skTheta.getSk(), pp.getGpkMA_ABE(), A);
+    ma_abe.AuthSetup(pkTheta.get_pk(), skTheta.get_sk(), pp.get_gpk_MA_ABE(), A);
 }
 
 /**
@@ -55,11 +99,11 @@ void DPCH_MXN_2022::AuthSetUp(DPCH_MXN_2022_pkTheta &pkTheta, DPCH_MXN_2022_skTh
  * @param A: attribute
  */
 void DPCH_MXN_2022::ModKeyGen(DPCH_MXN_2022_skGidA &skGidA, DPCH_MXN_2022_pp &pp, DPCH_MXN_2022_pk &pkDPCH, std::string gid, DPCH_MXN_2022_sigmaGid &sigmaGid, DPCH_MXN_2022_skTheta &skTheta, std::string A){
-    if(!(bls.Verify(pp.getPPBLS(), pkDPCH.getPkBLS(), gid, sigmaGid.getSignature()))){
+    if(!(bls.Verify(pp.get_pp_BLS(), pkDPCH.get_pk_BLS(), gid, sigmaGid.get_signature()))){
         throw std::runtime_error("ModKeyGen(): Signature Verify failed!");
     }
 
-    ma_abe.KeyGen(skGidA.getSk(), pp.getGpkMA_ABE(), skTheta.getSk(), gid, A);
+    ma_abe.KeyGen(skGidA.get_sk(), pp.get_gpk_MA_ABE(), skTheta.get_sk(), gid, A);
 }
 
 /**
@@ -72,24 +116,28 @@ void DPCH_MXN_2022::ModKeyGen(DPCH_MXN_2022_skGidA &skGidA, DPCH_MXN_2022_pp &pp
  * @param pkThetas: public keys of Theta
  * @param polocy: policy
  */
-void DPCH_MXN_2022::Hash(DPCH_MXN_2022_h &h, DPCH_MXN_2022_r &r, DPCH_MXN_2022_c &c, DPCH_MXN_2022_pp &pp, DPCH_MXN_2022_pk &pkDPCH, std::string m, std::vector<DPCH_MXN_2022_pkTheta *> &pkThetas, std::string polocy){
+void DPCH_MXN_2022::Hash(DPCH_MXN_2022_h &h, DPCH_MXN_2022_r &r, std::string m, DPCH_MXN_2022_pp &pp, DPCH_MXN_2022_pk &pkDPCH, std::vector<DPCH_MXN_2022_pkTheta *> &pkThetas, std::string polocy){
     CH_ET_BC_CDK_2017_etd etd;
     etd.init(1);
 
-    ch_et.Hash(h.getH(), r.getR(), etd, pp.getPPCH(), pkDPCH.getPkCH(), m);
+    ch_et.Hash(h.get_h(), r.get_r(), etd, pp.get_pp_CH(), pkDPCH.get_pk_CH(), m);
 
-    aes.KGen(tmp_GT, 256);
+    aes.KGen(tmp_Zn);
     mpz_t c_etd;
     mpz_init(c_etd);
-    aes.Enc(c_etd, tmp_GT, etd[CH_ET_BC_CDK_2017::d1]);
-    c.getC_etd().set(d1, c_etd);
+    aes.Enc(c_etd, tmp_Zn, etd[CH_ET_BC_CDK_2017::d1], 128);
+    r.get_c_etd().set(0, c_etd);
     mpz_clear(c_etd);
 
     std::vector<MA_ABE_pkTheta *> pkThetas_ABE(pkThetas.size());
     for(int i=0;i<pkThetas.size();i++){
-        pkThetas_ABE[i] = &pkThetas[i]->getPk();
+        pkThetas_ABE[i] = &pkThetas[i]->get_pk();
     }
-    ma_abe.Encrypt(c.getC_abe(), pp.getGpkMA_ABE(), pkThetas_ABE, polocy, tmp_GT);
+    // rt
+    element_random(tmp_Zn_2);
+
+    Encode(tmp_GT, tmp_Zn, tmp_Zn_2);
+    ma_abe.Encrypt(r.get_c_abe(), tmp_GT, tmp_Zn_2, pp.get_gpk_MA_ABE(), pkThetas_ABE, polocy);
 }
 
 /**
@@ -100,7 +148,7 @@ void DPCH_MXN_2022::Hash(DPCH_MXN_2022_h &h, DPCH_MXN_2022_r &r, DPCH_MXN_2022_c
  * @return bool
  */
 bool DPCH_MXN_2022::Check(DPCH_MXN_2022_pk &pkDPCH, std::string m, DPCH_MXN_2022_h &h, DPCH_MXN_2022_r &r){
-    return ch_et.Check(h.getH(), r.getR(), pkDPCH.getPkCH(), m);
+    return ch_et.Check(h.get_h(), r.get_r(), pkDPCH.get_pk_CH(), m);
 }
 
 /**
@@ -114,30 +162,45 @@ bool DPCH_MXN_2022::Check(DPCH_MXN_2022_pk &pkDPCH, std::string m, DPCH_MXN_2022
  * @param h: hash value
  * @param r: random value
  */
-void DPCH_MXN_2022::Adapt(DPCH_MXN_2022_r &r_p, DPCH_MXN_2022_pk &pkDPCH, DPCH_MXN_2022_skGid &skGid, std::vector<DPCH_MXN_2022_skGidA *> &skGidAs, DPCH_MXN_2022_c &c, std::string m, std::string m_p, DPCH_MXN_2022_h &h, DPCH_MXN_2022_r &r){
+void DPCH_MXN_2022::Adapt(DPCH_MXN_2022_r &r_p, std::string m_p, DPCH_MXN_2022_h &h, DPCH_MXN_2022_r &r, std::string m,
+    DPCH_MXN_2022_pk &pkDPCH, DPCH_MXN_2022_skGid &skGid, std::vector<DPCH_MXN_2022_skGidA *> &skGidAs,
+    DPCH_MXN_2022_pp &pp, std::vector<DPCH_MXN_2022_pkTheta *> &pkThetas, std::string polocy){
     if(m == m_p){
-        r_p.getR().set(CH_ET_BC_CDK_2017::r0, r.getR()[CH_ET_BC_CDK_2017::r0]);
-        r_p.getR().set(CH_ET_BC_CDK_2017::r1, r.getR()[CH_ET_BC_CDK_2017::r1]);
+        r_p.get_r().set(CH_ET_BC_CDK_2017::r0, r.get_r()[CH_ET_BC_CDK_2017::r0]);
+        r_p.get_r().set(CH_ET_BC_CDK_2017::r1, r.get_r()[CH_ET_BC_CDK_2017::r1]);
         return;
     }
 
     std::vector<MA_ABE_skgidA *> skgidAs_ABE(skGidAs.size());
     for(int i=0;i<skGidAs.size();i++){
-        skgidAs_ABE[i] = &skGidAs[i]->getSk();
+        skgidAs_ABE[i] = &skGidAs[i]->get_sk();
     }
-    ma_abe.Decrypt(tmp_GT, skgidAs_ABE, c.getC_abe());
+    ma_abe.Decrypt(tmp_GT, skgidAs_ABE, r.get_c_abe());
+
+    Decode(tmp_Zn, tmp_Zn_2, tmp_GT);
+
+    // c' ?= c
+    std::vector<MA_ABE_pkTheta *> pkThetas_ABE(pkThetas.size());
+    for(int i=0;i<pkThetas.size();i++){
+        pkThetas_ABE[i] = &pkThetas[i]->get_pk();
+    }
+    MA_ABE_ciphertext tmp_c;
+    ma_abe.Encrypt(tmp_c, tmp_GT, tmp_Zn_2, pp.get_gpk_MA_ABE(), pkThetas_ABE, polocy);
+    if(!(tmp_c == r.get_c_abe())){
+        throw std::runtime_error("DPCH_MXN_2022::Adapt(): c' != c");
+    }
 
 
     mpz_t c_etd;
     mpz_init(c_etd);
-    aes.Dec(c_etd, tmp_GT, c.getC_etd()[d1]);
+    aes.Dec(c_etd, tmp_Zn, r.get_c_etd()[0], 128);
 
     CH_ET_BC_CDK_2017_etd etd;
     etd.init(1);
     etd.set(CH_ET_BC_CDK_2017::d1, c_etd);
     mpz_clear(c_etd);
 
-    ch_et.Adapt(r_p.getR(), skGid.getSkCH(), etd, pkDPCH.getPkCH(), h.getH(), r.getR(), m, m_p);
+    ch_et.Adapt(r_p.get_r(), skGid.get_sk_CH(), etd, pkDPCH.get_pk_CH(), h.get_h(), r.get_r(), m, m_p);
 }
 
 /**

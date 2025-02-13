@@ -92,7 +92,7 @@ void CP_ABE::Setup(CP_ABE_msk &msk, CP_ABE_mpk &mpk){
  * output: sks
  */
 void CP_ABE::KeyGen(CP_ABE_sks &sks, CP_ABE_msk &msk, CP_ABE_mpk &mpk, std::vector<std::string> &attr_list){
-    sks.get_sk0().init(3);
+    sks.get_sk_0().init(3);
     sks.get_sk_prime().init(3);
     
     element_random(this->r1);
@@ -100,21 +100,21 @@ void CP_ABE::KeyGen(CP_ABE_sks &sks, CP_ABE_msk &msk, CP_ABE_mpk &mpk, std::vect
     // sk0 = (h^(b1r1), h^(b2r2), h^(r1+r2))
     element_mul(this->tmp_Zn, msk[b1], this->r1);
     element_pow_zn(sk_1_H, mpk[h], this->tmp_Zn);
-    sks.get_sk0().set(sk_1, sk_1_H);
+    sks.get_sk_0().set(sk_1, sk_1_H);
     // (b1 * r1) / a1
     element_div(this->b1r1a1, this->tmp_Zn, msk[a1]);
     // (b1 * r1) / a2
     element_div(this->b1r1a2, this->tmp_Zn, msk[a2]);
     element_mul(this->tmp_Zn, msk[b2], this->r2);
     element_pow_zn(sk_2_H, mpk[h], this->tmp_Zn);
-    sks.get_sk0().set(sk_2, sk_2_H);
+    sks.get_sk_0().set(sk_2, sk_2_H);
     // (b2 * r2) / a1
     element_div(this->b2r2a1, this->tmp_Zn, msk[a1]);
     // (b2 * r2) / a2
     element_div(this->b2r2a2, this->tmp_Zn, msk[a2]);
     element_add(this->tmp_Zn, this->r1, this->r2);
     element_pow_zn(sk_3_H, mpk[h], this->tmp_Zn);
-    sks.get_sk0().set(sk_3, sk_3_H);
+    sks.get_sk_0().set(sk_3, sk_3_H);
     // (r1 + r2) / a1
     element_div(this->r1r2a1, this->tmp_Zn, msk[a1]);
     // (r1 + r2) / a2
@@ -272,7 +272,7 @@ void CP_ABE::Encrypt(CP_ABE_ciphertext &ciphertext, CP_ABE_mpk &mpk, element_t m
  * output: ct
  */
 void CP_ABE::Encrypt(CP_ABE_ciphertext &ciphertext, CP_ABE_mpk &mpk, element_t msg, std::string policy_str, element_t s1, element_t s2){
-    ciphertext.get_ct0().init(3);
+    ciphertext.get_ct_0().init(3);
     ciphertext.get_ct_prime().init(1);
     
     this->policy_str = policy_str;
@@ -309,14 +309,14 @@ void CP_ABE::Encrypt(CP_ABE_ciphertext &ciphertext, CP_ABE_mpk &mpk, element_t m
     // ct0
     // ct0_1 = H1^s1
     element_pow_zn(ct_1_H, mpk[H1], this->s1);
-    ciphertext.get_ct0().set(ct_1, ct_1_H);
+    ciphertext.get_ct_0().set(ct_1, ct_1_H);
     // ct0_2 = H2^s2
     element_pow_zn(ct_2_H, mpk[H2], this->s2);
-    ciphertext.get_ct0().set(ct_2, ct_2_H);
+    ciphertext.get_ct_0().set(ct_2, ct_2_H);
     // ct0_3 = h^(s1+s2)
     element_add(this->tmp_Zn_2, this->s1, this->s2);
     element_pow_zn(ct_3_H, mpk[h], this->tmp_Zn_2);
-    ciphertext.get_ct0().set(ct_3, ct_3_H);
+    ciphertext.get_ct_0().set(ct_3, ct_3_H);
 
     // ct_prime = T1^s1 * T2^s2 * msg
     element_pow_zn(this->tmp_GT, mpk[T1], this->s1);
@@ -502,9 +502,9 @@ void CP_ABE::Decrypt(element_t res, CP_ABE_ciphertext &ciphertext, CP_ABE_mpk &m
         count++;
     }
     // ct_prime * e(tmp_G, sk0_1) * e(tmp_G_2, sk0_2) * e(tmp_G_3, sk0_3)
-    element_pairing(this->tmp_GT, this->tmp_G, sks.get_sk0()[sk_1]);
-    element_pairing(this->tmp_GT_2, this->tmp_G_2, sks.get_sk0()[sk_2]);
-    element_pairing(this->tmp_GT_3, this->tmp_G_3, sks.get_sk0()[sk_3]);
+    element_pairing(this->tmp_GT, this->tmp_G, sks.get_sk_0()[sk_1]);
+    element_pairing(this->tmp_GT_2, this->tmp_G_2, sks.get_sk_0()[sk_2]);
+    element_pairing(this->tmp_GT_3, this->tmp_G_3, sks.get_sk_0()[sk_3]);
 
     element_mul(num, ciphertext.get_ct_prime()[0], this->tmp_GT);
     element_mul(num, num, this->tmp_GT_2);
@@ -537,9 +537,9 @@ void CP_ABE::Decrypt(element_t res, CP_ABE_ciphertext &ciphertext, CP_ABE_mpk &m
     element_mul(this->tmp_G_3, sks.get_sk_prime()[sk_3], this->tmp_G_3);
 
     // e(tmp_G, ct01) * e(tmp_G_2, ct02) * e(tmp_G_3, ct03)
-    element_pairing(this->tmp_GT, this->tmp_G, ciphertext.get_ct0()[ct_1]);
-    element_pairing(this->tmp_GT_2, this->tmp_G_2, ciphertext.get_ct0()[ct_2]);
-    element_pairing(this->tmp_GT_3, this->tmp_G_3, ciphertext.get_ct0()[ct_3]);
+    element_pairing(this->tmp_GT, this->tmp_G, ciphertext.get_ct_0()[ct_1]);
+    element_pairing(this->tmp_GT_2, this->tmp_G_2, ciphertext.get_ct_0()[ct_2]);
+    element_pairing(this->tmp_GT_3, this->tmp_G_3, ciphertext.get_ct_0()[ct_3]);
 
     element_mul(den, this->tmp_GT, this->tmp_GT_2);
     element_mul(den, den, this->tmp_GT_3);

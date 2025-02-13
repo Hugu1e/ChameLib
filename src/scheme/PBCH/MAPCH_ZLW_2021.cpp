@@ -83,7 +83,9 @@ void MAPCH_ZLW_2021::Hash(MAPCH_ZLW_2021_h &h, MAPCH_ZLW_2021_pp &pp, std::vecto
 
     TypeConverter::mpz_to_element(tmp_GT, etd[CH_ET_BC_CDK_2017::d1]);
     
-    ma_abe.Encrypt(h.getC(), mhks.at(0)->getGpkABE(), pkThetas, policy, tmp_GT);
+    // TODO
+    element_random(tmp_Zn);
+    ma_abe.Encrypt(h.getC(), tmp_GT, tmp_Zn, mhks.at(0)->getGpkABE(), pkThetas, policy);
 }
 
 /**
