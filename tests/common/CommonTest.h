@@ -7,6 +7,7 @@
 #include <chrono>
 #include <iostream>
 #include <string>
+#include <stack>
 #include <utils/Logger.h>
 
 class CommonTest{
@@ -14,9 +15,8 @@ class CommonTest{
         bool out_file;
         bool visiable;
 
-        std::chrono::_V2::system_clock::time_point ts, te;
-
-        std::string current_test_name;
+        std::stack<std::string> current_test_name;
+        std::stack<std::chrono::_V2::system_clock::time_point> ts;
 
         FILE *out = NULL;
         

@@ -24,32 +24,56 @@ void test(std::string test_name, std::string curve){
 
     const int K = 256;
     MAPCH_ZLW_2021_pp pp;
+
+    CH_ET_BC_CDK_2017_pk pkCH;
+    CH_ET_BC_CDK_2017_sk skCH;
+    MA_ABE_gpk gpkABE;
+
     std::vector<MAPCH_ZLW_2021_mhk *> mhks;
     std::vector<MAPCH_ZLW_2021_mtk *> mtks;
     std::vector<MAPCH_ZLW_2021_mski *> mskis;
-    MAPCH_ZLW_2021_h h,h_p;
+    MAPCH_ZLW_2021_h h;
+    MAPCH_ZLW_2021_r r,r_p;
 
     std::string m = "message";
     std::string m_p = "message_p";
 
     printf("k = %d\n", K);
-        
+
     test.start("SetUp");
-    ch.SetUp(pp, mhks, mtks, K, As, h, h_p);
+    
+    test.start("GlobalSetup");
+    ch.GlobalSetup(pkCH, skCH, gpkABE, pp, h, r, r_p, K);
+    test.end("GlobalSetup");
+    
+    for(int i=0;i<SIZE_OF_ATTRIBUTES;i++){
+        MAPCH_ZLW_2021_mhk *mhk = new MAPCH_ZLW_2021_mhk();
+        MAPCH_ZLW_2021_mtk *mtk = new MAPCH_ZLW_2021_mtk();
+        test.start("AuthSetUp");
+        ch.AuthSetUp(*mhk, *mtk, As[i], pkCH, skCH, gpkABE, pp);
+        test.end("AuthSetUp");
+        mhks.push_back(mhk);
+        mtks.push_back(mtk);
+    }
     test.end("SetUp");
 
-    test.start("KeyGen");
-    ch.KeyGen(mskis, mtks, mhks, As, GID);
-    test.end("KeyGen");
+    for(int i=0;i<SIZE_OF_ATTRIBUTES;i++){
+        MAPCH_ZLW_2021_mski *mski = new MAPCH_ZLW_2021_mski();
+        test.start("KeyGen");
+        ch.KeyGen(*mski, *mtks[i], *mhks[i], As[i], GID);
+        test.end("KeyGen");
+        mskis.push_back(mski);
+    }
+    
 
     test.start("Hash");
-    ch.Hash(h, pp, mhks, m, POLICY);
+    ch.Hash(h, r, m, pp, mhks, POLICY);
     test.end("Hash");
-    h.getH().print();
-    h.getR().print();
+    h.get_h().print();
+    r.get_r().print();
 
     test.start("Check");
-    bool check_result = ch.Check(mhks, m, h);
+    bool check_result = ch.Check(h, r, m, mhks);
     test.end("Check");
 
     if(check_result){
@@ -60,14 +84,12 @@ void test(std::string test_name, std::string curve){
 
     // mskis.pop_back();
     test.start("Adapt");
-    ch.Adapt(h_p, mhks, mskis, m, m_p, h);
+    ch.Adapt(r_p, m_p, h, r, m, mhks, mskis);
     test.end("Adapt");
-    // h0, h1, r0, r1
-    h_p.getH().print();
-    h_p.getR().print();
+    r_p.get_r().print();
 
     test.start("Verify");
-    bool verify_result = ch.Verify(mhks, m_p, h_p);
+    bool verify_result = ch.Verify(h, r_p, m_p, mhks);
     test.end("Verify");
 
     if(verify_result){

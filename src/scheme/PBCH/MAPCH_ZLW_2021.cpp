@@ -3,60 +3,52 @@
 MAPCH_ZLW_2021::MAPCH_ZLW_2021(element_s *_G1, element_s *_G2, element_s *_GT, element_s *_Zn): PbcScheme(_G1, _G2, _GT, _Zn), ma_abe(_G1, _G2, _GT, _Zn){}
 
 /**
+ * @param pkCH: public key of CH
+ * @param skCH: secret key of CH
+ * @param gpkABE: global public key of ABE
  * @param pp: public parameters
  * @param mhks: master public keys
  * @param mtks: master secret keys
  * @param k: security parameter
  * @param As: attributes
  */
-void MAPCH_ZLW_2021::SetUp(MAPCH_ZLW_2021_pp &pp, std::vector<MAPCH_ZLW_2021_mhk *> &mhks, std::vector<MAPCH_ZLW_2021_mtk *> &mtks, int k, std::vector<std::string> &As, MAPCH_ZLW_2021_h &h, MAPCH_ZLW_2021_h &h_p){
-    int numOfAuthority = As.size();
-
-    CH_ET_BC_CDK_2017_pk pkCH;
-    CH_ET_BC_CDK_2017_sk skCH;
-    MA_ABE_gpk gpkABE;
-
-    ch_et.SetUp(pp.getPPCH(), pkCH, skCH, h.getH(), h.getR(), h_p.getR(), k);
-    ch_et.SetUp(pp.getPPCH(), pkCH, skCH, h_p.getH(), h.getR(), h_p.getR(), k);
-    ch_et.KeyGen(pkCH, skCH, pp.getPPCH());
+void MAPCH_ZLW_2021::GlobalSetup(CH_ET_BC_CDK_2017_pk &pkCH, CH_ET_BC_CDK_2017_sk &skCH, MA_ABE_gpk &gpkABE, MAPCH_ZLW_2021_pp &pp, MAPCH_ZLW_2021_h &h, MAPCH_ZLW_2021_r &r, MAPCH_ZLW_2021_r &r_p, int k){
+    ch_et.SetUp(pp.get_pp_CH(), pkCH, skCH, h.get_h(), r.get_r(), r_p.get_r(), k);
+    ch_et.KeyGen(pkCH, skCH, pp.get_pp_CH());
 
     element_random(tmp_G);
     ma_abe.GlobalSetup(gpkABE, tmp_G);
+}
 
-    for(int i=0;i<numOfAuthority;i++){
-        MAPCH_ZLW_2021_mhk *mhk = new MAPCH_ZLW_2021_mhk();
-        MAPCH_ZLW_2021_mtk *mtk = new MAPCH_ZLW_2021_mtk();
-        
-        mhk->getHk() = pkCH;
-        mhk->getGpkABE() = gpkABE;
-        mtk->getTk() = skCH;
+/**
+ * @param mhk: master public key
+ * @param mtk: master secret key
+ * @param A: attribute of the authority
+ * @param pkCH: public key of CH
+ * @param skCH: secret key of CH
+ * @param gpkABE: global public key of ABE
+ * @param pp: public parameters
+ */
+void MAPCH_ZLW_2021::AuthSetUp(MAPCH_ZLW_2021_mhk &mhk, MAPCH_ZLW_2021_mtk &mtk, std::string A, CH_ET_BC_CDK_2017_pk &pkCH, CH_ET_BC_CDK_2017_sk &skCH, MA_ABE_gpk &gpkABE, MAPCH_ZLW_2021_pp &pp){
+    mhk.get_hk() = pkCH;
+    mhk.get_gpk_ABE() = gpkABE;
+    mtk.get_tk() = skCH;
 
-        ma_abe.AuthSetup(mhk->getPkj(), mtk->getSkj(), mhk->getGpkABE(), As.at(i));
-
-        mhks.push_back(mhk);
-        mtks.push_back(mtk);
-    }
+    ma_abe.AuthSetup(mhk.get_pkj(), mtk.get_skj(), mhk.get_gpk_ABE(), A);
 }
 
 
 /**
- * @param mskis: secret keys of gid and attributes
- * @param mtks: master secret keys
- * @param mhks: master public keys
- * @param As: attributes
+ * @param msk: secret key of gid and attribute
+ * @param mtk: master secret key
+ * @param mhk: master public key
+ * @param A: attributes
  * @param GID: global identifier
  */
-void MAPCH_ZLW_2021::KeyGen(std::vector<MAPCH_ZLW_2021_mski *> &mskis, std::vector<MAPCH_ZLW_2021_mtk *> &mtks, std::vector<MAPCH_ZLW_2021_mhk *> &mhks, std::vector<std::string> &As, std::string GID){
-    int numOfAuthority = As.size();
-    for(int i=0;i<numOfAuthority;i++){
-        MAPCH_ZLW_2021_mski *mski = new MAPCH_ZLW_2021_mski();
+void MAPCH_ZLW_2021::KeyGen(MAPCH_ZLW_2021_mski &msk, MAPCH_ZLW_2021_mtk &mtk, MAPCH_ZLW_2021_mhk &mhk, std::string A, std::string GID){
+    msk.get_tk() = mtk.get_tk();
 
-        mski->getTk() = mtks.at(i)->getTk();
-
-        ma_abe.KeyGen(mski->getKiGid(), mhks.at(i)->getGpkABE(), mtks.at(i)->getSkj(), GID, As.at(i));
-
-        mskis.push_back(mski);
-    }
+    ma_abe.KeyGen(msk.get_KiGid(), mhk.get_gpk_ABE(), mtk.get_skj(), GID, A);
 }
 
 /**
@@ -66,7 +58,7 @@ void MAPCH_ZLW_2021::KeyGen(std::vector<MAPCH_ZLW_2021_mski *> &mskis, std::vect
  * @param m: message
  * @param polocy: policy
  */
-void MAPCH_ZLW_2021::Hash(MAPCH_ZLW_2021_h &h, MAPCH_ZLW_2021_pp &pp, std::vector<MAPCH_ZLW_2021_mhk *> &mhks, std::string m, std::string policy){
+void MAPCH_ZLW_2021::Hash(MAPCH_ZLW_2021_h &h, MAPCH_ZLW_2021_r &r, std::string m, MAPCH_ZLW_2021_pp &pp, std::vector<MAPCH_ZLW_2021_mhk *> &mhks, std::string policy){
     CH_ET_BC_CDK_2017_etd etd;
     etd.init(1);
 
@@ -74,18 +66,17 @@ void MAPCH_ZLW_2021::Hash(MAPCH_ZLW_2021_h &h, MAPCH_ZLW_2021_pp &pp, std::vecto
     for(int i=0;i<mhks.size();i++){
         MA_ABE_pkTheta *pkTheta = new MA_ABE_pkTheta();
 
-        *pkTheta = mhks.at(i)->getPkj();
+        *pkTheta = mhks.at(i)->get_pkj();
 
         pkThetas[i] = pkTheta;
     }
 
-    ch_et.Hash(h.getH(), h.getR(), etd, pp.getPPCH(), mhks.at(0)->getHk(), m);
+    ch_et.Hash(h.get_h(), r.get_r(), etd, pp.get_pp_CH(), mhks.at(0)->get_hk(), m);
 
     TypeConverter::mpz_to_element(tmp_GT, etd[CH_ET_BC_CDK_2017::d1]);
     
-    // TODO
     element_random(tmp_Zn);
-    ma_abe.Encrypt(h.getC(), tmp_GT, tmp_Zn, mhks.at(0)->getGpkABE(), pkThetas, policy);
+    ma_abe.Encrypt(r.get_c(), tmp_GT, tmp_Zn, mhks.at(0)->get_gpk_ABE(), pkThetas, policy);
 }
 
 /**
@@ -94,8 +85,8 @@ void MAPCH_ZLW_2021::Hash(MAPCH_ZLW_2021_h &h, MAPCH_ZLW_2021_pp &pp, std::vecto
  * @param h: hash value
  * @return bool
  */
-bool MAPCH_ZLW_2021::Check(std::vector<MAPCH_ZLW_2021_mhk *> &mhks, std::string m, MAPCH_ZLW_2021_h &h){
-    return ch_et.Check(h.getH(), h.getR(), mhks.at(0)->getHk(), m);
+bool MAPCH_ZLW_2021::Check(MAPCH_ZLW_2021_h &h, MAPCH_ZLW_2021_r &r, std::string m, std::vector<MAPCH_ZLW_2021_mhk *> &mhks){
+    return ch_et.Check(h.get_h(), r.get_r(), mhks.at(0)->get_hk(), m);
 }
 
 /**
@@ -106,20 +97,20 @@ bool MAPCH_ZLW_2021::Check(std::vector<MAPCH_ZLW_2021_mhk *> &mhks, std::string 
  * @param m_p: message
  * @param h: hash value
  */
-void MAPCH_ZLW_2021::Adapt(MAPCH_ZLW_2021_h &h_p,  std::vector<MAPCH_ZLW_2021_mhk *> &mhks, std::vector<MAPCH_ZLW_2021_mski *> &msks, std::string m, std::string m_p, MAPCH_ZLW_2021_h &h){
-    if(!Check(mhks, m, h)){
+void MAPCH_ZLW_2021::Adapt(MAPCH_ZLW_2021_r &r_p, std::string m_p, MAPCH_ZLW_2021_h &h, MAPCH_ZLW_2021_r &r, std::string m, std::vector<MAPCH_ZLW_2021_mhk *> &mhks, std::vector<MAPCH_ZLW_2021_mski *> &msks){
+    if(!Check(h, r, m, mhks)){
         throw std::runtime_error("Forge: Hash Check failed!");
     }
     std::vector<MA_ABE_skgidA *> skgidAs;
     for(int i=0;i<msks.size();i++){
         MA_ABE_skgidA *skgidA = new MA_ABE_skgidA();
         
-        *skgidA = msks.at(i)->getKiGid();
+        *skgidA = msks.at(i)->get_KiGid();
 
         skgidAs.push_back(skgidA);
     }
 
-    ma_abe.Decrypt(tmp_GT, skgidAs, h.getC());
+    ma_abe.Decrypt(tmp_GT, skgidAs, r.get_c());
 
     CH_ET_BC_CDK_2017_etd etd;
     etd.init(1);
@@ -130,10 +121,9 @@ void MAPCH_ZLW_2021::Adapt(MAPCH_ZLW_2021_h &h_p,  std::vector<MAPCH_ZLW_2021_mh
     etd.set(CH_ET_BC_CDK_2017::d1, d1);
     mpz_clear(d1);
 
-    ch_et.Adapt(h_p.getR(), msks.at(0)->getTk(), etd, mhks.at(0)->getHk(), h.getH(), h.getR(), m, m_p);
+    ch_et.Adapt(r_p.get_r(), msks.at(0)->get_tk(), etd, mhks.at(0)->get_hk(), h.get_h(), r.get_r(), m, m_p);
 
-    h_p.getC() = h.getC();
-    h_p.getH() = h.getH();
+    r_p.get_c() = r.get_c();
 }
 
 /**
@@ -143,8 +133,8 @@ void MAPCH_ZLW_2021::Adapt(MAPCH_ZLW_2021_h &h_p,  std::vector<MAPCH_ZLW_2021_mh
  * @param r_p: random value
  * @return bool
  */
-bool MAPCH_ZLW_2021::Verify(std::vector<MAPCH_ZLW_2021_mhk *> &mhks, std::string m_p, MAPCH_ZLW_2021_h &h_p){
-    return Check(mhks, m_p, h_p);
+bool MAPCH_ZLW_2021::Verify(MAPCH_ZLW_2021_h &h, MAPCH_ZLW_2021_r &r, std::string m, std::vector<MAPCH_ZLW_2021_mhk *> &mhks){
+    return Check(h, r, m, mhks);
 }
 
 
