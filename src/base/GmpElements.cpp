@@ -76,6 +76,18 @@ int GmpElements::getSize(){
     return size;
 }
 
+bool GmpElements::operator==(const GmpElements &other) const{
+    if(size != other.size){
+        return false;
+    }
+    for(int i = 0; i < size; i++){
+        if(mpz_cmp(elements[i], other.elements[i]) != 0){
+            return false;
+        }
+    }
+    return true;
+}
+
 void GmpElements::print(){
     if (size > 0){
         printf("GmpElements: %d elements\n", size);

@@ -23,6 +23,8 @@ class GmpElements{
         void set(int index, MP_INT *element);
 
         int getSize();
+
+        bool operator==(const GmpElements &other) const;
                 
         void print();
         void print(int index);

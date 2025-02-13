@@ -74,12 +74,13 @@ class PCH_DSS_2019: public PbcScheme{
         AES aes;
 
         int k;
-        element_t u1,u2;
-        element_t K;
 
         void H1(mpz_t res, mpz_t m, mpz_t N1, mpz_t N2, mpz_t n);
         void H2(mpz_t res, mpz_t m, mpz_t N1, mpz_t N2, mpz_t n);
-        void H4(element_t u1, element_t u2, mpz_t r, std::string A);
+        void H4(element_t u1, element_t u2, element_t r, std::string A);
+
+        void Encode(element_t res, element_t m1, element_t m2);
+        void Decode(element_t res1, element_t res2, element_t m);
 
     public:
         PCH_DSS_2019(element_s *_G1, element_s *_G2, element_s *_GT, element_s *_Zn);
@@ -92,7 +93,7 @@ class PCH_DSS_2019: public PbcScheme{
 
         bool Check(PCH_DSS_2019_pk &pkPCH, mpz_t m, PCH_DSS_2019_h &h, PCH_DSS_2019_r &r);
 
-        void Adapt(PCH_DSS_2019_pk &pkPCH, PCH_DSS_2019_sks &sksPCH, mpz_t m, mpz_t m_p, PCH_DSS_2019_h &h, PCH_DSS_2019_r &r, PCH_DSS_2019_r &r_p);
+        void Adapt(PCH_DSS_2019_r &r_p, mpz_t m_p, PCH_DSS_2019_h &h, PCH_DSS_2019_r &r, mpz_t m, PCH_DSS_2019_pk &pkPCH, PCH_DSS_2019_sks &sksPCH, const std::string &policy_str);
 
         bool Verify(PCH_DSS_2019_pk &pkPCH, mpz_t m_p, PCH_DSS_2019_h &h, PCH_DSS_2019_r &r_p);
 

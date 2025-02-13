@@ -62,6 +62,12 @@ class CP_ABE_ciphertext{
         {
             return ct_prime;
         }
+        bool operator==(const CP_ABE_ciphertext &other) const
+        {
+            return ct0 == other.ct0 &&
+                   ct_y == other.ct_y &&
+                   ct_prime == other.ct_prime;
+        }
 };
 
 

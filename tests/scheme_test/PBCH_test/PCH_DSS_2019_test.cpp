@@ -58,7 +58,7 @@ void test(std::string test_name, std::string curve){
     }
     
     test.start("Adapt");
-    ch.Adapt(pkPCH, sksPCH, m, m_p, h, r, r_p);
+    ch.Adapt(r_p, m_p, h, r, m, pkPCH, sksPCH, POLICY);
     test.end("Adapt");
     r_p.print();
 

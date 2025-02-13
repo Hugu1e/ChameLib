@@ -77,6 +77,18 @@ int PbcElements::getSize(){
     return size;
 }
 
+bool PbcElements::operator==(const PbcElements &other) const{
+    if(size != other.size){
+        return false;
+    }
+    for(int i = 0; i < size; i++){
+        if(element_cmp(elements[i], other.elements[i]) != 0){
+            return false;
+        }
+    }
+    return true;
+}
+
 void PbcElements::print(){
     if (size > 0){
         printf("PbcElements: %d elements\n", size);

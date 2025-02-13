@@ -15,7 +15,6 @@ void AES::KGen(element_t key, int k)
     {
         throw std::invalid_argument("AES::KGen(): k must be 256");
     }
-    this->k = k;
     element_random(key);
 }
 
@@ -35,8 +34,9 @@ void AES::KGen(element_t key)
  * @param ciphertext
  * @param key
  * @param plaintext
+ * @param k AES key length(128, 192, 256)
  */
-void AES::Enc(mpz_t ciphertext, element_t key, mpz_t plaintext)
+void AES::Enc(mpz_t ciphertext, element_t key, mpz_t plaintext, int k)
 {
     unsigned char aes_key[element_length_in_bytes(key)];
     element_to_bytes(aes_key, key);
@@ -50,7 +50,12 @@ void AES::Enc(mpz_t ciphertext, element_t key, mpz_t plaintext)
     int ciphertext_len;
 
     EVP_CIPHER_CTX *ctx = EVP_CIPHER_CTX_new();
-    EVP_EncryptInit_ex(ctx, EVP_aes_256_cbc(), NULL, aes_key, NULL); //  AES-256-CBC mode
+    if (k == 128)
+        EVP_EncryptInit_ex(ctx, EVP_aes_128_cbc(), NULL, aes_key, NULL); //  AES-128-CBC mode
+    else if (k == 192)
+        EVP_EncryptInit_ex(ctx, EVP_aes_192_cbc(), NULL, aes_key, NULL); //  AES-192-CBC mode
+    else if (k == 256)
+        EVP_EncryptInit_ex(ctx, EVP_aes_256_cbc(), NULL, aes_key, NULL); //  AES-256-CBC mode
     ciphertext_len = 0;
     int len;
     // encrypt
@@ -70,8 +75,9 @@ void AES::Enc(mpz_t ciphertext, element_t key, mpz_t plaintext)
  * @param decrypted_plaintext
  * @param key
  * @param ciphertext
+ * @param k AES key length(128, 192, 256)
  */
-void AES::Dec(mpz_t decrypted_plaintext, element_t key, mpz_t ciphertext)
+void AES::Dec(mpz_t decrypted_plaintext, element_t key, mpz_t ciphertext, int k)
 {
     unsigned char aes_key[element_length_in_bytes(key)];
     element_to_bytes(aes_key, key);
@@ -85,7 +91,12 @@ void AES::Dec(mpz_t decrypted_plaintext, element_t key, mpz_t ciphertext)
     int decrypted_len;
 
     EVP_CIPHER_CTX *ctx = EVP_CIPHER_CTX_new();
-    EVP_DecryptInit_ex(ctx, EVP_aes_256_cbc(), NULL, aes_key, NULL);
+    if (k == 128)
+        EVP_DecryptInit_ex(ctx, EVP_aes_128_cbc(), NULL, aes_key, NULL);
+    else if (k == 192)
+        EVP_DecryptInit_ex(ctx, EVP_aes_192_cbc(), NULL, aes_key, NULL);
+    else if (k == 256)
+        EVP_DecryptInit_ex(ctx, EVP_aes_256_cbc(), NULL, aes_key, NULL);
     decrypted_len = 0;
     int len;
     // decrypt

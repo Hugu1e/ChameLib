@@ -26,6 +26,8 @@ class PbcElements{
         void set(int index, element_s *element);
 
         int getSize();
+
+        bool operator==(const PbcElements &other) const;
                 
         void print();
         void print(int index);
