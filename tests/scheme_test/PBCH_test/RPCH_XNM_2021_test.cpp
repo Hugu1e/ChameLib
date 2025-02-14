@@ -16,6 +16,8 @@ void test(std::string test_name, std::string curve){
     const int SIZE_OF_POLICY = 4;
     const time_t T = TimeUtils::TimeCast(2024, 12, 21, 0, 0, 0);  // present time
 
+    const time_t end_time_1 = TimeUtils::TimeCast(2025, 12, 31, 0, 0, 0);
+
 
     int k;
     RPCH_XNM_2021_sk skRPCH;
@@ -45,7 +47,7 @@ void test(std::string test_name, std::string curve){
     test.end("SetUp");
 
     test.start("KeyGen");
-    ch.KeyGen(skidRPCH, pkRPCH, skRPCH, st, id, attr_list);
+    ch.KeyGen(skidRPCH, pkRPCH, skRPCH, st, attr_list, id, end_time_1);
     test.end("KeyGen");
 
     test.start("KUpt");

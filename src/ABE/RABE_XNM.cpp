@@ -89,12 +89,17 @@ void RABE_XNM::Setup(RABE_XNM_mpk &mpk, RABE_XNM_msk &msk, std::vector<RABE_XNM_
 }
 
 /**
- * input: mpk, msk, st, id, attr_list
- * output: skid, st
+ * @param[out] skid
+ * @param[out] st
+ * @param[in] mpk
+ * @param[in] msk
+ * @param[in] attr_list
+ * @param[in] id
+ * @param[in] re_time revoke time
  */
-void RABE_XNM::KGen(RABE_XNM_skid &skid, Binary_tree_RABE &st, RABE_XNM_mpk &mpk, RABE_XNM_msk &msk, element_t id, std::vector<std::string> &attr_list){
+void RABE_XNM::KGen(RABE_XNM_skid &skid, Binary_tree_RABE &st, RABE_XNM_mpk &mpk, RABE_XNM_msk &msk, std::vector<std::string> &attr_list, element_t id, time_t re_time){
     skid.get_sk0().init(3);
-    skid.get_sk_prime().init(3);
+    skid.get_sk_prime().init(2);
     
     element_random(this->r1);
     element_random(this->r2);
@@ -232,21 +237,13 @@ void RABE_XNM::KGen(RABE_XNM_skid &skid, Binary_tree_RABE &st, RABE_XNM_mpk &mpk
     element_mul(tmp_G, tmp_G, this->tmp_G_4);
     skid.get_sk_prime().set(sk_2, tmp_G);
 
-    // sk_prime3 = g^d3 * g ^ (-sigma_prime)
+    // g^d3 * g ^ (-sigma_prime)
     element_neg(this->tmp_Zn, this->tmp_Zn);
-    element_pow_zn(tmp_G, msk[g], this->tmp_Zn);
-    element_mul(tmp_G, tmp_G, msk[g_pow_d3]);
-    skid.get_sk_prime().set(sk_3, tmp_G);
-
-    // pick an unassigned node in st
-    // id
-    element_random(id);
-    // TODO
-    // time_t = 2025.12.31 0:00:00
-    time_t target_time = TimeUtils::TimeCast(2025, 12, 31, 0, 0, 0);
+    element_pow_zn(tmp_G_3, msk[g], this->tmp_Zn);
+    element_mul(tmp_G_3, tmp_G_3, msk[g_pow_d3]);
     
     // find and set an unassigned node
-    Binary_tree_RABE_node *node = st.setLeafNode(id, target_time);
+    Binary_tree_RABE_node *node = st.setLeafNode(id, re_time);
 
     // set sk_theta
     while(node != NULL){
@@ -259,7 +256,7 @@ void RABE_XNM::KGen(RABE_XNM_skid &skid, Binary_tree_RABE &st, RABE_XNM_mpk &mpk
             element_set(this->tmp_G, node->getGtheta());
         }
         // sk_theta = g^d3 * g^(-sigma_prime) / gtheta
-        element_div(this->tmp_G_2, skid.get_sk_prime()[sk_3], this->tmp_G);
+        element_div(this->tmp_G_2, tmp_G_3, this->tmp_G);
 
         PbcElements tmp_sk_theta;
         tmp_sk_theta.init(1);
@@ -311,9 +308,24 @@ void RABE_XNM::KUpt(RABE_XNM_kut &kut, RABE_XNM_mpk &mpk, Binary_tree_RABE &st, 
  * output: dkidt
  */
 void RABE_XNM::DKGen(RABE_XNM_dkidt &dkidt, RABE_XNM_mpk &mpk, RABE_XNM_skid &skid, RABE_XNM_kut &kut){
-    // TODO judge Path(id) ∩ KUNodes(st, rl, t) != NULL
+    // judge Path(id) ∩ KUNodes(st, rl, t) != NULL
+    int index_skid = -1;
+    int index_kut = -1;
+    for(int i = 0; i < skid.get_sk_theta().size(); i++){
+        for(int j = 0; j < kut.get_ku_theta().size(); j++){
+            if(skid.get_sk_theta()[i].first == kut.get_ku_theta()[j].first){
+                index_skid = i;
+                index_kut = j;
+                break;
+            }
+        }
+    }
+    if(index_skid == -1 || index_kut == -1){
+        throw std::runtime_error("RABE_XNM::DKGen(): Path(id) ∩ KUNodes(st, rl, t) = NULL");
+        return;
+    }
 
-    // rtheta + rtheta'
+    // rtheta'
     element_random(this->tmp_Zn);
 
     dkidt.setTime(kut.getTime());
@@ -322,11 +334,12 @@ void RABE_XNM::DKGen(RABE_XNM_dkidt &dkidt, RABE_XNM_mpk &mpk, RABE_XNM_skid &sk
     dkidt.get_sk_prime_prime().init(3);
     dkidt.get_sk_prime_prime().set(sk_1, skid.get_sk_prime().get(sk_1));
     dkidt.get_sk_prime_prime().set(sk_2, skid.get_sk_prime().get(sk_2));
-    // sk3' = g^d3 * g^(-sigma_prime) * H(1t)^(rtheta + rtheta')
+    // sk3' = sk_theta * ku_theta_1 * H(1t)^rtheta'
     std::string _1t = "1" + std::to_string(dkidt.getTime());
     this->Hash(this->tmp_G, _1t);
     element_pow_zn(this->tmp_G, this->tmp_G, this->tmp_Zn);
-    element_mul(tmp_G, skid.get_sk_prime().get(sk_3), this->tmp_G);
+    element_mul(tmp_G, skid.get_sk_theta()[index_skid].second[sk_theta], this->tmp_G);
+    element_mul(tmp_G, kut.get_ku_theta()[index_kut].second[ku_theta_1], this->tmp_G);
     dkidt.get_sk_prime_prime().set(sk_3, tmp_G);
 
     // sk0' = (sk01, sk02, sk03, sk04)
@@ -334,8 +347,9 @@ void RABE_XNM::DKGen(RABE_XNM_dkidt &dkidt, RABE_XNM_mpk &mpk, RABE_XNM_skid &sk
     dkidt.get_sk0_prime().set(sk0_1, skid.get_sk0().get(sk0_1));
     dkidt.get_sk0_prime().set(sk0_2, skid.get_sk0().get(sk0_2));
     dkidt.get_sk0_prime().set(sk0_3, skid.get_sk0().get(sk0_3));
-    // sk04 = h^(rtheta + rtheta')
+    // sk04 = ku_theta_2 * h^(rtheta')
     element_pow_zn(tmp_H, mpk[h], this->tmp_Zn);
+    element_mul(tmp_H, kut.get_ku_theta()[index_kut].second[ku_theta_2], tmp_H);
     dkidt.get_sk0_prime().set(sk0_4, tmp_H);
 
     // sky
@@ -364,10 +378,10 @@ void RABE_XNM::Enc(RABE_XNM_ciphertext &ciphertext, RABE_XNM_mpk &mpk, element_t
     element_random(this->tmp_Zn);
 
     std::vector<std::string>* postfix_expression = pr.infixToPostfix(policy_str);
-    for(int i = 0;i < postfix_expression->size();i++){
-        printf("%s ", postfix_expression->at(i).c_str());
-    }
-    printf("\n");
+    // for(int i = 0;i < postfix_expression->size();i++){
+    //     printf("%s ", postfix_expression->at(i).c_str());
+    // }
+    // printf("\n");
     Binary_tree_policy* binary_tree_expression = pr.postfixToBinaryTree(postfix_expression, this->tmp_Zn);
     pg.generatePolicyInMatrixForm(binary_tree_expression);
     Element_t_matrix* M = pg.getPolicyInMatrixFormFromTree(binary_tree_expression);
@@ -375,13 +389,13 @@ void RABE_XNM::Enc(RABE_XNM_ciphertext &ciphertext, RABE_XNM_mpk &mpk, element_t
     unsigned long int rows = M->row();
     unsigned long int cols = M->col();
 
-    printf("rows: %ld, cols: %ld\n", rows, cols);
-    for(int i = 0;i < rows;i++){
-        for(int j = 0;j < cols;j++){
-            element_printf("%B ", M->getElement(i, j));
-        }
-        printf("\n");
-    }
+    // printf("rows: %ld, cols: %ld\n", rows, cols);
+    // for(int i = 0;i < rows;i++){
+    //     for(int j = 0;j < cols;j++){
+    //         element_printf("%B ", M->getElement(i, j));
+    //     }
+    //     printf("\n");
+    // }
 
     // s1,s2
     element_set(this->s1, s1);
@@ -548,13 +562,13 @@ void RABE_XNM::Dec(element_t res, RABE_XNM_mpk &mpk, RABE_XNM_ciphertext &cipher
 
     unsigned long int r = inverse_attributesMatrix->row();
     unsigned long int c = inverse_attributesMatrix->col();
-    printf("rows: %ld, cols: %ld\n", r, c);
-    for(int i = 0;i < r;i++){
-        for(int j = 0;j < c;j++){
-            element_printf("%B ", inverse_attributesMatrix->getElement(i, j));
-        }
-        printf("\n");
-    }
+    // printf("rows: %ld, cols: %ld\n", r, c);
+    // for(int i = 0;i < r;i++){
+    //     for(int j = 0;j < c;j++){
+    //         element_printf("%B ", inverse_attributesMatrix->getElement(i, j));
+    //     }
+    //     printf("\n");
+    // }
     Element_t_vector* unit = inverse_attributesMatrix->getCoordinateAxisUnitVector();
 
     Element_t_vector* x= new Element_t_vector(inverse_attributesMatrix->col(), inverse_attributesMatrix->getElement(0, 0));
@@ -563,10 +577,10 @@ void RABE_XNM::Dec(element_t res, RABE_XNM_mpk &mpk, RABE_XNM_ciphertext &cipher
     if (-1 == type) {
         throw std::runtime_error("POLICY_NOT_SATISFIED");
     }
-    printf("type: %ld\n", type);
-    // print x
-    printf("Yi:\n");
-    x->printVector();
+    // printf("type: %ld\n", type);
+    // // print x
+    // printf("Yi:\n");
+    // x->printVector();
 
 
     // num
@@ -647,6 +661,13 @@ void RABE_XNM::Dec(element_t res, RABE_XNM_mpk &mpk, RABE_XNM_ciphertext &cipher
  * input: rl, id, t
  */
 void RABE_XNM::Rev(std::vector<RABE_XNM_revokedPreson> &rl, element_t id, time_t t){
+    for(int i=0; i<rl.size(); i++){
+        if(element_cmp(rl[i][0], id) == 0){
+            throw std::runtime_error("RABE_XNM::Rev(): id already exists in revoked list");
+            return;
+        }
+    }
+
     RABE_XNM_revokedPreson rp;
     rp.init(1);
     rp.set(0, id);

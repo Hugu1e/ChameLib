@@ -130,7 +130,7 @@ class RPCH_XNM_2021: public PbcScheme{
 
         void SetUp(RPCH_XNM_2021_sk &skRPCH, RPCH_XNM_2021_pk &pkRPCH, RPCH_XNM_2021_RevokedPresonList &rl, RPCH_XNM_2022_Binary_tree &st, int k, int n);
 
-        void KeyGen(RPCH_XNM_2021_skid &skidRPCH, RPCH_XNM_2021_pk &pkRPCH, RPCH_XNM_2021_sk &skRPCH, RPCH_XNM_2022_Binary_tree &st, element_t id, std::vector<std::string> &attr_list);
+        void KeyGen(RPCH_XNM_2021_skid &skidRPCH, RPCH_XNM_2021_pk &pkRPCH, RPCH_XNM_2021_sk &skRPCH, RPCH_XNM_2022_Binary_tree &st, std::vector<std::string> &attr_list, element_t id, time_t re_time);
 
         void KUpt(RPCH_XNM_2022_kut &kut, RPCH_XNM_2021_pk &pkRPCH, RPCH_XNM_2022_Binary_tree &st, RPCH_XNM_2021_RevokedPresonList &rl, time_t t);
 
