@@ -1,11 +1,10 @@
 #ifndef CHAMELIB_LOGGER_H
 #define CHAMELIB_LOGGER_H
 
-#include <gmp.h>
-#include <pbc.h>
+#include <pbc/pbc.h>
 #include <string>
-#include <base/PbcElements.h>
-#include <base/GmpElements.h>
+#include "../base/PbcElements.h"
+#include "../base/GmpElements.h"
 
 class Logger
 {

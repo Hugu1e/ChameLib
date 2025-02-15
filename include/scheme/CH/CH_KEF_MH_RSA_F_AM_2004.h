@@ -2,11 +2,11 @@
 #define CH_KEF_MH_RSA_F_AM_2004_H
 
 #include <stdio.h>
-#include <gmp.h>
-#include <utils/Hash.h>
-#include <utils/RandomGenerator.h>
-#include <AE/RSA.h>
-#include <base/GmpElements.h>
+#include <pbc/pbc.h>
+#include "../../utils/Hash.h"
+#include "../../utils/RandomGenerator.h"
+#include "../../AE/RSA.h"
+#include "../../base/GmpElements.h"
 
 class CH_KEF_MH_RSA_F_AM_2004_pk: public GmpElements{};
 

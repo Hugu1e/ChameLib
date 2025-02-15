@@ -1,16 +1,16 @@
 #ifndef RABE_TMM_H
 #define RABE_TMM_H
 
-#include <base/PbcElements.h>
-#include <base/PbcScheme.h>
+#include "../base/PbcElements.h"
+#include "../base/PbcScheme.h"
 #include <vector>
 #include <string>
 #include <unordered_map>
-#include <ABE/Policy_resolution.h>
-#include <ABE/Policy_generation.h>
-#include <utils/Hash.h>
-#include <utils/TimeUtils.h>
-#include <base/Binary_tree_RABE.h>
+#include "Policy_resolution.h"
+#include "Policy_generation.h"
+#include "../utils/Hash.h"
+#include "../utils/TimeUtils.h"
+#include "../base/Binary_tree_RABE.h"
 
 class RABE_TMM_mpk: public PbcElements{};
 class RABE_TMM_msk: public PbcElements{};

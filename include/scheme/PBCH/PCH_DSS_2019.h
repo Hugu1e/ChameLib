@@ -1,13 +1,13 @@
 #ifndef PCH_DSS_2019_H
 #define PCH_DSS_2019_H
 
-#include <utils/Hash.h>
-#include <base/PbcScheme.h>
-#include <base/GmpElements.h>
+#include "../../utils/Hash.h"
+#include "../../base/PbcScheme.h"
+#include "../../base/GmpElements.h"
 
-#include <ABE/CP_ABE.h>
-#include <SE/AES.h>
-#include <AE/RSA.h>
+#include "../../ABE/CP_ABE.h"
+#include "../../SE/AES.h"
+#include "../../AE/RSA.h"
 
 class PCH_DSS_2019_sk{
     private:

@@ -1,9 +1,9 @@
 #ifndef IB_CH_ZSS_S2_2003_H
 #define IB_CH_ZSS_S2_2003_H
 
-#include <base/PbcElements.h>
-#include <base/PbcScheme.h>
-#include <utils/Hash.h>
+#include "../../base/PbcElements.h"
+#include "../../base/PbcScheme.h"
+#include "../../utils/Hash.h"
 
 class IB_CH_ZSS_S2_2003_msk:public PbcElements{};
 

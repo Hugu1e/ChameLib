@@ -4,14 +4,14 @@
 #ifndef CHAMELIB_ABET_H
 #define CHAMELIB_ABET_H
 
-#include <base/PbcElements.h>
-#include <base/PbcScheme.h>
-#include <utils/Hash.h>
+#include "../base/PbcElements.h"
+#include "../base/PbcScheme.h"
+#include "../utils/Hash.h"
 #include <vector>
 #include <string>
 #include <unordered_map>
-#include <ABE/Policy_resolution.h>
-#include <ABE/Policy_generation.h>
+#include "Policy_resolution.h"
+#include "Policy_generation.h"
 
 class ABET_mpk: public PbcElements{
     private:

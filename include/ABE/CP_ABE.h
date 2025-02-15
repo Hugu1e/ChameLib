@@ -1,13 +1,13 @@
 #ifndef CHAMELIB_CP_ABE_H
 #define CHAMELIB_CP_ABE_H
 
-#include <base/PbcElements.h>
-#include <base/PbcScheme.h>
+#include "../base/PbcElements.h"
+#include "../base/PbcScheme.h"
 #include <vector>
 #include <unordered_map>
-#include <ABE/Policy_resolution.h>
-#include <ABE/Policy_generation.h>
-#include <utils/Hash.h>
+#include "Policy_resolution.h"
+#include "Policy_generation.h"
+#include "../utils/Hash.h"
 
 
 class CP_ABE_mpk : public PbcElements{};

@@ -1,13 +1,13 @@
 #ifndef RPCH_TMM_2022_H
 #define RPCH_TMM_2022_H
 
-#include <utils/Hash.h>
-#include <base/PbcScheme.h>
-#include <base/PbcElements.h>
+#include "../../utils/Hash.h"
+#include "../../base/PbcScheme.h"
+#include "../../base/PbcElements.h"
 
-#include <AE/RSA.h>
-#include <ABE/RABE_TMM.h>
-#include <SE/AES.h>
+#include "../../AE/RSA.h"
+#include "../../ABE/RABE_TMM.h"
+#include "../../SE/AES.h"
 
 class RPCH_TMM_2022_sk{
     private:

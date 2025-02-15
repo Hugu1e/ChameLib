@@ -1,9 +1,9 @@
 #ifndef CH_KEF_MH_RSANN_F_AM_2004_H
 #define CH_KEF_MH_RSANN_F_AM_2004_H
 
-#include <base/GmpElements.h>
-#include <utils/RandomGenerator.h>
-#include <utils/Hash.h>
+#include "../../base/GmpElements.h"
+#include "../../utils/RandomGenerator.h"
+#include "../../utils/Hash.h"
 
 class CH_KEF_MH_RSANN_F_AM_2004_pk: public GmpElements{};
 

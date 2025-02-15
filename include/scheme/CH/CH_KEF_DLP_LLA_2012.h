@@ -2,9 +2,9 @@
 #define CH_KEF_DLP_LLA_2012_H
 
 #include <stdexcept>
-#include <base/PbcElements.h>
-#include <base/PbcScheme.h>
-#include <utils/Hash.h>
+#include "../../base/PbcElements.h"
+#include "../../base/PbcScheme.h"
+#include "../../utils/Hash.h"
 
 class CH_KEF_DLP_LLA_2012_pp : public PbcElements{};
 class CH_KEF_DLP_LLA_2012_pk : public PbcElements{};

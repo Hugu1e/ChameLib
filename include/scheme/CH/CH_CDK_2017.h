@@ -1,9 +1,10 @@
 #ifndef CH_CDK_2017_H
 #define CH_CDK_2017_H
-#include <gmp.h>
-#include <utils/Hash.h>
-#include <AE/RSA.h>
-#include <base/GmpElements.h>
+
+#include <pbc/pbc.h>
+#include "../../utils/Hash.h"
+#include "../../AE/RSA.h"
+#include "../../base/GmpElements.h"
 
 class CH_CDK_2017_pk{
     private:

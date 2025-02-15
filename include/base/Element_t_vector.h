@@ -1,9 +1,9 @@
 #ifndef CHAMELIB_ELEMENT_T_VECTOR_H
 #define CHAMELIB_ELEMENT_T_VECTOR_H
 
-#include <pbc.h>
+#include <pbc/pbc.h>
 #include <vector>
-#include <utils/Logger.h>
+#include "../utils/Logger.h"
 
 class Element_t_vector
 {

@@ -2,8 +2,7 @@
 #define CHAMELIB_HASH_H
 
 #include <openssl/sha.h>
-#include <pbc.h>
-#include <gmp.h>
+#include <pbc/pbc.h>
 #include <string>
 
 class HASH{

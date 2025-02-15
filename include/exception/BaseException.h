@@ -1,3 +1,6 @@
+#ifndef CHAMELIB_BASEEXCEPTION_H
+#define CHAMELIB_BASEEXCEPTION_H
+
 #include <exception>
 #include <string>
 
@@ -11,3 +14,5 @@ class BaseException: public std::exception{
             return m.c_str();
         }
 };
+
+#endif  // CHAMELIB_BASEEXCEPTION_H

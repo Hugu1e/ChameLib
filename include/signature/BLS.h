@@ -1,8 +1,9 @@
 #ifndef CHAMELIB_BLS_H
 #define CHAMELIB_BLS_H
-#include <base/PbcElements.h>
-#include <base/PbcScheme.h>
-#include <utils/Hash.h>
+
+#include "../base/PbcElements.h"
+#include "../base/PbcScheme.h"
+#include "../utils/Hash.h"
 
 class BLS_pp: public PbcElements{};
 class BLS_pk: public PbcElements{};

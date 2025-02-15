@@ -1,8 +1,9 @@
 #ifndef CR_CH_DSS_2020_H
 #define CR_CH_DSS_2020_H
-#include <base/PbcScheme.h>
-#include <base/PbcElements.h>
-#include <utils/Hash.h>
+
+#include "../../base/PbcScheme.h"
+#include "../../base/PbcElements.h"
+#include "../../utils/Hash.h"
 
 class CR_CH_DSS_2020_pp: public PbcElements{};
 class CR_CH_DSS_2020_pk: public PbcElements{};

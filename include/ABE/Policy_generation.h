@@ -1,8 +1,8 @@
 #ifndef CHAMELIB_POLICY_GENERATION_H
 #define CHAMELIB_POLICY_GENERATION_H
 
-#include <base/Binary_tree_policy.h>
-#include <base/Element_t_matrix.h>
+#include "../base/Binary_tree_policy.h"
+#include "../base/Element_t_matrix.h"
 #include <map>
 #include <queue>
 

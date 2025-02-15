@@ -1,8 +1,7 @@
 #ifndef CHAMELIB_AES_H
 #define CHAMELIB_AES_H
 
-#include <pbc.h>
-#include <gmp.h>
+#include <pbc/pbc.h>
 #include <string.h>
 #include <openssl/evp.h>
 #include <iostream>

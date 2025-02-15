@@ -2,9 +2,9 @@
 #define CH_FS_ECC_CCT_2024_H
 
 #include <stdio.h>
-#include <base/PbcElements.h>
-#include <base/PbcScheme.h>
-#include <utils/Hash.h>
+#include "../../base/PbcElements.h"
+#include "../../base/PbcScheme.h"
+#include "../../utils/Hash.h"
 
 class CH_FS_ECC_CCT_2024_pp: public PbcElements{};
 class CH_FS_ECC_CCT_2024_pk: public PbcElements{};

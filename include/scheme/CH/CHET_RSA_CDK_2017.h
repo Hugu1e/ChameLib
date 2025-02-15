@@ -1,9 +1,9 @@
 #ifndef CHET_RSA_CDK_2017_H
 #define CHET_RSA_CDK_2017_H
 
-#include <utils/Hash.h>
-#include <base/GmpElements.h>
-#include <AE/RSA.h>
+#include "../../utils/Hash.h"
+#include "../../base/GmpElements.h"
+#include "../../AE/RSA.h"
 #include <stdexcept>
 
 class CHET_RSA_CDK_2017_pk: public GmpElements{};

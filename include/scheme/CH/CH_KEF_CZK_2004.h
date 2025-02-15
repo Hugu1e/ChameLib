@@ -2,8 +2,8 @@
 #define CH_KEF_CZK_2004_H
 
 #include <stdexcept>
-#include <base/PbcElements.h>
-#include <base/PbcScheme.h>
+#include "../../base/PbcElements.h"
+#include "../../base/PbcScheme.h"
 
 class CH_KEF_CZK_2004_pp : public PbcElements{};
 class CH_KEF_CZK_2004_pk : public PbcElements{};

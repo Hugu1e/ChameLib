@@ -1,9 +1,9 @@
 #ifndef FCR_CH_PreQA_DKS_2020_H
 #define FCR_CH_PreQA_DKS_2020_H
 
-#include <base/PbcScheme.h>
-#include <base/PbcElements.h>
-#include <utils/Hash.h>
+#include "../../base/PbcScheme.h"
+#include "../../base/PbcElements.h"
+#include "../../utils/Hash.h"
 #include <stdexcept>
 
 class FCR_CH_PreQA_DKS_2020_pp: public PbcElements{};

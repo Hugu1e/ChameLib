@@ -1,9 +1,9 @@
 #ifndef ID_B_CollRes_XSL_2021_H
 #define ID_B_CollRes_XSL_2021_H
 
-#include <base/PbcElements.h>
-#include <base/PbcScheme.h>
-#include <utils/Hash.h>
+#include "../../base/PbcElements.h"
+#include "../../base/PbcScheme.h"
+#include "../../utils/Hash.h"
 #include <cstring>
 
 class ID_B_CollRes_XSL_2021_pp: public PbcElements{

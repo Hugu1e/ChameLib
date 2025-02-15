@@ -1,10 +1,10 @@
 #ifndef CH_ET_BC_CDK_2017_H
 #define CH_ET_BC_CDK_2017_H
 
-#include <gmp.h>
-#include <utils/Hash.h>
-#include <AE/RSA.h>
-#include <base/GmpElements.h>
+#include <pbc/pbc.h>
+#include "../../utils/Hash.h"
+#include "../../AE/RSA.h"
+#include "../../base/GmpElements.h"
 #include <stdexcept>
 
 class CH_ET_BC_CDK_2017_pp{

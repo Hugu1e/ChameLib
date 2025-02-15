@@ -1,10 +1,10 @@
 #ifndef CHAMELIB_PKE_CPA_AMV_2017_H
 #define CHAMELIB_PKE_CPA_AMV_2017_H
 
-#include <base/PbcScheme.h>
-#include <base/PbcElements.h>
-#include <utils/Hash.h>
-#include <utils/TypeConverter.h>
+#include "../base/PbcScheme.h"
+#include "../base/PbcElements.h"
+#include "../utils/Hash.h"
+#include "../utils/TypeConverter.h"
 
 class PKE_CPA_AMV_2017_pk:public PbcElements{};
 

@@ -1,7 +1,7 @@
 #ifndef CHAMELIB_PBCSCHEME_H
 #define CHAMELIB_PBCSCHEME_H
 
-#include <pbc.h>
+#include <pbc/pbc.h>
 
 class PbcScheme{
     protected:

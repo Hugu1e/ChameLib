@@ -1,7 +1,7 @@
 #ifndef CHAMELIB_GMPELEMENT_H
 #define CHAMELIB_GMPELEMENT_H
 
-#include <gmp.h>
+#include <pbc/pbc.h>
 #include <string>
 
 class GmpElements{

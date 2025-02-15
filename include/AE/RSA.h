@@ -1,8 +1,8 @@
 #ifndef CHAMELIB_RSA_H
 #define CHAMELIB_RSA_H
 
-#include <base/GmpElements.h>
-#include <utils/RandomGenerator.h>
+#include "../base/GmpElements.h"
+#include "../utils/RandomGenerator.h"
 
 class RSA_pk: public GmpElements{};
 

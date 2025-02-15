@@ -1,5 +1,11 @@
 # ChameLib
 
+## Dependency
+
+[PBC library](http://crypto.stanford.edu/pbc/)
+
+[openssl](https://github.com/openssl/openssl.git)
+
 ## Quick start
 
 1. **Clone the Repository**

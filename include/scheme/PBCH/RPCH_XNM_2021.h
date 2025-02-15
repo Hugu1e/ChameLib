@@ -1,13 +1,13 @@
 #ifndef RPCH_XNM_2021_H
 #define RPCH_XNM_2021_H
 
-#include <utils/Hash.h>
-#include <base/PbcScheme.h>
-#include <base/GmpElements.h>
+#include "../../utils/Hash.h"
+#include "../../base/PbcScheme.h"
+#include "../../base/GmpElements.h"
 
-#include <AE/RSA.h>
-#include <ABE/RABE_XNM.h>
-#include <SE/AES.h>
+#include "../../AE/RSA.h"
+#include "../../ABE/RABE_XNM.h"
+#include "../../SE/AES.h"
 
 class RPCH_XNM_2021_sk{
     private:

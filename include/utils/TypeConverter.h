@@ -1,8 +1,7 @@
 #ifndef CHAMELIB_TYPE_CONVERTER_H
 #define CHAMELIB_TYPE_CONVERTER_H
 
-#include <gmp.h>
-#include <pbc.h>
+#include <pbc/pbc.h>
 #include <stdexcept>
 
 class TypeConverter{

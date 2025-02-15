@@ -1,7 +1,7 @@
 #ifndef CHAMELIB_POLICY_RESOLUTION_H
 #define CHAMELIB_POLICY_RESOLUTION_H
 
-#include <base/Binary_tree_policy.h>
+#include "../base/Binary_tree_policy.h"
 #include <stack>
 
 class Policy_resolution

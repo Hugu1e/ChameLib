@@ -1,9 +1,9 @@
 #ifndef MCH_CDK_2017_H
 #define MCH_CDK_2017_H
 
-#include <utils/Hash.h>
-#include <base/GmpElements.h>
-#include <AE/RSA.h>
+#include "../../utils/Hash.h"
+#include "../../base/GmpElements.h"
+#include "../../AE/RSA.h"
 #include <stdexcept>
 
 class MCH_CDK_2017_pk : public GmpElements{};

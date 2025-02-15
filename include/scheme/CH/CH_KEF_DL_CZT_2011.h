@@ -1,9 +1,9 @@
 #ifndef CH_KEF_DL_CZT_2011_H
 #define CH_KEF_DL_CZT_2011_H
 
-#include <base/PbcElements.h>
-#include <base/PbcScheme.h>
-#include <utils/Hash.h>
+#include "../../base/PbcElements.h"
+#include "../../base/PbcScheme.h"
+#include "../../utils/Hash.h"
 
 class CH_KEF_DL_CZT_2011_pp : public PbcElements{};
 class CH_KEF_DL_CZT_2011_pk : public PbcElements{};

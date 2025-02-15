@@ -1,7 +1,7 @@
 #ifndef CHAMELIB_ELEMENTEXCEPTION_H
 #define CHAMELIB_ELEMENTEXCEPTION_H
 
-#include <exception/BaseException.h>
+#include "BaseException.h"
 
 class ElementExistsException: public BaseException{
     public:

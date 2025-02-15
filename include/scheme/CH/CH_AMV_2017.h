@@ -1,12 +1,12 @@
 #ifndef CH_AMV_2017_H
 #define CH_AMV_2017_H
 
-#include <base/PbcScheme.h>
-#include <base/PbcElements.h>
-#include <utils/Hash.h>
-#include <utils/Logger.h>
-#include <AE/PKE_CCA_AMV_2017.h>
-#include <AE/PKE_CPA_AMV_2017.h>
+#include "../../base/PbcScheme.h"
+#include "../../base/PbcElements.h"
+#include "../../utils/Hash.h"
+#include "../../utils/Logger.h"
+#include "../../AE/PKE_CCA_AMV_2017.h"
+#include "../../AE/PKE_CPA_AMV_2017.h"
 
 class CH_AMV_2017_pk{
     private:

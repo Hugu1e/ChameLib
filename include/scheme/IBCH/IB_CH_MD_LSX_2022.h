@@ -1,9 +1,9 @@
 #ifndef IB_CH_MD_LSX_2022_H
 #define IB_CH_MD_LSX_2022_H
 
-#include <base/PbcElements.h>
-#include <base/PbcScheme.h>
-#include <utils/Hash.h>
+#include "../../base/PbcElements.h"
+#include "../../base/PbcScheme.h"
+#include "../../utils/Hash.h"
 
 class IB_CH_MD_LSX_2022_pp: public PbcElements {};
 class IB_CH_MD_LSX_2022_msk: public PbcElements {};

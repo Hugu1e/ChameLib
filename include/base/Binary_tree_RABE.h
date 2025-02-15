@@ -1,7 +1,7 @@
 #ifndef CHAMELIB_BINARY_TREE_RABE_H
 #define CHAMELIB_BINARY_TREE_RABE_H
 
-#include <pbc.h>
+#include <pbc/pbc.h>
 #include <vector>
 #include <stdexcept>
 #include <math.h>

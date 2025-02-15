@@ -1,12 +1,12 @@
 #ifndef CH_ET_KOG_CDK_2017_H
 #define CH_ET_KOG_CDK_2017_H
 
-#include <base/PbcScheme.h>
-#include <base/PbcElements.h>
-#include <gmp.h>
+#include "../../base/PbcScheme.h"
+#include "../../base/PbcElements.h"
+#include <pbc/pbc.h>
 
-#include <AE/RSA.h>
-#include <utils/Hash.h>
+#include "../../AE/RSA.h"
+#include "../../utils/Hash.h"
 
 class CH_ET_KOG_CDK_2017_pp: public PbcElements{};
 

@@ -1,14 +1,14 @@
 #ifndef DPCH_MXN_2022_H
 #define DPCH_MXN_2022_H
 
-#include <utils/Hash.h>
-#include <base/PbcScheme.h>
-#include <base/GmpElements.h>
+#include "../../utils/Hash.h"
+#include "../../base/PbcScheme.h"
+#include "../../base/GmpElements.h"
 
-#include <ABE/MA_ABE.h>
-#include <SE/AES.h>
-#include <signature/BLS.h>
-#include <scheme/CH/CH_ET_BC_CDK_2017.h>
+#include "../../ABE/MA_ABE.h"
+#include "../../SE/AES.h"
+#include "../../signature/BLS.h"
+#include "../CH/CH_ET_BC_CDK_2017.h"
 
 class DPCH_MXN_2022_pp{
     private:

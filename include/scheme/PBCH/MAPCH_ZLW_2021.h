@@ -1,13 +1,13 @@
 #ifndef MAPCH_ZLW_2021_H
 #define MAPCH_ZLW_2021_H
 
-#include <utils/Hash.h>
-#include <base/PbcScheme.h>
-#include <base/GmpElements.h>
-#include <utils/TypeConverter.h>
+#include "../../utils/Hash.h"
+#include "../../base/PbcScheme.h"
+#include "../../base/GmpElements.h"
+#include "../../utils/TypeConverter.h"
 
-#include <ABE/MA_ABE.h>
-#include <scheme/CH/CH_ET_BC_CDK_2017.h>
+#include "../../ABE/MA_ABE.h"
+#include "../CH/CH_ET_BC_CDK_2017.h"
 
 class MAPCH_ZLW_2021_pp{
     private:

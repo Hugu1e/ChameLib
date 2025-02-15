@@ -1,9 +1,9 @@
 #ifndef CHAMELIB_PBCELEMENT_H
 #define CHAMELIB_PBCELEMENT_H
 
-#include <pbc.h>
+#include <pbc/pbc.h>
 #include <string>
-#include <exception/ElementException.h>
+#include "../exception/ElementException.h"
 #include <stdexcept>
 
 class PbcElements{
