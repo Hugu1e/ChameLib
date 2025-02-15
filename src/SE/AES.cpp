@@ -11,10 +11,6 @@ AES::AES() {}
 void AES::KGen(element_t key, int k)
 {
     // TODO
-    if (k != 256)
-    {
-        throw std::invalid_argument("AES::KGen(): k must be 256");
-    }
     element_random(key);
 }
 
