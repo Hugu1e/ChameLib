@@ -7,6 +7,7 @@
 #include <stdexcept>
 
 class IB_CH_KEF_CZS_2014_pp: public PbcElements {};
+class IB_CH_KEF_CZS_2014_msk: public PbcElements {};
 class IB_CH_KEF_CZS_2014_td: public PbcElements {};
 class IB_CH_KEF_CZS_2014_h: public PbcElements {};
 class IB_CH_KEF_CZS_2014_r: public PbcElements {};
@@ -14,16 +15,14 @@ class IB_CH_KEF_CZS_2014_r: public PbcElements {};
 
 class IB_CH_KEF_CZS_2014 : public PbcScheme {
     private:
-        element_t x;
-
         void H(element_t res, std::string m);
 
     public:
         IB_CH_KEF_CZS_2014(element_s *_G1, element_s *_G2, element_s *_GT, element_s *_Zn);
 
-        void SetUp(IB_CH_KEF_CZS_2014_pp &pp, IB_CH_KEF_CZS_2014_td &td, IB_CH_KEF_CZS_2014_h &h, IB_CH_KEF_CZS_2014_r &r, IB_CH_KEF_CZS_2014_r &r_p);
+        void SetUp(IB_CH_KEF_CZS_2014_pp &pp, IB_CH_KEF_CZS_2014_msk &msk, IB_CH_KEF_CZS_2014_td &td, IB_CH_KEF_CZS_2014_h &h, IB_CH_KEF_CZS_2014_r &r, IB_CH_KEF_CZS_2014_r &r_p);
 
-        void Extract(IB_CH_KEF_CZS_2014_td &td, std::string ID);
+        void Extract(IB_CH_KEF_CZS_2014_td &td, std::string ID, IB_CH_KEF_CZS_2014_msk &msk);
 
         void Hash(IB_CH_KEF_CZS_2014_h &h, IB_CH_KEF_CZS_2014_r &r, std::string ID, std::string L, element_t m, IB_CH_KEF_CZS_2014_pp &pp);
 

@@ -9,6 +9,7 @@ void test(std::string test_name, std::string curve){
     IB_CH_KEF_CZS_2014 ch(test.get_G1(), test.get_G2(), test.get_GT(), test.get_Zn());
 
     IB_CH_KEF_CZS_2014_pp pp;
+    IB_CH_KEF_CZS_2014_msk msk;
     IB_CH_KEF_CZS_2014_td td;
     IB_CH_KEF_CZS_2014_h h;
     IB_CH_KEF_CZS_2014_r r,r_p;
@@ -24,12 +25,12 @@ void test(std::string test_name, std::string curve){
     element_random(m_p);
 
     test.start("SetUp");
-    ch.SetUp(pp, td, h, r, r_p);
+    ch.SetUp(pp, msk, td, h, r, r_p);
     test.end("SetUp");
     pp.print();
 
     test.start("Extract");
-    ch.Extract(td, ID);
+    ch.Extract(td, ID, msk);
     test.end("Extract");
     td.print();
 

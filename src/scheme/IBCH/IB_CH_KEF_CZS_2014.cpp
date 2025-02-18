@@ -1,28 +1,29 @@
 #include <scheme/IBCH/IB_CH_KEF_CZS_2014.h>
 
 IB_CH_KEF_CZS_2014::IB_CH_KEF_CZS_2014(element_s *_G1, element_s *_G2, element_s *_GT, element_s *_Zn):PbcScheme(_G1, _G2, _GT, _Zn) {
-    element_init_same_as(this->x, Zn);
 }
 
 /**
  * input : 
- * output: x, Ppub
+ * output: msk, Ppub
  */
-void IB_CH_KEF_CZS_2014::SetUp(IB_CH_KEF_CZS_2014_pp &pp, IB_CH_KEF_CZS_2014_td &td, IB_CH_KEF_CZS_2014_h &h, IB_CH_KEF_CZS_2014_r &r, IB_CH_KEF_CZS_2014_r &r_p) {
+void IB_CH_KEF_CZS_2014::SetUp(IB_CH_KEF_CZS_2014_pp &pp, IB_CH_KEF_CZS_2014_msk &msk, IB_CH_KEF_CZS_2014_td &td, IB_CH_KEF_CZS_2014_h &h, IB_CH_KEF_CZS_2014_r &r, IB_CH_KEF_CZS_2014_r &r_p) {
     pp.init(2);
     td.init(1);
     h.init(1);
     r.init(2);
     r_p.init(2);
+    msk.init(1);
     
     // P
     element_random(tmp_G);
     pp.set(P, tmp_G);
     
     // x
-    element_random(x);
+    element_random(tmp_Zn);
+    msk.set(0, tmp_Zn);
     // Ppub = x * P
-    element_mul_zn(tmp_G, tmp_G, x);
+    element_mul_zn(tmp_G, tmp_G, tmp_Zn);
     pp.set(Ppub, tmp_G);
 }
 
@@ -30,11 +31,11 @@ void IB_CH_KEF_CZS_2014::SetUp(IB_CH_KEF_CZS_2014_pp &pp, IB_CH_KEF_CZS_2014_td 
  * input : x, ID
  * output: SID
  */
-void IB_CH_KEF_CZS_2014::Extract(IB_CH_KEF_CZS_2014_td &td, std::string ID) {  
+void IB_CH_KEF_CZS_2014::Extract(IB_CH_KEF_CZS_2014_td &td, std::string ID, IB_CH_KEF_CZS_2014_msk &msk) {  
     // QID = H(ID)
     this->H(tmp_H, ID);
     // SID = x * QID
-    element_mul_zn(tmp_H, tmp_H, x);
+    element_mul_zn(tmp_H, tmp_H, msk[0]);
     td.set(SID, tmp_H);
 }
  
@@ -131,5 +132,4 @@ bool IB_CH_KEF_CZS_2014::Verify(IB_CH_KEF_CZS_2014_h &h, IB_CH_KEF_CZS_2014_r &r
 
 
 IB_CH_KEF_CZS_2014::~IB_CH_KEF_CZS_2014() {
-    element_clear(x);
 }
