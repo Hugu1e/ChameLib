@@ -30,9 +30,9 @@ void RPCH_TMM_2022::SetUp(RPCH_TMM_2022_sk &skRPCH, RPCH_TMM_2022_pk &pkRPCH, RP
  * input : pkRPCH, skRPCH, _st, id, attr_list
  * output: skidRPCH
  */
-void RPCH_TMM_2022::KeyGen(RPCH_TMM_2022_skid &skidRPCH, RPCH_TMM_2022_pk &pkRPCH, RPCH_TMM_2022_sk &skRPCH, RPCH_TMM_2022_Binary_tree &st, element_t id, std::vector<std::string> &attr_list) {
+void RPCH_TMM_2022::KeyGen(RPCH_TMM_2022_skid &skidRPCH, RPCH_TMM_2022_pk &pkRPCH, RPCH_TMM_2022_sk &skRPCH, RPCH_TMM_2022_Binary_tree &st, std::vector<std::string> &attr_list, element_t id, time_t re_time) {
     skidRPCH.get_skCHET().init(1);
-    rabe.KGen(skidRPCH.get_skidRABE(), st.get_st(), pkRPCH.get_mpkRABE(), skRPCH.get_mskRABE(), id, attr_list);
+    rabe.KGen(skidRPCH.get_skidRABE(), st.get_st(), pkRPCH.get_mpkRABE(), skRPCH.get_mskRABE(), attr_list, id, re_time);
     skidRPCH.get_skCHET().set(x, skRPCH.get_skCHET()[x]);
 }
 

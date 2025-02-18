@@ -14,27 +14,41 @@ void test(std::string test_name, std::string curve){
     const int SIZE_OF_ATTR = attr_list.size();  // S, S是Policy所有属性的子集
     const std::string POLICY = "(ONE&THREE)&(TWO|FOUR)";
     const int SIZE_OF_POLICY = 4;   // Policy的属性个数（不去重）
-    const time_t T = TimeUtils::TimeCast(2024, 12, 21, 0, 0, 0);  // present time
+
+    element_t id1, id2, id3;
+    element_init_same_as(id1, test.get_Zn());
+    element_init_same_as(id2, test.get_Zn());
+    element_init_same_as(id3, test.get_Zn());
+    element_random(id1);
+    element_random(id2);
+    element_random(id3);
+
+    // T1 < T3 < T_present < T2
+    const time_t T_present = TimeUtils::TimeCast(2025, 2, 1, 0, 0, 0);  // present time
+    const time_t re_time_1 = TimeUtils::TimeCast(2025, 1, 1, 0, 0, 0);
+    const time_t re_time_2 = TimeUtils::TimeCast(2025, 2, 31, 0, 0, 0);
+    const time_t re_time_3 = TimeUtils::TimeCast(2025, 1, 2, 0, 0, 0);
 
     RABE_TMM_mpk mpk;
     RABE_TMM_msk msk;
-    RABE_TMM_skid skid;
+    RABE_TMM_skid skid1, skid2, skid3;
     RABE_TMM_kut kut;
-    RABE_TMM_dkidt dkidt;
+    RABE_TMM_dkidt dkidt1, dkidt2, dkidt3;
     RABE_TMM_ciphertext ciphertext;
 
     std::vector<RABE_TMM_revokedPreson> rl;
     Binary_tree_RABE st;
 
-    element_t id;
     element_t msg,res;
     element_t s1,s2;
 
-    element_init_same_as(id, test.get_Zn());
     element_init_same_as(msg, test.get_Zn());
     element_init_same_as(res, test.get_Zn());
     element_init_same_as(s1, test.get_Zn());
     element_init_same_as(s2, test.get_Zn());
+
+    element_random(s1);
+    element_random(s2);
 
     test.start("Setup");
     abe.Setup(mpk, msk, rl, st, N);
@@ -56,8 +70,10 @@ void test(std::string test_name, std::string curve){
     // Logger::PrintPbc("T2", mpk.getElement("T2"));
 
     test.start("KeyGen");
-    abe.KGen(skid, st, mpk, msk, id, attr_list);
+    abe.KGen(skid1, st, mpk, msk, attr_list, id1, re_time_1);
     test.end("KeyGen");
+    abe.KGen(skid2, st, mpk, msk, attr_list, id2, re_time_2);
+    abe.KGen(skid3, st, mpk, msk, attr_list, id3, re_time_3);
     // Logger::PrintPbc("sk0.sk_1", skid.get_sk0()->getElement("sk0_1"));
     // Logger::PrintPbc("sk0.sk_2", skid.get_sk0()->getElement("sk0_2"));
     // Logger::PrintPbc("sk0.sk_3", skid.get_sk0()->getElement("sk0_3"));
@@ -70,22 +86,18 @@ void test(std::string test_name, std::string curve){
     // Logger::PrintPbc("sk_prime.sk_2", skid.get_sk_prime()->getElement("sk_2"));
     // Logger::PrintPbc("sk_prime.sk_3", skid.get_sk_prime()->getElement("sk_3"));
 
-    test.start("KUpt");
-    abe.KUpt(kut, mpk, st, rl, T);
-    test.end("KUpt");
-    printf("size of kut.ku_theta: %ld\n", kut.get_ku_theta().size());
 
-    test.start("DKGen");
-    abe.DKGen(dkidt, mpk, skid, kut);
-    test.end("DKGen");
+    test.start("Rev");
+    abe.Rev(rl, id1, re_time_1);
+    test.end("Rev");
+    abe.Rev(rl, id2, re_time_2);
+    abe.Rev(rl, id3, re_time_3);
+
 
     element_random(msg);
     Logger::PrintPbc("msg", msg);
-    element_random(s1);
-    element_random(s2);
-
     test.start("Encrypt");
-    abe.Enc(ciphertext, mpk, msg, POLICY, T, s1, s2);
+    abe.Enc(ciphertext, mpk, msg, POLICY, T_present, s1, s2);
     test.end("Encrypt");
     // Logger::PrintPbc("ct0.ct_1", ciphertext.get_ct0()->getElement("ct0_1"));
     // Logger::PrintPbc("ct0.ct_2", ciphertext.get_ct0()->getElement("ct0_2"));
@@ -97,8 +109,37 @@ void test(std::string test_name, std::string curve){
     // }
     // Logger::PrintPbc("ct_prime", ciphertext.get_ct_prime()->getElement("ct_prime"));
 
+
+
+
+    test.start("KUpt");
+    abe.KUpt(kut, mpk, st, rl, T_present);
+    test.end("KUpt");
+    printf("size of kut.ku_theta: %ld\n", kut.get_ku_theta().size());
+
+    test.start("DKGen");
+    try{
+        abe.DKGen(dkidt1, mpk, skid1, kut);
+    }catch(const std::runtime_error& e){
+        printf("%s\n", e.what());
+    }
+    test.end("DKGen");
+
+    test.start("DKGen");
+    try{
+        abe.DKGen(dkidt3, mpk, skid3, kut);
+    }catch(const std::runtime_error& e){
+        printf("%s\n", e.what());
+    }
+    test.end("DKGen");
+
+    test.start("DKGen");
+    abe.DKGen(dkidt2, mpk, skid2, kut);
+    test.end("DKGen");
+
+   
     test.start("Decrypt");
-    abe.Dec(res, mpk, ciphertext, dkidt);
+    abe.Dec(res, mpk, ciphertext, dkidt2);
     test.end("Decrypt");
 
     Logger::PrintPbc("msg", msg);
@@ -111,10 +152,6 @@ void test(std::string test_name, std::string curve){
         printf("Decrypt failed.\n");
     } 
 
-    test.start("Rev");
-    time_t target_time = TimeUtils::TimeCast(2025, 12, 31, 0, 0, 0);
-    abe.Rev(rl, id, target_time);
-    test.end("Rev");
 }
 
 

@@ -98,7 +98,7 @@ void RABE_TMM::Setup(RABE_TMM_mpk &mpk, RABE_TMM_msk &msk, std::vector<RABE_TMM_
  * input: mpk, msk, st, id, attr_list
  * output: skid, st
  */
-void RABE_TMM::KGen(RABE_TMM_skid &skid, Binary_tree_RABE &st, RABE_TMM_mpk &mpk, RABE_TMM_msk &msk, element_t id, std::vector<std::string> &attr_list){
+void RABE_TMM::KGen(RABE_TMM_skid &skid, Binary_tree_RABE &st, RABE_TMM_mpk &mpk, RABE_TMM_msk &msk, std::vector<std::string> &attr_list, element_t id, time_t re_time){
     skid.get_sk0().init(3);
     
     element_random(this->r1);
@@ -245,16 +245,9 @@ void RABE_TMM::KGen(RABE_TMM_skid &skid, Binary_tree_RABE &st, RABE_TMM_mpk &mpk
     element_neg(this->tmp_Zn, this->tmp_Zn);
     element_pow_zn(tmp_sk_prime_sk_3, mpk[g], this->tmp_Zn);
     element_mul(tmp_sk_prime_sk_3, tmp_sk_prime_sk_3, msk[g_pow_d3]);
-
-    // pick an unassigned node in st
-    // id
-    element_random(id);
-    // TODO
-    // time_t = 2025.12.31 0:00:00
-    time_t target_time = TimeUtils::TimeCast(2025, 12, 31, 0, 0, 0);
     
     // find and set an unassigned node
-    Binary_tree_RABE_node *node = st.setLeafNode(id, target_time);
+    Binary_tree_RABE_node *node = st.setLeafNode(id, re_time);
 
     // set sk_theta
     while(node != NULL){
@@ -341,7 +334,7 @@ void RABE_TMM::DKGen(RABE_TMM_dkidt &dkidt, RABE_TMM_mpk &mpk, RABE_TMM_skid &sk
         }
     }
     if(index_skid == -1 || index_kut == -1){
-        printf("ERROR: Path(id) ∩ KUNodes(st, rl, t) == NULL\n");
+        throw std::runtime_error("RABE_TMM::DKGen(): Path(id) ∩ KUNodes(st, rl, t) = NULL");
         return;
     }
 
@@ -392,10 +385,10 @@ void RABE_TMM::Enc(RABE_TMM_ciphertext &ciphertext, RABE_TMM_mpk &mpk, element_t
     element_random(this->tmp_Zn);
 
     std::vector<std::string>* postfix_expression = pr.infixToPostfix(policy_str);
-    for(int i = 0;i < postfix_expression->size();i++){
-        printf("%s ", postfix_expression->at(i).c_str());
-    }
-    printf("\n");
+    // for(int i = 0;i < postfix_expression->size();i++){
+    //     printf("%s ", postfix_expression->at(i).c_str());
+    // }
+    // printf("\n");
     Binary_tree_policy* binary_tree_expression = pr.postfixToBinaryTree(postfix_expression, this->tmp_Zn);
     pg.generatePolicyInMatrixForm(binary_tree_expression);
     Element_t_matrix* M = pg.getPolicyInMatrixFormFromTree(binary_tree_expression);
@@ -403,13 +396,13 @@ void RABE_TMM::Enc(RABE_TMM_ciphertext &ciphertext, RABE_TMM_mpk &mpk, element_t
     unsigned long int rows = M->row();
     unsigned long int cols = M->col();
 
-    printf("rows: %ld, cols: %ld\n", rows, cols);
-    for(int i = 0;i < rows;i++){
-        for(int j = 0;j < cols;j++){
-            element_printf("%B ", M->getElement(i, j));
-        }
-        printf("\n");
-    }
+    // printf("rows: %ld, cols: %ld\n", rows, cols);
+    // for(int i = 0;i < rows;i++){
+    //     for(int j = 0;j < cols;j++){
+    //         element_printf("%B ", M->getElement(i, j));
+    //     }
+    //     printf("\n");
+    // }
 
     // s1,s2
     element_set(this->s1, s1);
@@ -577,13 +570,13 @@ void RABE_TMM::Dec(element_t res, RABE_TMM_mpk &mpk, RABE_TMM_ciphertext &cipher
 
     unsigned long int r = inverse_attributesMatrix->row();
     unsigned long int c = inverse_attributesMatrix->col();
-    printf("rows: %ld, cols: %ld\n", r, c);
-    for(int i = 0;i < r;i++){
-        for(int j = 0;j < c;j++){
-            element_printf("%B ", inverse_attributesMatrix->getElement(i, j));
-        }
-        printf("\n");
-    }
+    // printf("rows: %ld, cols: %ld\n", r, c);
+    // for(int i = 0;i < r;i++){
+    //     for(int j = 0;j < c;j++){
+    //         element_printf("%B ", inverse_attributesMatrix->getElement(i, j));
+    //     }
+    //     printf("\n");
+    // }
     Element_t_vector* unit = inverse_attributesMatrix->getCoordinateAxisUnitVector();
 
     Element_t_vector* x= new Element_t_vector(inverse_attributesMatrix->col(), inverse_attributesMatrix->getElement(0, 0));
@@ -592,10 +585,10 @@ void RABE_TMM::Dec(element_t res, RABE_TMM_mpk &mpk, RABE_TMM_ciphertext &cipher
     if (-1 == type) {
         throw std::runtime_error("POLICY_NOT_SATISFIED");
     }
-    printf("type: %ld\n", type);
-    // print x
-    printf("Yi:\n");
-    x->printVector();
+    // printf("type: %ld\n", type);
+    // // print x
+    // printf("Yi:\n");
+    // x->printVector();
 
 
     // num

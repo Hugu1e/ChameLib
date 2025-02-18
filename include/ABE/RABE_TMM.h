@@ -161,7 +161,7 @@ class RABE_TMM : public PbcScheme{
         void Hash(element_t res, std::string m);
         void Hash(element_t res, element_t m);
 
-        void KGen(RABE_TMM_skid &skid, Binary_tree_RABE &st, RABE_TMM_mpk &mpk, RABE_TMM_msk &msk, element_t id, std::vector<std::string> &attr_list);
+        void KGen(RABE_TMM_skid &skid, Binary_tree_RABE &st, RABE_TMM_mpk &mpk, RABE_TMM_msk &msk, std::vector<std::string> &attr_list, element_t id, time_t re_time);
 
         std::vector<Binary_tree_RABE_node *> KUNodes(Binary_tree_RABE &st, std::vector<RABE_TMM_revokedPreson> &rl, time_t t);
 
