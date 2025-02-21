@@ -207,8 +207,8 @@ bool CH_AMV_2017::Check(CH_AMV_2017_h &h, element_t m, CH_AMV_2017_pk &pk){
     element_div(tmp_G_2, h.get_r().get_c1()[PKE_CPA_AMV_2017::c2_], h.get_r().get_c2()[PKE_CCA_AMV_2017::c3_]);
     HASH::hash(tmp_Zn_3, tmp_G_2, pk.get_PKE_CPA_pk()[y], pk.get_PKE_CCA_pk()[PKE_CCA_AMV_2017::y3], h.get_r().get_pai()[pai_4_1]);
     element_pow_zn(tmp_G_2, tmp_G_2, tmp_Zn_3);
-    Logger::PrintPbc("tmp_G",tmp_G);
-    Logger::PrintPbc("tmp_G_2",tmp_G_2);
+    // Logger::PrintPbc("tmp_G",tmp_G);
+    // Logger::PrintPbc("tmp_G_2",tmp_G_2);
     if(element_cmp(tmp_G, tmp_G_2) != 0){
         return false;
     }
