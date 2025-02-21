@@ -358,10 +358,10 @@ void ABET::Encrypt(ABET_ciphertext &ciphertext, ABET_mpk &mpk, ABET_msk &msk, el
     element_random(this->tmp_Zn);
 
     std::vector<std::string>* postfix_expression = pr.infixToPostfix(policy_str);
-    for(int i = 0;i < postfix_expression->size();i++){
-        printf("%s ", postfix_expression->at(i).c_str());
-    }
-    printf("\n");
+    // for(int i = 0;i < postfix_expression->size();i++){
+    //     printf("%s ", postfix_expression->at(i).c_str());
+    // }
+    // printf("\n");
     Binary_tree_policy* binary_tree_expression = pr.postfixToBinaryTree(postfix_expression, this->tmp_Zn);
     pg.generatePolicyInMatrixForm(binary_tree_expression);
     Element_t_matrix* M = pg.getPolicyInMatrixFormFromTree(binary_tree_expression);
@@ -369,13 +369,13 @@ void ABET::Encrypt(ABET_ciphertext &ciphertext, ABET_mpk &mpk, ABET_msk &msk, el
     unsigned long int rows = M->row();
     unsigned long int cols = M->col();
 
-    printf("rows: %ld, cols: %ld\n", rows, cols);
-    for(int i = 0;i < rows;i++){
-        for(int j = 0;j < cols;j++){
-            element_printf("%B ", M->getElement(i, j));
-        }
-        printf("\n");
-    }
+    // printf("rows: %ld, cols: %ld\n", rows, cols);
+    // for(int i = 0;i < rows;i++){
+    //     for(int j = 0;j < cols;j++){
+    //         element_printf("%B ", M->getElement(i, j));
+    //     }
+    //     printf("\n");
+    // }
 
     // s1,s2
     element_set(this->s1, s1);
@@ -570,13 +570,13 @@ void ABET::Decrypt(element_t res_R, element_t res_r, ABET_mpk &mpk, ABET_ciphert
 
     unsigned long int r = inverse_attributesMatrix->row();
     unsigned long int c = inverse_attributesMatrix->col();
-    printf("rows: %ld, cols: %ld\n", r, c);
-    for(int i = 0; i < r; i++){
-        for(int j = 0; j < c; j++){
-            element_printf("%B ", inverse_attributesMatrix->getElement(i, j));
-        }
-        printf("\n");
-    }
+    // printf("rows: %ld, cols: %ld\n", r, c);
+    // for(int i = 0; i < r; i++){
+    //     for(int j = 0; j < c; j++){
+    //         element_printf("%B ", inverse_attributesMatrix->getElement(i, j));
+    //     }
+    //     printf("\n");
+    // }
     Element_t_vector* unit = inverse_attributesMatrix->getCoordinateAxisUnitVector();
 
     Element_t_vector* x = new Element_t_vector(inverse_attributesMatrix->col(), inverse_attributesMatrix->getElement(0, 0));
@@ -585,10 +585,10 @@ void ABET::Decrypt(element_t res_R, element_t res_r, ABET_mpk &mpk, ABET_ciphert
     if(-1 == type) {
         throw std::runtime_error("POLICY_NOT_SATISFIED");
     }
-    printf("type: %ld\n", type);
-    // print x
-    printf("Yi:\n");
-    x->printVector();
+    // printf("type: %ld\n", type);
+    // // print x
+    // printf("Yi:\n");
+    // x->printVector();
 
     // retrive r
     // num
