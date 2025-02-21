@@ -74,6 +74,20 @@ void PKE_CCA_AMV_2017::Encrypt(PKE_CCA_AMV_2017_c &c, element_t m, PKE_CCA_AMV_2
 }
 
 void PKE_CCA_AMV_2017::Decrypt(element_t m, PKE_CCA_AMV_2017_c &c, PKE_CCA_AMV_2017_sk &sk){
+    // t =H(c1, c2, c3)
+    HASH::hash(tmp_Zn, c[c1], c[c2], c[c3]);
+    // verify c4 = c1^(x11+x12*t) * c2^(x21+x22*t)
+    element_mul(tmp_Zn_2, sk[x12], tmp_Zn);
+    element_add(tmp_Zn_2, sk[x11], tmp_Zn_2);
+    element_pow_zn(tmp_G, c[c1], tmp_Zn_2);
+    element_mul(tmp_Zn_2, sk[x22], tmp_Zn);
+    element_add(tmp_Zn_2, sk[x21], tmp_Zn_2);
+    element_pow_zn(tmp_G_2, c[c2], tmp_Zn_2);
+    element_mul(tmp_G, tmp_G, tmp_G_2);
+    if(element_cmp(tmp_G, c[c4]) != 0){
+        throw std::runtime_error("PKE_CCA_AMV_2017::Decrypt(): verify failed");
+    }
+
     // m = c3/(c1^x1 * c2^x2)
     element_pow_zn(tmp_G, c[c1], sk[x13]);
     element_pow_zn(tmp_G_2, c[c2], sk[x23]);
