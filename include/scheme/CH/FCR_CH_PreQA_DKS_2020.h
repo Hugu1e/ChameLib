@@ -23,6 +23,7 @@ class FCR_CH_PreQA_DKS_2020: public PbcScheme{
         element_t a;
 
         void H(element_t res, element_t y, element_t h, element_t m, element_t u1,element_t u2);
+        void H2(element_t res, element_t m);
 
     public:
         FCR_CH_PreQA_DKS_2020(element_s *_G1, element_s *_G2, element_s *_GT, element_s *_Zn);

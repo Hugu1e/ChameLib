@@ -22,8 +22,8 @@ void FCR_CH_PreQA_DKS_2020::SetUp(FCR_CH_PreQA_DKS_2020_pp &pp, FCR_CH_PreQA_DKS
     element_random(tmp_G);
     pp.set(g1, tmp_G);
 
-    element_random(tmp_G);
-    pp.set(g2, tmp_G);
+    H2(tmp_G_2, tmp_G);
+    pp.set(g2, tmp_G_2);
 }
 
 void FCR_CH_PreQA_DKS_2020::KeyGen(FCR_CH_PreQA_DKS_2020_pk &pk, FCR_CH_PreQA_DKS_2020_sk &sk, FCR_CH_PreQA_DKS_2020_pp &pp) {  
@@ -38,6 +38,10 @@ void FCR_CH_PreQA_DKS_2020::KeyGen(FCR_CH_PreQA_DKS_2020_pk &pk, FCR_CH_PreQA_DK
 
 void FCR_CH_PreQA_DKS_2020::H(element_t res, element_t y, element_t h, element_t m, element_t u1,element_t u2) {
     HASH::hash(res, y, h, m, u1, u2);
+}
+
+void FCR_CH_PreQA_DKS_2020::H2(element_t res, element_t m){
+    HASH::hash(res, m);
 }
 
 void FCR_CH_PreQA_DKS_2020::Hash(FCR_CH_PreQA_DKS_2020_h &h, FCR_CH_PreQA_DKS_2020_r &r, element_t m, FCR_CH_PreQA_DKS_2020_pk &pk, FCR_CH_PreQA_DKS_2020_pp &pp) {
