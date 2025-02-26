@@ -54,11 +54,13 @@ set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS}")
 
 SET(BUILD_TESTS ON)
 if(BUILD_TESTS)
+    find_package(GTest REQUIRED)
+
     enable_testing()
 
     macro(add_test_executable test_name test_source)
         add_executable(${test_name} ${test_source} test/common/CommonTest.cpp)
-        target_link_libraries(${test_name} PRIVATE ChameLib)
+        target_link_libraries(${test_name} PRIVATE ChameLib GTest::GTest pthread)
         add_test(NAME ${test_name} COMMAND ${test_name})
     endmacro()
 
