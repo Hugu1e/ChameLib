@@ -31,6 +31,7 @@ file(GLOB LIBRARY_SOURCES
     src/scheme/CH/CH_ET_KOG_CDK_2017.cpp
     src/scheme/CH/CH_FS_ECC_CCT_2024.cpp
     src/scheme/CH/CH_KEF_CZK_2004.cpp
+    src/scheme/CH/CH_KEF_DL_CZT_2011.cpp
     src/scheme/CH/MCH_CDK_2017.cpp
     src/AE/RSA.cpp
 )
@@ -90,7 +91,7 @@ if(BUILD_TESTS)
     add_test_executable(CH_ET_KOG_CDK_2017_test test/scheme_test/CH_test/CH_ET_KOG_CDK_2017_test.cpp)
     add_test_executable(CH_FS_ECC_CCT_2024_test test/scheme_test/CH_test/CH_FS_ECC_CCT_2024_test.cpp)
     add_test_executable(CH_KEF_CZK_2004_test test/scheme_test/CH_test/CH_KEF_CZK_2004_test.cpp)
-    # add_test_executable(CH_KEF_DL_CZT_2011_test test/scheme_test/CH_test/CH_KEF_DL_CZT_2011_test.cpp)
+    add_test_executable(CH_KEF_DL_CZT_2011_test test/scheme_test/CH_test/CH_KEF_DL_CZT_2011_test.cpp)
     # add_test_executable(CH_KEF_DLP_LLA_2012_test test/scheme_test/CH_test/CH_KEF_DLP_LLA_2012_test.cpp)
     # add_test_executable(CH_KEF_MH_RSA_F_AM_2004_test test/scheme_test/CH_test/CH_KEF_MH_RSA_F_AM_2004_test.cpp)
     # add_test_executable(CH_KEF_MH_RSANN_F_AM_2004_test test/scheme_test/CH_test/CH_KEF_MH_RSANN_F_AM_2004_test.cpp)
