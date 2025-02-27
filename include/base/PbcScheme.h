@@ -101,6 +101,27 @@ class PbcScheme{
             return zr;
         }
 
+        element_s* GetG1Element(){
+            element_s *g1 = new element_s;
+            element_init_same_as(g1, this->G1);
+            element_random(g1);
+            return g1;
+        }
+
+        element_s* GetG2Element(){
+            element_s *g2 = new element_s;
+            element_init_same_as(g2, this->G2);
+            element_random(g2);
+            return g2;
+        }
+
+        element_s* GetGTElement(){
+            element_s *gt = new element_s;
+            element_init_same_as(gt, this->GT);
+            element_random(gt);
+            return gt;
+        }
+
         ~PbcScheme(){}
 };
 

@@ -83,11 +83,6 @@ TEST_P(CH_Test, Test){
     CH_ET_KOG_CDK_2017_r r, r_p;
     CH_ET_KOG_CDK_2017_etd etd;
 
-    // element_t m,m_p;
-    // element_init_same_as(m, this->get_Zn());
-    // element_init_same_as(m_p, this->get_Zn());
-    // element_random(m);
-    // element_random(m_p);
     element_s* m = ch.GetZrElement();
     element_s* m_p = ch.GetZrElement();
 

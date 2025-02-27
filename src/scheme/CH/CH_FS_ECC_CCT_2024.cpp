@@ -1,12 +1,31 @@
 #include <scheme/CH/CH_FS_ECC_CCT_2024.h>
 
-CH_FS_ECC_CCT_2024::CH_FS_ECC_CCT_2024(element_s *_G1, element_s *_G2, element_s *_GT, element_s *_Zn): PbcScheme(_G1, _G2, _GT, _Zn){
+CH_FS_ECC_CCT_2024::CH_FS_ECC_CCT_2024(int curve, int group): PbcScheme(curve){
+    switch(group){
+        case Group::G1:
+            element_init_G1(G1, pairing);
+            break;
+        case Group::G2:
+            element_init_G2(G1, pairing);
+            break;
+        case Group::GT:
+            element_init_GT(G1, pairing);
+            break;
+        default:
+            throw std::invalid_argument("CH_ET_KOG_CDK_2017::CH_ET_KOG_CDK_2017(): Invalid group type");
+    }
+    element_init_Zr(Zn, pairing);
+
     element_init_same_as(this->rho, Zn);
     element_init_same_as(this->t1, Zn);
     element_init_same_as(this->t2, Zn);
     element_init_same_as(this->T1, G1);
     element_init_same_as(this->T2, G1);
     element_init_same_as(this->c2, Zn);
+
+    element_init_same_as(this->tmp_G, G1);
+    element_init_same_as(this->tmp_G_2, G1);
+    element_init_same_as(this->tmp_Zn, Zn);
 }
 
 
@@ -189,4 +208,8 @@ CH_FS_ECC_CCT_2024::~CH_FS_ECC_CCT_2024() {
     element_clear(this->T1);
     element_clear(this->T2);
     element_clear(this->c2);
+
+    element_clear(this->tmp_G);
+    element_clear(this->tmp_G_2);
+    element_clear(this->tmp_Zn);
 }

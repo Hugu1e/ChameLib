@@ -15,12 +15,13 @@ class CH_FS_ECC_CCT_2024: public PbcScheme{
     private:
         element_t rho;
         element_t t1,t2,T1,T2,c2;
+        element_t tmp_G, tmp_G_2, tmp_Zn;
 
         void H(element_t res, element_t m);
         void H(element_t res, element_t m1, element_t m2, element_t m3, element_t m4);
 
     public:
-        CH_FS_ECC_CCT_2024(element_s *_G1, element_s *_G2, element_s *_GT, element_s *_Zn);
+        CH_FS_ECC_CCT_2024(int curve, int group);
 
         void SetUp(CH_FS_ECC_CCT_2024_pp &pp, CH_FS_ECC_CCT_2024_pk &pk, CH_FS_ECC_CCT_2024_sk &sk, CH_FS_ECC_CCT_2024_r &r, CH_FS_ECC_CCT_2024_r &r_p);
         
