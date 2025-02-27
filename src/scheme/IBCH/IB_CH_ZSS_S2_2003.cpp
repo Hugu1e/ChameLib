@@ -1,6 +1,18 @@
 #include <scheme/IBCH/IB_CH_ZSS_S2_2003.h>
 
-IB_CH_ZSS_S2_2003::IB_CH_ZSS_S2_2003(element_s *_G1, element_s *_G2, element_s *_GT, element_s *_Zn): PbcScheme(_G1, _G2, _GT, _Zn) {}
+IB_CH_ZSS_S2_2003::IB_CH_ZSS_S2_2003(int curve): PbcScheme(curve) {
+    element_init_G1(G1, pairing);
+    element_init_GT(GT, pairing);
+    element_init_Zr(Zn, pairing);
+
+    element_init_same_as(tmp_G, G1);
+    element_init_same_as(tmp_G_2, G1);
+    element_init_same_as(tmp_GT, GT);
+    element_init_same_as(tmp_GT_2, GT);
+    element_init_same_as(tmp_Zn, Zn);
+    element_init_same_as(tmp_Zn_2, Zn);
+    element_init_same_as(tmp_Zn_3, Zn);
+}
 
 void IB_CH_ZSS_S2_2003::SetUp(IB_CH_ZSS_S2_2003_pp &pp, IB_CH_ZSS_S2_2003_msk &msk, IB_CH_ZSS_S2_2003_sk &sk, IB_CH_ZSS_S2_2003_h &h, IB_CH_ZSS_S2_2003_r &r, IB_CH_ZSS_S2_2003_r &r_p) {
     msk.init(1);
@@ -90,4 +102,15 @@ bool IB_CH_ZSS_S2_2003::Verify(IB_CH_ZSS_S2_2003_h &h_p, element_t m_p, IB_CH_ZS
     return this->Check(h_p, m_p, r_p, ID, pp);
 }
 
-IB_CH_ZSS_S2_2003::~IB_CH_ZSS_S2_2003(){}
+IB_CH_ZSS_S2_2003::~IB_CH_ZSS_S2_2003(){
+    element_clear(tmp_G);
+    element_clear(tmp_G_2);
+    element_clear(tmp_GT);
+    element_clear(tmp_GT_2);
+    element_clear(tmp_Zn);
+    element_clear(tmp_Zn_2);
+    element_clear(tmp_Zn_3);
+    element_clear(G1);
+    element_clear(GT);
+    element_clear(Zn);
+}

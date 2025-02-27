@@ -45,6 +45,7 @@ file(GLOB LIBRARY_SOURCES
     src/scheme/IBCH/IB_CH_KEF_CZS_2014.cpp
     src/scheme/IBCH/IB_CH_MD_LSX_2022.cpp
     src/scheme/IBCH/IB_CH_ZSS_S1_2003.cpp
+    src/scheme/IBCH/IB_CH_ZSS_S2_2003.cpp
 
     src/AE/RSA.cpp
 )
@@ -118,7 +119,7 @@ if(BUILD_TESTS)
     add_test_executable(IB_CH_KEF_CZS_2014_test test/scheme_test/IBCH_test/IB_CH_KEF_CZS_2014_test.cpp)
     add_test_executable(IB_CH_MD_LSX_2022_test test/scheme_test/IBCH_test/IB_CH_MD_LSX_2022_test.cpp)
     add_test_executable(IB_CH_ZSS_S1_2003_test test/scheme_test/IBCH_test/IB_CH_ZSS_S1_2003_test.cpp)
-    # add_test_executable(IB_CH_ZSS_S2_2003_test test/scheme_test/IBCH_test/IB_CH_ZSS_S2_2003_test.cpp)
+    add_test_executable(IB_CH_ZSS_S2_2003_test test/scheme_test/IBCH_test/IB_CH_ZSS_S2_2003_test.cpp)
     # add_test_executable(ID_B_CollRes_XSL_2021_test test/scheme_test/IBCH_test/ID_B_CollRes_XSL_2021_test.cpp)
 
     # add_test_executable(DPCH_MXN_2022_test test/scheme_test/PBCH_test/DPCH_MXN_2022_test.cpp)
