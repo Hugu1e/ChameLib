@@ -1,6 +1,32 @@
 #include <scheme/IBCH/IB_CH_KEF_CZS_2014.h>
 
-IB_CH_KEF_CZS_2014::IB_CH_KEF_CZS_2014(element_s *_G1, element_s *_G2, element_s *_GT, element_s *_Zn):PbcScheme(_G1, _G2, _GT, _Zn) {
+IB_CH_KEF_CZS_2014::IB_CH_KEF_CZS_2014(int curve, bool swap):PbcScheme(curve) {
+    this->swap = swap;
+    if(swap){
+        element_init_G1(G2, pairing);
+        element_init_G2(G1, pairing);
+    }else{
+        element_init_G1(G1, pairing);
+        element_init_G2(G2, pairing);
+    }
+    element_init_GT(GT, pairing);
+    element_init_Zr(Zn, pairing);
+
+    element_init_same_as(tmp_G, G1);
+    element_init_same_as(tmp_G_2, G1);
+    element_init_same_as(tmp_H, G1);
+    element_init_same_as(tmp_GT, GT);
+    element_init_same_as(tmp_GT_2, GT);
+    element_init_same_as(tmp_GT_3, GT);
+    element_init_same_as(tmp_Zn, Zn);
+}
+
+void IB_CH_KEF_CZS_2014::Pairing(element_t res, element_t g1, element_t g2){
+    if(swap){
+        element_pairing(res, g2, g1);
+    }else{
+        element_pairing(res, g1, g2);
+    }
 }
 
 /**
@@ -63,7 +89,7 @@ void IB_CH_KEF_CZS_2014::Hash(IB_CH_KEF_CZS_2014_h &h, IB_CH_KEF_CZS_2014_r &r, 
     r.set(r1, tmp_G);
     // r2 = e(a * Ppub, QID)
     element_mul_zn(tmp_G, pp[Ppub], tmp_Zn);
-    element_pairing(tmp_GT, tmp_G, tmp_H);
+    Pairing(tmp_GT, tmp_G, tmp_H);
     r.set(r2, tmp_GT);
 
     // h = a * P + m * H(L)
@@ -89,7 +115,7 @@ bool IB_CH_KEF_CZS_2014::Check(IB_CH_KEF_CZS_2014_h &h, IB_CH_KEF_CZS_2014_r &r,
     // check the correctness of the r
     // e(a * P,SID) == e(a * Ppub, QID)
     // e(r1, SID) == r2
-    element_pairing(this->tmp_GT, r[r1], td[SID]);
+    Pairing(this->tmp_GT, r[r1], td[SID]);
     if(element_cmp(this->tmp_GT, r[r2]) != 0){
         return false;
     }
@@ -109,14 +135,14 @@ void IB_CH_KEF_CZS_2014::Adapt(IB_CH_KEF_CZS_2014_r &r_p, element_t m_p, IB_CH_K
     r_p.set(r1, tmp_G_2);
     
     // r2_p = r2 * e(SID, H(L))^(m-m_p)
-    element_pairing(this->tmp_GT, tmp_G, td[SID]);
+    Pairing(this->tmp_GT, tmp_G, td[SID]);
     element_pow_zn(this->tmp_GT_2, this->tmp_GT, this->tmp_Zn);
     element_mul(tmp_GT_2, r[r2], this->tmp_GT_2);
     r_p.set(r2, tmp_GT_2);
 
     // check the correctness of the r_p
     // e(r1_p, SID) == r2_p
-    element_pairing(this->tmp_GT_3, r_p[r1], td[SID]);
+    Pairing(this->tmp_GT_3, r_p[r1], td[SID]);
     if(element_cmp(this->tmp_GT_3, r_p[r2]) != 0){
         throw std::runtime_error("IB_CH_KEF_CZS_2014::Adapt(): Adapt failed, r_p is invaid");
     }
@@ -132,4 +158,16 @@ bool IB_CH_KEF_CZS_2014::Verify(IB_CH_KEF_CZS_2014_h &h, IB_CH_KEF_CZS_2014_r &r
 
 
 IB_CH_KEF_CZS_2014::~IB_CH_KEF_CZS_2014() {
+    element_clear(tmp_G);
+    element_clear(tmp_G_2);
+    element_clear(tmp_H);
+    element_clear(tmp_GT);
+    element_clear(tmp_GT_2);
+    element_clear(tmp_GT_3);
+    element_clear(tmp_Zn);
+
+    element_clear(G1);
+    element_clear(G2);
+    element_clear(GT);
+    element_clear(Zn);
 }

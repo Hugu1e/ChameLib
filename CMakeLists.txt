@@ -41,6 +41,9 @@ file(GLOB LIBRARY_SOURCES
     src/scheme/CH/CR_CH_DSS_2020.cpp
     src/scheme/CH/FCR_CH_PreQA_DKS_2020.cpp
     src/scheme/CH/MCH_CDK_2017.cpp
+
+    src/scheme/IBCH/IB_CH_KEF_CZS_2014.cpp
+
     src/AE/RSA.cpp
 )
 add_library(ChameLib STATIC ${LIBRARY_SOURCES})
@@ -110,7 +113,7 @@ if(BUILD_TESTS)
     add_test_executable(FCR_CH_PreQA_DKS_2020_test test/scheme_test/CH_test/FCR_CH_PreQA_DKS_2020_test.cpp)
     add_test_executable(MCH_CDK_2017_test test/scheme_test/CH_test/MCH_CDK_2017_test.cpp)
 
-    # add_test_executable(IB_CH_KEF_CZS_2014_test test/scheme_test/IBCH_test/IB_CH_KEF_CZS_2014_test.cpp)
+    add_test_executable(IB_CH_KEF_CZS_2014_test test/scheme_test/IBCH_test/IB_CH_KEF_CZS_2014_test.cpp)
     # add_test_executable(IB_CH_MD_LSX_2022_test test/scheme_test/IBCH_test/IB_CH_MD_LSX_2022_test.cpp)
     # add_test_executable(IB_CH_ZSS_S1_2003_test test/scheme_test/IBCH_test/IB_CH_ZSS_S1_2003_test.cpp)
     # add_test_executable(IB_CH_ZSS_S2_2003_test test/scheme_test/IBCH_test/IB_CH_ZSS_S2_2003_test.cpp)

@@ -15,10 +15,16 @@ class IB_CH_KEF_CZS_2014_r: public PbcElements {};
 
 class IB_CH_KEF_CZS_2014 : public PbcScheme {
     private:
+        element_t tmp_G, tmp_G_2, tmp_H, tmp_GT, tmp_GT_2, tmp_GT_3, tmp_Zn;
+
+        bool swap;
+
         void H(element_t res, std::string m);
 
+        void Pairing(element_t res, element_t g1, element_t g2);
+
     public:
-        IB_CH_KEF_CZS_2014(element_s *_G1, element_s *_G2, element_s *_GT, element_s *_Zn);
+        IB_CH_KEF_CZS_2014(int curve, bool swap);
 
         void SetUp(IB_CH_KEF_CZS_2014_pp &pp, IB_CH_KEF_CZS_2014_msk &msk, IB_CH_KEF_CZS_2014_td &td, IB_CH_KEF_CZS_2014_h &h, IB_CH_KEF_CZS_2014_r &r, IB_CH_KEF_CZS_2014_r &r_p);
 
