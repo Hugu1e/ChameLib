@@ -36,10 +36,16 @@ class ID_B_CollRes_XSL_2021: public PbcScheme{
         element_t a;  // secret α ∈ Zp
         element_t t;  // t ∈ Zp
 
+        element_t tmp_G, tmp_G_2, tmp_H, tmp_H_2, tmp_GT, tmp_GT_2, tmp_GT_3, tmp_Zn;
+
+        bool swap;
+
         bool getBit(const char *bytes, int index);
 
+        bool Pairing(element_t res, element_t g1, element_t g2);
+
     public:
-        ID_B_CollRes_XSL_2021(element_s *_G1, element_s *_G2, element_s *_GT, element_s *_Zn);
+        ID_B_CollRes_XSL_2021(int curve, bool swap);
 
         void SetUp(ID_B_CollRes_XSL_2021_pp &pp, ID_B_CollRes_XSL_2021_msk &msk, ID_B_CollRes_XSL_2021_tk &tk, ID_B_CollRes_XSL_2021_h &h, ID_B_CollRes_XSL_2021_r &r, ID_B_CollRes_XSL_2021_r &r_p, unsigned long int n);
 
