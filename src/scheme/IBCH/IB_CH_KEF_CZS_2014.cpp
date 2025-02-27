@@ -14,7 +14,7 @@ IB_CH_KEF_CZS_2014::IB_CH_KEF_CZS_2014(int curve, bool swap):PbcScheme(curve) {
 
     element_init_same_as(tmp_G, G1);
     element_init_same_as(tmp_G_2, G1);
-    element_init_same_as(tmp_H, G1);
+    element_init_same_as(tmp_H, G2);
     element_init_same_as(tmp_GT, GT);
     element_init_same_as(tmp_GT_2, GT);
     element_init_same_as(tmp_GT_3, GT);

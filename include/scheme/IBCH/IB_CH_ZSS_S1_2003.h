@@ -19,10 +19,16 @@ class IB_CH_ZSS_S1_2003_r:public PbcElements{};
 
 class IB_CH_ZSS_S1_2003: public PbcScheme {
     private:
+        element_t tmp_G, tmp_H, tmp_GT, tmp_GT_2, tmp_Zn, tmp_Zn_2;
+
+        bool swap;
+
         void H(element_t res, element_t m);
 
+        void Pairing(element_t res, element_t g1, element_t g2);
+
     public:
-        IB_CH_ZSS_S1_2003(element_s *_G1, element_s *_G2, element_s *_GT, element_s *_Zn);
+        IB_CH_ZSS_S1_2003(int curve, bool swap);
 
         void SetUp(IB_CH_ZSS_S1_2003_pp &pp, IB_CH_ZSS_S1_2003_msk &msk, IB_CH_ZSS_S1_2003_pk &pk, IB_CH_ZSS_S1_2003_sk &sk, IB_CH_ZSS_S1_2003_h &h, IB_CH_ZSS_S1_2003_r &r, IB_CH_ZSS_S1_2003_r &r_p);
         

@@ -9,7 +9,7 @@ struct TestParams{
     bool swap;
 };
 
-class CH_Test : public testing::TestWithParam<TestParams>{
+class IBCH_Test : public testing::TestWithParam<TestParams>{
     private:
         bool out_file = true;
         bool visiable = true;
@@ -65,7 +65,7 @@ class CH_Test : public testing::TestWithParam<TestParams>{
         }
 };
 
-TEST_P(CH_Test, Test){
+TEST_P(IBCH_Test, Test){
     IB_CH_KEF_CZS_2014 ch(GetParam().curve, GetParam().swap);
 
     IB_CH_KEF_CZS_2014_pp pp;
@@ -120,10 +120,10 @@ std::vector<TestParams> generateTestParams() {
     int curves[] = {
         Curve::A,
         Curve::A1,
-        // Curve::D_159, Curve::D_201, Curve::D_224, Curve::D_105171_196_185, Curve::D_277699_175_167, Curve::D_278027_190_181,
+        Curve::D_159, Curve::D_201, Curve::D_224, Curve::D_105171_196_185, Curve::D_277699_175_167, Curve::D_278027_190_181,
         Curve::E,
-        // Curve::F, Curve::SM9,
-        // Curve::G_149
+        Curve::F, Curve::SM9,
+        Curve::G_149
     };
 
     bool swaps[] = {false, true};
@@ -143,7 +143,7 @@ const std::vector<TestParams> test_values = generateTestParams();
 
 INSTANTIATE_TEST_CASE_P(
 	IB_CH_KEF_CZS_2014,
-	CH_Test,
+	IBCH_Test,
 	testing::ValuesIn(test_values)
 );
 

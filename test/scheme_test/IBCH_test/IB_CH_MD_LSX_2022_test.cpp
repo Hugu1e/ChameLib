@@ -8,7 +8,7 @@ struct TestParams{
 	int curve;
 };
 
-class CH_Test : public testing::TestWithParam<TestParams>{
+class IBCH_Test : public testing::TestWithParam<TestParams>{
     private:
         bool out_file = true;
         bool visiable = true;
@@ -63,7 +63,7 @@ class CH_Test : public testing::TestWithParam<TestParams>{
         }
 };
 
-TEST_P(CH_Test, Test){
+TEST_P(IBCH_Test, Test){
     IB_CH_MD_LSX_2022 ch(GetParam().curve);
 
     IB_CH_MD_LSX_2022_pp pp;
@@ -136,7 +136,7 @@ const std::vector<TestParams> test_values = generateTestParams();
 
 INSTANTIATE_TEST_CASE_P(
 	IB_CH_MD_LSX_2022,
-	CH_Test,
+	IBCH_Test,
 	testing::ValuesIn(test_values)
 );
 
