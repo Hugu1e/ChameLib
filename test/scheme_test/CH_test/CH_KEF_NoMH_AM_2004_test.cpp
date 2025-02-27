@@ -1,11 +1,73 @@
-#include <scheme/CH/CH_KEF_NoMH_AM_2004.h>
-#include <CommonTest.h>
+#include "scheme/CH/CH_KEF_NoMH_AM_2004.h"
+#include <gtest/gtest.h>
+#include <stack>
+#include <chrono>
+#include "utils/Logger.h"
 
-int test_result = 1;
+struct TestParams{
+	int k;
+};
 
-void test(std::string test_name, std::string curve){
-    CommonTest test(test_name, curve);
+const TestParams test_values[] = {
+    {512}
+};
 
+class CH_Test : public testing::TestWithParam<TestParams>{
+    private:
+        bool out_file = true;
+        bool visiable = true;
+
+        std::stack<std::string> current_test_name;
+        std::stack<std::chrono::_V2::system_clock::time_point> ts;
+
+        FILE *out = NULL;
+        
+    protected:
+        void SetUp() override {
+            std::string filename = ::testing::UnitTest::GetInstance()->current_test_info()->test_case_name();
+            size_t pos = filename.find('/');
+            if (pos != std::string::npos) {
+                filename = filename.substr(0, pos);
+                filename += ".txt";
+            }
+            
+            out = fopen(filename.c_str(), "a");
+            fflush(out);
+
+            std::string testName = ::testing::UnitTest::GetInstance()->current_test_info()->name();
+            int k = GetParam().k;
+            fprintf(out, "%s k %d\n", testName.c_str(), k);
+            printf("%s k %d\n", testName.c_str(), k);
+        }
+
+        void TearDown() override {
+            fprintf(out, "\n\n");
+            fclose(out);
+        }
+
+        void OutTime(std::string name, std::string id, double us) {
+            us /= 1000;
+            if(out_file) fprintf(out, "%s %s time: %lf ms.\n", name.c_str(), id.c_str(), us);
+            if(visiable) printf("%s %s time: %lf ms.\n", name.c_str(), id.c_str(), us);
+        }
+        
+        void start(std::string current_test_name) {
+            std::cout<<"——————————" << current_test_name <<" start——————————" << std::endl;
+            this->current_test_name.push(current_test_name);
+            ts.push(std::chrono::system_clock::now());
+        }
+
+        void end(std::string current_test_name) {
+            std::chrono::_V2::system_clock::time_point te = std::chrono::system_clock::now();
+            if(this->current_test_name.empty() || this->current_test_name.top() != current_test_name) throw std::runtime_error("end(): wrong test pair");
+            OutTime(current_test_name, ::testing::UnitTest::GetInstance()->current_test_info()->name(), std::chrono::duration_cast<std::chrono::microseconds>(te - ts.top()).count());
+            std::cout<<"——————————" << current_test_name <<" end——————————" << std::endl;
+            this->current_test_name.pop();
+            ts.pop();
+        }
+};
+
+TEST_P(CH_Test, Test){
     CH_KEF_NoMH_AM_2004 ch = CH_KEF_NoMH_AM_2004();
 
     CH_KEF_NoMH_AM_2004_pk pk;
@@ -18,63 +80,51 @@ void test(std::string test_name, std::string curve){
     RandomGenerator::RandomInLength(m, 1024);
     RandomGenerator::RandomInLength(m_p, 1024);
 
-
-    test.start("Setup");
+    this->start("Setup");
     ch.Setup(pk, sk, h, r, r_p);
-    test.end("Setup");
+    this->end("Setup");
 
-    test.start("KeyGen");
-    ch.KeyGen(pk, sk, 512);
-    test.end("KeyGen");
+    this->start("KeyGen");
+    ch.KeyGen(pk, sk, GetParam().k);
+    this->end("KeyGen");
     pk.print();
     sk.print();
 
     Logger::PrintGmp("m", m);
-    test.start("Hash");
+    this->start("Hash");
     ch.Hash(h, r, m, pk);
-    test.end("Hash");
+    this->end("Hash");
     h.print();
     r.print();
 
 
-    test.start("Check");
+    this->start("Check");
     bool check_result = ch.Check(h, r, m, pk);
-    test.end("Check");
-
-    if(check_result){
-        printf("Hash check successful!\n");
-    }else{
-        printf("Hash check failed.\n");
-    }
+    this->end("Check");
+    ASSERT_TRUE(check_result);
 
     Logger::PrintGmp("m_p", m_p);
-    test.start("Adapt");
+    this->start("Adapt");
     ch.Adapt(r_p, m_p, h, r, m, pk, sk);
-    test.end("Adapt");
+    this->end("Adapt");
     r_p.print();
 
-    test.start("Verify");
+    this->start("Verify");
     bool verify_result = ch.Verify(h, r_p, m_p, pk);
-    test.end("Verify");
-
-    if(verify_result){
-        printf("Verify successful!\n");
-        test_result = 0;
-    }else{
-        printf("Verify failed.\n");
-    }
+    this->end("Verify");
+    ASSERT_TRUE(verify_result);
 }
 
+INSTANTIATE_TEST_CASE_P(
+	CH_KEF_NoMH_AM_2004,
+	CH_Test,
+	testing::ValuesIn(test_values)
+);
 
-int main(int argc, char *argv[]){
-    if(argc == 1) {
-        test(argv[0], "a");
-    }else if(argc == 2){
-        test(argv[0], argv[1]);
-    }else{
-        printf("usage: %s [a|e|i|f|d224]\n", argv[0]);
-        return 1;
-    }
-    return test_result;
+int main(int argc, char **argv) 
+{
+	::testing::InitGoogleTest(&argc, argv);
+	return RUN_ALL_TESTS();
 }
+
 
