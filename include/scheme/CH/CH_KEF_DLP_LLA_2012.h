@@ -17,12 +17,14 @@ class CH_KEF_DLP_LLA_2012: public PbcScheme{
         element_t y1;
         element_t t;
 
+        element_t tmp_G, tmp_G_2, tmp_Zn, tmp_Zn_2, tmp_Zn_3;
+
         void H1(element_t res, element_t m1, element_t m2, element_t m3);
         void H2(element_t res, element_t m);
    
 
     public:
-        CH_KEF_DLP_LLA_2012(element_s *_G1, element_s *_G2, element_s *_GT, element_s *_Zn);
+        CH_KEF_DLP_LLA_2012(int curve, int group);
 
         void LabelManager(CH_KEF_DLP_LLA_2012_label &label, element_t y1, element_t w1, element_t t);
 
