@@ -1,6 +1,8 @@
 #include "scheme/CH/CH_CDK_2017.h"
-#include "CommonTest.h"
 #include <gtest/gtest.h>
+#include <stack>
+#include <chrono>
+#include "utils/Logger.h"
 
 struct TestParams{
 	int lamuda;
@@ -38,6 +40,7 @@ class CH_Test : public testing::TestWithParam<TestParams>{
             std::string testName = ::testing::UnitTest::GetInstance()->current_test_info()->name();
             int lamuda = GetParam().lamuda;
             fprintf(out, "%s lamuda %d\n", testName.c_str(), lamuda);
+            printf("%s lamuda %d\n", testName.c_str(), lamuda);
         }
 
         void TearDown() override {
@@ -82,7 +85,7 @@ TEST_P(CH_Test, Test){
     this->end("SetUp");
 
     this->start("KeyGen");
-    ch.KeyGen(pk, sk, 1024);
+    ch.KeyGen(pk, sk, GetParam().lamuda);
     this->end("KeyGen");
 
     RandomGenerator::RandomN(m, pk.get_rsa_pk()[AE_RSA::n]);

@@ -1,6 +1,7 @@
 #include "scheme/CH/CH_ET_BC_CDK_2017.h"
-#include "CommonTest.h"
 #include <gtest/gtest.h>
+#include <stack>
+#include <chrono>
 
 struct TestParams{
 	int lamuda;
@@ -38,6 +39,7 @@ class CH_Test : public testing::TestWithParam<TestParams>{
             std::string testName = ::testing::UnitTest::GetInstance()->current_test_info()->name();
             int lamuda = GetParam().lamuda;
             fprintf(out, "%s lamuda %d\n", testName.c_str(), lamuda);
+            printf("%s lamuda %d\n", testName.c_str(), lamuda);
         }
 
         void TearDown() override {
@@ -80,7 +82,7 @@ TEST_P(CH_Test, Test){
     std::string m_p = "789101";
 
     this->start("SetUp");
-    ch.SetUp(pp, pk, sk, h, r, r_p, etd, 1024);
+    ch.SetUp(pp, pk, sk, h, r, r_p, etd, GetParam().lamuda);
     this->end("SetUp");
 
     this->start("KeyGen");

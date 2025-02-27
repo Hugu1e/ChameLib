@@ -1,6 +1,15 @@
 #include <scheme/CH/CH_ET_KOG_CDK_2017.h>
 
-CH_ET_KOG_CDK_2017_NIZKPOK::CH_ET_KOG_CDK_2017_NIZKPOK(element_s *_G1, element_s *_G2, element_s *_GT, element_s *_Zn): PbcScheme(_G1, _G2, _GT, _Zn){}
+CH_ET_KOG_CDK_2017_NIZKPOK::CH_ET_KOG_CDK_2017_NIZKPOK(){}
+
+void CH_ET_KOG_CDK_2017_NIZKPOK::init(element_t _G, element_t _Zn){
+    PbcScheme::init(_G, _Zn);
+
+    element_init_same_as(tmp_G, _G);
+    element_init_same_as(tmp_G_2, _G);
+    element_init_same_as(tmp_Zn, _Zn);
+    element_init_same_as(tmp_Zn_2, _Zn);
+}
 
 /**
  * @param[out] z
@@ -43,10 +52,43 @@ bool CH_ET_KOG_CDK_2017_NIZKPOK::verify(element_t z, element_t R, element_t pk, 
     return element_cmp(tmp_G, tmp_G_2) == 0;
 }
 
-CH_ET_KOG_CDK_2017_NIZKPOK::~CH_ET_KOG_CDK_2017_NIZKPOK(){}
+CH_ET_KOG_CDK_2017_NIZKPOK::~CH_ET_KOG_CDK_2017_NIZKPOK(){
+    element_clear(tmp_G);
+    element_clear(tmp_G_2);
+    element_clear(tmp_Zn);
+    element_clear(tmp_Zn_2);
+
+    element_clear(this->G1);
+    element_clear(this->Zn);
+}
 
 
-CH_ET_KOG_CDK_2017::CH_ET_KOG_CDK_2017(element_s *_G1, element_s *_G2, element_s *_GT, element_s *_Zn): PbcScheme(_G1, _G2, _GT, _Zn), nizkpok(_G1, _G2, _GT, _Zn){}
+CH_ET_KOG_CDK_2017::CH_ET_KOG_CDK_2017(int curve, int group): PbcScheme(curve){
+    switch(group){
+        case Group::G1:
+            element_init_G1(G1, pairing);
+            break;
+        case Group::G2:
+            element_init_G2(G1, pairing);
+            break;
+        case Group::GT:
+            element_init_GT(G1, pairing);
+            break;
+        default:
+            throw std::invalid_argument("CH_ET_KOG_CDK_2017::CH_ET_KOG_CDK_2017(): Invalid group type");
+    }
+    element_init_Zr(Zn, pairing);
+
+    element_init_same_as(tmp_G, G1);
+    element_init_same_as(tmp_G_2, G1);
+    element_init_same_as(tmp_G_3, G1);
+    element_init_same_as(tmp_Zn, Zn);
+    element_init_same_as(tmp_Zn_2, Zn);
+    element_init_same_as(tmp_Zn_3, Zn);
+    element_init_same_as(tmp_Zn_4, Zn);
+
+    nizkpok.init(G1, Zn);
+}
 
 void CH_ET_KOG_CDK_2017::SetUp(CH_ET_KOG_CDK_2017_pp &pp, CH_ET_KOG_CDK_2017_sk &sk, CH_ET_KOG_CDK_2017_pk &pk, 
     CH_ET_KOG_CDK_2017_h &h, CH_ET_KOG_CDK_2017_etd &etd, CH_ET_KOG_CDK_2017_r &r, CH_ET_KOG_CDK_2017_r &r_p){
@@ -229,4 +271,15 @@ bool CH_ET_KOG_CDK_2017::Verify(CH_ET_KOG_CDK_2017_h &hash, element_t m_p, CH_ET
     return Check(hash, m_p, r_p, pk, pp);
 }
 
-CH_ET_KOG_CDK_2017::~CH_ET_KOG_CDK_2017() {}
+CH_ET_KOG_CDK_2017::~CH_ET_KOG_CDK_2017() {
+    element_clear(tmp_G);
+    element_clear(tmp_G_2);
+    element_clear(tmp_G_3);
+    element_clear(tmp_Zn);
+    element_clear(tmp_Zn_2);
+    element_clear(tmp_Zn_3);
+    element_clear(tmp_Zn_4);
+
+    element_clear(this->G1);
+    element_clear(this->Zn);
+}

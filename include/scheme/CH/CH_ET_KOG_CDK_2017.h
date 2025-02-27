@@ -73,8 +73,13 @@ class CH_ET_KOG_CDK_2017_r{
 };
 
 class CH_ET_KOG_CDK_2017_NIZKPOK: public PbcScheme{
+    private:
+        element_t tmp_G, tmp_G_2, tmp_Zn, tmp_Zn_2;
+
     public:
-        CH_ET_KOG_CDK_2017_NIZKPOK(element_s *_G1, element_s *_G2, element_s *_GT, element_s *_Zn);
+        CH_ET_KOG_CDK_2017_NIZKPOK();
+
+        void init(element_t _G, element_t _Zn);
 
         void proof(element_t z, element_t R, element_t pk, element_t sk, element_t g);
 
@@ -89,8 +94,10 @@ class CH_ET_KOG_CDK_2017: public PbcScheme{
         AE_RSA enc;
         CH_ET_KOG_CDK_2017_NIZKPOK nizkpok;
 
+        element_t tmp_G, tmp_G_2, tmp_G_3, tmp_Zn, tmp_Zn_2, tmp_Zn_3, tmp_Zn_4;
+
     public:
-        CH_ET_KOG_CDK_2017(element_s *_G1, element_s *_G2, element_s *_GT, element_s *_Zn);
+        CH_ET_KOG_CDK_2017(int curve, int group);
 
         void SetUp(CH_ET_KOG_CDK_2017_pp &pp, CH_ET_KOG_CDK_2017_sk &sk, CH_ET_KOG_CDK_2017_pk &pk, 
             CH_ET_KOG_CDK_2017_h &h, CH_ET_KOG_CDK_2017_etd &etd, CH_ET_KOG_CDK_2017_r &r, CH_ET_KOG_CDK_2017_r &r_p);

@@ -32,6 +32,7 @@
 // exception headers
 #include "exception/BaseException.h"
 #include "exception/ElementException.h"
+#include "exception/CurveException.h"
 
 // scheme headers
 #include "scheme/CH/CH_AMV_2017.h"

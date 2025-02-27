@@ -5,9 +5,10 @@
 #include <string>
 
 class BaseException: public std::exception{
-    private:
+    protected:
         std::string m;
     public:
+        BaseException(){}
         BaseException(const std::string& message):m(message){}
 
         const char* what() const noexcept override {
