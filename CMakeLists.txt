@@ -37,6 +37,7 @@ file(GLOB LIBRARY_SOURCES
     src/scheme/CH/CH_KEF_MH_RSANN_F_AM_2004.cpp
     src/scheme/CH/CH_KEF_MH_SDH_DL_AM_2004.cpp
     src/scheme/CH/CH_KEF_NoMH_AM_2004.cpp
+    src/scheme/CH/CHET_RSA_CDK_2017.cpp
     src/scheme/CH/MCH_CDK_2017.cpp
     src/AE/RSA.cpp
 )
@@ -102,7 +103,7 @@ if(BUILD_TESTS)
     add_test_executable(CH_KEF_MH_RSANN_F_AM_2004_test test/scheme_test/CH_test/CH_KEF_MH_RSANN_F_AM_2004_test.cpp)
     add_test_executable(CH_KEF_MH_SDH_DL_AM_2004_test test/scheme_test/CH_test/CH_KEF_MH_SDH_DL_AM_2004_test.cpp)
     add_test_executable(CH_KEF_NoMH_AM_2004_test test/scheme_test/CH_test/CH_KEF_NoMH_AM_2004_test.cpp)
-    # add_test_executable(CHET_RSA_CDK_2017_test test/scheme_test/CH_test/CHET_RSA_CDK_2017_test.cpp)
+    add_test_executable(CHET_RSA_CDK_2017_test test/scheme_test/CH_test/CHET_RSA_CDK_2017_test.cpp)
     # add_test_executable(CR_CH_DSS_2020_test test/scheme_test/CH_test/CR_CH_DSS_2020_test.cpp)
     # add_test_executable(FCR_CH_PreQA_DKS_2020_test test/scheme_test/CH_test/FCR_CH_PreQA_DKS_2020_test.cpp)
     add_test_executable(MCH_CDK_2017_test test/scheme_test/CH_test/MCH_CDK_2017_test.cpp)
