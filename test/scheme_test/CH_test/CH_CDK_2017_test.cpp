@@ -6,6 +6,13 @@ struct TestParams{
 	int lamuda;
 };
 
+const TestParams test_values[] = {
+    {256},
+    {512},
+    {1024},
+    {2048}
+};
+
 class CH_Test : public testing::TestWithParam<TestParams>{
     private:
         bool out_file = true;
@@ -27,9 +34,14 @@ class CH_Test : public testing::TestWithParam<TestParams>{
             
             out = fopen(filename.c_str(), "a");
             fflush(out);
+
+            std::string testName = ::testing::UnitTest::GetInstance()->current_test_info()->name();
+            int lamuda = GetParam().lamuda;
+            fprintf(out, "%s lamuda %d\n", testName.c_str(), lamuda);
         }
 
         void TearDown() override {
+            fprintf(out, "\n\n");
             fclose(out);
         }
 
@@ -101,13 +113,6 @@ TEST_P(CH_Test, Test){
     this->end("Verify");
     ASSERT_TRUE(verify_result);
 }
-
-const TestParams test_values[] = {
-    {256},
-    {512},
-    {1024},
-    {2048}
-};
 
 INSTANTIATE_TEST_CASE_P(
 	CH_CDK_2017,
