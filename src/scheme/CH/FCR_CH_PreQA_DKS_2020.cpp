@@ -1,6 +1,21 @@
 #include <scheme/CH/FCR_CH_PreQA_DKS_2020.h>
 
-FCR_CH_PreQA_DKS_2020::FCR_CH_PreQA_DKS_2020(element_s *_G1, element_s *_G2, element_s *_GT, element_s *_Zn) : PbcScheme(_G1, _G2, _GT, _Zn) {
+FCR_CH_PreQA_DKS_2020::FCR_CH_PreQA_DKS_2020(int curve, int group) : PbcScheme(curve) {
+    switch(group){
+        case Group::G1:
+            element_init_G1(G1, pairing);
+            break;
+        case Group::G2:
+            element_init_G2(G1, pairing);
+            break;
+        case Group::GT:
+            element_init_GT(G1, pairing);
+            break;
+        default:
+            throw CurveException(CurveException::INVALID_GROUP);
+    }
+    element_init_Zr(Zn, pairing);
+
     // xi,k11,k12,k2,e2,s2;
     element_init_same_as(this->xi, Zn);
     element_init_same_as(this->k11, Zn);
@@ -9,6 +24,12 @@ FCR_CH_PreQA_DKS_2020::FCR_CH_PreQA_DKS_2020(element_s *_G1, element_s *_G2, ele
     element_init_same_as(this->u1, G1);
     element_init_same_as(this->u2, G1);
     element_init_same_as(this->e, Zn);
+
+    element_init_same_as(tmp_G, G1);
+    element_init_same_as(tmp_G_2, G1);
+    element_init_same_as(tmp_G_3, G1);
+    element_init_same_as(tmp_Zn, Zn);
+    element_init_same_as(tmp_Zn_2, Zn);
 }
 
 void FCR_CH_PreQA_DKS_2020::SetUp(FCR_CH_PreQA_DKS_2020_pp &pp, FCR_CH_PreQA_DKS_2020_pk &pk, FCR_CH_PreQA_DKS_2020_sk &sk, FCR_CH_PreQA_DKS_2020_h &h, FCR_CH_PreQA_DKS_2020_r &r, FCR_CH_PreQA_DKS_2020_r &r_p) {
@@ -158,4 +179,13 @@ FCR_CH_PreQA_DKS_2020::~FCR_CH_PreQA_DKS_2020() {
     element_clear(this->u1);
     element_clear(this->u2);
     element_clear(this->e);
+
+    element_clear(tmp_G);
+    element_clear(tmp_G_2);
+    element_clear(tmp_G_3);
+    element_clear(tmp_Zn);
+    element_clear(tmp_Zn_2);
+    
+    element_clear(G1);
+    element_clear(Zn);
 }
