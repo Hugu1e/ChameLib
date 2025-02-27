@@ -12,7 +12,7 @@ CH_FS_ECC_CCT_2024::CH_FS_ECC_CCT_2024(int curve, int group): PbcScheme(curve){
             element_init_GT(G1, pairing);
             break;
         default:
-            throw std::invalid_argument("CH_ET_KOG_CDK_2017::CH_ET_KOG_CDK_2017(): Invalid group type");
+            throw CurveException(CurveException::INVALID_GROUP);
     }
     element_init_Zr(Zn, pairing);
 
@@ -212,4 +212,7 @@ CH_FS_ECC_CCT_2024::~CH_FS_ECC_CCT_2024() {
     element_clear(this->tmp_G);
     element_clear(this->tmp_G_2);
     element_clear(this->tmp_Zn);
+
+    element_clear(G1);
+    element_clear(Zn);
 }

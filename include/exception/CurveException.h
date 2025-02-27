@@ -10,6 +10,9 @@ class CurveException: public BaseException{
                 case INVALID_CURVE:
                     m = "Invalid curve type";
                     break;
+                case INVALID_GROUP:
+                    m = "Invalid group type";
+                    break;
                 default:
                     m = "Unknown curve exception";
                     break;
@@ -17,6 +20,7 @@ class CurveException: public BaseException{
         }
 
         const static int INVALID_CURVE = 0;
+        const static int INVALID_GROUP = 1;
 };
 
 #endif  // CHAMELIB_CURVEEXCEPTION_H

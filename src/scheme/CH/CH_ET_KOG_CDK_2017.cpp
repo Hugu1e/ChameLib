@@ -58,8 +58,8 @@ CH_ET_KOG_CDK_2017_NIZKPOK::~CH_ET_KOG_CDK_2017_NIZKPOK(){
     element_clear(tmp_Zn);
     element_clear(tmp_Zn_2);
 
-    element_clear(this->G1);
-    element_clear(this->Zn);
+    element_clear(G1);
+    element_clear(Zn);
 }
 
 
@@ -75,7 +75,7 @@ CH_ET_KOG_CDK_2017::CH_ET_KOG_CDK_2017(int curve, int group): PbcScheme(curve){
             element_init_GT(G1, pairing);
             break;
         default:
-            throw std::invalid_argument("CH_ET_KOG_CDK_2017::CH_ET_KOG_CDK_2017(): Invalid group type");
+            throw CurveException(CurveException::INVALID_GROUP);
     }
     element_init_Zr(Zn, pairing);
 
@@ -280,6 +280,6 @@ CH_ET_KOG_CDK_2017::~CH_ET_KOG_CDK_2017() {
     element_clear(tmp_Zn_3);
     element_clear(tmp_Zn_4);
 
-    element_clear(this->G1);
-    element_clear(this->Zn);
+    element_clear(G1);
+    element_clear(Zn);
 }

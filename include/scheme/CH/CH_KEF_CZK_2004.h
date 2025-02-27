@@ -11,8 +11,11 @@ class CH_KEF_CZK_2004_sk : public PbcElements{};
 class CH_KEF_CZK_2004_r : public PbcElements{};
 
 class CH_KEF_CZK_2004: public PbcScheme {
+    private:
+        element_t tmp_G, tmp_G_2, tmp_Zn, tmp_Zn_2, tmp_Zn_3, tmp_Zn_4;
+
     public:
-        CH_KEF_CZK_2004(element_s *_G1, element_s *_G2, element_s *_GT, element_s *_Zn);
+        CH_KEF_CZK_2004(int curve, int group);
 
         void SetUp(CH_KEF_CZK_2004_pp &pp, CH_KEF_CZK_2004_pk &pk, CH_KEF_CZK_2004_sk &sk, CH_KEF_CZK_2004_r &r, CH_KEF_CZK_2004_r &r_p);
 
