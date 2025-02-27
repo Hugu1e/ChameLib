@@ -12,8 +12,11 @@ class IB_CH_MD_LSX_2022_h : public PbcElements {};
 class IB_CH_MD_LSX_2022_r : public PbcElements {};
 
 class IB_CH_MD_LSX_2022: public PbcScheme {
+    private:
+        element_t tmp_G, tmp_G_2, tmp_G_3, tmp_GT, tmp_GT_2, tmp_GT_3, tmp_Zn, tmp_Zn_2, tmp_Zn_3;
+
     public:
-        IB_CH_MD_LSX_2022(element_s *_G1, element_s *_G2, element_s *_GT, element_s *_Zn);
+        IB_CH_MD_LSX_2022(int curve);
 
         void SetUp(IB_CH_MD_LSX_2022_pp &pp, IB_CH_MD_LSX_2022_msk &msk, IB_CH_MD_LSX_2022_td &td, IB_CH_MD_LSX_2022_h &h, IB_CH_MD_LSX_2022_r &r, IB_CH_MD_LSX_2022_r &r_p);
 
