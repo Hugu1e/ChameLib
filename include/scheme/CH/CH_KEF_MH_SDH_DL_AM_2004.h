@@ -14,10 +14,12 @@ class CH_KEF_MH_SDH_DL_AM_2004_r : public PbcElements{};
 
 class CH_KEF_MH_SDH_DL_AM_2004: public PbcScheme{
     private:
+        element_t tmp_G, tmp_G_2, tmp_GT, tmp_GT_2, tmp_Zn, tmp_Zn_2, tmp_Zn_3;
+
         void H(element_t res, element_t m);
 
     public:
-        CH_KEF_MH_SDH_DL_AM_2004(element_s *_G1, element_s *_G2, element_s *_GT, element_s *_Zn);
+        CH_KEF_MH_SDH_DL_AM_2004(int curve);
         
         void SetUp(CH_KEF_MH_SDH_DL_AM_2004_pp &pp, CH_KEF_MH_SDH_DL_AM_2004_pk &pk, CH_KEF_MH_SDH_DL_AM_2004_sk &sk, CH_KEF_MH_SDH_DL_AM_2004_h &h, CH_KEF_MH_SDH_DL_AM_2004_r &r, CH_KEF_MH_SDH_DL_AM_2004_r &r_p);
 

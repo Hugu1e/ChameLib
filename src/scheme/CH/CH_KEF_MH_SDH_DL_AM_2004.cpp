@@ -1,6 +1,18 @@
 #include <scheme/CH/CH_KEF_MH_SDH_DL_AM_2004.h>
 
-CH_KEF_MH_SDH_DL_AM_2004::CH_KEF_MH_SDH_DL_AM_2004(element_s *_G1, element_s *_G2, element_s *_GT, element_s *_Zn): PbcScheme(_G1, _G2, _GT, _Zn) {}
+CH_KEF_MH_SDH_DL_AM_2004::CH_KEF_MH_SDH_DL_AM_2004(int curve): PbcScheme(curve) {
+    element_init_G1(G1, pairing);
+    element_init_GT(GT, pairing);
+    element_init_Zr(Zn, pairing);
+
+    element_init_same_as(tmp_G, G1);
+    element_init_same_as(tmp_G_2, G1);
+    element_init_same_as(tmp_GT, GT);
+    element_init_same_as(tmp_GT_2, GT);
+    element_init_same_as(tmp_Zn, Zn);
+    element_init_same_as(tmp_Zn_2, Zn);
+    element_init_same_as(tmp_Zn_3, Zn);
+}
 
 /**
  * input : 
@@ -109,4 +121,16 @@ bool CH_KEF_MH_SDH_DL_AM_2004::Verify(CH_KEF_MH_SDH_DL_AM_2004_h &h, CH_KEF_MH_S
     return this->Check(h, r_p, m_p, label, pk, pp);
 }
 
-CH_KEF_MH_SDH_DL_AM_2004::~CH_KEF_MH_SDH_DL_AM_2004() {}
+CH_KEF_MH_SDH_DL_AM_2004::~CH_KEF_MH_SDH_DL_AM_2004() {
+    element_clear(tmp_G);
+    element_clear(tmp_G_2);
+    element_clear(tmp_GT);
+    element_clear(tmp_GT_2);
+    element_clear(tmp_Zn);
+    element_clear(tmp_Zn_2);
+    element_clear(tmp_Zn_3);
+
+    element_clear(G1);
+    element_clear(GT);
+    element_clear(Zn);
+}
