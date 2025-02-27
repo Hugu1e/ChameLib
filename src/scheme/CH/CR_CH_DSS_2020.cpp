@@ -1,6 +1,21 @@
 #include <scheme/CH/CR_CH_DSS_2020.h>
 
-CR_CH_DSS_2020::CR_CH_DSS_2020(element_s *_G1, element_s *_G2, element_s *_GT, element_s *_Zn):PbcScheme(_G1, _G2, _GT, _Zn){
+CR_CH_DSS_2020::CR_CH_DSS_2020(int curve, int group):PbcScheme(curve) {
+    switch(group){
+        case Group::G1:
+            element_init_G1(G1, pairing);
+            break;
+        case Group::G2:
+            element_init_G2(G1, pairing);
+            break;
+        case Group::GT:
+            element_init_GT(G1, pairing);
+            break;
+        default:
+            throw CurveException(CurveException::INVALID_GROUP);
+    }
+    element_init_Zr(Zn, pairing);
+
     element_init_same_as(this->xi, Zn);
     element_init_same_as(this->k1, Zn);
     element_init_same_as(this->u11, G1);
@@ -8,6 +23,13 @@ CR_CH_DSS_2020::CR_CH_DSS_2020(element_s *_G1, element_s *_G2, element_s *_GT, e
     element_init_same_as(this->u2, G1);
     element_init_same_as(this->e, Zn);
     element_init_same_as(this->k2, Zn);
+
+    element_init_same_as(tmp_G, G1);
+    element_init_same_as(tmp_G_2, G1);
+    element_init_same_as(tmp_G_3, G1);
+    element_init_same_as(tmp_G_4, G1);
+    element_init_same_as(tmp_Zn, Zn);
+    element_init_same_as(tmp_Zn_2, Zn);
 }
 
 /**
@@ -184,4 +206,14 @@ CR_CH_DSS_2020::~CR_CH_DSS_2020() {
     element_clear(this->u2);
     element_clear(this->e);
     element_clear(this->k2);
+
+    element_clear(tmp_G);
+    element_clear(tmp_G_2);
+    element_clear(tmp_G_3);
+    element_clear(tmp_G_4);
+    element_clear(tmp_Zn);
+    element_clear(tmp_Zn_2);
+
+    element_clear(G1);
+    element_clear(Zn);
 }

@@ -17,10 +17,12 @@ class CR_CH_DSS_2020: public PbcScheme{
         element_t u11,u12,u2,e;
         element_t k2;
 
+        element_t tmp_G, tmp_G_2, tmp_G_3, tmp_G_4, tmp_Zn, tmp_Zn_2;
+
         void H(element_t res, element_t y, element_t h1, element_t h2, element_t m, element_t u11,element_t u12,element_t u2);
 
     public:
-        CR_CH_DSS_2020(element_s *_G1, element_s *_G2, element_s *_GT, element_s *_Zn);
+        CR_CH_DSS_2020(int curve, int group);
 
         void SetUp(CR_CH_DSS_2020_pp &pp, CR_CH_DSS_2020_pk &pk, CR_CH_DSS_2020_sk &sk, CR_CH_DSS_2020_h &h, CR_CH_DSS_2020_r &r, CR_CH_DSS_2020_r &r_p);
 
