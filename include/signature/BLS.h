@@ -14,8 +14,15 @@ class BLS: public PbcScheme{
     private:
         void H(element_t res, std::string m);
 
+        bool swap;
+        element_t tmp_G, tmp_H, tmp_H_2, tmp_GT, tmp_GT_2, tmp_Zn;
+
+        void Pairing(element_t res, element_t a, element_t b);
     public:
-        BLS(element_s *_G1, element_s *_G2, element_s *_GT, element_s *_Zn);
+        BLS(){}
+        BLS(int curve, bool swap);
+
+        void init(element_t _G, element_t _H, element_t _GT, element_t _Zn);
 
         void Setup(BLS_pp &pp, BLS_pk &pk, BLS_sk &sk, BLS_signature &signature);
         void Setup(BLS_pp &pp, BLS_pk &pk, BLS_sk &sk, BLS_signature &signature, element_t _g);
@@ -26,7 +33,7 @@ class BLS: public PbcScheme{
 
         bool Verify(BLS_pp &pp, BLS_pk &pk, std::string message, BLS_signature &signature);
 
-        ~BLS() override;
+        ~BLS();
         
         enum {
             g

@@ -19,12 +19,18 @@ file(GLOB LIBRARY_SOURCES
     src/exception/*.cpp
     src/curve/*.cpp
     src/utils/*.cpp
-    # src/SE/*.cpp
-    # src/signature/*.cpp
+    src/SE/*.cpp
+    src/signature/*.cpp
     # src/ABE/*.cpp
     # src/scheme/CH/*.cpp
-    # src/scheme/IBCH/*.cpp
+    src/scheme/IBCH/*.cpp
     # src/scheme/PBCH/*.cpp
+
+    src/ABE/MA_ABE.cpp
+    src/ABE/Policy_generation.cpp
+    src/ABE/Policy_resolution.cpp
+
+    src/scheme/PBCH/DPCH_MXN_2022.cpp
 
     src/scheme/CH/CH_CDK_2017.cpp
     src/scheme/CH/CH_ET_BC_CDK_2017.cpp
@@ -41,11 +47,6 @@ file(GLOB LIBRARY_SOURCES
     src/scheme/CH/CR_CH_DSS_2020.cpp
     src/scheme/CH/FCR_CH_PreQA_DKS_2020.cpp
     src/scheme/CH/MCH_CDK_2017.cpp
-
-    src/scheme/IBCH/IB_CH_KEF_CZS_2014.cpp
-    src/scheme/IBCH/IB_CH_MD_LSX_2022.cpp
-    src/scheme/IBCH/IB_CH_ZSS_S1_2003.cpp
-    src/scheme/IBCH/IB_CH_ZSS_S2_2003.cpp
 
     src/AE/RSA.cpp
 )
@@ -92,9 +93,9 @@ if(BUILD_TESTS)
     # add_test_executable(PKE_CPA_AMV_2017_test test/AE_test/PKE_CPA_AMV_2017_test.cpp)
     # add_test_executable(PKE_CCA_AMV_2017_test test/AE_test/PKE_CCA_AMV_2017_test.cpp)
     # add_test_executable(AES_test test/SE_test/AES_test.cpp)
-    # add_test_executable(BLS_test test/signature_test/BLS_test.cpp)
+    add_test_executable(BLS_test test/signature_test/BLS_test.cpp)
     # add_test_executable(CP_ABE_test test/ABE_test/CP_ABE_test.cpp)
-    # add_test_executable(MA_ABE_test test/ABE_test/MA_ABE_test.cpp)
+    add_test_executable(MA_ABE_test test/ABE_test/MA_ABE_test.cpp)
     # add_test_executable(ABET_test test/ABE_test/ABET_test.cpp)
     # add_test_executable(RABE_XNM_test test/ABE_test/RABE_XNM_test.cpp)
     # add_test_executable(RABE_TMM_test test/ABE_test/RABE_TMM_test.cpp)
@@ -120,9 +121,9 @@ if(BUILD_TESTS)
     add_test_executable(IB_CH_MD_LSX_2022_test test/scheme_test/IBCH_test/IB_CH_MD_LSX_2022_test.cpp)
     add_test_executable(IB_CH_ZSS_S1_2003_test test/scheme_test/IBCH_test/IB_CH_ZSS_S1_2003_test.cpp)
     add_test_executable(IB_CH_ZSS_S2_2003_test test/scheme_test/IBCH_test/IB_CH_ZSS_S2_2003_test.cpp)
-    # add_test_executable(ID_B_CollRes_XSL_2021_test test/scheme_test/IBCH_test/ID_B_CollRes_XSL_2021_test.cpp)
+    add_test_executable(ID_B_CollRes_XSL_2021_test test/scheme_test/IBCH_test/ID_B_CollRes_XSL_2021_test.cpp)
 
-    # add_test_executable(DPCH_MXN_2022_test test/scheme_test/PBCH_test/DPCH_MXN_2022_test.cpp)
+    add_test_executable(DPCH_MXN_2022_test test/scheme_test/PBCH_test/DPCH_MXN_2022_test.cpp)
     # add_test_executable(MAPCH_ZLW_2021_test test/scheme_test/PBCH_test/MAPCH_ZLW_2021_test.cpp)
     # add_test_executable(PCH_DSS_2019_test test/scheme_test/PBCH_test/PCH_DSS_2019_test.cpp)
     # add_test_executable(PCHBA_TLL_2020_test test/scheme_test/PBCH_test/PCHBA_TLL_2020_test.cpp)

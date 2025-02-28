@@ -1,7 +1,37 @@
 #include "ABE/MA_ABE.h"
 
-MA_ABE::MA_ABE(element_s *_G1, element_s *_G2, element_s *_GT, element_s *_Zn): PbcScheme(_G1, _G2, _GT, _Zn){
+MA_ABE::MA_ABE(int curve): PbcScheme(curve){
+    element_init_G1(G1, pairing);
+    element_init_GT(GT, pairing);
+    element_init_Zr(Zn, pairing);
+
     element_init_same_as(this->z, Zn);
+
+    element_init_same_as(this->tmp_G, G1);
+    element_init_same_as(this->tmp_G_2, G1);
+    element_init_same_as(this->tmp_G_3, G1);
+    element_init_same_as(this->tmp_G_4, G1);
+    element_init_same_as(this->tmp_GT, GT);
+    element_init_same_as(this->tmp_GT_2, GT);
+    element_init_same_as(this->tmp_GT_3, GT);
+    element_init_same_as(this->tmp_Zn, Zn);
+}
+
+void MA_ABE::init(element_t _G1, element_t _GT, element_t _Zn){
+    element_init_same_as(G1, _G1);
+    element_init_same_as(GT, _GT);
+    element_init_same_as(Zn, _Zn);
+
+    element_init_same_as(this->z, Zn);
+
+    element_init_same_as(this->tmp_G, G1);
+    element_init_same_as(this->tmp_G_2, G1);
+    element_init_same_as(this->tmp_G_3, G1);
+    element_init_same_as(this->tmp_G_4, G1);
+    element_init_same_as(this->tmp_GT, GT);
+    element_init_same_as(this->tmp_GT_2, GT);
+    element_init_same_as(this->tmp_GT_3, GT);
+    element_init_same_as(this->tmp_Zn, Zn);
 }
 
 /**
@@ -389,4 +419,17 @@ void MA_ABE::Decrypt(element_t res, std::vector<MA_ABE_skgidA *> &skgidAs, MA_AB
 
 MA_ABE::~MA_ABE(){
     element_clear(this->z);
+
+    element_clear(this->tmp_G);
+    element_clear(this->tmp_G_2);
+    element_clear(this->tmp_G_3);
+    element_clear(this->tmp_G_4);
+    element_clear(this->tmp_GT);
+    element_clear(this->tmp_GT_2);
+    element_clear(this->tmp_GT_3);
+    element_clear(this->tmp_Zn);
+
+    element_clear(G1);
+    element_clear(GT);
+    element_clear(Zn);
 }

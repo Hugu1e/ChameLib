@@ -1,6 +1,47 @@
 #include "signature/BLS.h"
 
-BLS::BLS(element_s *_G1, element_s *_G2, element_s *_GT, element_s *_Zn): PbcScheme(_G1,_G2,_GT,_Zn){}
+BLS::BLS(int curve, bool swap): PbcScheme(curve){
+    this->swap = swap;
+    if(swap){
+        element_init_G2(G1, pairing);
+        element_init_G1(G2, pairing);
+    }else{
+        element_init_G1(G1, pairing);
+        element_init_G2(G2, pairing);
+    }
+    element_init_GT(GT, pairing);
+    element_init_Zr(Zn, pairing);
+
+    element_init_same_as(tmp_G, G1);
+    element_init_same_as(tmp_H, G2);
+    element_init_same_as(tmp_H_2, G2);
+    element_init_same_as(tmp_GT, GT);
+    element_init_same_as(tmp_GT_2, GT);
+    element_init_same_as(tmp_Zn, Zn);
+}
+
+void BLS::init(element_t _G, element_t _H, element_t _GT, element_t _Zn){
+    this->swap = false;
+    element_init_same_as(G1, _G);
+    element_init_same_as(G2, _H);
+    element_init_same_as(GT, _GT);
+    element_init_same_as(Zn, _Zn);
+
+    element_init_same_as(tmp_G, G1);
+    element_init_same_as(tmp_H, G2);
+    element_init_same_as(tmp_H_2, G2);
+    element_init_same_as(tmp_GT, GT);
+    element_init_same_as(tmp_GT_2, GT);
+    element_init_same_as(tmp_Zn, Zn);
+}
+
+void BLS::Pairing(element_t res, element_t a, element_t b){
+    if(swap){
+        element_pairing(res, b, a);
+    }else{
+        element_pairing(res, a, b);
+    }
+}
 
 /**
  * @param[out] pp public parameters
@@ -77,9 +118,9 @@ bool BLS::Verify(BLS_pp &pp, BLS_pk &pk, std::string message, BLS_signature &sig
     element_init_same_as(tmp_GT, GT);
     element_init_same_as(tmp_H, G2);
     element_init_same_as(tmp_GT_2, GT);
-    element_pairing(tmp_GT, pp[g], signature[sigma]);
+    Pairing(tmp_GT, pp[g], signature[sigma]);
     H(tmp_H, message);
-    element_pairing(tmp_GT_2, pk[y], tmp_H);
+    Pairing(tmp_GT_2, pk[y], tmp_H);
     bool res = element_cmp(tmp_GT, tmp_GT_2) == 0;
     element_clear(tmp_GT);
     element_clear(tmp_H);
@@ -87,4 +128,16 @@ bool BLS::Verify(BLS_pp &pp, BLS_pk &pk, std::string message, BLS_signature &sig
     return res;
 }
 
-BLS::~BLS() {}
+BLS::~BLS() {
+    element_clear(tmp_G);
+    element_clear(tmp_H);
+    element_clear(tmp_H_2);
+    element_clear(tmp_GT);
+    element_clear(tmp_GT_2);
+    element_clear(tmp_Zn);
+
+    element_clear(G1);
+    element_clear(G2);
+    element_clear(GT);
+    element_clear(Zn);
+}

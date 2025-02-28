@@ -135,8 +135,10 @@ class DPCH_MXN_2022: public PbcScheme{
         void Encode(element_t res, element_t m1, element_t m2);
         void Decode(element_t res1, element_t res2, element_t m);
 
+        element_t tmp_G, tmp_GT, tmp_Zn, tmp_Zn_2;
+
     public:
-        DPCH_MXN_2022(element_s *_G1, element_s *_G2, element_s *_GT, element_s *_Zn);
+        DPCH_MXN_2022(int curve);
 
         void SetUp(DPCH_MXN_2022_pp &pp, DPCH_MXN_2022_pk &pkDPCH, DPCH_MXN_2022_sk &skDPCH, DPCH_MXN_2022_h &h, DPCH_MXN_2022_r &r, DPCH_MXN_2022_r &r_p, DPCH_MXN_2022_sigmaGid &sigmaGid, DPCH_MXN_2022_skGid &skGid,int k);
 

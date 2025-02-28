@@ -1,6 +1,19 @@
 #include <scheme/PBCH/DPCH_MXN_2022.h>
 
-DPCH_MXN_2022::DPCH_MXN_2022(element_s *_G1, element_s *_G2, element_s *_GT, element_s *_Zn):PbcScheme(_G1, _G2, _GT, _Zn), ma_abe(_G1, _G2, _GT, _Zn), bls(_G1, _G2, _GT, _Zn) {}
+DPCH_MXN_2022::DPCH_MXN_2022(int curve):PbcScheme(curve){
+    element_init_G1(G1, pairing);
+    element_init_G2(G2, pairing);
+    element_init_GT(GT, pairing);
+    element_init_Zr(Zn, pairing);
+
+    ma_abe.init(G1, GT, Zn);
+    bls.init(G1, G2, GT, Zn);
+
+    element_init_same_as(tmp_G, G1);
+    element_init_same_as(tmp_GT, GT);
+    element_init_same_as(tmp_Zn, Zn);
+    element_init_same_as(tmp_Zn_2, Zn);
+}
 
 
 /**
@@ -215,4 +228,14 @@ bool DPCH_MXN_2022::Verify(DPCH_MXN_2022_pk &pkDPCH, std::string m_p, DPCH_MXN_2
 }
 
 
-DPCH_MXN_2022::~DPCH_MXN_2022() {}
+DPCH_MXN_2022::~DPCH_MXN_2022() {
+    element_clear(tmp_G);
+    element_clear(tmp_GT);
+    element_clear(tmp_Zn);
+    element_clear(tmp_Zn_2);
+
+    element_clear(G1);
+    element_clear(G2);
+    element_clear(GT);
+    element_clear(Zn);
+}

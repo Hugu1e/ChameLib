@@ -1,15 +1,74 @@
 #include "ABE/MA_ABE.h"
-#include <CommonTest.h>
+#include <gtest/gtest.h>
+#include <stack>
+#include <chrono>
+#include "utils/Logger.h"
 
-int test_result = 1;
+struct TestParams{
+	int curve;
+    int authNum;
+};
 
-void test(std::string test_name, std::string curve){
-    CommonTest test(test_name, curve);
+class ABE_Test : public testing::TestWithParam<TestParams>{
+    private:
+        bool out_file = true;
+        bool visiable = true;
 
-    MA_ABE abe(test.get_G1(), test.get_G2(), test.get_GT(), test.get_Zn());
+        std::stack<std::string> current_test_name;
+        std::stack<std::chrono::_V2::system_clock::time_point> ts;
+
+        FILE *out = NULL;
+    
+    protected:
+        void SetUp() override {
+            std::string filename = ::testing::UnitTest::GetInstance()->current_test_info()->test_case_name();
+            size_t pos = filename.find('/');
+            if (pos != std::string::npos) {
+                filename = filename.substr(0, pos);
+                filename += ".txt";
+            }
+            
+            out = fopen(filename.c_str(), "a");
+            fflush(out);
+
+            std::string testName = ::testing::UnitTest::GetInstance()->current_test_info()->name();
+            std::string curveName = Curve::curve_names[GetParam().curve];
+            fprintf(out, "%s %s\n", testName.c_str(), curveName.c_str());
+            printf("%s %s\n", testName.c_str(), curveName.c_str());
+        }
+
+        void TearDown() override {
+            fprintf(out, "\n\n");
+            fclose(out);
+        }
+
+        void OutTime(std::string name, std::string id, double us) {
+            us /= 1000;
+            if(out_file) fprintf(out, "%s %s time: %lf ms.\n", name.c_str(), id.c_str(), us);
+            if(visiable) printf("%s %s time: %lf ms.\n", name.c_str(), id.c_str(), us);
+        }
+        
+        void start(std::string current_test_name) {
+            std::cout<<"——————————" << current_test_name <<" start——————————" << std::endl;
+            this->current_test_name.push(current_test_name);
+            ts.push(std::chrono::system_clock::now());
+        }
+
+        void end(std::string current_test_name) {
+            std::chrono::_V2::system_clock::time_point te = std::chrono::system_clock::now();
+            if(this->current_test_name.empty() || this->current_test_name.top() != current_test_name) throw std::runtime_error("end(): wrong test pair");
+            OutTime(current_test_name, ::testing::UnitTest::GetInstance()->current_test_info()->name(), std::chrono::duration_cast<std::chrono::microseconds>(te - ts.top()).count());
+            std::cout<<"——————————" << current_test_name <<" end——————————" << std::endl;
+            this->current_test_name.pop();
+            ts.pop();
+        }
+};
+
+TEST_P(ABE_Test, Test){
+    MA_ABE abe(GetParam().curve);
 
     const std::string POLICY = "(ONE&THREE)&(TWO|FOUR)";
-    const int SIZE_OF_POLICY = 4;   // Policy的属性个数（不去重）
+    const int SIZE_OF_POLICY = 4;
 
     // attribute
     const std::string A = "ONE";
@@ -27,27 +86,31 @@ void test(std::string test_name, std::string curve){
 
     MA_ABE_gpk gpk;
 
-    element_t msg,res;
-    element_t rt;
     MA_ABE_ciphertext c;
 
-    element_init_same_as(msg, test.get_GT());
-    element_init_same_as(res, test.get_GT());
-    element_init_same_as(rt, test.get_Zn());
 
-    test.start("GlobalSetup");
+    element_s *msg = abe.GetGTElement();
+    element_s *res = abe.GetGTElement();
+    element_s *rt = abe.GetZrElement();
+
+    this->start("GlobalSetup");
     abe.GlobalSetup(gpk);
-    test.end("GlobalSetup");
+    this->end("GlobalSetup");
     // Logger::PrintPbc("gpk.g", gpk.getElement("g"));
 
-    for(int _ = 0;_ < SIZE_OF_ATTRIBUTES;_++) {
+    for(int i = 0; i < GetParam().authNum; i++) {
         MA_ABE_pkTheta *pkTheta = new MA_ABE_pkTheta();
         MA_ABE_skTheta *skTheta = new MA_ABE_skTheta();
 
-        test.start("AuthSetup");
-        abe.AuthSetup(*pkTheta, *skTheta, gpk, ATTRIBUTES[_]);
-        test.end("AuthSetup");
-
+        if(i < SIZE_OF_ATTRIBUTES){
+            this->start("AuthSetup");
+            abe.AuthSetup(*pkTheta, *skTheta, gpk, ATTRIBUTES[i]);
+            this->end("AuthSetup");    
+        }else{
+            this->start("AuthSetup");
+            abe.AuthSetup(*pkTheta, *skTheta, gpk, "ATTRIBUTE@AUTHORITY_" + std::to_string(i));
+            this->end("AuthSetup");
+        }
         // Logger::PrintPbc("pkTheta.pkTheta_1", pkTheta->getElement("pkTheta_1"));
         // Logger::PrintPbc("pkTheta.pkTheta_2", pkTheta->getElement("pkTheta_2"));
         // Logger::PrintPbc("skTheta.aTheta", skTheta->getElement("aTheta"));
@@ -57,27 +120,30 @@ void test(std::string test_name, std::string curve){
         skThetas.push_back(skTheta);
     }
 
-    for(int _ = 0;_ < SIZE_OF_ATTRIBUTES;_++) {
+    for(int i = 0; i < GetParam().authNum; i++) {
         MA_ABE_skgidA *skgidA = new MA_ABE_skgidA();
 
-        test.start("KeyGen");
-        abe.KeyGen(*skgidA, gpk, *skThetas[_], GID, ATTRIBUTES[_]);
-        test.end("KeyGen");
-
+        if(i < SIZE_OF_ATTRIBUTES){
+            this->start("KeyGen");
+            abe.KeyGen(*skgidA, gpk, *skThetas[i], GID, ATTRIBUTES[i]);
+            this->end("KeyGen");
+        }else{
+            this->start("KeyGen");
+            abe.KeyGen(*skgidA, gpk, *skThetas[i], GID, "ATTRIBUTE@AUTHORITY_" + std::to_string(i));
+            this->end("KeyGen");
+        }
         // Logger::PrintPbc("skgidA.skgidA_0", skgidA->getElement("skgidA_0"));
         // Logger::PrintPbc("skgidA.skgidA_1", skgidA->getElement("skgidA_1"));
 
         skgidAs.push_back(skgidA);
     }
 
-    element_random(msg);
     Logger::PrintPbc("msg", msg);
-    element_random(rt);
     Logger::PrintPbc("rt", rt);
 
-    test.start("Encrypt");
+    this->start("Encrypt");
     abe.Encrypt(c, msg, rt, gpk, pkThetas, POLICY);
-    test.end("Encrypt");
+    this->end("Encrypt");
     // Logger::PrintPbc("c0", c.getC0()->getElement("c0"));
     // for(int i = 0;i < SIZE_OF_POLICY;i++){
     //     Logger::PrintPbc("ci[" + std::to_string(i) + "].ci_1", c.getCi(i)->getElement("ci_1"));
@@ -86,36 +152,50 @@ void test(std::string test_name, std::string curve){
     //     Logger::PrintPbc("ci[" + std::to_string(i) + "].ci_4", c.getCi(i)->getElement("ci_4"));
     // }
     
-    std::vector<MA_ABE_skgidA *> _skgidAs;  // partial secret keys
-    for(int i = 0;i < skgidAs.size();i++) {
-        _skgidAs.push_back(skgidAs[i]);
-    }
-
-    test.start("Decrypt");
+    // choose partial secret keys
+    std::vector<MA_ABE_skgidA *> _skgidAs;  
+    _skgidAs.push_back(skgidAs[0]);
+    _skgidAs.push_back(skgidAs[1]);
+    _skgidAs.push_back(skgidAs[2]);
+    
+    this->start("Decrypt");
     abe.Decrypt(res, _skgidAs, c);
-    test.end("Decrypt");
+    this->end("Decrypt");
 
     Logger::PrintPbc("msg", msg);
     Logger::PrintPbc("res", res);
-
-    if(element_cmp(msg, res) == 0){
-        printf("Decrypt successfully.\n");
-        test_result = 0;
-    }else{
-        printf("Decrypt failed.\n");
-    } 
+    ASSERT_TRUE(element_cmp(msg, res) == 0);
 }
 
+std::vector<TestParams> generateTestParams() {
+    int curves[] = {
+        Curve::A,
+        Curve::A1,
+        Curve::E,
+    };
+    int authNums[] = {16, 32, 64};
 
-int main(int argc, char *argv[]){
-    if(argc == 1) {
-        test(argv[0], "a");
-    }else if(argc == 2){
-        test(argv[0], argv[1]);
-    }else{
-        printf("usage: %s [a|e|i|f|d224]\n", argv[0]);
-        return 1;
+    std::vector<TestParams> test_params;
+
+    for (int curve : curves) {
+        for (int authNum : authNums) {
+            test_params.push_back({curve, authNum});
+        }
     }
-    return test_result;
+
+    return test_params;
 }
 
+const std::vector<TestParams> test_values = generateTestParams();
+
+INSTANTIATE_TEST_CASE_P(
+	MA_ABE,
+	ABE_Test,
+	testing::ValuesIn(test_values)
+);
+
+int main(int argc, char **argv) 
+{
+	::testing::InitGoogleTest(&argc, argv);
+	return RUN_ALL_TESTS();
+}

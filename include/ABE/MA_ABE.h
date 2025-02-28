@@ -98,6 +98,7 @@ class MA_ABE_ciphertext{
 class MA_ABE: public PbcScheme{
     private:
         element_t z;
+        element_t tmp_G, tmp_G_2, tmp_G_3, tmp_G_4, tmp_GT, tmp_GT_2, tmp_GT_3, tmp_Zn;
 
         std::unordered_map<unsigned long int, std::string> pai;  // π(i) -> attr
 
@@ -106,7 +107,10 @@ class MA_ABE: public PbcScheme{
         void Ht(element_t res, element_t rt, std::string A);
 
     public:
-        MA_ABE(element_s *_G1, element_s *_G2, element_s *_GT, element_s *_Zn);
+        MA_ABE(){}
+        MA_ABE(int curve);
+
+        void init(element_t _G1, element_t _GT, element_t _Zn);
 
         void GlobalSetup(MA_ABE_gpk &gpk);
         void GlobalSetup(MA_ABE_gpk &gpk, element_t _g);
@@ -119,7 +123,7 @@ class MA_ABE: public PbcScheme{
 
         void Decrypt(element_t res, std::vector<MA_ABE_skgidA *> &skgidAs, MA_ABE_ciphertext &C);
 
-        ~MA_ABE() override;
+        ~MA_ABE();
 
         enum {
             g
