@@ -1,15 +1,74 @@
-#include <scheme/PBCH/RPCH_TMM_2022.h>
-#include <CommonTest.h>
-#include "utils/TimeUtils.h"
+#include "scheme/PBCH/RPCH_TMM_2022.h"
+#include <gtest/gtest.h>
+#include <stack>
+#include <chrono>
+#include "utils/Logger.h"
 
-int test_result = 1;
+struct TestParams{
+	int curve;
+    bool swap;
+    int leafNodeSize;
+    int k;
+};
 
-void test(std::string test_name, std::string curve){
-    CommonTest test(test_name, curve);
+class PBCH_Test : public testing::TestWithParam<TestParams>{
+    private:
+        bool out_file = true;
+        bool visiable = true;
 
-    RPCH_TMM_2022 ch(test.get_G1(), test.get_G2(), test.get_GT(), test.get_Zn());
+        std::stack<std::string> current_test_name;
+        std::stack<std::chrono::_V2::system_clock::time_point> ts;
 
-    const int N = 8;  // a binary tree with N leaf nodes
+        FILE *out = NULL;
+    
+    protected:
+        void SetUp() override {
+            std::string filename = ::testing::UnitTest::GetInstance()->current_test_info()->test_case_name();
+            size_t pos = filename.find('/');
+            if (pos != std::string::npos) {
+                filename = filename.substr(0, pos);
+                filename += ".txt";
+            }
+            
+            out = fopen(filename.c_str(), "a");
+            fflush(out);
+
+            std::string testName = ::testing::UnitTest::GetInstance()->current_test_info()->name();
+            std::string curveName = Curve::curve_names[GetParam().curve];
+            fprintf(out, "%s %s swap: %d leafNodeSize: %d k: %d\n", testName.c_str(), curveName.c_str(), GetParam().swap, GetParam().leafNodeSize, GetParam().k);
+            printf("%s %s swap: %d leafNodeSize: %d k: %d\n", testName.c_str(), curveName.c_str(), GetParam().swap, GetParam().leafNodeSize, GetParam().k);
+        }
+
+        void TearDown() override {
+            fprintf(out, "\n\n");
+            fclose(out);
+        }
+
+        void OutTime(std::string name, std::string id, double us) {
+            us /= 1000;
+            if(out_file) fprintf(out, "%s %s time: %lf ms.\n", name.c_str(), id.c_str(), us);
+            if(visiable) printf("%s %s time: %lf ms.\n", name.c_str(), id.c_str(), us);
+        }
+        
+        void start(std::string current_test_name) {
+            std::cout<<"——————————" << current_test_name <<" start——————————" << std::endl;
+            this->current_test_name.push(current_test_name);
+            ts.push(std::chrono::system_clock::now());
+        }
+
+        void end(std::string current_test_name) {
+            std::chrono::_V2::system_clock::time_point te = std::chrono::system_clock::now();
+            if(this->current_test_name.empty() || this->current_test_name.top() != current_test_name) throw std::runtime_error("end(): wrong test pair");
+            OutTime(current_test_name, ::testing::UnitTest::GetInstance()->current_test_info()->name(), std::chrono::duration_cast<std::chrono::microseconds>(te - ts.top()).count());
+            std::cout<<"——————————" << current_test_name <<" end——————————" << std::endl;
+            this->current_test_name.pop();
+            ts.pop();
+        }
+};
+
+TEST_P(PBCH_Test, Test){
+    RPCH_TMM_2022 ch(GetParam().curve, GetParam().swap);
+
     std::vector<std::string> attr_list = {"ONE","TWO","THREE"};
     const int SIZE_OF_ATTR = attr_list.size();  // S
     const std::string POLICY = "(ONE&THREE)&(TWO|FOUR)";
@@ -19,8 +78,6 @@ void test(std::string test_name, std::string curve){
 
     const time_t end_time_1 = TimeUtils::TimeCast(2025, 12, 31, 0, 0, 0);
 
-
-    int k;
     RPCH_TMM_2022_sk skRPCH;
     RPCH_TMM_2022_pk pkRPCH;
     RPCH_TMM_2022_skid skidRPCH;
@@ -32,81 +89,90 @@ void test(std::string test_name, std::string curve){
     RPCH_TMM_2022_RevokedPresonList rl;
     RPCH_TMM_2022_Binary_tree st;
 
-    element_t m,m_p;
-    element_t id;
-
-    element_init_same_as(id, test.get_Zn());
-    element_init_same_as(m, test.get_Zn());
-    element_init_same_as(m_p, test.get_Zn());
-    element_random(m);
-    element_random(m_p);
-    element_random(id);
-
-
-    k = 512;
-    printf("k = %d\n", k);
+    element_s *m = ch.GetZrElement();
+    element_s *m_p = ch.GetZrElement();
+    element_s *id = ch.GetZrElement();
     
-    test.start("SetUp");
-    ch.SetUp(skRPCH, pkRPCH, rl, st, k, N);
-    test.end("SetUp");
+    this->start("SetUp");
+    ch.SetUp(skRPCH, pkRPCH, rl, st, GetParam().k, GetParam().leafNodeSize);
+    this->end("SetUp");
     
-    test.start("KeyGen");
+    this->start("KeyGen");
     ch.KeyGen(skidRPCH, pkRPCH, skRPCH, st, attr_list, id, end_time_1);
-    test.end("KeyGen");
+    this->end("KeyGen");
     
-    test.start("KUpt");
+    this->start("KUpt");
     ch.KUpt(kut, pkRPCH, st, rl, T);
-    test.end("KUpt");
+    this->end("KUpt");
     
-    test.start("DKGen");
+    this->start("DKGen");
     ch.DKGen(dkidtRPCH, pkRPCH, skidRPCH, kut);
-    test.end("DKGen");
+    this->end("DKGen");
     
-    test.start("Rev");
+    this->start("Rev");
     ch.Rev(rl, id, T);
-    test.end("Rev");
+    this->end("Rev");
 
-    test.start("Hash");
+    this->start("Hash");
     ch.Hash(h, m, pkRPCH, POLICY, T);
-    test.end("Hash");
+    this->end("Hash");
     
-    test.start("Check");
+    this->start("Check");
     bool check = ch.Check(pkRPCH, m, h);
-    test.end("Check");
-            
-    if(check){
-        printf("Check success\n");
-    }
-    else{
-        printf("Check failed\n");
-    }
+    this->end("Check");
+    ASSERT_TRUE(check);
         
-        
-    test.start("Adapt");
+    this->start("Adapt");
     ch.Adapt(h_p, m_p, m, h, pkRPCH, dkidtRPCH);
-    test.end("Adapt");
+    this->end("Adapt");
     
-    test.start("Verify");
+    this->start("Verify");
     bool verify = ch.Verify(pkRPCH, m_p, h_p);
-    test.end("Verify");
-
-    if(verify){
-        printf("Verify success\n");
-        test_result = 0;
-    }
-    else{
-        printf("Verify failed\n");
-    }
+    this->end("Verify");
+    ASSERT_TRUE(verify);
 }
 
-int main(int argc, char *argv[]){
-    if(argc == 1) {
-        test(argv[0], "a");
-    }else if(argc == 2){
-        test(argv[0], argv[1]);
-    }else{
-        printf("usage: %s [a|e|i|f|d224]\n", argv[0]);
-        return 1;
+std::vector<TestParams> generateTestParams() {
+    int curves[] = {
+        Curve::A,
+        Curve::A1,
+        Curve::D_159, Curve::D_201, Curve::D_224, Curve::D_105171_196_185, Curve::D_277699_175_167, Curve::D_278027_190_181,
+        Curve::E,
+        Curve::F, Curve::SM9,
+        Curve::G_149
+    };
+
+    bool swaps[] = {false, true};
+
+    int leadNodeSizes[] = {8, 16, 32, 64};
+
+    int ks[] = {128, 256, 512};
+
+    std::vector<TestParams> test_params;
+
+    for (int curve : curves) {
+        for (bool swap : swaps) {
+            for (int leafNodeSize : leadNodeSizes) {
+                for (int k : ks) {
+                    test_params.push_back({curve, swap, leafNodeSize, k});
+                }
+            }
+        }
     }
-    return test_result;
+
+    return test_params;
+}
+
+const std::vector<TestParams> test_values = generateTestParams();
+
+INSTANTIATE_TEST_CASE_P(
+	RPCH_TMM_2022,
+	PBCH_Test,
+	testing::ValuesIn(test_values)
+);
+
+int main(int argc, char **argv) 
+{
+	::testing::InitGoogleTest(&argc, argv);
+	return RUN_ALL_TESTS();
 }

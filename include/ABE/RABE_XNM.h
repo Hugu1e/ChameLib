@@ -154,6 +154,7 @@ class RABE_XNM: public PbcScheme{
         void Pairing(element_t res, element_t a, element_t b);
     
     public:
+        RABE_XNM(){}
         RABE_XNM(int curve, bool swap);
 
         void init(element_t _G1, element_t _G2, element_t _GT, element_t _Zn, bool swap);

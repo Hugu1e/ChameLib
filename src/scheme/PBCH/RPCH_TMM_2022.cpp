@@ -1,10 +1,29 @@
 #include <scheme/PBCH/RPCH_TMM_2022.h>
 
-RPCH_TMM_2022::RPCH_TMM_2022(element_s *_G1, element_s *_G2, element_s *_GT, element_s *_Zn): PbcScheme(_G1, _G2, _GT, _Zn), rabe(_G1, _G2, _GT, _Zn){
+RPCH_TMM_2022::RPCH_TMM_2022(int curve, bool swap): PbcScheme(curve){
+    this->swap = swap;
+    if(swap){
+        element_init_G1(G2, pairing);
+        element_init_G2(G1, pairing);
+    }else{
+        element_init_G1(G1, pairing);
+        element_init_G2(G2, pairing);
+    }
+    element_init_GT(GT, pairing);
+    element_init_Zr(Zn, pairing);
+
+    rabe.init(G1, G2, GT, Zn, swap);
+
     element_init_same_as(this->s1, Zn);
     element_init_same_as(this->s2, Zn);
     element_init_same_as(this->K, GT);
     element_init_same_as(this->R, Zn);
+
+    element_init_same_as(this->tmp_G, G1);
+    element_init_same_as(this->tmp_G_2, G1);
+    element_init_same_as(this->tmp_Zn, Zn);
+    element_init_same_as(this->tmp_Zn_2, Zn);
+    element_init_same_as(this->tmp_Zn_3, Zn);
 }
 
 /**
@@ -146,4 +165,15 @@ RPCH_TMM_2022::~RPCH_TMM_2022() {
     element_clear(this->s2);
     element_clear(this->K);
     element_clear(this->R);
+
+    element_clear(this->tmp_G);
+    element_clear(this->tmp_G_2);
+    element_clear(this->tmp_Zn);
+    element_clear(this->tmp_Zn_2);
+    element_clear(this->tmp_Zn_3);
+
+    element_clear(G1);
+    element_clear(G2);
+    element_clear(GT);
+    element_clear(Zn);
 }

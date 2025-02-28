@@ -116,13 +116,15 @@ class RPCH_TMM_2022_kut{
 class RPCH_TMM_2022: public PbcScheme{
     private:
         RABE_TMM rabe;
-    
+
+        bool swap;
         int k;
         element_t s1,s2;
         element_t K;
         element_t R;
+        element_t tmp_G, tmp_G_2, tmp_Zn, tmp_Zn_2, tmp_Zn_3;
     public:
-        RPCH_TMM_2022(element_s *_G1, element_s *_G2, element_s *_GT, element_s *_Zn);
+        RPCH_TMM_2022(int curve, bool swap);
 
         void SetUp(RPCH_TMM_2022_sk &skRPCH, RPCH_TMM_2022_pk &pkRPCH, RPCH_TMM_2022_RevokedPresonList &rl, RPCH_TMM_2022_Binary_tree &st, int k, int n);
 

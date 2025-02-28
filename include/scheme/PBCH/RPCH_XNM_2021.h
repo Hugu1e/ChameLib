@@ -120,13 +120,16 @@ class RPCH_XNM_2021: public PbcScheme{
         int k;
         element_t s1,s2;
         element_t K;
+        element_t tmp_Zn, tmp_Zn_2;
+
+        bool swap;
 
         void H1(mpz_t res, mpz_t m, mpz_t N1, mpz_t N2, mpz_t n);
         void H2(mpz_t res, mpz_t m, mpz_t N1, mpz_t N2, mpz_t n);
         void H4(element_t u1, element_t u2, mpz_t r, std::string A);
 
     public:
-        RPCH_XNM_2021(element_s *_G1, element_s *_G2, element_s *_GT, element_s *_Zn);
+        RPCH_XNM_2021(int curve, bool swap);
 
         void SetUp(RPCH_XNM_2021_sk &skRPCH, RPCH_XNM_2021_pk &pkRPCH, RPCH_XNM_2021_RevokedPresonList &rl, RPCH_XNM_2022_Binary_tree &st, int k, int n);
 
