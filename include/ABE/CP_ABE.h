@@ -73,12 +73,19 @@ class CP_ABE_ciphertext{
 
 class CP_ABE:public PbcScheme{
     private:
+        bool swap;
+
         element_t d1, d2, d3;
         element_t r1, r2;
         element_t b1r1a1, b1r1a2, b2r2a1, b2r2a2, r1r2a1, r1r2a2;
         element_t s1, s2;
         element_t sk_1_G, sk_2_G, sk_3_G, sk_1_H, sk_2_H, sk_3_H;
         element_t ct_1_G, ct_2_G, ct_3_G, ct_1_H, ct_2_H, ct_3_H;
+
+        element_t tmp_G, tmp_G_2, tmp_G_3, tmp_G_4;
+        element_t tmp_H;
+        element_t tmp_GT, tmp_GT_2, tmp_GT_3;
+        element_t tmp_Zn, tmp_Zn_2;
 
         std::unordered_map<unsigned long int, std::string> pai;      // π(i) -> attr
         std::unordered_map<std::string, unsigned long int> attr_map; // attr -> index of attr_list
@@ -87,8 +94,13 @@ class CP_ABE:public PbcScheme{
 
         void Hash(element_t res, std::string m);
 
+        void Pairing(element_t res, element_t a, element_t b);
+
     public:
-        CP_ABE(element_s *_G1, element_s *_G2, element_s *_GT, element_s *_Zn);
+        CP_ABE(){}
+        CP_ABE(int curve, bool swap);
+
+        void init(element_t _G1, element_t _G2, element_t _GT, element_t _Zn);
 
         void Setup(CP_ABE_msk &msk, CP_ABE_mpk &mpk);
 
@@ -99,7 +111,7 @@ class CP_ABE:public PbcScheme{
 
         void Decrypt(element_t res, CP_ABE_ciphertext &ciphertext, CP_ABE_mpk &mpk, CP_ABE_sks &sks);
 
-        ~CP_ABE() override;
+        ~CP_ABE();
 
         enum {
             h, g, a1, a2, b1, b2,

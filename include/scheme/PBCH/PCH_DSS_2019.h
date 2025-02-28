@@ -73,7 +73,10 @@ class PCH_DSS_2019: public PbcScheme{
         CP_ABE cp_abe;
         AES aes;
 
+        bool swap;
         int k;
+
+        element_t tmp_GT, tmp_Zn, tmp_Zn_2, tmp_Zn_3, tmp_Zn_4;
 
         void H1(mpz_t res, mpz_t m, mpz_t N1, mpz_t N2, mpz_t n);
         void H2(mpz_t res, mpz_t m, mpz_t N1, mpz_t N2, mpz_t n);
@@ -83,7 +86,7 @@ class PCH_DSS_2019: public PbcScheme{
         void Decode(element_t res1, element_t res2, element_t m);
 
     public:
-        PCH_DSS_2019(element_s *_G1, element_s *_G2, element_s *_GT, element_s *_Zn);
+        PCH_DSS_2019(int curve, bool swap);
 
         void SetUp(PCH_DSS_2019_pk &pkPCH, PCH_DSS_2019_sk &skPCH, PCH_DSS_2019_h &h, PCH_DSS_2019_r &r, PCH_DSS_2019_r &r_p, int k);
 
