@@ -1,5 +1,7 @@
 # ChameLib
 
+![test](https://github.com/Hugu1e/ChameLib/actions/workflows/go.yml/badge.svg)
+
 ## Dependency
 
 [PBC library](http://crypto.stanford.edu/pbc/)
