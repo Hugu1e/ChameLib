@@ -100,7 +100,7 @@ class CP_ABE:public PbcScheme{
         CP_ABE(){}
         CP_ABE(int curve, bool swap);
 
-        void init(element_t _G1, element_t _G2, element_t _GT, element_t _Zn);
+        void init(element_t _G1, element_t _G2, element_t _GT, element_t _Zn,  bool swap);
 
         void Setup(CP_ABE_msk &msk, CP_ABE_mpk &mpk);
 

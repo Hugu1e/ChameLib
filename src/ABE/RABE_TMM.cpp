@@ -1,6 +1,17 @@
 #include "ABE/RABE_TMM.h"
 
-RABE_TMM::RABE_TMM(element_s *_G1, element_s *_G2, element_s *_GT, element_s *_Zn): PbcScheme(_G1, _G2, _GT, _Zn){
+RABE_TMM::RABE_TMM(int curve, bool swap): PbcScheme(curve){
+    this->swap = swap;
+    if(swap){
+        element_init_G2(G1, pairing);
+        element_init_G1(G2, pairing);
+    }else{
+        element_init_G1(G1, pairing);
+        element_init_G2(G2, pairing);
+    }
+    element_init_GT(GT, pairing);
+    element_init_Zr(Zn, pairing);
+
     element_init_same_as(this->d1, Zn);
     element_init_same_as(this->d2, Zn);
     element_init_same_as(this->d3, Zn);
@@ -17,7 +28,67 @@ RABE_TMM::RABE_TMM(element_s *_G1, element_s *_G2, element_s *_GT, element_s *_Z
 
     element_init_same_as(this->s1, Zn);
     element_init_same_as(this->s2, Zn);
+
+    element_init_same_as(this->tmp_G, G1);
+    element_init_same_as(this->tmp_G_2, G1);
+    element_init_same_as(this->tmp_G_3, G1);
+    element_init_same_as(this->tmp_G_4, G1);
+    element_init_same_as(this->tmp_H, G2);
+    element_init_same_as(this->tmp_GT, GT);
+    element_init_same_as(this->tmp_GT_2, GT);
+    element_init_same_as(this->tmp_GT_3, GT);
+    element_init_same_as(this->tmp_GT_4, GT);
+    element_init_same_as(this->tmp_Zn, Zn);
+    element_init_same_as(this->tmp_Zn_2, Zn);
+    element_init_same_as(this->tmp_Zn_3, Zn);
 }
+
+void RABE_TMM::init(element_t _G1, element_t _G2, element_t _GT, element_t _Zn, bool swap){
+    this->swap = swap;
+    element_init_same_as(G1, _G1);
+    element_init_same_as(G2, _G2);
+    element_init_same_as(GT, _GT);
+    element_init_same_as(Zn, _Zn);
+
+    element_init_same_as(this->d1, Zn);
+    element_init_same_as(this->d2, Zn);
+    element_init_same_as(this->d3, Zn);
+
+    element_init_same_as(this->r1, Zn);
+    element_init_same_as(this->r2, Zn);
+
+    element_init_same_as(this->b1r1a1, Zn);
+    element_init_same_as(this->b1r1a2, Zn);
+    element_init_same_as(this->b2r2a1, Zn);
+    element_init_same_as(this->b2r2a2, Zn);
+    element_init_same_as(this->r1r2a1, Zn);
+    element_init_same_as(this->r1r2a2, Zn);
+
+    element_init_same_as(this->s1, Zn);
+    element_init_same_as(this->s2, Zn);
+
+    element_init_same_as(this->tmp_G, G1);
+    element_init_same_as(this->tmp_G_2, G1);
+    element_init_same_as(this->tmp_G_3, G1);
+    element_init_same_as(this->tmp_G_4, G1);
+    element_init_same_as(this->tmp_H, G2);
+    element_init_same_as(this->tmp_GT, GT);
+    element_init_same_as(this->tmp_GT_2, GT);
+    element_init_same_as(this->tmp_GT_3, GT);
+    element_init_same_as(this->tmp_GT_4, GT);
+    element_init_same_as(this->tmp_Zn, Zn);
+    element_init_same_as(this->tmp_Zn_2, Zn);
+    element_init_same_as(this->tmp_Zn_3, Zn);
+}
+
+void RABE_TMM::Pairing(element_t res, element_t a, element_t b){
+    if (this->swap){
+        element_pairing(res, b, a);
+    }else{
+        element_pairing(res, a, b);
+    }
+}
+
 
 /**
  * hash function {0,1}* -> G
@@ -77,13 +148,13 @@ void RABE_TMM::Setup(RABE_TMM_mpk &mpk, RABE_TMM_msk &msk, std::vector<RABE_TMM_
     // e(g,h)^(d1a1+d3)
     element_mul(this->tmp_Zn, this->d1, msk[a1]);
     element_add(this->tmp_Zn, this->tmp_Zn, this->d3);
-    element_pairing(this->tmp_GT, mpk[g], mpk[h]);
+    Pairing(this->tmp_GT, mpk[g], mpk[h]);
     element_pow_zn(tmp_GT, this->tmp_GT, this->tmp_Zn);
     mpk.set(T1, tmp_GT);
     // e(g,h)^(d2a2+d3)
     element_mul(this->tmp_Zn, this->d2, msk[a2]);
     element_add(this->tmp_Zn, this->tmp_Zn, this->d3);
-    element_pairing(this->tmp_GT, mpk[g], mpk[h]);
+    Pairing(this->tmp_GT, mpk[g], mpk[h]);
     element_pow_zn(tmp_GT, this->tmp_GT, this->tmp_Zn);
     mpk.set(T2, tmp_GT);
 
@@ -615,10 +686,10 @@ void RABE_TMM::Dec(element_t res, RABE_TMM_mpk &mpk, RABE_TMM_ciphertext &cipher
         count++;
     }
     // ct_prime * e(tmp_G, sk0_1) * e(tmp_G_2, sk0_2) * e(tmp_G_3, sk0_3) * e(ct0_4, sk0_4)
-    element_pairing(this->tmp_GT, this->tmp_G, dkidt.get_sk0().get(sk0_1));
-    element_pairing(this->tmp_GT_2, this->tmp_G_2, dkidt.get_sk0().get(sk0_2));
-    element_pairing(this->tmp_GT_3, this->tmp_G_3, dkidt.get_sk0().get(sk0_3));
-    element_pairing(this->tmp_GT_4, ciphertext.get_ct0().get(ct0_4), dkidt.get_skt1().get(skt1));
+    Pairing(this->tmp_GT, this->tmp_G, dkidt.get_sk0().get(sk0_1));
+    Pairing(this->tmp_GT_2, this->tmp_G_2, dkidt.get_sk0().get(sk0_2));
+    Pairing(this->tmp_GT_3, this->tmp_G_3, dkidt.get_sk0().get(sk0_3));
+    Pairing(this->tmp_GT_4, ciphertext.get_ct0().get(ct0_4), dkidt.get_skt1().get(skt1));
 
     element_mul(num, this->tmp_GT, this->tmp_GT_2);
     element_mul(num, num, this->tmp_GT_3);
@@ -650,9 +721,9 @@ void RABE_TMM::Dec(element_t res, RABE_TMM_mpk &mpk, RABE_TMM_ciphertext &cipher
     element_mul(this->tmp_G_3, dkidt.get_sk_prime().get(sk_3), this->tmp_G_3);
 
     // e(tmp_G, ct01) * e(tmp_G_2, ct02) * e(tmp_G_3, ct03)
-    element_pairing(this->tmp_GT, this->tmp_G, ciphertext.get_ct0().get(ct0_1));
-    element_pairing(this->tmp_GT_2, this->tmp_G_2, ciphertext.get_ct0().get(ct0_2));
-    element_pairing(this->tmp_GT_3, this->tmp_G_3, ciphertext.get_ct0().get(ct0_3));
+    Pairing(this->tmp_GT, this->tmp_G, ciphertext.get_ct0().get(ct0_1));
+    Pairing(this->tmp_GT_2, this->tmp_G_2, ciphertext.get_ct0().get(ct0_2));
+    Pairing(this->tmp_GT_3, this->tmp_G_3, ciphertext.get_ct0().get(ct0_3));
 
     element_mul(den, this->tmp_GT, this->tmp_GT_2);
     element_mul(den, den, this->tmp_GT_3);
@@ -696,4 +767,22 @@ RABE_TMM::~RABE_TMM(){
 
     element_clear(this->s1);
     element_clear(this->s2);
+
+    element_clear(this->tmp_G);
+    element_clear(this->tmp_G_2);
+    element_clear(this->tmp_G_3);
+    element_clear(this->tmp_G_4);
+    element_clear(this->tmp_H);
+    element_clear(this->tmp_GT);
+    element_clear(this->tmp_GT_2);
+    element_clear(this->tmp_GT_3);
+    element_clear(this->tmp_GT_4);
+    element_clear(this->tmp_Zn);
+    element_clear(this->tmp_Zn_2);
+    element_clear(this->tmp_Zn_3);
+
+    element_clear(G1);
+    element_clear(G2);
+    element_clear(GT);
+    element_clear(Zn);
 }

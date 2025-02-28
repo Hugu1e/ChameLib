@@ -56,7 +56,9 @@ CP_ABE::CP_ABE(int curve, bool swap): PbcScheme(curve){
     element_init_same_as(this->tmp_Zn_2, Zn);
 }
 
-void CP_ABE::init(element_t _G1, element_t _G2, element_t _GT, element_t _Zn){
+void CP_ABE::init(element_t _G1, element_t _G2, element_t _GT, element_t _Zn, bool swap){
+    this->swap = swap;
+
     element_init_same_as(G1, _G1);
     element_init_same_as(G2, _G2);
     element_init_same_as(GT, _GT);

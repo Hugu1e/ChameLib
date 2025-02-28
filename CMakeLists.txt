@@ -30,6 +30,8 @@ file(GLOB LIBRARY_SOURCES
     src/ABE/Policy_generation.cpp
     src/ABE/Policy_resolution.cpp
     src/ABE/CP_ABE.cpp
+    src/ABE/RABE_TMM.cpp
+    src/ABE/RABE_XNM.cpp
 
     src/scheme/PBCH/DPCH_MXN_2022.cpp
     src/scheme/PBCH/MAPCH_ZLW_2021.cpp
@@ -100,8 +102,8 @@ if(BUILD_TESTS)
     add_test_executable(CP_ABE_test test/ABE_test/CP_ABE_test.cpp)
     add_test_executable(MA_ABE_test test/ABE_test/MA_ABE_test.cpp)
     # add_test_executable(ABET_test test/ABE_test/ABET_test.cpp)
-    # add_test_executable(RABE_XNM_test test/ABE_test/RABE_XNM_test.cpp)
-    # add_test_executable(RABE_TMM_test test/ABE_test/RABE_TMM_test.cpp)
+    add_test_executable(RABE_XNM_test test/ABE_test/RABE_XNM_test.cpp)
+    add_test_executable(RABE_TMM_test test/ABE_test/RABE_TMM_test.cpp)
 
     # add_test_executable(CH_AMV_2017_test test/scheme_test/CH_test/CH_AMV_2017_test.cpp)
     add_test_executable(CH_CDK_2017_test test/scheme_test/CH_test/CH_CDK_2017_test.cpp)

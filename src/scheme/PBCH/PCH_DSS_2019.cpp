@@ -13,7 +13,7 @@ PCH_DSS_2019::PCH_DSS_2019(int curve, bool swap): PbcScheme(curve){
     element_init_GT(GT, pairing);
     element_init_Zr(Zn, pairing);
 
-    cp_abe.init(G1, G2, GT, Zn);
+    cp_abe.init(G1, G2, GT, Zn, swap);
 
     element_init_same_as(tmp_GT, GT);
     element_init_same_as(tmp_Zn, Zn);
