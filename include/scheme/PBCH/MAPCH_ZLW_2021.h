@@ -87,9 +87,10 @@ class MAPCH_ZLW_2021: public PbcScheme{
         MA_ABE ma_abe;
         CH_ET_BC_CDK_2017 ch_et;
 
+        element_t tmp_G, tmp_GT, tmp_Zn, tmp_Zn_2;
 
     public:
-        MAPCH_ZLW_2021(element_s *_G1, element_s *_G2, element_s *_GT, element_s *_Zn);
+        MAPCH_ZLW_2021(int curve);
 
         void GlobalSetup(CH_ET_BC_CDK_2017_pk &pkCH, CH_ET_BC_CDK_2017_sk &skCH, MA_ABE_gpk &gpkABE, MAPCH_ZLW_2021_pp &pp, MAPCH_ZLW_2021_h &h, MAPCH_ZLW_2021_r &r, MAPCH_ZLW_2021_r &r_p, int k);
         void AuthSetUp(MAPCH_ZLW_2021_mhk &mhk, MAPCH_ZLW_2021_mtk &mtk, std::string A, CH_ET_BC_CDK_2017_pk &pkCH, CH_ET_BC_CDK_2017_sk &skCH, MA_ABE_gpk &gpkABE, MAPCH_ZLW_2021_pp &pp);

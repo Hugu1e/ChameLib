@@ -31,6 +31,7 @@ file(GLOB LIBRARY_SOURCES
     src/ABE/Policy_resolution.cpp
 
     src/scheme/PBCH/DPCH_MXN_2022.cpp
+    src/scheme/PBCH/MAPCH_ZLW_2021.cpp
 
     src/scheme/CH/CH_CDK_2017.cpp
     src/scheme/CH/CH_ET_BC_CDK_2017.cpp
@@ -124,7 +125,7 @@ if(BUILD_TESTS)
     add_test_executable(ID_B_CollRes_XSL_2021_test test/scheme_test/IBCH_test/ID_B_CollRes_XSL_2021_test.cpp)
 
     add_test_executable(DPCH_MXN_2022_test test/scheme_test/PBCH_test/DPCH_MXN_2022_test.cpp)
-    # add_test_executable(MAPCH_ZLW_2021_test test/scheme_test/PBCH_test/MAPCH_ZLW_2021_test.cpp)
+    add_test_executable(MAPCH_ZLW_2021_test test/scheme_test/PBCH_test/MAPCH_ZLW_2021_test.cpp)
     # add_test_executable(PCH_DSS_2019_test test/scheme_test/PBCH_test/PCH_DSS_2019_test.cpp)
     # add_test_executable(PCHBA_TLL_2020_test test/scheme_test/PBCH_test/PCHBA_TLL_2020_test.cpp)
     # add_test_executable(RPCH_TMM_2022_test test/scheme_test/PBCH_test/RPCH_TMM_2022_test.cpp)

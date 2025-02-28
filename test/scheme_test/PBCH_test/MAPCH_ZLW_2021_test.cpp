@@ -1,13 +1,72 @@
-#include <scheme/PBCH/MAPCH_ZLW_2021.h>
-#include <CommonTest.h>
+#include "scheme/PBCH/MAPCH_ZLW_2021.h"
+#include <gtest/gtest.h>
+#include <stack>
+#include <chrono>
+#include "utils/Logger.h"
 
-int test_result = 1;
+struct TestParams{
+	int curve;
+    int authNum;
+    int lamuda;
+};
 
-void test(std::string test_name, std::string curve){
-    CommonTest test(test_name, curve);
+class PBCH_Test : public testing::TestWithParam<TestParams>{
+    private:
+        bool out_file = true;
+        bool visiable = true;
 
-    MAPCH_ZLW_2021 ch(test.get_G1(), test.get_G2(), test.get_GT(), test.get_Zn());
+        std::stack<std::string> current_test_name;
+        std::stack<std::chrono::_V2::system_clock::time_point> ts;
 
+        FILE *out = NULL;
+    
+    protected:
+        void SetUp() override {
+            std::string filename = ::testing::UnitTest::GetInstance()->current_test_info()->test_case_name();
+            size_t pos = filename.find('/');
+            if (pos != std::string::npos) {
+                filename = filename.substr(0, pos);
+                filename += ".txt";
+            }
+            
+            out = fopen(filename.c_str(), "a");
+            fflush(out);
+
+            std::string testName = ::testing::UnitTest::GetInstance()->current_test_info()->name();
+            std::string curveName = Curve::curve_names[GetParam().curve];
+            fprintf(out, "%s %s authNum:%d lamuda:%d\n", testName.c_str(), curveName.c_str(), GetParam().authNum, GetParam().lamuda);
+            printf("%s %s authNum:%d lamuda:%d\n", testName.c_str(), curveName.c_str(), GetParam().authNum, GetParam().lamuda);
+        }
+
+        void TearDown() override {
+            fprintf(out, "\n\n");
+            fclose(out);
+        }
+
+        void OutTime(std::string name, std::string id, double us) {
+            us /= 1000;
+            if(out_file) fprintf(out, "%s %s time: %lf ms.\n", name.c_str(), id.c_str(), us);
+            if(visiable) printf("%s %s time: %lf ms.\n", name.c_str(), id.c_str(), us);
+        }
+        
+        void start(std::string current_test_name) {
+            std::cout<<"——————————" << current_test_name <<" start——————————" << std::endl;
+            this->current_test_name.push(current_test_name);
+            ts.push(std::chrono::system_clock::now());
+        }
+
+        void end(std::string current_test_name) {
+            std::chrono::_V2::system_clock::time_point te = std::chrono::system_clock::now();
+            if(this->current_test_name.empty() || this->current_test_name.top() != current_test_name) throw std::runtime_error("end(): wrong test pair");
+            OutTime(current_test_name, ::testing::UnitTest::GetInstance()->current_test_info()->name(), std::chrono::duration_cast<std::chrono::microseconds>(te - ts.top()).count());
+            std::cout<<"——————————" << current_test_name <<" end——————————" << std::endl;
+            this->current_test_name.pop();
+            ts.pop();
+        }
+};
+
+TEST_P(PBCH_Test, Test){
+    MAPCH_ZLW_2021 ch(GetParam().curve);
 
     const std::string POLICY = "(ONE&THREE)&(TWO|FOUR)";
     const int SIZE_OF_POLICY = 4;
@@ -21,8 +80,6 @@ void test(std::string test_name, std::string curve){
     const int SIZE_OF_ATTRIBUTES = As.size();
     const std::string GID = "GID of A B C D with attribute ONE TOW THREE FOUR";
 
-
-    const int K = 256;
     MAPCH_ZLW_2021_pp pp;
 
     CH_ET_BC_CDK_2017_pk pkCH;
@@ -38,77 +95,98 @@ void test(std::string test_name, std::string curve){
     std::string m = "message";
     std::string m_p = "message_p";
 
-    printf("k = %d\n", K);
-
-    test.start("SetUp");
+    this->start("SetUp");
     
-    test.start("GlobalSetup");
-    ch.GlobalSetup(pkCH, skCH, gpkABE, pp, h, r, r_p, K);
-    test.end("GlobalSetup");
+    this->start("GlobalSetup");
+    ch.GlobalSetup(pkCH, skCH, gpkABE, pp, h, r, r_p, GetParam().lamuda);
+    this->end("GlobalSetup");
     
-    for(int i=0;i<SIZE_OF_ATTRIBUTES;i++){
+    this->start("AuthSetUp");
+    for(int i=0; i<GetParam().authNum; i++){
         MAPCH_ZLW_2021_mhk *mhk = new MAPCH_ZLW_2021_mhk();
         MAPCH_ZLW_2021_mtk *mtk = new MAPCH_ZLW_2021_mtk();
-        test.start("AuthSetUp");
-        ch.AuthSetUp(*mhk, *mtk, As[i], pkCH, skCH, gpkABE, pp);
-        test.end("AuthSetUp");
+
+        if (i < SIZE_OF_ATTRIBUTES) {
+            ch.AuthSetUp(*mhk, *mtk, As[i], pkCH, skCH, gpkABE, pp);
+        }else{
+            ch.AuthSetUp(*mhk, *mtk, "ATTRIBUTE@AUTHORITY_" + std::to_string(i), pkCH, skCH, gpkABE, pp);
+        }
+        
         mhks.push_back(mhk);
         mtks.push_back(mtk);
     }
-    test.end("SetUp");
+    this->end("AuthSetUp");
+    this->end("SetUp");
 
-    for(int i=0;i<SIZE_OF_ATTRIBUTES;i++){
+    this->start("KeyGen");
+    for(int i=0; i<GetParam().authNum; i++){
         MAPCH_ZLW_2021_mski *mski = new MAPCH_ZLW_2021_mski();
-        test.start("KeyGen");
-        ch.KeyGen(*mski, *mtks[i], *mhks[i], As[i], GID);
-        test.end("KeyGen");
+        if(i < SIZE_OF_ATTRIBUTES){
+            ch.KeyGen(*mski, *mtks[i], *mhks[i], As[i], GID);
+        }else{
+            ch.KeyGen(*mski, *mtks[i], *mhks[i], "ATTRIBUTE@AUTHORITY_" + std::to_string(i), GID);
+        }
         mskis.push_back(mski);
     }
-    
+    this->end("KeyGen");
 
-    test.start("Hash");
+
+    this->start("Hash");
     ch.Hash(h, r, m, pp, mhks, POLICY);
-    test.end("Hash");
+    this->end("Hash");
     h.get_h().print();
     r.get_r().print();
 
-    test.start("Check");
+    this->start("Check");
     bool check_result = ch.Check(h, r, m, mhks);
-    test.end("Check");
-
-    if(check_result){
-        printf("Hash check successful!\n");
-    }else{
-        printf("Hash check failed.\n");
-    }
+    this->end("Check");
+    ASSERT_TRUE(check_result);
 
     // mskis.pop_back();
-    test.start("Adapt");
+    this->start("Adapt");
     ch.Adapt(r_p, m_p, h, r, m, mhks, mskis);
-    test.end("Adapt");
+    this->end("Adapt");
     r_p.get_r().print();
 
-    test.start("Verify");
+    this->start("Verify");
     bool verify_result = ch.Verify(h, r_p, m_p, mhks);
-    test.end("Verify");
-
-    if(verify_result){
-        printf("Verify successful!\n");
-        test_result = 0;
-    }else{
-        printf("Verify failed.\n");
-    }
+    this->end("Verify");
+    ASSERT_TRUE(verify_result);
 }
 
+std::vector<TestParams> generateTestParams() {
+    int curves[] = {
+        Curve::A,
+        Curve::A1,
+        Curve::E,
+    };
+    int authNums[] = {16, 32, 64};
+    // int lamudas[] = {256, 512, 1024};
+    int lamudas[] = {32, 64, 128};
 
-int main(int argc, char *argv[]){
-    if(argc == 1) {
-        test(argv[0], "a");
-    }else if(argc == 2){
-        test(argv[0], argv[1]);
-    }else{
-        printf("usage: %s [a|e|i|f|d224]\n", argv[0]);
-        return 1;
+    std::vector<TestParams> test_params;
+
+    for (int curve : curves) {
+        for (int authNum : authNums) {
+            for (int lamuda : lamudas) {
+                test_params.push_back({curve, authNum, lamuda});
+            }
+        }
     }
-    return test_result;
+
+    return test_params;
+}
+
+const std::vector<TestParams> test_values = generateTestParams();
+
+INSTANTIATE_TEST_CASE_P(
+	MAPCH_ZLW_2021,
+	PBCH_Test,
+	testing::ValuesIn(test_values)
+);
+
+int main(int argc, char **argv) 
+{
+	::testing::InitGoogleTest(&argc, argv);
+	return RUN_ALL_TESTS();
 }
