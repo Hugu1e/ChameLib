@@ -1,0 +1,42 @@
+name: Test
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y build-essential flex bison libgmp-dev
+
+    - name: Download and install PBC library
+      run: |
+        wget https://crypto.stanford.edu/pbc/files/pbc-0.5.14.tar.gz
+        tar -xzf pbc-0.5.14.tar.gz
+        cd pbc-0.5.14
+        ./configure
+        make
+        sudo make install
+        sudo ldconfig
+
+    - name: build(default BUILD_TESTS ON)
+      run: |
+        mkdir build
+        cd build
+        cmake ..
+        make
+
+    - name: test
+      run: |
+        cd build
+        ctest
