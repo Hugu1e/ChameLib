@@ -1,8 +1,5 @@
 #include "SE/AES.h"
-#include <gtest/gtest.h>
-#include <stack>
-#include <chrono>
-#include "utils/Logger.h"
+#include "CommonTest.h"
 #include "curve/params.h"
 #include "exception/CurveException.h"
 #include "utils/RandomGenerator.h"
@@ -11,58 +8,15 @@ struct TestParams{
 	int curve;
 };
 
-class SE_Test : public testing::TestWithParam<TestParams>{
-    private:
-        bool out_file = true;
-        bool visiable = true;
-
-        std::stack<std::string> current_test_name;
-        std::stack<std::chrono::_V2::system_clock::time_point> ts;
-
-        FILE *out = NULL;
-    
+class AES_Test : public BaseTest<TestParams>{
     protected:
         void SetUp() override {
-            std::string filename = ::testing::UnitTest::GetInstance()->current_test_info()->test_case_name();
-            size_t pos = filename.find('/');
-            if (pos != std::string::npos) {
-                filename = filename.substr(0, pos);
-                filename += ".txt";
-            }
-            
-            out = fopen(filename.c_str(), "a");
-            fflush(out);
+            BaseTest::SetUp();
 
             std::string testName = ::testing::UnitTest::GetInstance()->current_test_info()->name();
             std::string curveName = Curve::curve_names[GetParam().curve];
             fprintf(out, "%s %s \n", testName.c_str(), curveName.c_str());
-            printf("%s %s \n", testName.c_str(), curveName.c_str());
-        }
-
-        void TearDown() override {
-            fprintf(out, "\n\n");
-            fclose(out);
-        }
-
-        void OutTime(std::string name, std::string id, double us) {
-            us /= 1000;
-            if(out_file) fprintf(out, "%s %s time: %lf ms.\n", name.c_str(), id.c_str(), us);
-            if(visiable) printf("%s %s time: %lf ms.\n", name.c_str(), id.c_str(), us);
-        }
-        
-        void start(std::string current_test_name) {
-            std::cout<<"——————————" << current_test_name <<" start——————————" << std::endl;
-            this->current_test_name.push(current_test_name);
-            ts.push(std::chrono::system_clock::now());
-        }
-
-        void end(std::string current_test_name) {
-            std::chrono::_V2::system_clock::time_point te = std::chrono::system_clock::now();
-            if(this->current_test_name.empty() || this->current_test_name.top() != current_test_name) throw std::runtime_error("end(): wrong test pair");
-            OutTime(current_test_name, ::testing::UnitTest::GetInstance()->current_test_info()->name(), std::chrono::duration_cast<std::chrono::microseconds>(te - ts.top()).count());
-            std::cout<<"——————————" << current_test_name <<" end——————————" << std::endl;
-            this->current_test_name.pop();
-            ts.pop();
+            if(visiable)printf("%s %s \n", testName.c_str(), curveName.c_str());
         }
 };
 
@@ -132,42 +86,6 @@ void initCurve(pairing_t pairing, const int curve){
     }
 }
 
-TEST_P(SE_Test, Test){
-    AES aes;
-    element_t key;
-    mpz_t plaintext;
-    mpz_t ciphertext;
-    mpz_t decrypted_plaintext;
-
-    pairing_t pairing;
-    initCurve(pairing, GetParam().curve);
-
-    element_init_GT(key, pairing);
-    mpz_inits(plaintext, ciphertext, decrypted_plaintext, NULL);
-
-    this->start("KGen");
-    aes.KGen(key, 256);
-    this->end("KGen");
-    Logger::PrintPbc("key", key);
-
-    this->start("Encrypt");
-    RandomGenerator::RandomInLength(plaintext, 128);
-    Logger::PrintGmp("plaintext", plaintext);
-    aes.Enc(ciphertext, key, plaintext);
-    this->end("Encrypt");
-
-    this->start("Decrypt");
-    aes.Dec(decrypted_plaintext, key, ciphertext);
-    Logger::PrintGmp("decrypted_plaintext", decrypted_plaintext);
-    this->end("Decrypt");
-
-    bool result = mpz_cmp(plaintext, decrypted_plaintext) == 0;
-    
-    element_clear(key);
-    mpz_clears(plaintext, ciphertext, decrypted_plaintext, NULL);
-    ASSERT_TRUE(result);
-}
-
 std::vector<TestParams> generateTestParams() {
     int curves[] = {
         Curve::A,
@@ -190,10 +108,52 @@ std::vector<TestParams> generateTestParams() {
 const std::vector<TestParams> test_values = generateTestParams();
 
 INSTANTIATE_TEST_CASE_P(
-	AES,
 	SE_Test,
+    AES_Test,
 	testing::ValuesIn(test_values)
 );
+
+TEST_P(AES_Test, Test){
+    AES aes;
+    element_t key;
+    mpz_t plaintext;
+    mpz_t ciphertext;
+    mpz_t decrypted_plaintext;
+
+    pairing_t pairing;
+    initCurve(pairing, GetParam().curve);
+
+    element_init_GT(key, pairing);
+    mpz_inits(plaintext, ciphertext, decrypted_plaintext, NULL);
+
+    this->start("KGen");
+    aes.KGen(key, 256);
+    this->end("KGen");
+    if(visiable){
+        Logger::PrintPbc("key", key);
+    }
+
+    RandomGenerator::RandomInLength(plaintext, 128);
+    this->start("Encrypt");
+    aes.Enc(ciphertext, key, plaintext);
+    this->end("Encrypt");
+    if(visiable){
+        Logger::PrintGmp("plaintext", plaintext);
+    }
+
+    this->start("Decrypt");
+    aes.Dec(decrypted_plaintext, key, ciphertext);
+    this->end("Decrypt");
+    if(visiable){
+        Logger::PrintGmp("decrypted_plaintext", decrypted_plaintext);
+    }
+
+    bool result = mpz_cmp(plaintext, decrypted_plaintext) == 0;
+    
+    element_clear(key);
+    mpz_clears(plaintext, ciphertext, decrypted_plaintext, NULL);
+    ASSERT_TRUE(result);
+}
 
 int main(int argc, char **argv) 
 {

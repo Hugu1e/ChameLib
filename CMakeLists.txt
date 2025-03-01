@@ -9,7 +9,7 @@ set(CMAKE_CXX_STANDARD 17)
 SET(CMAKE_BUILD_TYPE "Debug")
 # SET(CMAKE_BUILD_TYPE "Release")
 
-include_directories(include test/common)
+include_directories(include)
 
 find_package(OpenSSL REQUIRED)
 
@@ -92,6 +92,7 @@ if(BUILD_TESTS)
 
     macro(add_test_executable test_name test_source)
         add_executable(${test_name} ${test_source})
+        target_include_directories(${test_name} PRIVATE test/common)
         target_link_libraries(${test_name} PRIVATE ChameLib GTest::GTest pthread)
         add_test(NAME ${test_name} COMMAND ${test_name})
     endmacro()

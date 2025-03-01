@@ -1,8 +1,5 @@
 #include "scheme/PBCH/MAPCH_ZLW_2021.h"
-#include <gtest/gtest.h>
-#include <stack>
-#include <chrono>
-#include "utils/Logger.h"
+#include "CommonTest.h"
 
 struct TestParams{
 	int curve;
@@ -10,62 +7,50 @@ struct TestParams{
     int lamuda;
 };
 
-class PBCH_Test : public testing::TestWithParam<TestParams>{
-    private:
-        bool out_file = true;
-        bool visiable = true;
-
-        std::stack<std::string> current_test_name;
-        std::stack<std::chrono::_V2::system_clock::time_point> ts;
-
-        FILE *out = NULL;
-    
+class MAPCH_ZLW_2021_Test : public BaseTest<TestParams>{
     protected:
         void SetUp() override {
-            std::string filename = ::testing::UnitTest::GetInstance()->current_test_info()->test_case_name();
-            size_t pos = filename.find('/');
-            if (pos != std::string::npos) {
-                filename = filename.substr(0, pos);
-                filename += ".txt";
-            }
-            
-            out = fopen(filename.c_str(), "a");
-            fflush(out);
+            BaseTest::SetUp();
 
             std::string testName = ::testing::UnitTest::GetInstance()->current_test_info()->name();
             std::string curveName = Curve::curve_names[GetParam().curve];
             fprintf(out, "%s %s authNum:%d lamuda:%d\n", testName.c_str(), curveName.c_str(), GetParam().authNum, GetParam().lamuda);
-            printf("%s %s authNum:%d lamuda:%d\n", testName.c_str(), curveName.c_str(), GetParam().authNum, GetParam().lamuda);
-        }
-
-        void TearDown() override {
-            fprintf(out, "\n\n");
-            fclose(out);
-        }
-
-        void OutTime(std::string name, std::string id, double us) {
-            us /= 1000;
-            if(out_file) fprintf(out, "%s %s time: %lf ms.\n", name.c_str(), id.c_str(), us);
-            if(visiable) printf("%s %s time: %lf ms.\n", name.c_str(), id.c_str(), us);
-        }
-        
-        void start(std::string current_test_name) {
-            std::cout<<"——————————" << current_test_name <<" start——————————" << std::endl;
-            this->current_test_name.push(current_test_name);
-            ts.push(std::chrono::system_clock::now());
-        }
-
-        void end(std::string current_test_name) {
-            std::chrono::_V2::system_clock::time_point te = std::chrono::system_clock::now();
-            if(this->current_test_name.empty() || this->current_test_name.top() != current_test_name) throw std::runtime_error("end(): wrong test pair");
-            OutTime(current_test_name, ::testing::UnitTest::GetInstance()->current_test_info()->name(), std::chrono::duration_cast<std::chrono::microseconds>(te - ts.top()).count());
-            std::cout<<"——————————" << current_test_name <<" end——————————" << std::endl;
-            this->current_test_name.pop();
-            ts.pop();
+            if(visiable)printf("%s %s authNum:%d lamuda:%d\n", testName.c_str(), curveName.c_str(), GetParam().authNum, GetParam().lamuda);
         }
 };
 
-TEST_P(PBCH_Test, Test){
+std::vector<TestParams> generateTestParams() {
+    int curves[] = {
+        Curve::A,
+        Curve::A1,
+        Curve::E,
+    };
+    int authNums[] = {16, 32, 64};
+    // int lamudas[] = {256, 512, 1024};
+    int lamudas[] = {32, 64, 128};
+
+    std::vector<TestParams> test_params;
+
+    for (int curve : curves) {
+        for (int authNum : authNums) {
+            for (int lamuda : lamudas) {
+                test_params.push_back({curve, authNum, lamuda});
+            }
+        }
+    }
+
+    return test_params;
+}
+
+const std::vector<TestParams> test_values = generateTestParams();
+
+INSTANTIATE_TEST_CASE_P(
+	PBCH_Test,
+    MAPCH_ZLW_2021_Test,
+	testing::ValuesIn(test_values)
+);
+
+TEST_P(MAPCH_ZLW_2021_Test, Test){
     MAPCH_ZLW_2021 ch(GetParam().curve);
 
     const std::string POLICY = "(ONE&THREE)&(TWO|FOUR)";
@@ -130,12 +115,13 @@ TEST_P(PBCH_Test, Test){
     }
     this->end("KeyGen");
 
-
     this->start("Hash");
     ch.Hash(h, r, m, pp, mhks, POLICY);
     this->end("Hash");
-    h.get_h().print();
-    r.get_r().print();
+    if(visiable){
+        h.get_h().print();
+        r.get_r().print();
+    }
 
     this->start("Check");
     bool check_result = ch.Check(h, r, m, mhks);
@@ -146,44 +132,15 @@ TEST_P(PBCH_Test, Test){
     this->start("Adapt");
     ch.Adapt(r_p, m_p, h, r, m, mhks, mskis);
     this->end("Adapt");
-    r_p.get_r().print();
+    if(visiable){
+        r_p.get_r().print();
+    }
 
     this->start("Verify");
     bool verify_result = ch.Verify(h, r_p, m_p, mhks);
     this->end("Verify");
     ASSERT_TRUE(verify_result);
 }
-
-std::vector<TestParams> generateTestParams() {
-    int curves[] = {
-        Curve::A,
-        Curve::A1,
-        Curve::E,
-    };
-    int authNums[] = {16, 32, 64};
-    // int lamudas[] = {256, 512, 1024};
-    int lamudas[] = {32, 64, 128};
-
-    std::vector<TestParams> test_params;
-
-    for (int curve : curves) {
-        for (int authNum : authNums) {
-            for (int lamuda : lamudas) {
-                test_params.push_back({curve, authNum, lamuda});
-            }
-        }
-    }
-
-    return test_params;
-}
-
-const std::vector<TestParams> test_values = generateTestParams();
-
-INSTANTIATE_TEST_CASE_P(
-	MAPCH_ZLW_2021,
-	PBCH_Test,
-	testing::ValuesIn(test_values)
-);
 
 int main(int argc, char **argv) 
 {
