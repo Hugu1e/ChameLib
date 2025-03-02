@@ -1,6 +1,33 @@
 #include <scheme/CH/CH_AMV_2017.h>
 
-CH_AMV_2017::CH_AMV_2017(element_s *_G1, element_s *_G2, element_s *_GT, element_s *_Zn): PbcScheme(_G1, _G2, _GT, _Zn), PKE_CCA(_G1, _G2, _GT, _Zn),  PKE_CPA(_G1, _G2, _GT, _Zn){}
+CH_AMV_2017::CH_AMV_2017(int curve, int group): PbcScheme(curve){
+    switch(group){
+        case Group::G1:
+            element_init_G1(G1, pairing);
+            break;
+        case Group::G2:
+            element_init_G2(G1, pairing);
+            break;
+        case Group::GT:
+            element_init_GT(G1, pairing);
+            break;
+        default:
+            throw CurveException(CurveException::INVALID_GROUP);
+    }
+    element_init_Zr(Zn, pairing);
+
+    PKE_CCA.init(G1, Zn);
+    PKE_CPA.init(G1, Zn);
+    
+    element_init_same_as(tmp_G, G1);
+    element_init_same_as(tmp_G_2, G1);
+    element_init_same_as(tmp_G_3, G1);
+    element_init_same_as(tmp_G_4, G1);
+    element_init_same_as(tmp_Zn, Zn);
+    element_init_same_as(tmp_Zn_2, Zn);
+    element_init_same_as(tmp_Zn_3, Zn);
+    element_init_same_as(tmp_Zn_4, Zn);
+}
 
 void CH_AMV_2017::SetUp(CH_AMV_2017_pk &pk, CH_AMV_2017_sk &sk, CH_AMV_2017_h &h, CH_AMV_2017_h &h_p){
     pk.get_CH_pk().init(2);
@@ -330,4 +357,16 @@ bool CH_AMV_2017::Verify(CH_AMV_2017_h &h_p, element_t m_p, CH_AMV_2017_pk &pk){
 }
 
 
-CH_AMV_2017::~CH_AMV_2017(){}
+CH_AMV_2017::~CH_AMV_2017(){
+    element_clear(tmp_G);
+    element_clear(tmp_G_2);
+    element_clear(tmp_G_3);
+    element_clear(tmp_G_4);
+    element_clear(tmp_Zn);
+    element_clear(tmp_Zn_2);
+    element_clear(tmp_Zn_3);
+    element_clear(tmp_Zn_4);
+
+    element_clear(G1);
+    element_clear(Zn);
+}

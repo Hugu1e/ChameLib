@@ -1,86 +1,115 @@
-#include <scheme/CH/CH_AMV_2017.h>
-#include <CommonTest.h>
+#include "scheme/CH/CH_AMV_2017.h"
+#include "CommonTest.h"
 
-int test_result = 1;
+struct TestParams{
+	int curve;
+    int group;
+};
 
-void test(std::string test_name, std::string curve){
-    CommonTest test(test_name, curve);
+class CH_AMV_2017_Test : public BaseTest<TestParams>{
+    protected:
+        void SetUp() override {
+            BaseTest::SetUp();
 
-    CH_AMV_2017 ch = CH_AMV_2017(test.get_G1(), test.get_G2(), test.get_GT(), test.get_Zn());
+            visiable = true;
+
+            std::string testName = ::testing::UnitTest::GetInstance()->current_test_info()->name();
+            std::string curveName = Curve::curve_names[GetParam().curve];
+            std::string groupName;
+            if (GetParam().group == Group::G1) {
+                groupName = "G1";
+            } else if (GetParam().group == Group::G2) {
+                groupName = "G2";
+            } else if (GetParam().group == Group::GT) {
+                groupName = "GT";
+            } else {
+                groupName = "UNKNOWN";
+            }
+            fprintf(out, "%s %s %s\n", testName.c_str(), curveName.c_str(), groupName.c_str());
+            if(visiable)printf("%s %s %s\n", testName.c_str(), curveName.c_str(), groupName.c_str());
+        }
+};
+
+std::vector<TestParams> generateTestParams() {
+    int curves[] = {
+        Curve::A,
+        Curve::A1,
+        Curve::D_159, Curve::D_201, Curve::D_224, Curve::D_105171_196_185, Curve::D_277699_175_167, Curve::D_278027_190_181,
+        Curve::E,
+        Curve::F, Curve::SM9,
+        Curve::G_149
+    };
+
+    int groups[] = {Group::G1, Group::G2, Group::GT};
+
+    std::vector<TestParams> test_params;
+
+    for (int curve : curves) {
+        for (int group : groups) {
+            test_params.push_back({curve, group});
+        }
+    }
+
+    return test_params;
+}
+
+const std::vector<TestParams> test_values = generateTestParams();
+
+INSTANTIATE_TEST_CASE_P(
+	CH_Test,
+    CH_AMV_2017_Test,
+	testing::ValuesIn(test_values)
+);
+
+TEST_P(CH_AMV_2017_Test, Test){
+    CH_AMV_2017 ch = CH_AMV_2017(GetParam().curve, GetParam().group);
 
     CH_AMV_2017_pk pk;
     CH_AMV_2017_sk sk;
     CH_AMV_2017_h h,h_p;
-    element_t m,m_p;
 
-    element_init_same_as(m, test.get_Zn());
-    element_init_same_as(m_p, test.get_Zn());
+    element_s *m = ch.GetZrElement();
+    element_s *m_p = ch.GetZrElement();
 
-    test.start("SetUp");
+    this->start("SetUp");
     ch.SetUp(pk, sk, h, h_p);
-    test.end("SetUp");
+    this->end("SetUp");
 
-
-    test.start("KeyGen");
+    this->start("KeyGen");
     ch.KeyGen(pk, sk);
-    test.end("KeyGen");
-    Logger::PrintPbc("g", pk.get_CH_pk()[CH_AMV_2017::g]);
-    Logger::PrintPbc("y", pk.get_CH_pk()[CH_AMV_2017::y]);
-    Logger::PrintPbc("x", sk.get_CH_sk()[CH_AMV_2017::x]);
-
-
-    element_random(m);
-    Logger::PrintPbc("m", m);
-    test.start("Hash");
+    this->end("KeyGen");
+    if(visiable){
+        Logger::PrintPbc("g", pk.get_CH_pk()[CH_AMV_2017::g]);
+        Logger::PrintPbc("y", pk.get_CH_pk()[CH_AMV_2017::y]);
+        Logger::PrintPbc("x", sk.get_CH_sk()[CH_AMV_2017::x]);        
+    }
+    
+    this->start("Hash");
     ch.Hash(h, m, pk);
-    test.end("Hash");
-    Logger::PrintPbc("Hash value", h.get_h()[CH_AMV_2017::h1]);
+    this->end("Hash");
+    if(visiable){
+        Logger::PrintPbc("m", m);
+        Logger::PrintPbc("Hash value", h.get_h()[CH_AMV_2017::h1]);
+    }
 
-
-    test.start("Check");
+    this->start("Check");
     bool check_result = ch.Check(h, m, pk);
-    test.end("Check");
+    this->end("Check");
+    ASSERT_TRUE(check_result);
 
-    if(check_result){
-        printf("Hash check successful!\n");
-    }else{
-        printf("Hash check failed.\n");
-    }
-
-    element_random(m_p);
-    Logger::PrintPbc("m_p", m_p);
-    test.start("Adapt");
+    this->start("Adapt");
     ch.Adapt(h_p, m_p, h, m, sk, pk);
-    test.end("Adapt");
-    // Logger::PrintPbcElements("h_p.h", *h_p.get_h());
-    // Logger::PrintPbcElements("h_p.r.c1", *h_p.get_r()->get_c1());
-    // Logger::PrintPbcElements("h_p.r.c2", *h_p.get_r()->get_c2());
-    // Logger::PrintPbcElements("h_p.r.pai", *h_p.get_r()->get_pai());
+    this->end("Adapt");
+    if(visiable) Logger::PrintPbc("m_p", m_p);
 
-
-
-    test.start("Verify");
+    this->start("Verify");
     bool verify_result = ch.Verify(h_p, m_p, pk);
-    test.end("Verify");
-
-    if(verify_result){
-        printf("Verify successful!\n");
-        test_result = 0;
-    }else{
-        printf("Verify failed.\n");
-    }
+    this->end("Verify");
+    ASSERT_TRUE(verify_result);
 }
 
-
-int main(int argc, char *argv[]){
-    if(argc == 1) {
-        test(argv[0], "a");
-    }else if(argc == 2){
-        test(argv[0], argv[1]);
-    }else{
-        printf("usage: %s [a|e|i|f|d224]\n", argv[0]);
-        return 1;
-    }
-    return test_result;
+int main(int argc, char **argv) 
+{
+	::testing::InitGoogleTest(&argc, argv);
+	return RUN_ALL_TESTS();
 }
-

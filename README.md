@@ -1,6 +1,6 @@
 # ChameLib
 
-![Build Status](https://github.com/Hugu1e/ChameLib/actions/workflows/test.yml/badge.svg)
+![test](https://github.com/Hugu1e/ChameLib/actions/workflows/test.yml/badge.svg)
 
 ## Dependency
 

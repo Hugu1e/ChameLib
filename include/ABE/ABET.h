@@ -118,14 +118,24 @@ class ABET:public PbcScheme{
         element_t b1r1a1,b1r1a2,b2r2a1,b2r2a2,r1r2a1,r1r2a2;
         element_t s1,s2;
 
+        element_t tmp_G, tmp_G_2, tmp_G_3, tmp_G_4;
+        element_t tmp_H, tmp_H_2;
+        element_t tmp_GT, tmp_GT_2, tmp_GT_3;
+        element_t tmp_Zn, tmp_Zn_2;
+
+        bool swap;
+
         std::unordered_map<unsigned long int, std::string> pai;  // π(i) -> attr
         std::unordered_map<std::string, unsigned long int> attr_map;  // attr -> index of attr_list
         std::string policy_str;
 
-
+        void Pairing(element_t res, element_t a, element_t b);
 
     public:
-        ABET(element_s *_G1, element_s *_G2, element_s *_GT, element_s *_Zn);
+        ABET(){}
+        ABET(int curve, bool swap);
+
+        void init(element_t _G1, element_t _G2, element_t _GT, element_t _Zn, bool swap);
 
         void Setup(ABET_msk &msk, ABET_mpk &mpk, ABET_sks &sks, ABET_ciphertext &ciphertext, int k);
 
@@ -138,7 +148,7 @@ class ABET:public PbcScheme{
         void Hash(element_t res, std::string m);
         void Hash2(element_t res, element_t m);
 
-        ~ABET() override;
+        ~ABET();
 
         const int MODIFIER = 1;
         const int OWNER = 2;

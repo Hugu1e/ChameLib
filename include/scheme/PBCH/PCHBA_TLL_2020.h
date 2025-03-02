@@ -89,8 +89,15 @@ class PCHBA_TLL_2020: public PbcScheme{
         element_t r,R;
         element_t s1,s2;
         element_t esk;
+
+        element_t tmp_G, tmp_G_2, tmp_H, tmp_H_2, tmp_GT, tmp_GT_2, tmp_GT_3, tmp_Zn, tmp_Zn_2, tmp_Zn_3;
+
+        bool swap;
+
+        bool Pairing(element_t res, element_t a, element_t b);
+
     public:
-        PCHBA_TLL_2020(element_s *_G1, element_s *_G2, element_s *_GT, element_s *_Zn);
+        PCHBA_TLL_2020(int curve, bool swap);
 
         void SetUp(PCHBA_TLL_2020_pk &pkPCHBA, PCHBA_TLL_2020_sk &skPCHBA, PCHBA_TLL_2020_sks &sksPCHBA, PCHBA_TLL_2020_h &h, PCHBA_TLL_2020_h &h_p, int k);
 

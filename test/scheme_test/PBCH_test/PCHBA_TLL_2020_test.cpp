@@ -1,17 +1,66 @@
-#include <scheme/PBCH/PCHBA_TLL_2020.h>
-#include <CommonTest.h>
+#include "scheme/PBCH/PCHBA_TLL_2020.h"
+#include "CommonTest.h"
 
-int test_result = 1;
+struct TestParams{
+	int curve;
+    bool swap;
+    int k;
+};
 
-void test(std::string test_name, std::string curve){
-    CommonTest test(test_name, curve);
+class PCHBA_TLL_2020_Test : public BaseTest<TestParams>{
+    protected:
+        void SetUp() override {
+            BaseTest::SetUp();
 
-    PCHBA_TLL_2020 ch(test.get_G1(), test.get_G2(), test.get_GT(), test.get_Zn());
+            std::string testName = ::testing::UnitTest::GetInstance()->current_test_info()->name();
+            std::string curveName = Curve::curve_names[GetParam().curve];
+            fprintf(out, "%s %s swap: %d k: %d\n", testName.c_str(), curveName.c_str(), GetParam().swap, GetParam().k);
+            if(visiable)printf("%s %s swap: %d k: %d\n", testName.c_str(), curveName.c_str(), GetParam().swap, GetParam().k);
+        }
+};
+
+std::vector<TestParams> generateTestParams() {
+    int curves[] = {
+        Curve::A,
+        Curve::A1,
+        Curve::D_159, Curve::D_201, Curve::D_224, Curve::D_105171_196_185, Curve::D_277699_175_167, Curve::D_278027_190_181,
+        Curve::E,
+        Curve::F, Curve::SM9,
+        Curve::G_149
+    };
+
+    bool swaps[] = {false, true};
+
+    int ks[] = {8, 16, 24};
+
+    std::vector<TestParams> test_params;
+
+    for (int curve : curves) {
+        for (bool swap : swaps) {
+            for (int k : ks) {
+                test_params.push_back({curve, swap, k});
+            }
+        }
+    }
+
+    return test_params;
+}
+
+const std::vector<TestParams> test_values = generateTestParams();
+
+INSTANTIATE_TEST_CASE_P(
+	PBCH_Test,
+    PCHBA_TLL_2020_Test,
+	testing::ValuesIn(test_values)
+);
+
+TEST_P(PCHBA_TLL_2020_Test, Test){
+    PCHBA_TLL_2020 ch(GetParam().curve, GetParam().swap);
 
     std::vector<std::string> attr_list = {"ONE","TWO","THREE"};
-    const int SIZE_OF_ATTR = attr_list.size();  // S, S是Policy所有属性的子集
+    const int SIZE_OF_ATTR = attr_list.size();  
     const std::string POLICY = "(ONE&THREE)&(TWO|FOUR)";
-    const int SIZE_OF_POLICY = 4;   // Policy的属性个数（不去重）
+    const int SIZE_OF_POLICY = 4;  
 
     const int K = 10;
     const int I = 5;  // modifier
@@ -22,82 +71,53 @@ void test(std::string test_name, std::string curve){
     PCHBA_TLL_2020_sks sksPCHBA;
     PCHBA_TLL_2020_h h, h_p;
 
-    element_t m,m_p;
-
     ID.get_IDABET().init(K);
     for(int i = 1;i<=K;i++){
-        element_t tmp_Zn;
-        element_init_same_as(tmp_Zn, test.get_Zn());
-        element_random(tmp_Zn);
+        element_s *tmp_Zn = ch.GetZrElement();
 
         ID.get_IDABET().set(i-1, tmp_Zn);
         element_clear(tmp_Zn);
     }
-    ID.get_IDABET().print();
+    if(visiable) ID.get_IDABET().print();
 
-    element_init_same_as(m, test.get_Zn());
-    element_init_same_as(m_p, test.get_Zn());
-    element_random(m);
-    element_random(m_p);
+    element_s *m = ch.GetZrElement();
+    element_s *m_p = ch.GetZrElement();
 
-    test.start("SetUp");
+    this->start("SetUp");
     ch.SetUp(pkPCHBA, skPCHBA, sksPCHBA, h, h_p, K);
-    test.end("SetUp");
+    this->end("SetUp");
     
-    test.start("KeyGen");
+    this->start("KeyGen");
     ch.KeyGen(sksPCHBA, pkPCHBA, skPCHBA, attr_list, ID, I);
-    test.end("KeyGen");
+    this->end("KeyGen");
     
-    test.start("Hash");
+    this->start("Hash");
     ch.Hash(h, m, pkPCHBA, skPCHBA, POLICY, ID, J);
-    test.end("Hash");
+    this->end("Hash");
     
-    test.start("Check");
+    this->start("Check");
     bool check_result = ch.Check(h, m, pkPCHBA);
-    test.end("Check");
-
-    if(check_result){
-        printf("Check success\n");
-    }else{
-        printf("Check failed\n");
-    }
+    this->end("Check");
+    ASSERT_TRUE(check_result);
     
-    test.start("Adapt");
+    this->start("Adapt");
     ch.Adapt(h_p, m_p, h, m, POLICY, ID, I, pkPCHBA, skPCHBA, sksPCHBA);
-    test.end("Adapt");
+    this->end("Adapt");
 
-    test.start("Verify");
+    this->start("Verify");
     bool verify_result = ch.Verify(h_p, m_p, pkPCHBA);
-    test.end("Verify");
-
-    if(verify_result){
-        printf("Verify success\n");
-        test_result = 0;
-    }else{
-        printf("Verify failed\n");
-    }
+    this->end("Verify");
+    ASSERT_TRUE(verify_result);
     
-    test.start("Judge");
+    this->start("Judge");
     bool judgeRes = ch.Judge(m, h, m_p, h_p, ID, I, pkPCHBA, skPCHBA);
-    test.end("Judge");
+    this->end("Judge");
     
-
-    if(judgeRes){
-        printf("Judge success\n");
-        test_result  = 0;
-    }else{
-        printf("Judge failed\n");
-    } 
+    ASSERT_TRUE(judgeRes);
 }
 
-int main(int argc, char *argv[]){
-    if(argc == 1) {
-        test(argv[0], "a");
-    }else if(argc == 2){
-        test(argv[0], argv[1]);
-    }else{
-        printf("usage: %s [a|e|i|f|d224]\n", argv[0]);
-        return 1;
-    }
-    return test_result;
+int main(int argc, char **argv) 
+{
+	::testing::InitGoogleTest(&argc, argv);
+	return RUN_ALL_TESTS();
 }

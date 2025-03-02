@@ -1,6 +1,40 @@
 #include <AE/PKE_CCA_AMV_2017.h>
 
-PKE_CCA_AMV_2017::PKE_CCA_AMV_2017(element_s *_G1, element_s *_G2, element_s *_GT, element_s *_Zn):PbcScheme(_G1, _G2, _GT, _Zn){}
+PKE_CCA_AMV_2017::PKE_CCA_AMV_2017(int curve, int group):PbcScheme(curve){
+    switch(group){
+        case Group::G1:
+            element_init_G1(G1, pairing);
+            break;
+        case Group::G2:
+            element_init_G2(G1, pairing);
+            break;
+        case Group::GT:
+            element_init_GT(G1, pairing);
+            break;
+        default:
+            throw CurveException(CurveException::INVALID_GROUP);
+    }
+    element_init_Zr(Zn, pairing);
+
+    element_init_same_as(tmp_G, G1);
+    element_init_same_as(tmp_G_2, G1);
+    element_init_same_as(tmp_G_3, G1);
+    element_init_same_as(tmp_G_4, G1);
+    element_init_same_as(tmp_Zn, Zn);
+    element_init_same_as(tmp_Zn_2, Zn);
+}
+
+void PKE_CCA_AMV_2017::init(element_t _G, element_t _Zn){
+    element_init_same_as(G1, _G);
+    element_init_same_as(Zn, _Zn);
+
+    element_init_same_as(tmp_G, G1);
+    element_init_same_as(tmp_G_2, G1);
+    element_init_same_as(tmp_G_3, G1);
+    element_init_same_as(tmp_G_4, G1);
+    element_init_same_as(tmp_Zn, Zn);
+    element_init_same_as(tmp_Zn_2, Zn);
+}
 
 void PKE_CCA_AMV_2017::Setup(PKE_CCA_AMV_2017_pk &pk, PKE_CCA_AMV_2017_sk &sk, PKE_CCA_AMV_2017_c &c){
     pk.init(5);
@@ -96,4 +130,14 @@ void PKE_CCA_AMV_2017::Decrypt(element_t m, PKE_CCA_AMV_2017_c &c, PKE_CCA_AMV_2
     TypeConverter::element_zn_from_element_g(m, tmp_G_3);
 }
 
-PKE_CCA_AMV_2017::~PKE_CCA_AMV_2017(){}
+PKE_CCA_AMV_2017::~PKE_CCA_AMV_2017(){
+    element_clear(tmp_G);
+    element_clear(tmp_G_2);
+    element_clear(tmp_G_3);
+    element_clear(tmp_G_4);
+    element_clear(tmp_Zn);
+    element_clear(tmp_Zn_2);
+
+    element_clear(G1);
+    element_clear(Zn);
+}

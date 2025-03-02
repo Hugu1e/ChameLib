@@ -13,8 +13,14 @@ class PKE_CPA_AMV_2017_sk:public PbcElements{};
 class PKE_CPA_AMV_2017_c:public PbcElements{};
 
 class PKE_CPA_AMV_2017: public PbcScheme{
+    private:
+        element_t tmp_G, tmp_G_2, tmp_G_3, tmp_Zn;
+
     public:
-        PKE_CPA_AMV_2017(element_s *_G1, element_s *_G2, element_s *_GT, element_s *_Zn);
+        PKE_CPA_AMV_2017(){}
+        PKE_CPA_AMV_2017(int curve, int group);
+
+        void init(element_t _G, element_t _Zn);
 
         void Setup(PKE_CPA_AMV_2017_pk &pk, PKE_CPA_AMV_2017_sk &sk,PKE_CPA_AMV_2017_c &c);
 

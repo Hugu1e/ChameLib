@@ -1,13 +1,43 @@
 #include <scheme/PBCH/PCHBA_TLL_2020.h>
 
-PCHBA_TLL_2020::PCHBA_TLL_2020(element_s *_G1, element_s *_G2, element_s *_GT, element_s *_Zn)
-    : PbcScheme(_G1, _G2, _GT, _Zn), abet(_G1, _G2, _GT, _Zn)
-{
+PCHBA_TLL_2020::PCHBA_TLL_2020(int curve, bool swap): PbcScheme(curve){
+    this->swap = swap;
+    if(swap){
+        element_init_G1(G2, pairing);
+        element_init_G2(G1, pairing);
+    }else{
+        element_init_G1(G1, pairing);
+        element_init_G2(G2, pairing);
+    }
+    element_init_GT(GT, pairing);
+    element_init_Zr(Zn, pairing);
+
+    abet.init(G1, G2, GT, Zn, swap);
+
     element_init_same_as(this->r, Zn);
     element_init_same_as(this->R, Zn);
     element_init_same_as(this->s1, Zn);
     element_init_same_as(this->s2, Zn);
     element_init_same_as(this->esk, Zn);
+
+    element_init_same_as(this->tmp_G, G1);
+    element_init_same_as(this->tmp_G_2, G1);
+    element_init_same_as(this->tmp_H, G2);
+    element_init_same_as(this->tmp_H_2, G2);
+    element_init_same_as(this->tmp_GT, GT);
+    element_init_same_as(this->tmp_GT_2, GT);
+    element_init_same_as(this->tmp_GT_3, GT);
+    element_init_same_as(this->tmp_Zn, Zn);
+    element_init_same_as(this->tmp_Zn_2, Zn);
+    element_init_same_as(this->tmp_Zn_3, Zn);
+}
+
+bool PCHBA_TLL_2020::Pairing(element_t res, element_t a, element_t b){
+    if(swap){
+        element_pairing(res, b, a);
+    }else{
+        element_pairing(res, a, b);
+    }
 }
 
 /**
@@ -69,8 +99,8 @@ void PCHBA_TLL_2020::Hash(PCHBA_TLL_2020_h &h, element_t m, PCHBA_TLL_2020_pk &p
     element_random(this->s1);
     element_random(this->s2);
     // C
-    Logger::PrintPbc("Encrypt:R", this->R);
-    Logger::PrintPbc("Encrypt:r", this->r);
+    // Logger::PrintPbc("Encrypt:R", this->R);
+    // Logger::PrintPbc("Encrypt:r", this->r);
     abet.Encrypt(h.get_r().get_C(), pkPCHBA.get_pkABET(), skPCHBA.get_skABET(), this->r, this->R, policy_str, ID.get_IDABET(), oj, this->s1, this->s2);
 
     // c = h^(s1+s2+R)
@@ -112,12 +142,12 @@ bool PCHBA_TLL_2020::Check(PCHBA_TLL_2020_h &h, element_t m, PCHBA_TLL_2020_pk &
         return false;
     }
     // e(g^a, ct2)^sigma =? e(epk,ct1) * e(g,ct3)^(H2(epk||c))
-    element_pairing(this->tmp_GT, pkPCHBA.get_pkABET()[ABET::g_pow_a], h.get_r().get_C().get_ct2()[0]);
+    Pairing(this->tmp_GT, pkPCHBA.get_pkABET()[ABET::g_pow_a], h.get_r().get_C().get_ct2()[0]);
     element_pow_zn(this->tmp_GT, this->tmp_GT, h.get_r()[sigma]);
 
-    element_pairing(this->tmp_GT_2, h.get_r()[epk], h.get_r().get_C().get_ct1()[0]);
+    Pairing(this->tmp_GT_2, h.get_r()[epk], h.get_r().get_C().get_ct1()[0]);
 
-    element_pairing(this->tmp_GT_3, pkPCHBA.get_pkABET()[ABET::g], h.get_r().get_C().get_ct3()[0]);
+    Pairing(this->tmp_GT_3, pkPCHBA.get_pkABET()[ABET::g], h.get_r().get_C().get_ct3()[0]);
     // epk_str + c_str
     unsigned char bytes_epk[element_length_in_bytes(h.get_r()[epk])];
     unsigned char bytes_c[element_length_in_bytes(h.get_r()[c])];
@@ -263,10 +293,10 @@ bool PCHBA_TLL_2020::Judge(element_t m, PCHBA_TLL_2020_h &h, element_t m_p, PCHB
     element_invert(this->tmp_Zn, this->tmp_Zn);
     element_pow_zn(this->tmp_H, h.get_r().get_C().get_ct1()[0], this->tmp_Zn);
     // e(g,ct1^(1/a^2))
-    element_pairing(this->tmp_GT, pkPCHBA.get_pkABET()[ABET::g], this->tmp_H);
+    Pairing(this->tmp_GT, pkPCHBA.get_pkABET()[ABET::g], this->tmp_H);
     // ID_i
     this->abet.GetID_(this->tmp_G, pkPCHBA.get_pkABET(), ID.get_IDABET(), mi, abet.MODIFIER);
-    element_pairing(this->tmp_GT_2, this->tmp_G, h.get_r().get_C().get_ct0()[ABET::ct0_3]);
+    Pairing(this->tmp_GT_2, this->tmp_G, h.get_r().get_C().get_ct0()[ABET::ct0_3]);
     if (element_cmp(this->tmp_GT, this->tmp_GT_2) != 0) {
         return false;
     }
@@ -279,4 +309,20 @@ PCHBA_TLL_2020::~PCHBA_TLL_2020() {
     element_clear(this->s1);
     element_clear(this->s2);
     element_clear(this->esk);   
+
+    element_clear(this->tmp_G);
+    element_clear(this->tmp_G_2);
+    element_clear(this->tmp_H);
+    element_clear(this->tmp_H_2);
+    element_clear(this->tmp_GT);
+    element_clear(this->tmp_GT_2);
+    element_clear(this->tmp_GT_3);
+    element_clear(this->tmp_Zn);
+    element_clear(this->tmp_Zn_2);
+    element_clear(this->tmp_Zn_3);
+
+    element_clear(this->G1);
+    element_clear(this->G2);
+    element_clear(this->GT);
+    element_clear(this->Zn);
 }

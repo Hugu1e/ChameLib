@@ -78,8 +78,10 @@ class CH_AMV_2017: public PbcScheme{
         PKE_CPA_AMV_2017 PKE_CPA;
         void H(element_t res, element_t m1, element_t m2, element_t n);
 
+        element_t tmp_G, tmp_G_2, tmp_G_3, tmp_G_4, tmp_Zn, tmp_Zn_2, tmp_Zn_3, tmp_Zn_4;
+
     public:
-        CH_AMV_2017(element_s *_G1, element_s *_G2, element_s *_GT, element_s *_Zn);
+        CH_AMV_2017(int curve, int group);
 
         void SetUp(CH_AMV_2017_pk &pk, CH_AMV_2017_sk &sk, CH_AMV_2017_h &h, CH_AMV_2017_h &h_p);
 

@@ -1,6 +1,17 @@
 #include "ABE/ABET.h"
 
-ABET::ABET(element_s *_G1, element_s *_G2, element_s *_GT, element_s *_Zn):PbcScheme(_G1, _G2, _GT, _Zn){
+ABET::ABET(int curve, bool swap):PbcScheme(curve){
+    this->swap = swap;
+    if(swap){
+        element_init_G1(G2, pairing);
+        element_init_G2(G1, pairing);
+    }else{
+        element_init_G1(G1, pairing);
+        element_init_G2(G2, pairing);
+    }
+    element_init_GT(GT, pairing);
+    element_init_Zr(Zn, pairing);
+
     element_init_same_as(this->d1, Zn);
     element_init_same_as(this->d2, Zn);
     element_init_same_as(this->d3, Zn);
@@ -18,6 +29,65 @@ ABET::ABET(element_s *_G1, element_s *_G2, element_s *_GT, element_s *_Zn):PbcSc
 
     element_init_same_as(this->s1, Zn);
     element_init_same_as(this->s2, Zn);
+
+    element_init_same_as(this->tmp_G, G1);
+    element_init_same_as(this->tmp_G_2, G1);
+    element_init_same_as(this->tmp_G_3, G1);
+    element_init_same_as(this->tmp_G_4, G1);
+    element_init_same_as(this->tmp_H, G2);
+    element_init_same_as(this->tmp_H_2, G2);
+    element_init_same_as(this->tmp_GT, GT);
+    element_init_same_as(this->tmp_GT_2, GT);
+    element_init_same_as(this->tmp_GT_3, GT);
+    element_init_same_as(this->tmp_Zn, Zn);
+    element_init_same_as(this->tmp_Zn_2, Zn);
+}
+
+void ABET::init(element_t _G1, element_t _G2, element_t _GT, element_t _Zn, bool swap){
+    this->swap = swap;
+
+    element_init_same_as(G1, _G1);
+    element_init_same_as(G2, _G2);
+    element_init_same_as(GT, _GT);
+    element_init_same_as(Zn, _Zn);
+
+    element_init_same_as(this->d1, Zn);
+    element_init_same_as(this->d2, Zn);
+    element_init_same_as(this->d3, Zn);
+
+    element_init_same_as(this->r1, Zn);
+    element_init_same_as(this->r2, Zn);
+    element_init_same_as(this->R, Zn);
+
+    element_init_same_as(this->b1r1a1, Zn);
+    element_init_same_as(this->b1r1a2, Zn);
+    element_init_same_as(this->b2r2a1, Zn);
+    element_init_same_as(this->b2r2a2, Zn);
+    element_init_same_as(this->r1r2a1, Zn);
+    element_init_same_as(this->r1r2a2, Zn);
+
+    element_init_same_as(this->s1, Zn);
+    element_init_same_as(this->s2, Zn);
+
+    element_init_same_as(this->tmp_G, G1);
+    element_init_same_as(this->tmp_G_2, G1);
+    element_init_same_as(this->tmp_G_3, G1);
+    element_init_same_as(this->tmp_G_4, G1);
+    element_init_same_as(this->tmp_H, G2);
+    element_init_same_as(this->tmp_H_2, G2);
+    element_init_same_as(this->tmp_GT, GT);
+    element_init_same_as(this->tmp_GT_2, GT);
+    element_init_same_as(this->tmp_GT_3, GT);
+    element_init_same_as(this->tmp_Zn, Zn);
+    element_init_same_as(this->tmp_Zn_2, Zn);
+}
+
+void ABET::Pairing(element_t res, element_t a, element_t b){
+    if(swap){
+        element_pairing(res, b, a);
+    }else{
+        element_pairing(res, a, b);
+    }
 }
 /**
  * output: mpk, msk
@@ -89,7 +159,7 @@ void ABET::Setup(ABET_msk &msk, ABET_mpk &mpk, ABET_sks &sks, ABET_ciphertext &c
     element_mul(this->tmp_Zn, this->d1, msk[a1]);
     element_div(this->tmp_Zn_2, this->d3, msk[a]);
     element_add(this->tmp_Zn, this->tmp_Zn, this->tmp_Zn_2);
-    element_pairing(this->tmp_GT, mpk[g], mpk[h]);
+    Pairing(this->tmp_GT, mpk[g], mpk[h]);
     element_pow_zn(tmp_GT_2, this->tmp_GT, this->tmp_Zn);
     mpk.set(T1, tmp_GT_2);
     // T2 = e(g, h)^(d2*a2+d3/a)
@@ -406,7 +476,7 @@ void ABET::Encrypt(ABET_ciphertext &ciphertext, ABET_mpk &mpk, ABET_msk &msk, el
 
     // ct_prime = (R || 0^(l-|R|)) xor H2(e(g,h^(d/a))^s)
     // H2(e(g,h^(d/a))^s)
-    element_pairing(this->tmp_GT, mpk[g], mpk[h_pow_d_div_a]);
+    Pairing(this->tmp_GT, mpk[g], mpk[h_pow_d_div_a]);
     element_add(this->tmp_Zn, this->s1, this->s2);
     element_pow_zn(this->tmp_GT, this->tmp_GT, this->tmp_Zn);
     this->Hash2(this->tmp_Zn, this->tmp_GT);
@@ -534,9 +604,9 @@ void ABET::Encrypt(ABET_ciphertext &ciphertext, ABET_mpk &mpk, ABET_msk &msk, el
  */
 void ABET::Decrypt(element_t res_R, element_t res_r, ABET_mpk &mpk, ABET_ciphertext &ciphertext, ABET_sks &sks){
     // retrive R
-    element_pairing(this->tmp_GT, sks.get_sk1()[0], ciphertext.get_ct0()[ct0_3]);
-    element_pairing(this->tmp_GT_2, sks.get_sk0()[sk0_5], ciphertext.get_ct1()[0]);
-    element_pairing(this->tmp_GT_3, sks.get_sk0()[sk0_6], ciphertext.get_ct0()[ct0_4]);
+    Pairing(this->tmp_GT, sks.get_sk1()[0], ciphertext.get_ct0()[ct0_3]);
+    Pairing(this->tmp_GT_2, sks.get_sk0()[sk0_5], ciphertext.get_ct1()[0]);
+    Pairing(this->tmp_GT_3, sks.get_sk0()[sk0_6], ciphertext.get_ct0()[ct0_4]);
     element_mul(this->tmp_GT_2, this->tmp_GT_2, this->tmp_GT_3);
     element_div(this->tmp_GT, this->tmp_GT, this->tmp_GT_2);
     this->Hash2(this->tmp_Zn, this->tmp_GT);
@@ -614,9 +684,9 @@ void ABET::Decrypt(element_t res_R, element_t res_r, ABET_mpk &mpk, ABET_ciphert
         count++;
     }
     // ct_prime * e(tmp_G, sk0_1) * e(tmp_G_2, sk0_2) * e(tmp_G_3, sk0_3)
-    element_pairing(this->tmp_GT, this->tmp_G, sks.get_sk0()[sk0_1]);
-    element_pairing(this->tmp_GT_2, this->tmp_G_2, sks.get_sk0()[sk0_2]);
-    element_pairing(this->tmp_GT_3, this->tmp_G_3, sks.get_sk0()[sk0_3]);
+    Pairing(this->tmp_GT, this->tmp_G, sks.get_sk0()[sk0_1]);
+    Pairing(this->tmp_GT_2, this->tmp_G_2, sks.get_sk0()[sk0_2]);
+    Pairing(this->tmp_GT_3, this->tmp_G_3, sks.get_sk0()[sk0_3]);
 
     element_mul(num, this->tmp_GT, this->tmp_GT_2);
     element_mul(num, num, this->tmp_GT_3);
@@ -647,9 +717,9 @@ void ABET::Decrypt(element_t res_R, element_t res_r, ABET_mpk &mpk, ABET_ciphert
     element_mul(this->tmp_G_3, sks.get_sk_prime()[sk_3], this->tmp_G_3);
 
     // e(tmp_G, ct01) * e(tmp_G_2, ct02) * e(tmp_G_3, ct03)
-    element_pairing(this->tmp_GT, this->tmp_G, ciphertext.get_ct0()[ct0_1]);
-    element_pairing(this->tmp_GT_2, this->tmp_G_2, ciphertext.get_ct0()[ct0_2]);
-    element_pairing(this->tmp_GT_3, this->tmp_G_3, ciphertext.get_ct0()[ct0_3]);
+    Pairing(this->tmp_GT, this->tmp_G, ciphertext.get_ct0()[ct0_1]);
+    Pairing(this->tmp_GT_2, this->tmp_G_2, ciphertext.get_ct0()[ct0_2]);
+    Pairing(this->tmp_GT_3, this->tmp_G_3, ciphertext.get_ct0()[ct0_3]);
 
     element_mul(den, this->tmp_GT, this->tmp_GT_2);
     element_mul(den, den, this->tmp_GT_3);
@@ -705,4 +775,21 @@ ABET::~ABET(){
 
     element_clear(this->s1);
     element_clear(this->s2);
+
+    element_clear(this->tmp_G);
+    element_clear(this->tmp_G_2);
+    element_clear(this->tmp_G_3);
+    element_clear(this->tmp_G_4);
+    element_clear(this->tmp_H);
+    element_clear(this->tmp_H_2);
+    element_clear(this->tmp_GT);
+    element_clear(this->tmp_GT_2);
+    element_clear(this->tmp_GT_3);
+    element_clear(this->tmp_Zn);
+    element_clear(this->tmp_Zn_2);
+
+    element_clear(this->G1);
+    element_clear(this->G2);
+    element_clear(this->GT);
+    element_clear(this->Zn);
 }
