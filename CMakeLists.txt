@@ -26,6 +26,8 @@ file(GLOB LIBRARY_SOURCES
     src/scheme/IBCH/*.cpp
     # src/scheme/PBCH/*.cpp
 
+    src/AE/RSA.cpp
+
     src/ABE/MA_ABE.cpp
     src/ABE/Policy_generation.cpp
     src/ABE/Policy_resolution.cpp
@@ -97,7 +99,7 @@ if(BUILD_TESTS)
         add_test(NAME ${test_name} COMMAND ${test_name})
     endmacro()
 
-    # add_test_executable(RSA_test test/AE_test/RSA_test.cpp)
+    add_test_executable(RSA_test test/AE_test/RSA_test.cpp)
     # add_test_executable(PKE_CPA_AMV_2017_test test/AE_test/PKE_CPA_AMV_2017_test.cpp)
     # add_test_executable(PKE_CCA_AMV_2017_test test/AE_test/PKE_CCA_AMV_2017_test.cpp)
     add_test_executable(AES_test test/SE_test/AES_test.cpp)
