@@ -1,4 +1,5 @@
 #include <scheme/PBCH/DPCH_MXN_2022.h>
+#include <openssl/rand.h>
 
 DPCH_MXN_2022::DPCH_MXN_2022(int curve):PbcScheme(curve){
     element_init_G1(G1, pairing);
@@ -19,45 +20,32 @@ DPCH_MXN_2022::DPCH_MXN_2022(int curve):PbcScheme(curve){
 /**
  * @brief Encode two messages into one element
  */
-void DPCH_MXN_2022::Encode(element_t res, element_t m1, element_t m2){
-    int len_1 = element_length_in_bytes(m1);
-    int len_2 = element_length_in_bytes(m2);
-    unsigned char *str_1 = (unsigned char *)malloc(len_1);
-    element_to_bytes(str_1, m1);
-    unsigned char *str_2 = (unsigned char *)malloc(len_2);
-    element_to_bytes(str_2, m2);
-    
-    unsigned char *str_res = (unsigned char *)malloc(len_1 + len_2 + 1);
-    str_res[0] = len_1;
-    memcpy(str_res + 1, str_1, len_1);
-    memcpy(str_res + 1 + len_1, str_2, len_2);
-    element_from_bytes(res, str_res);
-
-    free(str_1);
-    free(str_2);
-    free(str_res);
+void DPCH_MXN_2022::Encode(element_t res, unsigned char *k, unsigned char *r, int k_len, int r_len){
+    unsigned char tmp[element_length_in_bytes(res)];
+    memset(tmp, 0, sizeof(tmp));
+    tmp[1] = (unsigned char)k_len;
+    memcpy(tmp + 2, k, k_len);
+    tmp[element_length_in_bytes(res) / 2 + 1] = (unsigned char)r_len;
+    memcpy(tmp + element_length_in_bytes(res) / 2 + 2, r, r_len);
+    element_from_bytes(res, tmp);
 }
+
 /**
  * @brief Decode two messages from one element
  */
-void DPCH_MXN_2022::Decode(element_t res1, element_t res2, element_t m){
-    int len_m = element_length_in_bytes(m);
-    unsigned char *str_m = (unsigned char *)malloc(len_m);
-    element_to_bytes(str_m, m);
-
-    int len_1 = str_m[0];
-    unsigned char *str_1 = (unsigned char *)malloc(len_1);
-    memcpy(str_1, str_m + 1, len_1);
-    element_from_bytes(res1, str_1);
-
-    int len_2 = len_m - len_1 - 1;
-    unsigned char *str_2 = (unsigned char *)malloc(len_2);
-    memcpy(str_2, str_m + 1 + len_1, len_2);
-    element_from_bytes(res2, str_2);
-
-    free(str_m);
-    free(str_1);
-    free(str_2);
+void DPCH_MXN_2022::Decode(unsigned char *k, unsigned char * r, element_t res){
+    unsigned char tmp[element_length_in_bytes(res)];
+    element_to_bytes(tmp, res);
+    int l1 = tmp[1];
+    if (l1 < 0 || l1 + 2 >= element_length_in_bytes(res)) {
+        throw std::runtime_error("Decode Failed");
+    }
+    memcpy(k, tmp + 2, l1);
+    int l2 = tmp[element_length_in_bytes(res) / 2 + 1];
+    if (l2 < 0 || l2 + element_length_in_bytes(res) / 2 + 2 >= element_length_in_bytes(res)) {
+        throw std::runtime_error("Decode Failed");
+    }
+    memcpy(r, tmp + element_length_in_bytes(res) / 2 + 2, l2);
 }
 
 /**
@@ -135,10 +123,18 @@ void DPCH_MXN_2022::Hash(DPCH_MXN_2022_h &h, DPCH_MXN_2022_r &r, std::string m, 
 
     ch_et.Hash(h.get_h(), r.get_r(), etd, pp.get_pp_CH(), pkDPCH.get_pk_CH(), m);
 
-    aes.KGen(tmp_Zn);
+    int k_bits = 128;
+    int k_bytes = k_bits / 8;
+    unsigned char K[k_bytes];
+    memset(K, 0, sizeof(K));
+    unsigned char R[k_bytes];
+    memset(R, 0, sizeof(R));
+    aes.KGen(K, k_bits);
+    RAND_bytes(R, k_bytes);
+
     mpz_t c_etd;
     mpz_init(c_etd);
-    aes.Enc(c_etd, tmp_Zn, etd[CH_ET_BC_CDK_2017::d1], 128);
+    aes.Enc(c_etd, K, etd[CH_ET_BC_CDK_2017::d1], k_bits);
     r.get_c_etd().set(0, c_etd);
     mpz_clear(c_etd);
 
@@ -147,9 +143,13 @@ void DPCH_MXN_2022::Hash(DPCH_MXN_2022_h &h, DPCH_MXN_2022_r &r, std::string m, 
         pkThetas_ABE[i] = &pkThetas[i]->get_pk();
     }
     // rt
-    element_random(tmp_Zn_2);
+    int rt_len = element_length_in_bytes(tmp_Zn_2);
+    unsigned char tmp[rt_len];
+    memset(tmp, 0, sizeof(tmp));
+    memcpy(tmp, R, k_bytes);
+    element_from_bytes(tmp_Zn_2, tmp);
 
-    Encode(tmp_GT, tmp_Zn, tmp_Zn_2);
+    Encode(tmp_GT, K, R, k_bytes, k_bytes);
     ma_abe.Encrypt(r.get_c_abe(), tmp_GT, tmp_Zn_2, pp.get_gpk_MA_ABE(), pkThetas_ABE, polocy);
 }
 
@@ -190,7 +190,14 @@ void DPCH_MXN_2022::Adapt(DPCH_MXN_2022_r &r_p, std::string m_p, DPCH_MXN_2022_h
     }
     ma_abe.Decrypt(tmp_GT, skgidAs_ABE, r.get_c_abe());
 
-    Decode(tmp_Zn, tmp_Zn_2, tmp_GT);
+    int k_bits = 128;
+    int k_bytes = k_bits / 8;
+    // Decode(K) -> (k, r)
+    unsigned char K[k_bytes];
+    memset(K, 0, sizeof(K));
+    unsigned char R[k_bytes];
+    memset(R, 0, sizeof(R));
+    Decode(K, R, tmp_GT);
 
     // c' ?= c
     std::vector<MA_ABE_pkTheta *> pkThetas_ABE(pkThetas.size());
@@ -198,15 +205,21 @@ void DPCH_MXN_2022::Adapt(DPCH_MXN_2022_r &r_p, std::string m_p, DPCH_MXN_2022_h
         pkThetas_ABE[i] = &pkThetas[i]->get_pk();
     }
     MA_ABE_ciphertext tmp_c;
+    // rt
+    int rt_len = element_length_in_bytes(tmp_Zn_2);
+    unsigned char tmp[rt_len];
+    memset(tmp, 0, sizeof(tmp));
+    memcpy(tmp, R, k_bytes);
+    element_from_bytes(tmp_Zn_2, tmp);
+
     ma_abe.Encrypt(tmp_c, tmp_GT, tmp_Zn_2, pp.get_gpk_MA_ABE(), pkThetas_ABE, polocy);
     if(!(tmp_c == r.get_c_abe())){
         throw std::runtime_error("DPCH_MXN_2022::Adapt(): c' != c");
     }
 
-
     mpz_t c_etd;
     mpz_init(c_etd);
-    aes.Dec(c_etd, tmp_Zn, r.get_c_etd()[0], 128);
+    aes.Dec(c_etd, K, r.get_c_etd()[0], k_bits);
 
     CH_ET_BC_CDK_2017_etd etd;
     etd.init(1);

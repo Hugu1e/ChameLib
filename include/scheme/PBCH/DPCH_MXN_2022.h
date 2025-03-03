@@ -132,8 +132,8 @@ class DPCH_MXN_2022: public PbcScheme{
         BLS bls;
         CH_ET_BC_CDK_2017 ch_et;
 
-        void Encode(element_t res, element_t m1, element_t m2);
-        void Decode(element_t res1, element_t res2, element_t m);
+        void Encode(element_t res, unsigned char *k, unsigned char *r, int k_len, int r_len);
+        void Decode(unsigned char *k, unsigned char * r, element_t res);
 
         element_t tmp_G, tmp_GT, tmp_Zn, tmp_Zn_2;
 
