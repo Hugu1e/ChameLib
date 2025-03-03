@@ -1,28 +1,38 @@
 #include "utils/TypeConverter.h"
+#include <string.h>
 
 /**
- * parse element_t to mpz_t
- * @param mpz mpz_t
- * @param element element_t
+ * @brief parse element_t to mpz_t
+ * @param[out] mpz mpz_t
+ * @param[in] element element_t
  */
 void TypeConverter::mpz_from_element(mpz_t mpz, element_t element){
-    unsigned char *str = (unsigned char *)malloc(element_length_in_bytes(element));
+    unsigned char str[element_length_in_bytes(element)];
     element_to_bytes(str, element);
-    mpz_set_str(mpz, (char *)str, 10); 
-    free(str);
+    if(str[1] > 0) {
+        unsigned char str2[str[1]];
+        strcpy((char*)str2, (char*)(str + 2));
+        mpz_set_str(mpz, (char *)str2, 62);
+    }
     if(mpz_cmp_ui(mpz, 0) == 0){
         throw std::runtime_error("mpz_from_element: mpz = 0");
     }
 }
 
 /**
- * parse mpz_t to element_t
+ * @brief parse mpz_t to element_t
  * 
+ * @param[out] element element_t
+ * @param[in] mpz mpz_t
  */
 void TypeConverter::mpz_to_element(element_t element, mpz_t mpz){
-    char *str = mpz_get_str(NULL, 10, mpz);
-    element_from_bytes(element, (unsigned char *)str);
-    free(str);
+    unsigned char str[element_length_in_bytes(element)];
+    mpz_get_str((char*)str, 62, mpz);
+    unsigned char str2[strlen((char*)str) + 2];
+    strcpy((char*)(str2 + 2), (char*)str);
+    str2[1] = strlen((char*)str);
+    str2[0] = 0;
+    element_from_bytes(element, (unsigned char *)str2);
 }
 
 
