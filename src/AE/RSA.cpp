@@ -142,6 +142,55 @@ void AE_RSA::KeyGen(mpz_t n, mpz_t e, mpz_t d, short k, short exponent) {
 }
 
 /**
+ * @brief Generate RSA key pair with bit of e and p
+ * 
+ * @param pk[out] public key
+ * @param sk[out] private key
+ * @param ebit[in] bit of e
+ * @param pbit[in] bit of p
+ */
+void AE_RSA::KeyGen(RSA_pk &pk, RSA_sk &sk, short ebit, short pbit){
+    mpz_t e_, p, q, phi, gcdResult, n_, d_;
+    mpz_inits(e_, p, q, phi, gcdResult, n_, d_, NULL);
+
+    RandomGenerator::RandomPrimeInLength(e_, ebit);
+    RandomGenerator::RandomPrimeInLength(p, pbit);
+    RandomGenerator::RandomPrimeInLength(q, pbit);
+
+    ComputePhi(phi, p, q);
+    mpz_gcd(gcdResult, e_, phi);
+    while(mpz_cmp_ui(gcdResult, 1) != 0){
+        RandomGenerator::RandomPrimeInLength(e_, ebit);
+        RandomGenerator::RandomPrimeInLength(p, pbit);
+        RandomGenerator::RandomPrimeInLength(q, pbit);
+
+        ComputePhi(phi, p, q);
+        mpz_gcd(gcdResult, e_, phi);
+    }
+
+    mpz_mul(n_, p, q);
+    mpz_invert(d_, e_, phi);
+
+    pk.set(e, e_);
+    pk.set(n, n_);
+    sk.set(d, d_);
+
+    mpz_clears(e_, p, q, phi, gcdResult, n_, d_, NULL);
+}
+
+/**
+ * @brief Compute φ(n) = (p-1)*(q-1)
+ */
+void AE_RSA::ComputePhi(mpz_t phi, mpz_t p, mpz_t q){
+    mpz_t p_1, q_1;
+    mpz_inits(p_1, q_1, NULL);
+    mpz_sub_ui(p_1, p, 1);
+    mpz_sub_ui(q_1, q, 1);
+    mpz_mul(phi, p_1, q_1);
+    mpz_clears(p_1, q_1, NULL);
+}
+
+/**
  * @brief Generate RSA key pair with e
  * 
  * @param n[out] n = p * q

@@ -102,7 +102,7 @@ class CH_ET_KOG_CDK_2017: public PbcScheme{
         void SetUp(CH_ET_KOG_CDK_2017_pp &pp, CH_ET_KOG_CDK_2017_sk &sk, CH_ET_KOG_CDK_2017_pk &pk, 
             CH_ET_KOG_CDK_2017_h &h, CH_ET_KOG_CDK_2017_etd &etd, CH_ET_KOG_CDK_2017_r &r, CH_ET_KOG_CDK_2017_r &r_p);
 
-        void KeyGen(CH_ET_KOG_CDK_2017_sk &sk, CH_ET_KOG_CDK_2017_pk &pk, CH_ET_KOG_CDK_2017_pp &pp);
+        void KeyGen(CH_ET_KOG_CDK_2017_sk &sk, CH_ET_KOG_CDK_2017_pk &pk, CH_ET_KOG_CDK_2017_pp &pp, short lamuda);
 
         void Hash(CH_ET_KOG_CDK_2017_h &hash, CH_ET_KOG_CDK_2017_r &r, CH_ET_KOG_CDK_2017_etd &etd, element_t m, CH_ET_KOG_CDK_2017_pk &pk, CH_ET_KOG_CDK_2017_pp &pp);
 

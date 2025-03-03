@@ -113,7 +113,7 @@ void CH_ET_KOG_CDK_2017::SetUp(CH_ET_KOG_CDK_2017_pp &pp, CH_ET_KOG_CDK_2017_sk 
     etd.init(1);
 }
 
-void CH_ET_KOG_CDK_2017::KeyGen(CH_ET_KOG_CDK_2017_sk &sk, CH_ET_KOG_CDK_2017_pk &pk, CH_ET_KOG_CDK_2017_pp &pp){
+void CH_ET_KOG_CDK_2017::KeyGen(CH_ET_KOG_CDK_2017_sk &sk, CH_ET_KOG_CDK_2017_pk &pk, CH_ET_KOG_CDK_2017_pp &pp, short lamuda){
     // x
     element_random(tmp_Zn);
     sk.get_ch_sk().set(x, tmp_Zn);
@@ -122,7 +122,7 @@ void CH_ET_KOG_CDK_2017::KeyGen(CH_ET_KOG_CDK_2017_sk &sk, CH_ET_KOG_CDK_2017_pk
     element_pow_zn(tmp_G, pp[g], tmp_Zn);
     pk.get_ch_pk().set(h, tmp_G);
 
-    enc.KeyGen(pk.get_enc_pk(), sk.get_enc_sk(), 1024);
+    enc.KeyGen(pk.get_enc_pk(), sk.get_enc_sk(), lamuda, lamuda);
 
     nizkpok.proof(tmp_Zn, tmp_G, pk.get_ch_pk()[h], sk.get_ch_sk()[x], pp[g]);
     pk.get_pai_pk().set(pai_z, tmp_Zn);

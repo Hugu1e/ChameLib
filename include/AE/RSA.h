@@ -24,8 +24,11 @@ class AE_RSA{
         // void KeyGen(mpz_t p, mpz_t q, short k);
         void KeyGen(mpz_t p, mpz_t q, mpz_t n, mpz_t e, short k, short exponent);
         void KeyGen(mpz_t n, mpz_t e, mpz_t d, short k, short exponent);
+        void KeyGen(RSA_pk &pk, RSA_sk &sk, short ebit, short pbit);
         void KeyGen_E(mpz_t n, mpz_t d, mpz_t e, short k);
         void KeyGen_E(mpz_t p, mpz_t q, mpz_t n, mpz_t e, short k);
+
+        void ComputePhi(mpz_t phi, mpz_t p, mpz_t q);
 
         enum{
             n,

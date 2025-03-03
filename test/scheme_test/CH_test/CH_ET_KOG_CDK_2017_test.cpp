@@ -72,32 +72,12 @@ TEST_P(CH_ET_KOG_CDK_2017_Test, Test){
     element_s* m = ch.GetZrElement();
     element_s* m_p = ch.GetZrElement();
 
-    // // Test NIZK
-    // element_t z, R, pk, sk, g;
-    // element_init_same_as(z, this->get_Zn());
-    // element_init_same_as(R, this->get_G1());
-    // element_init_same_as(pk, this->get_G1());
-    // element_init_same_as(sk, this->get_Zn());
-    // element_init_same_as(g, this->get_G1());
-
-    // element_random(sk);
-    // element_random(g);
-    // // pk = g^sk
-    // element_pow_zn(pk, g, sk);
-
-    // ch.NIZKPOK_proof(z, R, pk, sk, g);
-    // if(ch.NIZKPOK_verify(z, R, pk, g)){
-    //     printf("NIZKPOK_verify success\n");
-    // }else{
-    //     printf("NIZKPOK_verify fail\n");
-    // }
-
     this->start("SetUp");
     ch.SetUp(pp, sk, pk, h, etd, r, r_p);
     this->end("SetUp");
 
     this->start("KeyGen");
-    ch.KeyGen(sk, pk, pp);
+    ch.KeyGen(sk, pk, pp, 1024);
     this->end("KeyGen");
 
     this->start("Hash");
