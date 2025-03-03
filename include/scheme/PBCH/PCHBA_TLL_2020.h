@@ -111,8 +111,6 @@ class PCHBA_TLL_2020: public PbcScheme{
 
         bool Verify(PCHBA_TLL_2020_h &h_p, element_t m_p, PCHBA_TLL_2020_pk &pkPCHBA);
 
-        bool Judge(element_t m, PCHBA_TLL_2020_h &h, element_t m_p, PCHBA_TLL_2020_h &h_p, PCHBA_TLL_2020_ID &ID, int mi, PCHBA_TLL_2020_pk &pkPCHBA, PCHBA_TLL_2020_sk &skPCHBA);
-
         ~PCHBA_TLL_2020();
 
         enum{

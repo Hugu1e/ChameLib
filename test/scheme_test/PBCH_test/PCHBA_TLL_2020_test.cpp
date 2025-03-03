@@ -108,12 +108,6 @@ TEST_P(PCHBA_TLL_2020_Test, Test){
     bool verify_result = ch.Verify(h_p, m_p, pkPCHBA);
     this->end("Verify");
     ASSERT_TRUE(verify_result);
-    
-    this->start("Judge");
-    bool judgeRes = ch.Judge(m, h, m_p, h_p, ID, I, pkPCHBA, skPCHBA);
-    this->end("Judge");
-    
-    ASSERT_TRUE(judgeRes);
 }
 
 int main(int argc, char **argv) 

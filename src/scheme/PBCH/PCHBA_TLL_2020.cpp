@@ -242,67 +242,6 @@ bool PCHBA_TLL_2020::Verify(PCHBA_TLL_2020_h &h_p, element_t m_p, PCHBA_TLL_2020
     return this->Check(h_p, m_p, pkPCHBA);
 }
 
-/**
- * input : pkPCHBA, skPCHBA, m, p, h', b, C, c, epk, sigma, m', p', C', c', epk', sigma', ID, mi,
- * output: bool
- */
-bool PCHBA_TLL_2020::Judge(element_t m, PCHBA_TLL_2020_h &h, element_t m_p, PCHBA_TLL_2020_h &h_p, PCHBA_TLL_2020_ID &ID, int mi, PCHBA_TLL_2020_pk &pkPCHBA, PCHBA_TLL_2020_sk &skPCHBA) {
-    // step 1
-    element_pow_zn(this->tmp_H, h.get_r()[h_], m);
-    element_mul(this->tmp_H_2, h.get_r()[p], this->tmp_H);
-    if (element_cmp(h.get_h()[b], this->tmp_H_2) != 0) {
-        return false;
-    }
-    element_pow_zn(this->tmp_H, h.get_r()[h_], m_p);
-    element_mul(this->tmp_H_2, h_p.get_r()[p], this->tmp_H);
-    if (element_cmp(h.get_h()[b], this->tmp_H_2) != 0) {
-        return false;
-    }
-
-     // // step 2
-    // // g^sigma =? epk * g^(sk*H2(epk||c))
-    // // epk_str + c_str
-    // unsigned char bytes_epk[element_length_in_bytes(*epk)];
-    // unsigned char bytes_c[element_length_in_bytes(*c)];
-    // element_to_bytes(bytes_epk, *epk);
-    // element_to_bytes(bytes_c, *c);
-    // string epk_str((char *)bytes_epk, element_length_in_bytes(*epk));
-    // string c_str((char *)bytes_c, element_length_in_bytes(*c));
-    // string combine = epk_str + c_str;
-    // this->abet.Hash(combine, &this->tmp_Zn);
-    // element_mul(this->tmp_Zn, skPCHBA->skCHET.x, this->tmp_Zn);
-    // element_pow_zn(this->tmp_G, pkPCHBA->pkABET.g, this->tmp_Zn);
-    // element_mul(this->tmp_G, *epk, this->tmp_G);
-    // element_pow_zn(this->tmp_G_2, pkPCHBA->pkABET.g, *sigma);
-    // if (element_cmp(this->tmp_G, this->tmp_G_2) != 0) {
-    //     return false;
-    // }
-
-    // // step 3
-    // // delta_sk = c'/c
-    // element_div(this->tmp_H, *c_p, *c);
-    // // ct_0_3 * delta_sk
-    // element_mul(this->tmp_H_2, C->ct_0.ct0_3, this->tmp_H);
-    // if(element_cmp(C_p->ct_0.ct0_3, this->tmp_H_2) != 0) {
-    //     return false;
-    // }
-
-    // step 4
-    // ct1^(1/a^2)
-    element_mul(this->tmp_Zn, skPCHBA.get_skABET()[ABET::a], skPCHBA.get_skABET()[ABET::a]);
-    element_invert(this->tmp_Zn, this->tmp_Zn);
-    element_pow_zn(this->tmp_H, h.get_r().get_C().get_ct1()[0], this->tmp_Zn);
-    // e(g,ct1^(1/a^2))
-    Pairing(this->tmp_GT, pkPCHBA.get_pkABET()[ABET::g], this->tmp_H);
-    // ID_i
-    this->abet.GetID_(this->tmp_G, pkPCHBA.get_pkABET(), ID.get_IDABET(), mi, abet.MODIFIER);
-    Pairing(this->tmp_GT_2, this->tmp_G, h.get_r().get_C().get_ct0()[ABET::ct0_3]);
-    if (element_cmp(this->tmp_GT, this->tmp_GT_2) != 0) {
-        return false;
-    }
-    return true;
-}
-
 PCHBA_TLL_2020::~PCHBA_TLL_2020() {
     element_clear(this->r);
     element_clear(this->R);
