@@ -1,4 +1,6 @@
 #include <scheme/PBCH/PCH_DSS_2019.h>
+#include <openssl/rand.h>
+#include <string>
 
 PCH_DSS_2019::PCH_DSS_2019(int curve, bool swap): PbcScheme(curve){
     this->swap = swap;
@@ -68,53 +70,39 @@ void PCH_DSS_2019::H2(mpz_t res, mpz_t m, mpz_t N1, mpz_t N2, mpz_t n){
 /**
  * (u1,u2)<-H4((r,A))
  */
-void PCH_DSS_2019::H4(element_t u1, element_t u2, element_t r, std::string A){
-    HASH::hash(u1, r);
+void PCH_DSS_2019::H4(element_t u1, element_t u2, unsigned char *r, int r_len, std::string A){
+    HASH::hash(u1, r, r_len);
     HASH::hash(u2, A);
 }
 
 /**
  * @brief Encode two messages into one element
  */
-void PCH_DSS_2019::Encode(element_t res, element_t m1, element_t m2){
-    int len_1 = element_length_in_bytes(m1);
-    int len_2 = element_length_in_bytes(m2);
-    unsigned char *str_1 = (unsigned char *)malloc(len_1);
-    element_to_bytes(str_1, m1);
-    unsigned char *str_2 = (unsigned char *)malloc(len_2);
-    element_to_bytes(str_2, m2);
-    
-    unsigned char *str_res = (unsigned char *)malloc(len_1 + len_2 + 1);
-    str_res[0] = len_1;
-    memcpy(str_res + 1, str_1, len_1);
-    memcpy(str_res + 1 + len_1, str_2, len_2);
-    element_from_bytes(res, str_res);
-
-    free(str_1);
-    free(str_2);
-    free(str_res);
+void PCH_DSS_2019::Encode(element_t res, unsigned char *k, unsigned char *r, int k_len, int r_len){
+    unsigned char tmp[element_length_in_bytes(res)];
+    memset(tmp, 0, sizeof(tmp));
+    tmp[1] = (unsigned char)k_len;
+    memcpy(tmp + 2, k, k_len);
+    tmp[element_length_in_bytes(res) / 2 + 1] = (unsigned char)r_len;
+    memcpy(tmp + element_length_in_bytes(res) / 2 + 2, r, r_len);
+    element_from_bytes(res, tmp);
 }
 /**
  * @brief Decode two messages from one element
  */
-void PCH_DSS_2019::Decode(element_t res1, element_t res2, element_t m){
-    int len_m = element_length_in_bytes(m);
-    unsigned char *str_m = (unsigned char *)malloc(len_m);
-    element_to_bytes(str_m, m);
-
-    int len_1 = str_m[0];
-    unsigned char *str_1 = (unsigned char *)malloc(len_1);
-    memcpy(str_1, str_m + 1, len_1);
-    element_from_bytes(res1, str_1);
-
-    int len_2 = len_m - len_1 - 1;
-    unsigned char *str_2 = (unsigned char *)malloc(len_2);
-    memcpy(str_2, str_m + 1 + len_1, len_2);
-    element_from_bytes(res2, str_2);
-
-    free(str_m);
-    free(str_1);
-    free(str_2);
+void PCH_DSS_2019::Decode(unsigned char *k, unsigned char * r, element_t res){
+    unsigned char tmp[element_length_in_bytes(res)];
+    element_to_bytes(tmp, res);
+    int l1 = tmp[1];
+    if (l1 < 0 || l1 + 2 >= element_length_in_bytes(res)) {
+        throw std::runtime_error("Decode Failed");
+    }
+    memcpy(k, tmp + 2, l1);
+    int l2 = tmp[element_length_in_bytes(res) / 2 + 1];
+    if (l2 < 0 || l2 + element_length_in_bytes(res) / 2 + 2 >= element_length_in_bytes(res)) {
+        throw std::runtime_error("Decode Failed");
+    }
+    memcpy(r, tmp + element_length_in_bytes(res) / 2 + 2, l2);
 }
 
 
@@ -147,18 +135,24 @@ void PCH_DSS_2019::Hash(PCH_DSS_2019_pk &pkPCH, mpz_t m, const std::string &poli
     mpz_mul(h.getH()[h2], tmp1, tmp2);
     mpz_mod(h.getH()[h2], h.getH()[h2], h.getH()[N2]);
 
-    aes.KGen(tmp_Zn);
+    int k_bits = 128;
+    int k_bytes = k_bits / 8;
+    unsigned char K[k_bytes];
+    memset(K, 0, sizeof(K));
+    unsigned char R[k_bytes];
+    memset(R, 0, sizeof(R));
+    aes.KGen(K, k_bits);
+    RAND_bytes(R, k_bytes);
     // (u1,u2)<-H4((r,A))
-    element_random(tmp_Zn_2);
-    H4(tmp_Zn_3, tmp_Zn_4, tmp_Zn_2, policy_str);
+    H4(tmp_Zn_3, tmp_Zn_4, R, k_bytes, policy_str);
 
     // Encode(k, r) -> K
-    Encode(tmp_GT, tmp_Zn, tmp_Zn_2);
+    Encode(tmp_GT, K, R, k_bytes, k_bytes);
 
     cp_abe.Encrypt(h.getCt(), pkPCH.getMpkABE(), tmp_GT, policy_str, tmp_Zn_3, tmp_Zn_4);
 
     // ct_
-    aes.Enc(h.getCt_()[ct_], tmp_Zn, d2, 128);
+    aes.Enc(h.getCt_()[ct_], K, d2, k_bits);
 
     mpz_clears(tmp1, tmp2, kk, d2, NULL);
 }
@@ -206,12 +200,18 @@ void PCH_DSS_2019::Adapt(PCH_DSS_2019_r &r_p, mpz_t m_p, PCH_DSS_2019_h &h, PCH_
 
     cp_abe.Decrypt(tmp_GT, h.getCt(), pkPCH.getMpkABE(),  sksPCH.getSksABE());
 
+    int k_bits = 128;
+    int k_bytes = k_bits / 8;
     // Decode(K) -> (k, r)
-    Decode(tmp_Zn, tmp_Zn_2, tmp_GT);
+    unsigned char K[k_bytes];
+    memset(K, 0, sizeof(K));
+    unsigned char R[k_bytes];
+    memset(R, 0, sizeof(R));
+    Decode(K, R, tmp_GT);
 
     // check ct ?= ct'
     // (u1,u2)<-H4((r,A))
-    H4(tmp_Zn_3, tmp_Zn_4, tmp_Zn_2, policy_str);
+    H4(tmp_Zn_3, tmp_Zn_4, R, k_bytes, policy_str);
     CP_ABE_ciphertext tmp_ct;
     cp_abe.Encrypt(tmp_ct, pkPCH.getMpkABE(), tmp_GT, policy_str, tmp_Zn_3, tmp_Zn_4);
     if(!(tmp_ct == h.getCt())){
@@ -219,7 +219,7 @@ void PCH_DSS_2019::Adapt(PCH_DSS_2019_r &r_p, mpz_t m_p, PCH_DSS_2019_h &h, PCH_
     }
 
     // DecSE(K, ct_) -> d2
-    this->aes.Dec(d2, tmp_Zn, h.getCt_()[ct_], 128);
+    this->aes.Dec(d2, K, h.getCt_()[ct_], k_bits);
 
     // Hash Check
     if(!(Check(pkPCH, m, h, r))){

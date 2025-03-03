@@ -80,10 +80,10 @@ class PCH_DSS_2019: public PbcScheme{
 
         void H1(mpz_t res, mpz_t m, mpz_t N1, mpz_t N2, mpz_t n);
         void H2(mpz_t res, mpz_t m, mpz_t N1, mpz_t N2, mpz_t n);
-        void H4(element_t u1, element_t u2, element_t r, std::string A);
+        void H4(element_t u1, element_t u2, unsigned char *r, int r_len, std::string A);
 
-        void Encode(element_t res, element_t m1, element_t m2);
-        void Decode(element_t res1, element_t res2, element_t m);
+        void Encode(element_t res, unsigned char *k, unsigned char *r, int k_len, int r_len);
+        void Decode(unsigned char *k, unsigned char * r, element_t res);
 
     public:
         PCH_DSS_2019(int curve, bool swap);

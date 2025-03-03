@@ -1,4 +1,5 @@
 #include "utils/Hash.h"
+#include <string.h>
 
 /**
  * @brief Hash(m) -> res
@@ -184,6 +185,15 @@ void HASH::hash(element_t res, std::string m) {
     SHA256_CTX sha256;
     SHA256_Init(&sha256);
     SHA256_Update(&sha256, m.c_str(), m.length());
+    SHA256_Final(hash, &sha256);
+    element_from_hash(res, hash, SHA256_DIGEST_LENGTH);
+}
+
+void HASH::hash(element_t res, unsigned char *m, int m_len){
+    unsigned char hash[SHA256_DIGEST_LENGTH];
+    SHA256_CTX sha256;
+    SHA256_Init(&sha256);
+    SHA256_Update(&sha256, m, m_len);
     SHA256_Final(hash, &sha256);
     element_from_hash(res, hash, SHA256_DIGEST_LENGTH);
 }

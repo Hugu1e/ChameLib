@@ -115,7 +115,7 @@ INSTANTIATE_TEST_CASE_P(
 
 TEST_P(AES_Test, Test){
     AES aes;
-    element_t key;
+    // element_t key;
     mpz_t plaintext;
     mpz_t ciphertext;
     mpz_t decrypted_plaintext;
@@ -123,14 +123,16 @@ TEST_P(AES_Test, Test){
     pairing_t pairing;
     initCurve(pairing, GetParam().curve);
 
-    element_init_GT(key, pairing);
+    // element_init_GT(key, pairing);
     mpz_inits(plaintext, ciphertext, decrypted_plaintext, NULL);
 
+    int k=128;
+    unsigned char key[128];
     this->start("KGen");
-    aes.KGen(key, 256);
+    aes.KGen(key, k);
     this->end("KGen");
     if(visiable){
-        Logger::PrintPbc("key", key);
+        printf("key: %s\n", key);
     }
 
     RandomGenerator::RandomInLength(plaintext, 128);
@@ -150,7 +152,7 @@ TEST_P(AES_Test, Test){
 
     bool result = mpz_cmp(plaintext, decrypted_plaintext) == 0;
     
-    element_clear(key);
+    // element_clear(key);
     mpz_clears(plaintext, ciphertext, decrypted_plaintext, NULL);
     ASSERT_TRUE(result);
 }
