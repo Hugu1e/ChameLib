@@ -66,15 +66,28 @@ TEST_P(RPCH_TMM_2022_Test, Test){
     const int SIZE_OF_ATTR = attr_list.size();  // S
     const std::string POLICY = "(ONE&THREE)&(TWO|FOUR)";
     const int SIZE_OF_POLICY = 4;
+
+    element_s *id_1 = ch.GetZrElement();
+    element_s *id_2 = ch.GetZrElement();
+    element_s *id_3 = ch.GetZrElement();
+
+    // T1 < T3 < T_present < T2
+    const time_t T_present = TimeUtils::TimeCast(2025, 2, 1, 0, 0, 0);  // present time
+    const time_t re_time_1 = TimeUtils::TimeCast(2025, 1, 1, 0, 0, 0);
+    const time_t re_time_2 = TimeUtils::TimeCast(2025, 2, 31, 0, 0, 0);
+    const time_t re_time_3 = TimeUtils::TimeCast(2025, 1, 2, 0, 0, 0);
     
-    const time_t T = TimeUtils::TimeCast(2024, 12, 21, 0, 0, 0);  // present time
-
-    const time_t end_time_1 = TimeUtils::TimeCast(2025, 12, 31, 0, 0, 0);
-
     RPCH_TMM_2022_sk skRPCH;
     RPCH_TMM_2022_pk pkRPCH;
-    RPCH_TMM_2022_skid skidRPCH;
-    RPCH_TMM_2022_dkidt dkidtRPCH;
+
+    RPCH_TMM_2022_skid skidRPCH_1;
+    RPCH_TMM_2022_skid skidRPCH_2;
+    RPCH_TMM_2022_skid skidRPCH_3;
+
+    RPCH_TMM_2022_dkidt dkidtRPCH_1;
+    RPCH_TMM_2022_dkidt dkidtRPCH_2;
+    RPCH_TMM_2022_dkidt dkidtRPCH_3;
+
     RPCH_TMM_2022_kut kut;
 
     RPCH_TMM_2022_h h,h_p;
@@ -84,39 +97,52 @@ TEST_P(RPCH_TMM_2022_Test, Test){
 
     element_s *m = ch.GetZrElement();
     element_s *m_p = ch.GetZrElement();
-    element_s *id = ch.GetZrElement();
     
     this->start("SetUp");
     ch.SetUp(skRPCH, pkRPCH, rl, st, GetParam().k, GetParam().leafNodeSize);
     this->end("SetUp");
     
     this->start("KeyGen");
-    ch.KeyGen(skidRPCH, pkRPCH, skRPCH, st, attr_list, id, end_time_1);
+    ch.KeyGen(skidRPCH_1, pkRPCH, skRPCH, st, attr_list, id_1, re_time_1);
     this->end("KeyGen");
-    
-    this->start("KUpt");
-    ch.KUpt(kut, pkRPCH, st, rl, T);
-    this->end("KUpt");
-    
-    this->start("DKGen");
-    ch.DKGen(dkidtRPCH, pkRPCH, skidRPCH, kut);
-    this->end("DKGen");
-    
+    ch.KeyGen(skidRPCH_2, pkRPCH, skRPCH, st, attr_list, id_2, re_time_2);
+    ch.KeyGen(skidRPCH_3, pkRPCH, skRPCH, st, attr_list, id_3, re_time_3);
+
     this->start("Rev");
-    ch.Rev(rl, id, T);
+    ch.Rev(rl, id_1, re_time_1);
     this->end("Rev");
+    ch.Rev(rl, id_2, re_time_2);
+    ch.Rev(rl, id_3, re_time_3);
 
     this->start("Hash");
-    ch.Hash(h, m, pkRPCH, POLICY, T);
+    ch.Hash(h, m, pkRPCH, POLICY, T_present);
     this->end("Hash");
-    
+        
     this->start("Check");
     bool check = ch.Check(pkRPCH, m, h);
     this->end("Check");
     ASSERT_TRUE(check);
-        
+    
+    this->start("KUpt");
+    ch.KUpt(kut, pkRPCH, st, rl, T_present);
+    this->end("KUpt");
+    
+    try{
+        ch.DKGen(dkidtRPCH_1, pkRPCH, skidRPCH_1, kut);
+    }catch(const std::runtime_error& e){
+        if(visiable) printf("%s\n", e.what());
+    }
+    try{
+        ch.DKGen(dkidtRPCH_3, pkRPCH, skidRPCH_3, kut);
+    }catch(const std::runtime_error& e){
+        if(visiable) printf("%s\n", e.what());
+    }
+    this->start("DKGen");
+    ch.DKGen(dkidtRPCH_2, pkRPCH, skidRPCH_2, kut);
+    this->end("DKGen");
+
     this->start("Adapt");
-    ch.Adapt(h_p, m_p, m, h, pkRPCH, dkidtRPCH);
+    ch.Adapt(h_p, m_p, m, h, pkRPCH, dkidtRPCH_2);
     this->end("Adapt");
     
     this->start("Verify");

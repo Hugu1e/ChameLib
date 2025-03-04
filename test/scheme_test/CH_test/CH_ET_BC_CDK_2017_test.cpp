@@ -6,6 +6,7 @@ struct TestParams{
 };
 
 const TestParams test_values[] = {
+    {128},
     {256},
     {512},
     {1024},

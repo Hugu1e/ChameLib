@@ -11,6 +11,10 @@ class CH_ET_BC_CDK_2017_pp{
     private:
         int k;
     public:
+        CH_ET_BC_CDK_2017_pp(){}
+        CH_ET_BC_CDK_2017_pp(int k){
+            this->k = k;
+        }
         void setK(int k){
             this->k = k;
         }
@@ -19,15 +23,40 @@ class CH_ET_BC_CDK_2017_pp{
         }
 };
 
-class CH_ET_BC_CDK_2017_pk: public GmpElements{};
+class CH_ET_BC_CDK_2017_pk: public GmpElements{
+    public:
+        CH_ET_BC_CDK_2017_pk(){
+            this->init(2);
+        }
+};
 
-class CH_ET_BC_CDK_2017_sk: public GmpElements{};
+class CH_ET_BC_CDK_2017_sk: public GmpElements{
+    public:
+        CH_ET_BC_CDK_2017_sk(){
+            this->init(1);
+        }
+};
 
-class CH_ET_BC_CDK_2017_h: public GmpElements{};
+class CH_ET_BC_CDK_2017_h: public GmpElements{
+    public:
+        CH_ET_BC_CDK_2017_h(){
+            this->init(4);
+        }
+};
 
-class CH_ET_BC_CDK_2017_r: public GmpElements{};
+class CH_ET_BC_CDK_2017_r: public GmpElements{
+    public:
+        CH_ET_BC_CDK_2017_r(){
+            this->init(2);
+        }
+};
 
-class CH_ET_BC_CDK_2017_etd: public GmpElements{};
+class CH_ET_BC_CDK_2017_etd: public GmpElements{
+    public:
+        CH_ET_BC_CDK_2017_etd(){
+            this->init(1);
+        }
+};
 
 class CH_ET_BC_CDK_2017{
     private:

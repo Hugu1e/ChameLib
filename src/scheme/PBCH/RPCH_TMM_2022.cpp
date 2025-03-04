@@ -69,8 +69,8 @@ void RPCH_TMM_2022::KUpt(RPCH_TMM_2022_kut &kut, RPCH_TMM_2022_pk &pkRPCH, RPCH_
  * output: dkidtRPCH
  */
 void RPCH_TMM_2022::DKGen(RPCH_TMM_2022_dkidt &dkidtRPCH, RPCH_TMM_2022_pk &pkRPCH, RPCH_TMM_2022_skid &skidRPCH, RPCH_TMM_2022_kut &kut){
-    dkidtRPCH.get_skCHET().init(1);
     rabe.DKGen(dkidtRPCH.get_dkidtRABE(), pkRPCH.get_mpkRABE(), skidRPCH.get_skidRABE(), kut.get_kut());
+    dkidtRPCH.get_skCHET().init(1);
     dkidtRPCH.get_skCHET().set(x, skidRPCH.get_skCHET()[x]);
 }
 

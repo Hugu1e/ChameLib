@@ -8,16 +8,26 @@
 #include "../../AE/RSA.h"
 #include "../../ABE/RABE_XNM.h"
 #include "../../SE/AES.h"
+#include "../CH/CH_ET_BC_CDK_2017.h"
+
+class RPCH_XNM_2021_pp{
+    private:
+        CH_ET_BC_CDK_2017_pp ppCHET;
+    public:
+        CH_ET_BC_CDK_2017_pp& get_ppCHET(){
+            return ppCHET;
+        }
+};
 
 class RPCH_XNM_2021_sk{
     private:
         RABE_XNM_msk mskRABE;
-        GmpElements skCHET;
+        CH_ET_BC_CDK_2017_sk skCHET;
     public:
         RABE_XNM_msk& get_mskRABE(){
             return mskRABE;
         }
-        GmpElements& get_skCHET(){
+        CH_ET_BC_CDK_2017_sk& get_skCHET(){
             return skCHET;
         }
 };
@@ -25,22 +35,22 @@ class RPCH_XNM_2021_sk{
 class RPCH_XNM_2021_pk{
     private:
         RABE_XNM_mpk mpkRABE;
-        GmpElements pkCHET;
+        CH_ET_BC_CDK_2017_pk pkCHET;
     public:
         RABE_XNM_mpk& get_mpkRABE(){
             return mpkRABE;
         }
-        GmpElements& get_pkCHET(){
+        CH_ET_BC_CDK_2017_pk& get_pkCHET(){
             return pkCHET;
         }
 };
 
 class RPCH_XNM_2021_skid{
     private:
-        GmpElements skCHET;
+        CH_ET_BC_CDK_2017_sk skCHET;
         RABE_XNM_skid skidRABE;
     public:
-        GmpElements& get_skCHET(){
+        CH_ET_BC_CDK_2017_sk& get_skCHET(){
             return skCHET;
         }
         RABE_XNM_skid& get_skidRABE(){
@@ -50,10 +60,10 @@ class RPCH_XNM_2021_skid{
 
 class RPCH_XNM_2021_dkidt{
     private:
-        GmpElements skCHET;
+        CH_ET_BC_CDK_2017_sk skCHET;
         RABE_XNM_dkidt dkidtRABE;
     public:
-        GmpElements& get_skCHET(){
+        CH_ET_BC_CDK_2017_sk& get_skCHET(){
             return skCHET;
         }
         RABE_XNM_dkidt& get_dkidtRABE(){
@@ -61,26 +71,32 @@ class RPCH_XNM_2021_dkidt{
         }
 };
 
-class RPCH_XNM_2021_r: public GmpElements{
+class RPCH_XNM_2021_r{
     private:
-        // r1, r2, N2, cSE
-        RABE_XNM_ciphertext ct;
+        CH_ET_BC_CDK_2017_r rCHET;
     public:
-        RABE_XNM_ciphertext& get_ct(){
-            return ct;
+        CH_ET_BC_CDK_2017_r& get_rCHET(){
+            return rCHET;
         }
 };
 
 class RPCH_XNM_2021_h{
     private:
-        GmpElements h;
-        RPCH_XNM_2021_r r;
+        CH_ET_BC_CDK_2017_h h;
+        RABE_XNM_ciphertext ct;
+        GmpElements cSE;
     public:
-        GmpElements& get_h(){
+        RPCH_XNM_2021_h(){
+            cSE.init(1);
+        }
+        CH_ET_BC_CDK_2017_h& get_h(){
             return h;
         }
-        RPCH_XNM_2021_r& get_r(){
-            return r;
+        RABE_XNM_ciphertext& get_ct(){
+            return ct;
+        }
+        GmpElements& get_cSE(){
+            return cSE;
         }
 };
 
@@ -113,25 +129,19 @@ class RPCH_XNM_2022_kut{
 
 class RPCH_XNM_2021: public PbcScheme{
     private:
-        AE_RSA rsa;
+        CH_ET_BC_CDK_2017 ch;
         RABE_XNM rabe;
         AES aes;
     
-        int k;
         element_t s1,s2;
         element_t K;
-        element_t tmp_Zn, tmp_Zn_2;
 
         bool swap;
-
-        void H1(mpz_t res, mpz_t m, mpz_t N1, mpz_t N2, mpz_t n);
-        void H2(mpz_t res, mpz_t m, mpz_t N1, mpz_t N2, mpz_t n);
-        void H4(element_t u1, element_t u2, mpz_t r, std::string A);
 
     public:
         RPCH_XNM_2021(int curve, bool swap);
 
-        void SetUp(RPCH_XNM_2021_sk &skRPCH, RPCH_XNM_2021_pk &pkRPCH, RPCH_XNM_2021_RevokedPresonList &rl, RPCH_XNM_2022_Binary_tree &st, int k, int n);
+        void SetUp(RPCH_XNM_2021_pp &ppRPCH, RPCH_XNM_2021_sk &skRPCH, RPCH_XNM_2021_pk &pkRPCH, RPCH_XNM_2021_RevokedPresonList &rl, RPCH_XNM_2022_Binary_tree &st, int k, int n);
 
         void KeyGen(RPCH_XNM_2021_skid &skidRPCH, RPCH_XNM_2021_pk &pkRPCH, RPCH_XNM_2021_sk &skRPCH, RPCH_XNM_2022_Binary_tree &st, std::vector<std::string> &attr_list, element_t id, time_t re_time);
 
@@ -141,31 +151,15 @@ class RPCH_XNM_2021: public PbcScheme{
 
         void Rev(RPCH_XNM_2021_RevokedPresonList &rl, element_t id, time_t t);
 
-        void Hash(RPCH_XNM_2021_h &h, mpz_t m, RPCH_XNM_2021_pk &pkRPCH, std::string policy_str, time_t t);
+        void Hash(RPCH_XNM_2021_h &h, RPCH_XNM_2021_r &r, std::string m, RPCH_XNM_2021_pk &pkRPCH, std::string policy_str, time_t t, RPCH_XNM_2021_pp &ppRPCH);
 
-        bool Check(RPCH_XNM_2021_pk &pkRPCH, mpz_t m, RPCH_XNM_2021_h &h);
+        bool Check(RPCH_XNM_2021_h &h, RPCH_XNM_2021_r &r, std::string m, RPCH_XNM_2021_pk &pkRPCH);
 
-        void Adapt(RPCH_XNM_2021_h &h_p, mpz_t m_p, mpz_t m, RPCH_XNM_2021_h &h, RPCH_XNM_2021_pk &pkRPCH, RPCH_XNM_2021_dkidt &dkidtRPCH);
+        void Adapt(RPCH_XNM_2021_r &r_p, std::string m_p, RPCH_XNM_2021_h &h, RPCH_XNM_2021_r &r, std::string m, RPCH_XNM_2021_pk &pkRPCH, RPCH_XNM_2021_dkidt &dkidtRPCH);
 
-        bool Verify(RPCH_XNM_2021_pk &pkRPCH, mpz_t m_p, RPCH_XNM_2021_h &h_p);
+        bool Verify(RPCH_XNM_2021_h &h, RPCH_XNM_2021_r &r_p, std::string m_p, RPCH_XNM_2021_pk &pkRPCH);
 
         ~RPCH_XNM_2021();
-
-        enum {
-            d1,   
-        };
-
-        enum {
-            N1, e
-        };
-
-        enum {
-            N2, r1, r2, cSE
-        };
-
-        enum {
-            h1, h2
-        };
 };
 
 

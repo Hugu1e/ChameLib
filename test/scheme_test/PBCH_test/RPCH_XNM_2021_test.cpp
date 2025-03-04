@@ -66,84 +66,105 @@ TEST_P(RPCH_XNM_2021_Test, Test){
     const int SIZE_OF_ATTR = attr_list.size();  // S
     const std::string POLICY = "(ONE&THREE)&(TWO|FOUR)";
     const int SIZE_OF_POLICY = 4;
-    const time_t T = TimeUtils::TimeCast(2024, 12, 21, 0, 0, 0);  // present time
 
-    const time_t end_time_1 = TimeUtils::TimeCast(2025, 12, 31, 0, 0, 0);
+    element_s *id_1 = ch.GetZrElement();
+    element_s *id_2 = ch.GetZrElement();
+    element_s *id_3 = ch.GetZrElement();
+    
+    // T1 < T3 < T_present < T2
+    const time_t T_present = TimeUtils::TimeCast(2025, 2, 1, 0, 0, 0);  // present time
+    const time_t re_time_1 = TimeUtils::TimeCast(2025, 1, 1, 0, 0, 0);
+    const time_t re_time_2 = TimeUtils::TimeCast(2025, 2, 31, 0, 0, 0);
+    const time_t re_time_3 = TimeUtils::TimeCast(2025, 1, 2, 0, 0, 0);
 
+    RPCH_XNM_2021_pp ppRPCH;
     RPCH_XNM_2021_sk skRPCH;
     RPCH_XNM_2021_pk pkRPCH;
-    RPCH_XNM_2021_skid skidRPCH;
-    RPCH_XNM_2021_dkidt dkidtRPCH;
-    RPCH_XNM_2022_kut kut;
 
-    RPCH_XNM_2021_h h,h_p;
+    RPCH_XNM_2021_skid skidRPCH_1;
+    RPCH_XNM_2021_skid skidRPCH_2;
+    RPCH_XNM_2021_skid skidRPCH_3;
+
+    RPCH_XNM_2021_dkidt dkidtRPCH_1;
+    RPCH_XNM_2021_dkidt dkidtRPCH_2;
+    RPCH_XNM_2021_dkidt dkidtRPCH_3;
+
+    RPCH_XNM_2022_kut kut;
+    RPCH_XNM_2021_h h;
+    RPCH_XNM_2021_r r,r_p;
 
     RPCH_XNM_2021_RevokedPresonList rl;
     RPCH_XNM_2022_Binary_tree st;
+    
+    std::string m = "message to hash";
+    std::string m_p = "message to adapt";
 
-    element_s *id = ch.GetZrElement();
-    mpz_t m,m_p;
-    mpz_inits(m,m_p,NULL);
-    RandomGenerator::RandomInLength(m, 128);
-    RandomGenerator::RandomInLength(m_p, 128);
- 
     this->start("SetUp");
-    ch.SetUp(skRPCH, pkRPCH, rl, st, GetParam().k, GetParam().leafNodeSize);
+    ch.SetUp(ppRPCH, skRPCH, pkRPCH, rl, st, GetParam().k, GetParam().leafNodeSize);
     this->end("SetUp");
 
     this->start("KeyGen");
-    ch.KeyGen(skidRPCH, pkRPCH, skRPCH, st, attr_list, id, end_time_1);
+    ch.KeyGen(skidRPCH_1, pkRPCH, skRPCH, st, attr_list, id_1, re_time_1);
     this->end("KeyGen");
+    ch.KeyGen(skidRPCH_2, pkRPCH, skRPCH, st, attr_list, id_2, re_time_2);
+    ch.KeyGen(skidRPCH_3, pkRPCH, skRPCH, st, attr_list, id_3, re_time_3);
+
+    this->start("Rev");
+    ch.Rev(rl, id_1, re_time_1);
+    this->end("Rev");
+    ch.Rev(rl, id_2, re_time_2);
+    ch.Rev(rl, id_3, re_time_3);
+
+    this->start("Hash");
+    ch.Hash(h, r, m, pkRPCH, POLICY, T_present, ppRPCH);
+    this->end("Hash");
+    if(visiable){    
+        h.get_h().print();
+        r.get_rCHET().print();
+    }
+
+    this->start("Check");
+    bool check = ch.Check(h, r, m, pkRPCH);
+    this->end("Check");
+    ASSERT_TRUE(check);
 
     this->start("KUpt");
-    ch.KUpt(kut, pkRPCH, st, rl, T);
+    ch.KUpt(kut, pkRPCH, st, rl, T_present);
     this->end("KUpt");
     if(visiable){
         printf("size of kut.ku_theta: %ld\n", kut.get_kut().get_ku_theta().size());
     }
    
+    try{
+        ch.DKGen(dkidtRPCH_1, pkRPCH, skidRPCH_1, kut);
+    }catch(const std::runtime_error& e){
+        if(visiable) printf("%s\n", e.what());
+    }
+    try{
+        ch.DKGen(dkidtRPCH_3, pkRPCH, skidRPCH_3, kut);
+    }catch(const std::runtime_error& e){
+        if(visiable) printf("%s\n", e.what());
+    }
     this->start("DKGen");
-    ch.DKGen(dkidtRPCH, pkRPCH, skidRPCH, kut);
+    ch.DKGen(dkidtRPCH_2, pkRPCH, skidRPCH_2, kut);
     this->end("DKGen");
 
-    this->start("Rev");
-    ch.Rev(rl, id, T);
-    this->end("Rev");
-
-
-    this->start("Hash");
-    ch.Hash(h, m, pkRPCH, POLICY, T);
-    this->end("Hash");
-    if(visiable){    
-        Logger::PrintGmp("m", m);
-        // h1 h2 r1 r2 N2 cSE
-        h.get_h().print();
-        h.get_r().print();
-    }
-
-    this->start("Check");
-    bool check = ch.Check(pkRPCH, m, h);
-    this->end("Check");
-    ASSERT_TRUE(check);
-
     this->start("Adapt");
-    ch.Adapt(h_p, m_p, m, h, pkRPCH, dkidtRPCH);
+    ch.Adapt(r_p, m_p, h, r, m, pkRPCH, dkidtRPCH_2);
     this->end("Adapt");
     if(visiable){
-        Logger::PrintGmp("m_p", m_p);
-        // h1 h2 r1 r2 N2 cSE
-        h_p.get_h().print();
-        h_p.get_r().print();
+        r_p.get_rCHET().print();
     }
 
     this->start("Verify");
-    bool verify = ch.Verify(pkRPCH, m_p, h_p);
+    bool verify = ch.Verify(h, r_p, m_p, pkRPCH);
     this->end("Verify");
     ASSERT_TRUE(verify);
 }
 
 int main(int argc, char **argv) 
 {
+    ::testing::GTEST_FLAG(catch_exceptions) = false;
 	::testing::InitGoogleTest(&argc, argv);
 	return RUN_ALL_TESTS();
 }
