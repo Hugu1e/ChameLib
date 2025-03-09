@@ -128,7 +128,7 @@ bool RPCH_TMM_2022::Check(RPCH_TMM_2022_pk &pkRPCH, element_t m, RPCH_TMM_2022_h
  * input : pkRPCH, dkidtRPCH, m, m', h, r
  * output: r'
  */
-void RPCH_TMM_2022::Adapt(RPCH_TMM_2022_h &h_p, element_t m_p, element_t m, RPCH_TMM_2022_h &h, RPCH_TMM_2022_pk &pkRPCH, RPCH_TMM_2022_dkidt &dkidtRPCH) {
+void RPCH_TMM_2022::Adapt(RPCH_TMM_2022_h &h_p, element_t m_p, element_t m, RPCH_TMM_2022_h &h, RPCH_TMM_2022_pk &pkRPCH, RPCH_TMM_2022_dkidt &dkidtRPCH, std::string policy_str) {
     // Check
     if (!this->Check(pkRPCH, m, h)) {
         printf("Hash Check failed\n");
@@ -138,7 +138,7 @@ void RPCH_TMM_2022::Adapt(RPCH_TMM_2022_h &h_p, element_t m_p, element_t m, RPCH
     h_p.get_r().init(2);
     h_p.get_h().init(1);
 
-    rabe.Dec(this->R, pkRPCH.get_mpkRABE(), h.get_r().get_C(), dkidtRPCH.get_dkidtRABE());
+    rabe.Dec(this->R, pkRPCH.get_mpkRABE(), h.get_r().get_C(), dkidtRPCH.get_dkidtRABE(), policy_str);
     
     // r' = r + (m - m')*sk/R
     element_sub(this->tmp_Zn, m, m_p);

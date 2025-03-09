@@ -100,8 +100,6 @@ class MA_ABE: public PbcScheme{
         element_t z;
         element_t tmp_G, tmp_G_2, tmp_G_3, tmp_G_4, tmp_GT, tmp_GT_2, tmp_GT_3, tmp_Zn;
 
-        std::unordered_map<unsigned long int, std::string> pai;  // π(i) -> attr
-
         void HGID(element_t res, bool bit, std::string gid);
         void Hu(element_t res, std::string u);
         void Ht(element_t res, element_t rt, std::string A);

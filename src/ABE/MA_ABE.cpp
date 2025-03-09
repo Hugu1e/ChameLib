@@ -273,7 +273,6 @@ void MA_ABE::Encrypt(MA_ABE_ciphertext &C, element_t m, element_t rt, MA_ABE_gpk
     for(int i=0;i<rows;i++){
         // ci_1 = e(g,g)^lamuda_i * e(g,g)^(a*ti)
         std::string attr = M->getName(i);
-        pai[i] = attr;
         element_pairing(tmp_GT, gpk[g], gpk[g]);
         element_pow_zn(tmp_GT, tmp_GT, lamuda[i]);
         for(int j=0;j<pkThetas.size();j++){
@@ -351,7 +350,7 @@ void MA_ABE::Decrypt(element_t res, std::vector<MA_ABE_skgidA *> &skgidAs, MA_AB
     for(unsigned long int i=0; i<rows;i++){
         // judge whether the attribute of the policy is in the skgidAs
         for(int k=0;k<skgidAs.size();k++){
-            if(skgidAs[k]->get_A() == pai[i]){
+            if(skgidAs[k]->get_A() == M->getName(i)){
                 Element_t_vector *v = new Element_t_vector();
                 for (signed long int j = 0; j < M->col(); ++j) {
                     v->pushBack(M->getElement(i, j));
@@ -392,7 +391,7 @@ void MA_ABE::Decrypt(element_t res, std::vector<MA_ABE_skgidA *> &skgidAs, MA_AB
     for(int i=0;i<rows;i++){
         // judge whether the attribute of the policy is in the skgidAs
         for(int k=0;k<skgidAs.size();k++){
-            if(skgidAs[k]->get_A() == pai[i]){
+            if(skgidAs[k]->get_A() == M->getName(i)){
                 element_set(tmp_GT, C.get_ct_i(i)[ct_1]);
                 // e(skgidA_0,ci_2)
                 element_pairing(tmp_GT_2, skgidAs[k]->get(skgidA_0), C.get_ct_i(i)[ct_2]);

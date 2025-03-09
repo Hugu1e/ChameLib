@@ -198,7 +198,7 @@ void PCH_DSS_2019::Adapt(PCH_DSS_2019_r &r_p, mpz_t m_p, PCH_DSS_2019_h &h, PCH_
     mpz_t kk,rr,d2,x1,x1_p,y1,x2,x2_p,y2, r1_p, r2_p;
     mpz_inits(kk,rr,d2,x1,x1_p,y1,x2,x2_p,y2, r1_p, r2_p, NULL);
 
-    cp_abe.Decrypt(tmp_GT, h.getCt(), pkPCH.getMpkABE(),  sksPCH.getSksABE());
+    cp_abe.Decrypt(tmp_GT, h.getCt(), policy_str, pkPCH.getMpkABE(),  sksPCH.getSksABE());
 
     int k_bits = 128;
     int k_bytes = k_bits / 8;

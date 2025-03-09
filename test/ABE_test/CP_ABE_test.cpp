@@ -80,7 +80,7 @@ TEST_P(CP_ABE_Test, Test){
     this->end("Encrypt");
 
     this->start("Decrypt");
-    abe.Decrypt(res, ciphertext, mpk, sks);
+    abe.Decrypt(res, ciphertext, POLICY, mpk, sks);
     this->end("Decrypt");
     if(visiable){
         Logger::PrintPbc("res", res);        

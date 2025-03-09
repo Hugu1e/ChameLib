@@ -142,7 +142,7 @@ TEST_P(RPCH_TMM_2022_Test, Test){
     this->end("DKGen");
 
     this->start("Adapt");
-    ch.Adapt(h_p, m_p, m, h, pkRPCH, dkidtRPCH_2);
+    ch.Adapt(h_p, m_p, m, h, pkRPCH, dkidtRPCH_2, POLICY);
     this->end("Adapt");
     
     this->start("Verify");

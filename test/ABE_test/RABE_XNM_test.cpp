@@ -135,7 +135,7 @@ TEST_P(RABE_XNM_Test, Test){
     this->end("DKGen");
 
     this->start("Decrypt");
-    abe.Dec(res, mpk, ciphertext, dkidt2);
+    abe.Dec(res, mpk, ciphertext, dkidt2, POLICY);
     this->end("Decrypt");
 
     if(visiable){

@@ -96,8 +96,8 @@ bool RPCH_XNM_2021::Check(RPCH_XNM_2021_h &h, RPCH_XNM_2021_r &r, std::string m,
  * input : pkRPCH, dkidtRPCH, h
  * output: h_p
  */
-void RPCH_XNM_2021::Adapt(RPCH_XNM_2021_r &r_p, std::string m_p, RPCH_XNM_2021_h &h, RPCH_XNM_2021_r &r, std::string m, RPCH_XNM_2021_pk &pkRPCH, RPCH_XNM_2021_dkidt &dkidtRPCH) {
-    rabe.Dec(this->K, pkRPCH.get_mpkRABE(), h.get_ct(), dkidtRPCH.get_dkidtRABE());
+void RPCH_XNM_2021::Adapt(RPCH_XNM_2021_r &r_p, std::string m_p, RPCH_XNM_2021_h &h, RPCH_XNM_2021_r &r, std::string m, RPCH_XNM_2021_pk &pkRPCH, RPCH_XNM_2021_dkidt &dkidtRPCH, std::string policy_str) {
+    rabe.Dec(this->K, pkRPCH.get_mpkRABE(), h.get_ct(), dkidtRPCH.get_dkidtRABE(), policy_str);
 
     CH_ET_BC_CDK_2017_etd etd;
     // DecSE(kk, ct_) -> d2

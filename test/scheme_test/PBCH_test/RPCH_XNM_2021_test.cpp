@@ -150,7 +150,7 @@ TEST_P(RPCH_XNM_2021_Test, Test){
     this->end("DKGen");
 
     this->start("Adapt");
-    ch.Adapt(r_p, m_p, h, r, m, pkRPCH, dkidtRPCH_2);
+    ch.Adapt(r_p, m_p, h, r, m, pkRPCH, dkidtRPCH_2, POLICY);
     this->end("Adapt");
     if(visiable){
         r_p.get_rCHET().print();

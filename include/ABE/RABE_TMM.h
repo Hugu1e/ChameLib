@@ -19,6 +19,7 @@ class RABE_TMM_skid{
         PbcElements sk0;
         std::vector<PbcElements> sk_y;
         std::vector<std::pair<Binary_tree_RABE_node*,PbcElements>> sk_prime;
+        std::unordered_map<std::string, unsigned long int> attr2id;
     public:
         PbcElements& get_sk0()
         {
@@ -39,6 +40,10 @@ class RABE_TMM_skid{
         std::pair<Binary_tree_RABE_node*,PbcElements>& get_sk_prime(int i)
         {
             return sk_prime[i];
+        }
+        std::unordered_map<std::string, unsigned long int>& get_attr2id()
+        {
+            return attr2id;
         }
 };
 class RABE_TMM_revokedPreson: public PbcElements{
@@ -81,6 +86,7 @@ class RABE_TMM_dkidt{
         std::vector<PbcElements> sk_y;
         PbcElements sk_prime;
         PbcElements skt1;  // sk(t,1)
+        std::unordered_map<std::string, unsigned long int> attr2id;
     public:
         void setTime(time_t t){
             this->t = t;
@@ -107,6 +113,10 @@ class RABE_TMM_dkidt{
         PbcElements& get_skt1()
         {
             return skt1;
+        }
+        std::unordered_map<std::string, unsigned long int>& get_attr2id()
+        {
+            return attr2id;
         }
 };
 class RABE_TMM_ciphertext{
@@ -151,10 +161,6 @@ class RABE_TMM : public PbcScheme{
 
         bool swap;
 
-        std::unordered_map<unsigned long int, std::string> pai;  // π(i) -> attr
-        std::unordered_map<std::string, unsigned long int> attr_map;  // attr -> index of attr_list
-        std::string policy_str;
-
         void Pairing(element_t res, element_t a, element_t b);
     
     public:
@@ -180,7 +186,7 @@ class RABE_TMM : public PbcScheme{
 
         void Enc(RABE_TMM_ciphertext &ciphertext, RABE_TMM_mpk &mpk, element_t msg, std::string policy_str, time_t t, element_t s1, element_t s2);
 
-        void Dec(element_t res, RABE_TMM_mpk &mpk, RABE_TMM_ciphertext &ciphertext, RABE_TMM_dkidt &dkidt);
+        void Dec(element_t res, RABE_TMM_mpk &mpk, RABE_TMM_ciphertext &ciphertext, RABE_TMM_dkidt &dkidt, std::string policy_str);
 
         void Rev(std::vector<RABE_TMM_revokedPreson> &rl, element_t id, time_t t);
 

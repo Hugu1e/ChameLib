@@ -196,7 +196,7 @@ void RABE_XNM::KGen(RABE_XNM_skid &skid, Binary_tree_RABE &st, RABE_XNM_mpk &mpk
     // compute sk_y
     skid.get_sk_y().resize(attr_list.size());
     for(int i = 0; i < attr_list.size(); i++){
-        attr_map[attr_list[i]] = i;
+        skid.get_attr2id()[attr_list[i]] = i;
         // sigma_y
         element_random(this->tmp_Zn);
         // t = 1
@@ -392,6 +392,8 @@ void RABE_XNM::DKGen(RABE_XNM_dkidt &dkidt, RABE_XNM_mpk &mpk, RABE_XNM_skid &sk
         return;
     }
 
+    dkidt.get_attr2id() = skid.get_attr2id();
+
     // rtheta'
     element_random(this->tmp_Zn);
 
@@ -437,8 +439,6 @@ void RABE_XNM::Enc(RABE_XNM_ciphertext &ciphertext, RABE_XNM_mpk &mpk, element_t
 {
     ciphertext.get_ct0().init(4);
     ciphertext.get_ct_prime().init(1);
-
-    this->policy_str = policy_str;
 
     Policy_resolution pr;
     Policy_generation pg;
@@ -500,7 +500,6 @@ void RABE_XNM::Enc(RABE_XNM_ciphertext &ciphertext, RABE_XNM_mpk &mpk, element_t
     ciphertext.get_ct_y().resize(rows);
     for(unsigned long int i=0; i<rows;i++){
         std::string attr = M->getName(i);
-        pai[i] = attr;
         // printf("attr: %s\n", attr.c_str());
 
         // l = 1
@@ -599,14 +598,13 @@ void RABE_XNM::Enc(RABE_XNM_ciphertext &ciphertext, RABE_XNM_mpk &mpk, element_t
  * input: mpk, ciphertext, dkidt, 
  * output: res
  */
-void RABE_XNM::Dec(element_t res, RABE_XNM_mpk &mpk, RABE_XNM_ciphertext &ciphertext, RABE_XNM_dkidt &dkidt)
-{   
+void RABE_XNM::Dec(element_t res, RABE_XNM_mpk &mpk, RABE_XNM_ciphertext &ciphertext, RABE_XNM_dkidt &dkidt, std::string policy_str){ 
     // compute Yi
     // get original matrix
     Policy_resolution pr;
     Policy_generation pg;
     element_random(this->tmp_Zn);
-    std::vector<std::string>* postfix_expression = pr.infixToPostfix(this->policy_str);
+    std::vector<std::string>* postfix_expression = pr.infixToPostfix(policy_str);
     Binary_tree_policy* binary_tree_expression = pr.postfixToBinaryTree(postfix_expression, this->tmp_Zn);
     pg.generatePolicyInMatrixForm(binary_tree_expression);
     Element_t_matrix* M = pg.getPolicyInMatrixFormFromTree(binary_tree_expression);
@@ -615,7 +613,7 @@ void RABE_XNM::Dec(element_t res, RABE_XNM_mpk &mpk, RABE_XNM_ciphertext &cipher
     unsigned long int rows = ciphertext.get_ct_y().size();
     for(unsigned long int i=0; i<rows;i++){
         // judge whether the attribute is in the policy
-        if(attr_map.find(pai[i]) == attr_map.end()){
+        if(dkidt.get_attr2id().find(M->getName(i)) == dkidt.get_attr2id().end()){
             continue;
         }
         Element_t_vector *v = new Element_t_vector();
@@ -662,7 +660,7 @@ void RABE_XNM::Dec(element_t res, RABE_XNM_mpk &mpk, RABE_XNM_ciphertext &cipher
     int count = 0;
     for(unsigned long int i=0; i<rows;i++){
         // judge whether the attribute is in the policy
-        if(attr_map.find(pai[i]) == attr_map.end()){
+        if(dkidt.get_attr2id().find(M->getName(i)) == dkidt.get_attr2id().end()){
             continue;
         }
         element_pow_zn(this->tmp_G_4, ciphertext.get_ct_y(i).get(ct_1), x->getElement(count));
@@ -691,14 +689,14 @@ void RABE_XNM::Dec(element_t res, RABE_XNM_mpk &mpk, RABE_XNM_ciphertext &cipher
     count = 0;
     for(unsigned long int i=0; i<rows;i++){
         // judge whether the attribute is in the policy
-        if(attr_map.find(pai[i]) == attr_map.end()){
+        if(dkidt.get_attr2id().find(M->getName(i)) == dkidt.get_attr2id().end()){
             continue;
         }
-        element_pow_zn(this->tmp_G_4, dkidt.get_sk_y(attr_map[pai[i]]).get(sk_1), x->getElement(count));
+        element_pow_zn(this->tmp_G_4, dkidt.get_sk_y(dkidt.get_attr2id()[M->getName(i)]).get(sk_1), x->getElement(count));
         element_mul(this->tmp_G, this->tmp_G, this->tmp_G_4);
-        element_pow_zn(this->tmp_G_4, dkidt.get_sk_y(attr_map[pai[i]]).get(sk_2), x->getElement(count));
+        element_pow_zn(this->tmp_G_4, dkidt.get_sk_y(dkidt.get_attr2id()[M->getName(i)]).get(sk_2), x->getElement(count));
         element_mul(this->tmp_G_2, this->tmp_G_2, this->tmp_G_4);
-        element_pow_zn(this->tmp_G_4, dkidt.get_sk_y(attr_map[pai[i]]).get(sk_3), x->getElement(count));
+        element_pow_zn(this->tmp_G_4, dkidt.get_sk_y(dkidt.get_attr2id()[M->getName(i)]).get(sk_3), x->getElement(count));
         element_mul(this->tmp_G_3, this->tmp_G_3, this->tmp_G_4);
         count++;
     }

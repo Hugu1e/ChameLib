@@ -20,6 +20,7 @@ class RABE_XNM_skid{
         std::vector<PbcElements> sk_y;
         PbcElements sk_prime;
         std::vector<std::pair<Binary_tree_RABE_node*,PbcElements>> sk_theta;
+        std::unordered_map<std::string, unsigned long int> attr2id;
     public:
         PbcElements& get_sk0()
         {
@@ -40,6 +41,10 @@ class RABE_XNM_skid{
         std::vector<std::pair<Binary_tree_RABE_node*,PbcElements>>& get_sk_theta()
         {
             return sk_theta;
+        }
+        std::unordered_map<std::string, unsigned long int> &get_attr2id()
+        {
+            return attr2id;
         }
 };
 class RABE_XNM_revokedPreson: public PbcElements{
@@ -77,6 +82,7 @@ class RABE_XNM_dkidt{
         PbcElements sk0_prime;
         std::vector<PbcElements> sk_y;
         PbcElements sk_prime_prime;
+        std::unordered_map<std::string, unsigned long int> attr2id;
     public:
         void setTime(time_t t){
             this->t = t;
@@ -99,6 +105,10 @@ class RABE_XNM_dkidt{
         PbcElements& get_sk_prime_prime()
         {
             return sk_prime_prime;
+        }
+        std::unordered_map<std::string, unsigned long int>& get_attr2id()
+        {
+            return attr2id;
         }
 };
 class RABE_XNM_ciphertext{
@@ -147,10 +157,6 @@ class RABE_XNM: public PbcScheme{
 
         bool swap;
 
-        std::unordered_map<unsigned long int, std::string> pai;  // π(i) -> attr
-        std::unordered_map<std::string, unsigned long int> attr_map;  // attr -> index of attr_list
-        std::string policy_str;
-
         void Pairing(element_t res, element_t a, element_t b);
     
     public:
@@ -175,7 +181,7 @@ class RABE_XNM: public PbcScheme{
 
         void Enc(RABE_XNM_ciphertext &ciphertext, RABE_XNM_mpk &mpk, element_t msg, std::string policy_str, time_t t, element_t s1, element_t s2);
 
-        void Dec(element_t res, RABE_XNM_mpk &mpk, RABE_XNM_ciphertext &ciphertext, RABE_XNM_dkidt &dkidt);
+        void Dec(element_t res, RABE_XNM_mpk &mpk, RABE_XNM_ciphertext &ciphertext, RABE_XNM_dkidt &dkidt, std::string policy_str);
 
         void Rev(std::vector<RABE_XNM_revokedPreson> &rl, element_t id, time_t t);
 

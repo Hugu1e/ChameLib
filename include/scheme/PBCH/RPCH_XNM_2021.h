@@ -155,7 +155,7 @@ class RPCH_XNM_2021: public PbcScheme{
 
         bool Check(RPCH_XNM_2021_h &h, RPCH_XNM_2021_r &r, std::string m, RPCH_XNM_2021_pk &pkRPCH);
 
-        void Adapt(RPCH_XNM_2021_r &r_p, std::string m_p, RPCH_XNM_2021_h &h, RPCH_XNM_2021_r &r, std::string m, RPCH_XNM_2021_pk &pkRPCH, RPCH_XNM_2021_dkidt &dkidtRPCH);
+        void Adapt(RPCH_XNM_2021_r &r_p, std::string m_p, RPCH_XNM_2021_h &h, RPCH_XNM_2021_r &r, std::string m, RPCH_XNM_2021_pk &pkRPCH, RPCH_XNM_2021_dkidt &dkidtRPCH, std::string policy_str);
 
         bool Verify(RPCH_XNM_2021_h &h, RPCH_XNM_2021_r &r_p, std::string m_p, RPCH_XNM_2021_pk &pkRPCH);
 

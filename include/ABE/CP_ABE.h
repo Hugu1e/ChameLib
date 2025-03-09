@@ -19,7 +19,7 @@ class CP_ABE_sks{
         PbcElements sk_0;
         std::vector<PbcElements> sk_y;
         PbcElements sk_prime;
-
+        std::unordered_map<std::string, unsigned long int> attr2id;
     public:
         PbcElements &get_sk_0()
         {
@@ -36,6 +36,10 @@ class CP_ABE_sks{
         PbcElements &get_sk_prime()
         {
             return sk_prime;
+        }
+        std::unordered_map<std::string, unsigned long int> &get_attr2id()
+        {
+            return attr2id;
         }
 };
 
@@ -87,11 +91,6 @@ class CP_ABE:public PbcScheme{
         element_t tmp_GT, tmp_GT_2, tmp_GT_3;
         element_t tmp_Zn, tmp_Zn_2;
 
-        std::unordered_map<unsigned long int, std::string> pai;      // π(i) -> attr
-        std::unordered_map<std::string, unsigned long int> attr_map; // attr -> index of attr_list
-
-        std::string policy_str;
-
         void Hash(element_t res, std::string m);
 
         void Pairing(element_t res, element_t a, element_t b);
@@ -109,7 +108,7 @@ class CP_ABE:public PbcScheme{
         void Encrypt(CP_ABE_ciphertext &ciphertext, CP_ABE_mpk &mpk, element_t msg, std::string policy_str);
         void Encrypt(CP_ABE_ciphertext &ciphertext, CP_ABE_mpk &mpk, element_t msg, std::string policy_str, element_t s1, element_t s2);
 
-        void Decrypt(element_t res, CP_ABE_ciphertext &ciphertext, CP_ABE_mpk &mpk, CP_ABE_sks &sks);
+        void Decrypt(element_t res, CP_ABE_ciphertext &ciphertext, std::string policy_str, CP_ABE_mpk &mpk, CP_ABE_sks &sks);
 
         ~CP_ABE();
 
