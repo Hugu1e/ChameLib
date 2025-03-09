@@ -112,6 +112,17 @@ void PbcElements::print(int index){
     }
 }
 
+void PbcElements::pop_front(){
+    if (size > 0){
+        element_clear(elements[0]);
+        delete elements[0];
+        for(int i = 0; i < size-1; i++){
+            elements[i] = elements[i+1];
+        }
+        size--;
+    }
+}
+
 PbcElements::~PbcElements(){
     if (elements != nullptr){
         for (int i = 0; i < size; i++){

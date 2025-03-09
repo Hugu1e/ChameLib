@@ -1,5 +1,6 @@
 #include "ABE/ABET.h"
 #include "CommonTest.h"
+#include "utils/RandomGenerator.h"
 
 struct TestParams{
 	int curve;
@@ -57,20 +58,27 @@ INSTANTIATE_TEST_CASE_P(
 TEST_P(ABET_Test, Test){
     ABET abe(GetParam().curve, GetParam().swap);
 
-    std::vector<std::string> attr_list = {"ONE","TWO","THREE","FOUR"};
-    const int SIZE_OF_ATTR = attr_list.size();
-    const std::string POLICY = "(ONE&THREE)&(TWO|FOUR)";
+    const std::string POLICY = "A&(DDDD|(BB&CCC))";
     const int SIZE_OF_POLICY = 4;
 
-    const int K = 10;
-    const int I = 5;  // modifier
-    const int J = 5;  // owner
+    std::vector<std::string> S1 = {"A","DDDD"};
+    const int SIZE_OF_S1 = S1.size();
+
+    std::vector<std::string> S2 = {"BB","CCC"};
+    const int SIZE_OF_S2 = S2.size();
+
+    int K = GetParam().k;
+    const int U1 = K/3;  // length of U1
+    const int U2 = K/2;  // length of U2
+
     ABET_ID id;
     ABET_mpk mpk;
     ABET_msk msk;
-    ABET_sks sks;
+    ABET_sks sks_1;
+    ABET_sks sks_2;
 
-    ABET_ciphertext ciphertext;
+    ABET_ciphertext ciphertext_1;
+    ABET_ciphertext ciphertext_2;
 
     id.init(K);
     for(int i = 1;i<=K;i++){
@@ -78,42 +86,61 @@ TEST_P(ABET_Test, Test){
         id.set(i-1, tmp_Zn);
         element_clear(tmp_Zn);
     }
-    if(visiable) id.print();
+    // if(visiable) id.print();
 
+    // r
     element_s *r = abe.GetZrElement();
-    element_s *R = abe.GetZrElement();
     element_s *res_r = abe.GetZrElement();
-    element_s *res_R = abe.GetZrElement();
+    // R
+    unsigned char R[element_length_in_bytes(r) / 2];
+    unsigned char res_R[element_length_in_bytes(r) / 2];
+    RandomGenerator::Random_bytes(R, element_length_in_bytes(r) / 2);
+    if(visiable){
+        Logger::PrintPbc("r", r);
+        printf("R: %s\n", R);        
+    }
+
     element_s *s1 = abe.GetZrElement();
     element_s *s2 = abe.GetZrElement();
 
     this->start("Setup");
-    abe.Setup(msk, mpk, sks, ciphertext, K);
+    abe.Setup(msk, mpk, K);
     this->end("Setup");
 
+    // U1
     this->start("KeyGen");
-    abe.KeyGen(sks, msk, mpk, attr_list, id, I);
+    abe.KeyGen(sks_1, msk, mpk, S1, id, U1);
     this->end("KeyGen");
-
-    if(visiable){
-        Logger::PrintPbc("R", R);
-        Logger::PrintPbc("r", r);        
-    }
+    abe.KeyGen(sks_2, msk, mpk, S2, id, U2);
 
     this->start("Encrypt");
-    abe.Encrypt(ciphertext, mpk, msk, r, R, POLICY, id, J, s1, s2);
+    abe.Encrypt(ciphertext_1, mpk, msk, r, R, element_length_in_bytes(r) / 2, POLICY, id, U1, s1, s2);
     this->end("Encrypt");
-   
+    abe.Encrypt(ciphertext_2, mpk, msk, r, R, element_length_in_bytes(r) / 2, POLICY, id, U2, s1, s2);
+
     this->start("Decrypt");
-    abe.Decrypt(res_R, res_r, mpk, ciphertext, sks);
+    abe.Decrypt(res_R, res_r, mpk, msk, ciphertext_1, sks_1, POLICY, id, U1, U1);
     this->end("Decrypt");
+    ASSERT_TRUE(memcmp(R, res_R, element_length_in_bytes(r) / 2) == 0);
+    ASSERT_TRUE(element_cmp(r, res_r) == 0);
     if(visiable){
-        Logger::PrintPbc("res_R", res_R);
         Logger::PrintPbc("res_r", res_r);
+        printf("res_R_1: %s\n", res_R);
     }
 
-    ASSERT_TRUE(element_cmp(R,res_R) == 0);
-    ASSERT_TRUE(element_cmp(r,res_r) == 0);
+    try{
+        abe.Decrypt(res_R, res_r, mpk, msk, ciphertext_2, sks_2, POLICY, id, U2, U2);
+    }catch(const std::runtime_error& e){
+        if(visiable) printf("%s\n", e.what());
+    }
+
+    // element_random(res_r);
+    // RandomGenerator::Random_bytes(R, element_length_in_bytes(r) / 2);
+    // abe.Decrypt(res_R, res_r, mpk, msk, ciphertext_2, sks_1, POLICY, id, U1, U2);
+    // if(visiable){
+    //     Logger::PrintPbc("res_r", res_r);
+    //     printf("res_R_2: %s\n", res_R);
+    // }
 }
 
 int main(int argc, char **argv) 

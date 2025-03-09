@@ -66,3 +66,17 @@ void RandomGenerator::RandomCoprimeN(mpz_t res, mpz_t n){
     }
     mpz_clears(gcd, NULL);
 }
+
+/**
+ * @brief Generate random bytes
+ */
+void RandomGenerator::Random_bytes(unsigned char* buffer, size_t size){
+    std::random_device rd;
+    std::mt19937 gen(rd());
+
+    std::uniform_int_distribution<unsigned short> dist(0, 255);
+
+    for (size_t i = 0; i < size; ++i) {
+        buffer[i] = static_cast<unsigned char>(dist(gen));
+    }
+}

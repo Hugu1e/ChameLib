@@ -32,6 +32,8 @@ class PbcElements{
         void print();
         void print(int index);
 
+        void pop_front();
+
         ~PbcElements();
 };
 

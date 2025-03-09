@@ -57,19 +57,26 @@ INSTANTIATE_TEST_CASE_P(
 TEST_P(PCHBA_TLL_2020_Test, Test){
     PCHBA_TLL_2020 ch(GetParam().curve, GetParam().swap);
 
-    std::vector<std::string> attr_list = {"ONE","TWO","THREE"};
-    const int SIZE_OF_ATTR = attr_list.size();  
-    const std::string POLICY = "(ONE&THREE)&(TWO|FOUR)";
-    const int SIZE_OF_POLICY = 4;  
+    const std::string POLICY = "A&(DDDD|(BB&CCC))";
+    const int SIZE_OF_POLICY = 4;
 
-    const int K = 10;
-    const int I = 5;  // modifier
-    const int J = 5;  // owner
+    std::vector<std::string> S1 = {"A","DDDD"};
+    const int SIZE_OF_S1 = S1.size();
+
+    std::vector<std::string> S2 = {"BB","CCC"};
+    const int SIZE_OF_S2 = S2.size();
+
+    int K = GetParam().k;
+    const int U1 = K/3;  // length of U1
+    const int U2 = K/2;  // length of U2
+
     PCHBA_TLL_2020_sk skPCHBA;
     PCHBA_TLL_2020_pk pkPCHBA;
     PCHBA_TLL_2020_ID ID;
-    PCHBA_TLL_2020_sks sksPCHBA;
-    PCHBA_TLL_2020_h h, h_p;
+    PCHBA_TLL_2020_sks sksPCHBA_1, sksPCHBA_2;
+    PCHBA_TLL_2020_h h1, h2;
+    PCHBA_TLL_2020_r r1, r2, r_p;
+
 
     ID.get_IDABET().init(K);
     for(int i = 1;i<=K;i++){
@@ -80,34 +87,50 @@ TEST_P(PCHBA_TLL_2020_Test, Test){
     }
     if(visiable) ID.get_IDABET().print();
 
-    element_s *m = ch.GetZrElement();
+    element_s *m1 = ch.GetZrElement();
+    element_s *m2 = ch.GetZrElement();
     element_s *m_p = ch.GetZrElement();
 
     this->start("SetUp");
-    ch.SetUp(pkPCHBA, skPCHBA, sksPCHBA, h, h_p, K);
+    ch.SetUp(pkPCHBA, skPCHBA, K);
     this->end("SetUp");
     
     this->start("KeyGen");
-    ch.KeyGen(sksPCHBA, pkPCHBA, skPCHBA, attr_list, ID, I);
+    ch.KeyGen(sksPCHBA_1, pkPCHBA, skPCHBA, S1, ID, U1);
     this->end("KeyGen");
+    ch.KeyGen(sksPCHBA_2, pkPCHBA, skPCHBA, S2, ID, U2);
     
     this->start("Hash");
-    ch.Hash(h, m, pkPCHBA, skPCHBA, POLICY, ID, J);
+    ch.Hash(h1, r1, m1, pkPCHBA, skPCHBA, POLICY, ID, U1);
     this->end("Hash");
     
+    
     this->start("Check");
-    bool check_result = ch.Check(h, m, pkPCHBA);
+    bool check_result = ch.Check(h1, r1, m1, pkPCHBA);
     this->end("Check");
     ASSERT_TRUE(check_result);
-    
+
     this->start("Adapt");
-    ch.Adapt(h_p, m_p, h, m, POLICY, ID, I, pkPCHBA, skPCHBA, sksPCHBA);
+    ch.Adapt(r_p, m_p, h1, r1, m1, POLICY, ID, U1, U1, pkPCHBA, skPCHBA, sksPCHBA_1);
     this->end("Adapt");
 
     this->start("Verify");
-    bool verify_result = ch.Verify(h_p, m_p, pkPCHBA);
+    bool verify_result = ch.Verify(h1, r_p, m_p, pkPCHBA);
     this->end("Verify");
     ASSERT_TRUE(verify_result);
+
+    ch.Hash(h2, r2, m2, pkPCHBA, skPCHBA, POLICY, ID, U2);
+    check_result = ch.Check(h2, r2, m2, pkPCHBA);
+    ASSERT_TRUE(check_result);
+    try{
+        ch.Adapt(r_p, m_p, h2, r2, m2, POLICY, ID, U2, U2, pkPCHBA, skPCHBA, sksPCHBA_2);
+    }catch(const std::runtime_error& e){
+        if(visiable) printf("%s\n", e.what());
+    }
+
+    // ch.Adapt(r_p, m_p, h2, r2, m2, POLICY, ID, U1, U2, pkPCHBA, skPCHBA, sksPCHBA_1);
+    // verify_result = ch.Verify(h2, r_p, m_p, pkPCHBA);
+    // ASSERT_TRUE(verify_result);
 }
 
 int main(int argc, char **argv) 
