@@ -63,7 +63,7 @@ TEST_P(ID_B_CollRes_XSL_2021_Test, Test){
     ID_B_CollRes_XSL_2021_h h;
     ID_B_CollRes_XSL_2021_r r,r_p;
 
-    std::string I = "IDENTITY";
+    std::string I = "IDENTITYIDENTITYIDENTITYIDENTITY";
     
     element_s *m = ch.GetZrElement();
     element_s *m_p = ch.GetZrElement();    
