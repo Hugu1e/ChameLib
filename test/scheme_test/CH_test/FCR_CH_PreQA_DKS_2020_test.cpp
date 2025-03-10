@@ -71,9 +71,6 @@ TEST_P(FCR_CH_PreQA_DKS_2020_Test, Test){
                 return;
         }
     }
-    if(GetParam().group == Group::GT && GetParam().curve == Curve::G_149) {
-        return;
-    }
 
     FCR_CH_PreQA_DKS_2020 ch(GetParam().curve, GetParam().group);
 

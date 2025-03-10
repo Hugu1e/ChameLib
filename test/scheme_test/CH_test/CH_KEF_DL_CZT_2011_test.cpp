@@ -60,10 +60,6 @@ INSTANTIATE_TEST_CASE_P(
 );
 
 TEST_P(CH_KEF_DL_CZT_2011_Test, Test){
-    if (GetParam().curve == Curve::G_149 && GetParam().group == Group::GT) {
-        return;
-    }
-
     CH_KEF_DL_CZT_2011 ch(GetParam().curve, GetParam().group);
     
     CH_KEF_DL_CZT_2011_pp pp;
