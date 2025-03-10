@@ -62,53 +62,46 @@ TEST_P(PCH_DSS_2019_Test, Test){
     const std::string POLICY = "(ONE&THREE)&(TWO|FOUR)";
     const int SIZE_OF_POLICY = 4;
 
+    PCH_DSS_2019_pp ppPCH;
     PCH_DSS_2019_sk skPCH;
     PCH_DSS_2019_pk pkPCH;
     PCH_DSS_2019_sks sksPCH;
 
-    mpz_t m,m_p;
     PCH_DSS_2019_h h;
     PCH_DSS_2019_r r,r_p;
 
-    mpz_inits(m,m_p,NULL);
-
-    RandomGenerator::RandomInLength(m, 128);
-    RandomGenerator::RandomInLength(m_p, 128);
-    if(visiable){
-        Logger::PrintGmp("m", m);
-        Logger::PrintGmp("m_p", m_p);
-    }
+    std::string m = "message to hash";
+    std::string m_p = "message to adapt";
 
     this->start("SetUp");
-    ch.SetUp(pkPCH, skPCH, h, r, r_p, GetParam().k);
+    ch.SetUp(ppPCH, pkPCH, skPCH, GetParam().k);
     this->end("SetUp");
 
     this->start("KeyGen");
-    ch.KeyGen(skPCH, pkPCH, attr_list, sksPCH);
+    ch.KeyGen(sksPCH, skPCH, pkPCH, attr_list);
     this->end("KeyGen");
 
     this->start("Hash");
-    ch.Hash(pkPCH, m, POLICY, h, r);
+    ch.Hash(h, r, m, POLICY, pkPCH, ppPCH);
     this->end("Hash");
     if(visiable){
-        // h1 h2 N2
-        h.getH().print();
+        h.get_h().print();
     }
 
     this->start("Check");
-    bool check_result = ch.Check(pkPCH, m, h, r);
+    bool check_result = ch.Check(h, r, m, pkPCH);
     this->end("Check");
     ASSERT_TRUE(check_result);
     
     this->start("Adapt");
-    ch.Adapt(r_p, m_p, h, r, m, pkPCH, sksPCH, POLICY);
+    ch.Adapt(r_p, m_p, h, r, m, sksPCH, pkPCH, POLICY);
     this->end("Adapt");
     if(visiable){
-        r_p.print();
+        r_p.get_rCHET().print();
     }
 
     this->start("Verify");
-    bool verify_result = ch.Verify(pkPCH, m_p, h, r_p);
+    bool verify_result = ch.Verify(h, r_p, m_p, pkPCH);
     this->end("Verify");
     ASSERT_TRUE(verify_result);
 }

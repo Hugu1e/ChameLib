@@ -8,16 +8,26 @@
 #include "../../ABE/CP_ABE.h"
 #include "../../SE/AES.h"
 #include "../../AE/RSA.h"
+#include "../CH/CH_ET_BC_CDK_2017.h"
+
+class PCH_DSS_2019_pp{
+    private:
+        CH_ET_BC_CDK_2017_pp ppCHET;
+    public:
+        CH_ET_BC_CDK_2017_pp& get_ppCHET(){
+            return ppCHET;
+        }
+};
 
 class PCH_DSS_2019_sk{
     private:
         CP_ABE_msk mskABE;
-        GmpElements skCHET;
+        CH_ET_BC_CDK_2017_sk skCHET;
     public:
         CP_ABE_msk& getMskABE(){
             return mskABE;
         }
-        GmpElements& getSkCHET(){
+        CH_ET_BC_CDK_2017_sk& get_skCHET(){
             return skCHET;
         }
 };
@@ -25,22 +35,22 @@ class PCH_DSS_2019_sk{
 class PCH_DSS_2019_pk{
     private:
         CP_ABE_mpk mpkABE;
-        GmpElements pkCHET;
+        CH_ET_BC_CDK_2017_pk pkCHET;
     public:
         CP_ABE_mpk& getMpkABE(){
             return mpkABE;
         }
-        GmpElements& getPkCHET(){
+        CH_ET_BC_CDK_2017_pk& get_pkCHET(){
             return pkCHET;
         }
 };
 
 class PCH_DSS_2019_sks{
     private:
-        GmpElements skCHET;
+        CH_ET_BC_CDK_2017_sk skCHET;
         CP_ABE_sks sksABE;
     public:
-        GmpElements& getSkCHET(){
+        CH_ET_BC_CDK_2017_sk& get_skCHET(){
             return skCHET;
         }
         CP_ABE_sks& getSksABE(){
@@ -48,15 +58,25 @@ class PCH_DSS_2019_sks{
         }
 };
 
-class PCH_DSS_2019_r: public GmpElements{};
+class PCH_DSS_2019_r{
+    private:
+        CH_ET_BC_CDK_2017_r rCHET;
+    public:
+        CH_ET_BC_CDK_2017_r& get_rCHET(){
+            return rCHET;
+        }
+};
 
 class PCH_DSS_2019_h{
     private:
-        GmpElements h;  // h1,h2,N2
+        CH_ET_BC_CDK_2017_h h;
         CP_ABE_ciphertext ct;
         GmpElements ct_;
     public:
-        GmpElements& getH(){
+        PCH_DSS_2019_h(){
+            ct_.init(1);
+        }
+        CH_ET_BC_CDK_2017_h& get_h(){
             return h;
         }
         CP_ABE_ciphertext& getCt(){
@@ -69,7 +89,7 @@ class PCH_DSS_2019_h{
 
 class PCH_DSS_2019: public PbcScheme{
     private:
-        AE_RSA rsa;
+        CH_ET_BC_CDK_2017 ch;
         CP_ABE cp_abe;
         AES aes;
 
@@ -88,43 +108,19 @@ class PCH_DSS_2019: public PbcScheme{
     public:
         PCH_DSS_2019(int curve, bool swap);
 
-        void SetUp(PCH_DSS_2019_pk &pkPCH, PCH_DSS_2019_sk &skPCH, PCH_DSS_2019_h &h, PCH_DSS_2019_r &r, PCH_DSS_2019_r &r_p, int k);
+        void SetUp(PCH_DSS_2019_pp &pp, PCH_DSS_2019_pk &pk, PCH_DSS_2019_sk &sk, int k);
 
-        void KeyGen(PCH_DSS_2019_sk &skPCH, PCH_DSS_2019_pk &pkPCH, std::vector<std::string> &attr_list, PCH_DSS_2019_sks &sksPCH);
+        void KeyGen(PCH_DSS_2019_sks &sks, PCH_DSS_2019_sk &sk, PCH_DSS_2019_pk &pk, std::vector<std::string> &attr_list);
 
-        void Hash(PCH_DSS_2019_pk &pkPCH, mpz_t m, const std::string &policy_str, PCH_DSS_2019_h &h, PCH_DSS_2019_r &r);
+        void Hash(PCH_DSS_2019_h &h, PCH_DSS_2019_r &r, std::string m, const std::string &policy_str, PCH_DSS_2019_pk &pk, PCH_DSS_2019_pp &pp);
 
-        bool Check(PCH_DSS_2019_pk &pkPCH, mpz_t m, PCH_DSS_2019_h &h, PCH_DSS_2019_r &r);
+        bool Check(PCH_DSS_2019_h &h, PCH_DSS_2019_r &r, std::string m, PCH_DSS_2019_pk &pk);
 
-        void Adapt(PCH_DSS_2019_r &r_p, mpz_t m_p, PCH_DSS_2019_h &h, PCH_DSS_2019_r &r, mpz_t m, PCH_DSS_2019_pk &pkPCH, PCH_DSS_2019_sks &sksPCH, const std::string &policy_str);
+        void Adapt(PCH_DSS_2019_r &r_p, std::string m_p, PCH_DSS_2019_h &h, PCH_DSS_2019_r &r, std::string m, PCH_DSS_2019_sks &sks, PCH_DSS_2019_pk &pk, const std::string &policy_str);
 
-        bool Verify(PCH_DSS_2019_pk &pkPCH, mpz_t m_p, PCH_DSS_2019_h &h, PCH_DSS_2019_r &r_p);
+        bool Verify(PCH_DSS_2019_h &h, PCH_DSS_2019_r &r_p, std::string m_p, PCH_DSS_2019_pk &pk);
 
         ~PCH_DSS_2019();
-
-        enum {
-            d1
-        };
-
-        enum {
-            N1,
-            e
-        };
-
-        enum {
-            N2,
-            h1,
-            h2
-        };
-
-        enum {
-            r1,
-            r2
-        };
-
-        enum {
-            ct_
-        };
 };
 
 
