@@ -1,6 +1,9 @@
 #include <scheme/CH/FCR_CH_PreQA_DKS_2020.h>
 
 FCR_CH_PreQA_DKS_2020::FCR_CH_PreQA_DKS_2020(int curve, int group) : PbcScheme(curve) {
+    this->group = group;
+    this->curve = curve;
+
     switch(group){
         case Group::G1:
             element_init_G1(G1, pairing);
@@ -58,7 +61,17 @@ void FCR_CH_PreQA_DKS_2020::KeyGen(FCR_CH_PreQA_DKS_2020_pk &pk, FCR_CH_PreQA_DK
 }
 
 void FCR_CH_PreQA_DKS_2020::H(element_t res, element_t y, element_t h, element_t m, element_t u1,element_t u2) {
+    mpz_t ndonr;
+    mpz_init(ndonr);
+
+    Func::GetNdonr(ndonr, this->group, this->curve);
+
+    element_pow_mpz(u1, u1, ndonr);
+    element_pow_mpz(u2, u2, ndonr);
+
     HASH::hash(res, y, h, m, u1, u2);
+
+    mpz_clear(ndonr);
 }
 
 void FCR_CH_PreQA_DKS_2020::H2(element_t res, element_t m){

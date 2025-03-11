@@ -2,30 +2,32 @@
 #define CHAMELIB_CURVE_PARAMS_H
 
 #include <string>
+#include <sstream>
+#include <pbc/pbc.h>
 
 class CurveParams
 {
     public:
-    std::string a_param;
-    std::string a1_param;
-    std::string e_param;
-    std::string i_param;
-    std::string a_param_80;
-    std::string a_param_112;
-    std::string a_param_128;
-    std::string a_param_160;
+    static const std::string a_param;
+    static const std::string a1_param;
+    static const std::string e_param;
+    static const std::string i_param;
+    static const std::string a_param_80;
+    static const std::string a_param_112;
+    static const std::string a_param_128;
+    static const std::string a_param_160;
 
-    std::string sm9_param;
-    std::string d159_param;
-    std::string d201_param;
-    std::string d224_param;
-    std::string d105171_196_185_param;
-    std::string d277699_175_167_param;
-    std::string d278027_190_181_param;
-    std::string f_param;
-    std::string g149_param;
+    static const std::string sm9_param;
+    static const std::string d159_param;
+    static const std::string d201_param;
+    static const std::string d224_param;
+    static const std::string d105171_196_185_param;
+    static const std::string d277699_175_167_param;
+    static const std::string d278027_190_181_param;
+    static const std::string f_param;
+    static const std::string g149_param;
     
-    CurveParams();
+    static void GetMpz(mpz_t res, std::string s, int curve);
 };
 
 class Curve{

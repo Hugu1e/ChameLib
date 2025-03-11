@@ -70,6 +70,7 @@
 #include "signature/BLS.h"
 
 // utils headers
+#include "utils/Func.h"
 #include "utils/Hash.h"
 #include "utils/Logger.h"
 #include "utils/RandomGenerator.h"

@@ -5,6 +5,7 @@
 #include "../../base/PbcElements.h"
 #include "../../base/PbcScheme.h"
 #include "../../utils/Hash.h"
+#include "../../utils/Func.h"
 
 class CH_FS_ECC_CCT_2024_pp: public PbcElements{};
 class CH_FS_ECC_CCT_2024_pk: public PbcElements{};
@@ -13,6 +14,9 @@ class CH_FS_ECC_CCT_2024_r: public PbcElements{};
 
 class CH_FS_ECC_CCT_2024: public PbcScheme{
     private:
+        int curve;
+        int group;
+    
         element_t rho;
         element_t t1,t2,T1,T2,c2;
         element_t tmp_G, tmp_G_2, tmp_Zn;

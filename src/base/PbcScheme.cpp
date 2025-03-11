@@ -5,59 +5,57 @@ PbcScheme::PbcScheme(const int curve){
 }
 
 void PbcScheme::initCurve(const int curve){
-    CurveParams curves;
-
     switch(curve){
         case Curve::A:
-            initPairing(curves.a_param);
+            initPairing(CurveParams::a_param);
             break;
         case Curve::A1:
-            initPairing(curves.a1_param);
+            initPairing(CurveParams::a1_param);
             break;
         case Curve::E:
-            initPairing(curves.e_param);
+            initPairing(CurveParams::e_param);
             break;
         case Curve::I:
-            initPairing(curves.i_param);
+            initPairing(CurveParams::i_param);
             break;
         case Curve::A_80:
-            initPairing(curves.a_param_80);
+            initPairing(CurveParams::a_param_80);
             break;
         case Curve::A_112:
-            initPairing(curves.a_param_112);
+            initPairing(CurveParams::a_param_112);
             break;
         case Curve::A_128:
-            initPairing(curves.a_param_128);
+            initPairing(CurveParams::a_param_128);
             break;
         case Curve::A_160:
-            initPairing(curves.a_param_160);
+            initPairing(CurveParams::a_param_160);
             break;
         case Curve::SM9:
-            initPairing(curves.sm9_param);
+            initPairing(CurveParams::sm9_param);
             break;
         case Curve::D_159:
-            initPairing(curves.d159_param);
+            initPairing(CurveParams::d159_param);
             break;
         case Curve::D_201:
-            initPairing(curves.d201_param);
+            initPairing(CurveParams::d201_param);
             break;
         case Curve::D_224:
-            initPairing(curves.d224_param);
+            initPairing(CurveParams::d224_param);
             break;
         case Curve::D_105171_196_185:
-            initPairing(curves.d105171_196_185_param);
+            initPairing(CurveParams::d105171_196_185_param);
             break;
         case Curve::D_277699_175_167:
-            initPairing(curves.d277699_175_167_param);
+            initPairing(CurveParams::d277699_175_167_param);
             break;
         case Curve::D_278027_190_181:
-            initPairing(curves.d278027_190_181_param);
+            initPairing(CurveParams::d278027_190_181_param);
             break;
         case Curve::F:
-            initPairing(curves.f_param);
+            initPairing(CurveParams::f_param);
             break;
         case Curve::G_149:
-            initPairing(curves.g149_param);
+            initPairing(CurveParams::g149_param);
             break;
         default:
             throw CurveException(CurveException::INVALID_CURVE);

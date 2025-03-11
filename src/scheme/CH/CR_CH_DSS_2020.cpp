@@ -1,6 +1,8 @@
 #include <scheme/CH/CR_CH_DSS_2020.h>
 
 CR_CH_DSS_2020::CR_CH_DSS_2020(int curve, int group):PbcScheme(curve) {
+    this->curve = curve;
+    this->group = group;
     switch(group){
         case Group::G1:
             element_init_G1(G1, pairing);
@@ -68,7 +70,17 @@ void CR_CH_DSS_2020::KeyGen(CR_CH_DSS_2020_pk &pk, CR_CH_DSS_2020_sk &sk, CR_CH_
  * output: res
  */
 void CR_CH_DSS_2020::H(element_t res, element_t y, element_t h1, element_t h2, element_t m, element_t u11,element_t u12,element_t u2) {
+    mpz_t ndonr;
+    mpz_init(ndonr);
+
+    Func::GetNdonr(ndonr, this->group, this->curve);
+
+    element_pow_mpz(u11, u11, ndonr);
+    element_pow_mpz(u12, u12, ndonr);
+    element_pow_mpz(u2, u2, ndonr);
+    
     HASH::hash(res, y, h1, h2, m, u11, u12, u2);
+    mpz_clear(ndonr);
 }
 
 

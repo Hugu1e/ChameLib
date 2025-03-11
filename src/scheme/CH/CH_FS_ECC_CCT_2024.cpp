@@ -1,6 +1,8 @@
 #include <scheme/CH/CH_FS_ECC_CCT_2024.h>
 
 CH_FS_ECC_CCT_2024::CH_FS_ECC_CCT_2024(int curve, int group): PbcScheme(curve){
+    this->group = group;
+    this->curve = curve;
     switch(group){
         case Group::G1:
             element_init_G1(G1, pairing);
@@ -111,7 +113,15 @@ void CH_FS_ECC_CCT_2024::H(element_t res, element_t m){
  * @param res: hash value
  */
 void CH_FS_ECC_CCT_2024::H(element_t res, element_t m1, element_t m2, element_t m3, element_t m4){
+    mpz_t ndonr;
+    mpz_init(ndonr);
+    Func::GetNdonr(ndonr, this->group, this->curve);
+
+    element_pow_mpz(m1, m1, ndonr);
+
     HASH::hash(res, m1, m2, m3, m4);
+
+    mpz_clear(ndonr);
 }
 
 /**

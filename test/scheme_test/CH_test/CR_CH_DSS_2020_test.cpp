@@ -60,18 +60,6 @@ INSTANTIATE_TEST_CASE_P(
 );
 
 TEST_P(CR_CH_DSS_2020_Test, Test){
-    if(GetParam().group == Group::G2) {
-        switch (GetParam().curve) {
-            case Curve::A:
-            case Curve::A1:
-            case Curve::E:
-                break;
-
-            default:
-                return;
-        }
-    }
-
     CR_CH_DSS_2020 ch(GetParam().curve, GetParam().group);
 
     CR_CH_DSS_2020_pp pp;

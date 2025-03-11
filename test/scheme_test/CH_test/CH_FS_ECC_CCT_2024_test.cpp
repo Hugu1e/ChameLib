@@ -60,18 +60,6 @@ INSTANTIATE_TEST_CASE_P(
 );
 
 TEST_P(CH_FS_ECC_CCT_2024_Test, Test){
-    // if(GetParam().group == Group::G2){
-    //     switch (GetParam().curve)
-    //     {
-    //     case Curve::A:
-    //     case Curve::A1:
-    //     case Curve::E:
-    //         break;
-    //     default:
-    //         return;
-    //     }
-    // }
-
     CH_FS_ECC_CCT_2024 ch(GetParam().curve, GetParam().group);
 
     CH_FS_ECC_CCT_2024_pp pp;

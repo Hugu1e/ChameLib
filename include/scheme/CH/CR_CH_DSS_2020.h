@@ -4,6 +4,7 @@
 #include "../../base/PbcScheme.h"
 #include "../../base/PbcElements.h"
 #include "../../utils/Hash.h"
+#include "../../utils/Func.h"
 
 class CR_CH_DSS_2020_pp: public PbcElements{};
 class CR_CH_DSS_2020_pk: public PbcElements{};
@@ -13,6 +14,8 @@ class CR_CH_DSS_2020_r: public PbcElements{};
 
 class CR_CH_DSS_2020: public PbcScheme{
     private:
+        int curve; 
+        int group;
         element_t xi,k1;
         element_t u11,u12,u2,e;
         element_t k2;
