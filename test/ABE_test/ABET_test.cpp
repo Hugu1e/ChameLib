@@ -134,13 +134,13 @@ TEST_P(ABET_Test, Test){
         if(visiable) printf("%s\n", e.what());
     }
 
-    // element_random(res_r);
-    // RandomGenerator::Random_bytes(R, element_length_in_bytes(r) / 2);
-    // abe.Decrypt(res_R, res_r, mpk, msk, ciphertext_2, sks_1, POLICY, id, U1, U2);
-    // if(visiable){
-    //     Logger::PrintPbc("res_r", res_r);
-    //     printf("res_R_2: %s\n", res_R);
-    // }
+    element_random(res_r);
+    RandomGenerator::Random_bytes(R, element_length_in_bytes(r) / 2);
+    abe.Decrypt(res_R, res_r, mpk, msk, ciphertext_2, sks_1, POLICY, id, U1, U2);
+    if(visiable){
+        Logger::PrintPbc("res_r", res_r);
+        printf("res_R_2: %s\n", res_R);
+    }
 }
 
 int main(int argc, char **argv) 

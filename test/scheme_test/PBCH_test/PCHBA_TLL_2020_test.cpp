@@ -128,9 +128,9 @@ TEST_P(PCHBA_TLL_2020_Test, Test){
         if(visiable) printf("%s\n", e.what());
     }
 
-    // ch.Adapt(r_p, m_p, h2, r2, m2, POLICY, ID, U1, U2, pkPCHBA, skPCHBA, sksPCHBA_1);
-    // verify_result = ch.Verify(h2, r_p, m_p, pkPCHBA);
-    // ASSERT_TRUE(verify_result);
+    ch.Adapt(r_p, m_p, h2, r2, m2, POLICY, ID, U1, U2, pkPCHBA, skPCHBA, sksPCHBA_1);
+    verify_result = ch.Verify(h2, r_p, m_p, pkPCHBA);
+    ASSERT_TRUE(verify_result);
 }
 
 int main(int argc, char **argv) 

@@ -152,6 +152,7 @@ class ABET:public PbcScheme{
         element_t s1,s2;
         element_t z_1,z_2, z;
         element_t alpha_a_1, alpha_a_2;
+        element_t ID_i_1;
 
         element_t tmp_G, tmp_G_2, tmp_G_3, tmp_G_4;
         element_t tmp_H, tmp_H_2;

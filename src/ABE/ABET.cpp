@@ -34,6 +34,8 @@ ABET::ABET(int curve, bool swap):PbcScheme(curve){
     element_init_same_as(this->z_2, Zn);
     element_init_same_as(this->z, Zn);
 
+    element_init_same_as(ID_i_1, G1);
+
     element_init_same_as(this->alpha_a_1, Zn);
     element_init_same_as(this->alpha_a_2, Zn);
 
@@ -79,6 +81,8 @@ void ABET::init(element_t _G1, element_t _G2, element_t _GT, element_t _Zn, bool
     element_init_same_as(this->z_1, Zn);
     element_init_same_as(this->z_2, Zn);
     element_init_same_as(this->z, Zn);
+
+    element_init_same_as(ID_i_1, G1);
 
     element_init_same_as(this->alpha_a_1, Zn);
     element_init_same_as(this->alpha_a_2, Zn);
@@ -714,10 +718,10 @@ bool ABET::SkDelegate(ABET_sks &sk, ABET_mpk &mpk, ABET_msk &msk, element_t ID_i
 }
 
 bool ABET::UserDelegate(ABET_sks &sk, ABET_mpk &mpk, ABET_msk &msk, ABET_ID &ID, int i) {
-    GetID_(tmp_G, mpk, ID, i, MODIFIER);
-    element_pow_zn(tmp_G, tmp_G, msk.get_msk()[a]);
+    GetID_(ID_i_1, mpk, ID, i+1, MODIFIER);
+    element_pow_zn(ID_i_1, ID_i_1, msk.get_msk()[a]);
 
-    return SkDelegate(sk, mpk, msk, tmp_G, ID[i]);
+    return SkDelegate(sk, mpk, msk, ID_i_1, ID[i]);
 }
 
 /**
