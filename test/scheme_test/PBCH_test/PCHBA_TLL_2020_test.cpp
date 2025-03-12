@@ -69,23 +69,22 @@ TEST_P(PCHBA_TLL_2020_Test, Test){
     int K = GetParam().k;
     const int U1 = K/3;  // length of U1
     const int U2 = K/2;  // length of U2
-
-    PCHBA_TLL_2020_sk skPCHBA;
-    PCHBA_TLL_2020_pk pkPCHBA;
-    PCHBA_TLL_2020_ID ID;
-    PCHBA_TLL_2020_sks sksPCHBA_1, sksPCHBA_2;
-    PCHBA_TLL_2020_h h1, h2;
-    PCHBA_TLL_2020_r r1, r2, r_p;
-
-
-    ID.get_IDABET().init(K);
+    PCHBA_TLL_2020_ID ID12;
+    ID12.get_IDABET().init(K);
     for(int i = 1;i<=K;i++){
         element_s *tmp_Zn = ch.GetZrElement();
 
-        ID.get_IDABET().set(i-1, tmp_Zn);
+        ID12.get_IDABET().set(i-1, tmp_Zn);
         element_clear(tmp_Zn);
     }
-    if(visiable) ID.get_IDABET().print();
+    // if(visiable) ID12.get_IDABET().print();
+
+    PCHBA_TLL_2020_sk skPCHBA;
+    PCHBA_TLL_2020_pk pkPCHBA;
+    
+    PCHBA_TLL_2020_sks sksPCHBA_1, sksPCHBA_2;
+    PCHBA_TLL_2020_h h1, h2;
+    PCHBA_TLL_2020_r r1, r2, r_p;
 
     element_s *m1 = ch.GetZrElement();
     element_s *m2 = ch.GetZrElement();
@@ -96,14 +95,13 @@ TEST_P(PCHBA_TLL_2020_Test, Test){
     this->end("SetUp");
     
     this->start("KeyGen");
-    ch.KeyGen(sksPCHBA_1, pkPCHBA, skPCHBA, S1, ID, U1);
+    ch.KeyGen(sksPCHBA_1, pkPCHBA, skPCHBA, S1, ID12, U1);
     this->end("KeyGen");
-    ch.KeyGen(sksPCHBA_2, pkPCHBA, skPCHBA, S2, ID, U2);
+    ch.KeyGen(sksPCHBA_2, pkPCHBA, skPCHBA, S2, ID12, U2);
     
     this->start("Hash");
-    ch.Hash(h1, r1, m1, pkPCHBA, skPCHBA, POLICY, ID, U1);
+    ch.Hash(h1, r1, m1, pkPCHBA, skPCHBA, POLICY, ID12, U1);
     this->end("Hash");
-    
     
     this->start("Check");
     bool check_result = ch.Check(h1, r1, m1, pkPCHBA);
@@ -111,7 +109,7 @@ TEST_P(PCHBA_TLL_2020_Test, Test){
     ASSERT_TRUE(check_result);
 
     this->start("Adapt");
-    ch.Adapt(r_p, m_p, h1, r1, m1, POLICY, ID, U1, U1, pkPCHBA, skPCHBA, sksPCHBA_1);
+    ch.Adapt(r_p, m_p, h1, r1, m1, POLICY, ID12, U1, pkPCHBA, skPCHBA, sksPCHBA_1);
     this->end("Adapt");
 
     this->start("Verify");
@@ -119,16 +117,16 @@ TEST_P(PCHBA_TLL_2020_Test, Test){
     this->end("Verify");
     ASSERT_TRUE(verify_result);
 
-    ch.Hash(h2, r2, m2, pkPCHBA, skPCHBA, POLICY, ID, U2);
+    ch.Hash(h2, r2, m2, pkPCHBA, skPCHBA, POLICY, ID12, U2);
     check_result = ch.Check(h2, r2, m2, pkPCHBA);
     ASSERT_TRUE(check_result);
     try{
-        ch.Adapt(r_p, m_p, h2, r2, m2, POLICY, ID, U2, U2, pkPCHBA, skPCHBA, sksPCHBA_2);
+        ch.Adapt(r_p, m_p, h2, r2, m2, POLICY, ID12, U2, pkPCHBA, skPCHBA, sksPCHBA_2);
     }catch(const std::runtime_error& e){
         if(visiable) printf("%s\n", e.what());
     }
 
-    ch.Adapt(r_p, m_p, h2, r2, m2, POLICY, ID, U1, U2, pkPCHBA, skPCHBA, sksPCHBA_1);
+    ch.Adapt(r_p, m_p, h2, r2, m2, POLICY, ID12, U1, pkPCHBA, skPCHBA, sksPCHBA_1);
     verify_result = ch.Verify(h2, r_p, m_p, pkPCHBA);
     ASSERT_TRUE(verify_result);
 }

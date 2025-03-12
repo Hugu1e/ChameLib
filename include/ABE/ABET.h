@@ -61,6 +61,14 @@ class ABET_sks{
             sk_prime.init(3);
             sk1.init(1);
         }
+        ABET_sks(ABET_sks &other){
+            sk0 = other.get_sk0();
+            sk_y = other.get_sk_y();
+            sk_prime = other.get_sk_prime();
+            sk1 = other.get_sk1();
+            sk2 = other.get_sk2();
+            attr2id = other.get_attr2id();
+        }
         PbcElements& get_sk0(){
             return sk0;
         }
@@ -93,6 +101,7 @@ class ABET_ciphertext{
         PbcElements ct1;
         PbcElements ct2;
         PbcElements ct3;
+        int ownerId_length;
     public:
         ABET_ciphertext(){
             ct0.init(4);
@@ -136,6 +145,12 @@ class ABET_ciphertext{
         PbcElements& get_ct3(){
             return ct3;
         }
+        int get_ownerId_length(){
+            return ownerId_length;
+        }
+        void set_ownerId_length(int ownerId_length){
+            this->ownerId_length = ownerId_length;
+        }
         ~ABET_ciphertext(){
             delete[] ct_;
             delete[] ct_prime;
@@ -178,7 +193,7 @@ class ABET:public PbcScheme{
 
         void Encrypt(ABET_ciphertext &ciphertext, ABET_mpk &mpk, ABET_msk &msk, element_t r, unsigned char *R, int size_R, std::string policy_str, ABET_ID &ID, int oj, element_t s1, element_t s2);
 
-        void Decrypt(unsigned char *res_R, element_t res_r, ABET_mpk &mpk, ABET_msk &msk, ABET_ciphertext &ciphertext, ABET_sks &sks, std::string policy_str, ABET_ID &ID, int mi, int oj);
+        void Decrypt(unsigned char *res_R, element_t res_r, ABET_mpk &mpk, ABET_msk &msk, ABET_ciphertext &ciphertext, ABET_sks &sks, std::string policy_str, ABET_ID &ID, int mi);
 
         void Hash(element_t res, std::string m);
         void Hash2(element_t res, element_t m);

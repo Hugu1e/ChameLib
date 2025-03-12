@@ -70,8 +70,16 @@ TEST_P(ABET_Test, Test){
     int K = GetParam().k;
     const int U1 = K/3;  // length of U1
     const int U2 = K/2;  // length of U2
+    ABET_ID id_12;
+    id_12.init(K);
+    for(int i = 1;i<=K;i++){
+        element_s *tmp_Zn = abe.GetZrElement();
+        id_12.set(i-1, tmp_Zn);
+        element_clear(tmp_Zn);
+    }
+    // if(visiable) id_12.print();
 
-    ABET_ID id;
+    
     ABET_mpk mpk;
     ABET_msk msk;
     ABET_sks sks_1;
@@ -79,14 +87,6 @@ TEST_P(ABET_Test, Test){
 
     ABET_ciphertext ciphertext_1;
     ABET_ciphertext ciphertext_2;
-
-    id.init(K);
-    for(int i = 1;i<=K;i++){
-        element_s *tmp_Zn = abe.GetZrElement();
-        id.set(i-1, tmp_Zn);
-        element_clear(tmp_Zn);
-    }
-    // if(visiable) id.print();
 
     // r
     element_s *r = abe.GetZrElement();
@@ -109,17 +109,18 @@ TEST_P(ABET_Test, Test){
 
     // U1
     this->start("KeyGen");
-    abe.KeyGen(sks_1, msk, mpk, S1, id, U1);
+    abe.KeyGen(sks_1, msk, mpk, S1, id_12, U1);
     this->end("KeyGen");
-    abe.KeyGen(sks_2, msk, mpk, S2, id, U2);
+    // U2
+    abe.KeyGen(sks_2, msk, mpk, S2, id_12, U2);
 
     this->start("Encrypt");
-    abe.Encrypt(ciphertext_1, mpk, msk, r, R, element_length_in_bytes(r) / 2, POLICY, id, U1, s1, s2);
+    abe.Encrypt(ciphertext_1, mpk, msk, r, R, element_length_in_bytes(r) / 2, POLICY, id_12, U1, s1, s2);
     this->end("Encrypt");
-    abe.Encrypt(ciphertext_2, mpk, msk, r, R, element_length_in_bytes(r) / 2, POLICY, id, U2, s1, s2);
+    abe.Encrypt(ciphertext_2, mpk, msk, r, R, element_length_in_bytes(r) / 2, POLICY, id_12, U2, s1, s2);
 
     this->start("Decrypt");
-    abe.Decrypt(res_R, res_r, mpk, msk, ciphertext_1, sks_1, POLICY, id, U1, U1);
+    abe.Decrypt(res_R, res_r, mpk, msk, ciphertext_1, sks_1, POLICY, id_12, U1);
     this->end("Decrypt");
     ASSERT_TRUE(memcmp(R, res_R, element_length_in_bytes(r) / 2) == 0);
     ASSERT_TRUE(element_cmp(r, res_r) == 0);
@@ -129,14 +130,14 @@ TEST_P(ABET_Test, Test){
     }
 
     try{
-        abe.Decrypt(res_R, res_r, mpk, msk, ciphertext_2, sks_2, POLICY, id, U2, U2);
+        abe.Decrypt(res_R, res_r, mpk, msk, ciphertext_2, sks_2, POLICY, id_12, U2);
     }catch(const std::runtime_error& e){
         if(visiable) printf("%s\n", e.what());
     }
 
     element_random(res_r);
     RandomGenerator::Random_bytes(R, element_length_in_bytes(r) / 2);
-    abe.Decrypt(res_R, res_r, mpk, msk, ciphertext_2, sks_1, POLICY, id, U1, U2);
+    abe.Decrypt(res_R, res_r, mpk, msk, ciphertext_2, sks_1, POLICY, id_12, U1);
     if(visiable){
         Logger::PrintPbc("res_r", res_r);
         printf("res_R_2: %s\n", res_R);

@@ -614,6 +614,7 @@ void ABET::Encrypt(ABET_ciphertext &ciphertext, ABET_mpk &mpk, ABET_msk &msk, el
 
         ciphertext.get_ct_y()[i] = ct_y;
     }
+    ciphertext.set_ownerId_length(oj);
 }
 
 bool ABET::SkDelegate(ABET_sks &sk, ABET_mpk &mpk, ABET_msk &msk, element_t ID_i_1, element_t I_i_1) {
@@ -729,13 +730,14 @@ bool ABET::UserDelegate(ABET_sks &sk, ABET_mpk &mpk, ABET_msk &msk, ABET_ID &ID,
  * input: mpk, ciphertext, sks
  * output: res_R, res_r
  */
-void ABET::Decrypt(unsigned char *res_R, element_t res_r, ABET_mpk &mpk, ABET_msk &msk, ABET_ciphertext &ciphertext, ABET_sks &sks, std::string policy_str, ABET_ID &ID, int mi, int oj){
-    for(int i = mi; i < oj; ++i) if(!UserDelegate(sks, mpk, msk, ID, i)) throw std::runtime_error("delegate failed");
+void ABET::Decrypt(unsigned char *res_R, element_t res_r, ABET_mpk &mpk, ABET_msk &msk, ABET_ciphertext &ciphertext, ABET_sks &sks, std::string policy_str, ABET_ID &ID, int mi){
+    ABET_sks sk_p(sks);
+    for(int i = mi; i < ciphertext.get_ownerId_length(); ++i) if(!UserDelegate(sk_p, mpk, msk, ID, i)) throw std::runtime_error("delegate failed");
 
     // retrive R
-    Pairing(tmp_GT, sks.get_sk1()[0], ciphertext.get_ct0()[ct0_3]);
-    Pairing(tmp_GT_2, sks.get_sk0()[sk0_5], ciphertext.get_ct1()[0]);
-    Pairing(tmp_GT_3, sks.get_sk0()[sk0_6], ciphertext.get_ct0()[ct0_4]);
+    Pairing(tmp_GT, sk_p.get_sk1()[0], ciphertext.get_ct0()[ct0_3]);
+    Pairing(tmp_GT_2, sk_p.get_sk0()[sk0_5], ciphertext.get_ct1()[0]);
+    Pairing(tmp_GT_3, sk_p.get_sk0()[sk0_6], ciphertext.get_ct0()[ct0_4]);
     element_mul(tmp_GT_2, tmp_GT_2, tmp_GT_3);
     element_div(tmp_GT, tmp_GT, tmp_GT_2);
     Hash2(tmp_Zn, tmp_GT);
@@ -768,7 +770,7 @@ void ABET::Decrypt(unsigned char *res_R, element_t res_r, ABET_mpk &mpk, ABET_ms
     unsigned long int rows = ciphertext.get_ct_y().size();
     for(unsigned long int i = 0; i < rows; i++){
         // judge whether the attribute is in the policy
-        if(sks.get_attr2id().find(M->getName(i)) == sks.get_attr2id().end()){
+        if(sk_p.get_attr2id().find(M->getName(i)) == sk_p.get_attr2id().end()){
             continue;
         }
         Element_t_vector *v = new Element_t_vector();
@@ -814,7 +816,7 @@ void ABET::Decrypt(unsigned char *res_R, element_t res_r, ABET_mpk &mpk, ABET_ms
     int count = 0;
     for(unsigned long int i = 0; i < rows; i++){
         // judge whether the attribute is in the policy
-        if(sks.get_attr2id().find(M->getName(i)) == sks.get_attr2id().end()){
+        if(sk_p.get_attr2id().find(M->getName(i)) == sk_p.get_attr2id().end()){
             continue;
         }
         element_pow_zn(this->tmp_G_4, ciphertext.get_ct_y(i)[ct_1], x->getElement(count));
@@ -826,9 +828,9 @@ void ABET::Decrypt(unsigned char *res_R, element_t res_r, ABET_mpk &mpk, ABET_ms
         count++;
     }
     // ct_prime * e(tmp_G, sk0_1) * e(tmp_G_2, sk0_2) * e(tmp_G_3, sk0_3)
-    Pairing(this->tmp_GT, this->tmp_G, sks.get_sk0()[sk0_1]);
-    Pairing(this->tmp_GT_2, this->tmp_G_2, sks.get_sk0()[sk0_2]);
-    Pairing(this->tmp_GT_3, this->tmp_G_3, sks.get_sk0()[sk0_3]);
+    Pairing(this->tmp_GT, this->tmp_G, sk_p.get_sk0()[sk0_1]);
+    Pairing(this->tmp_GT_2, this->tmp_G_2, sk_p.get_sk0()[sk0_2]);
+    Pairing(this->tmp_GT_3, this->tmp_G_3, sk_p.get_sk0()[sk0_3]);
 
     element_mul(num, this->tmp_GT, this->tmp_GT_2);
     element_mul(num, num, this->tmp_GT_3);
@@ -840,23 +842,23 @@ void ABET::Decrypt(unsigned char *res_R, element_t res_r, ABET_mpk &mpk, ABET_ms
     count = 0;
     for(unsigned long int i = 0; i < rows; i++){
         // judge whether the attribute is in the policy
-        if(sks.get_attr2id().find(M->getName(i)) == sks.get_attr2id().end()){
+        if(sk_p.get_attr2id().find(M->getName(i)) == sk_p.get_attr2id().end()){
             continue;
         }
-        element_pow_zn(this->tmp_G_4, sks.get_sk_y(sks.get_attr2id()[M->getName(i)])[sk_1], x->getElement(count));
+        element_pow_zn(this->tmp_G_4, sk_p.get_sk_y(sk_p.get_attr2id()[M->getName(i)])[sk_1], x->getElement(count));
         element_mul(this->tmp_G, this->tmp_G, this->tmp_G_4);
-        element_pow_zn(this->tmp_G_4, sks.get_sk_y(sks.get_attr2id()[M->getName(i)])[sk_2], x->getElement(count));
+        element_pow_zn(this->tmp_G_4, sk_p.get_sk_y(sk_p.get_attr2id()[M->getName(i)])[sk_2], x->getElement(count));
         element_mul(this->tmp_G_2, this->tmp_G_2, this->tmp_G_4);
-        element_pow_zn(this->tmp_G_4, sks.get_sk_y(sks.get_attr2id()[M->getName(i)])[sk_3], x->getElement(count));
+        element_pow_zn(this->tmp_G_4, sk_p.get_sk_y(sk_p.get_attr2id()[M->getName(i)])[sk_3], x->getElement(count));
         element_mul(this->tmp_G_3, this->tmp_G_3, this->tmp_G_4);
         count++;
     }
     // sk_prime_1 * tmp_G
-    element_mul(this->tmp_G, sks.get_sk_prime()[sk_1], this->tmp_G);
+    element_mul(this->tmp_G, sk_p.get_sk_prime()[sk_1], this->tmp_G);
     // sk_prime_2 * tmp_G_2
-    element_mul(this->tmp_G_2, sks.get_sk_prime()[sk_2], this->tmp_G_2);
+    element_mul(this->tmp_G_2, sk_p.get_sk_prime()[sk_2], this->tmp_G_2);
     // sk_prime_3 * tmp_G_3
-    element_mul(this->tmp_G_3, sks.get_sk_prime()[sk_3], this->tmp_G_3);
+    element_mul(this->tmp_G_3, sk_p.get_sk_prime()[sk_3], this->tmp_G_3);
 
     // e(tmp_G, ct01) * e(tmp_G_2, ct02) * e(tmp_G_3, ct03)
     Pairing(this->tmp_GT, this->tmp_G, ciphertext.get_ct0()[ct0_1]);
