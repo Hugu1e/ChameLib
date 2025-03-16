@@ -66,6 +66,10 @@ void PbcScheme::initPairing(std::string param) {
     pbc_param_t par;
     pbc_param_init_set_str(par, param.c_str());
     pairing_init_pbc_param(pairing, par);
+    element_init_G1(G1, pairing);
+    element_init_G2(G2, pairing);
+    element_init_GT(GT, pairing);
+    element_init_Zr(Zn, pairing);
 }
 
 void PbcScheme::init(element_t _G1, element_t _G2, element_t _GT, element_t _Zn){
