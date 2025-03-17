@@ -52,13 +52,17 @@ TEST_P(Base_Test, Test){
     auto repeat = GetParam().repeat;
     PbcScheme ch(GetParam().curve);
     element_s *G1s[repeat];
+    for(int i = 0;i < repeat;++i) G1s[i] = ch.GetG1Element();
     element_s *G2s[repeat];
+    for(int i = 0;i < repeat;++i) G2s[i] = ch.GetG2Element();
     element_s *GTs[repeat];
+    for(int i = 0;i < repeat;++i) GTs[i] = ch.GetGTElement();
     element_s *Zps[repeat];
+    for(int i = 0;i < repeat;++i) Zps[i] = ch.GetZrElement();
     {
         {
             auto start = std::chrono::high_resolution_clock::now();
-            for(int i = 0;i < repeat;++i) G1s[i] = ch.GetG1Element();
+            for(int i = 0;i < repeat;++i) element_random(G1s[i]);
             auto end = std::chrono::high_resolution_clock::now();
             auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
             // printf("random in G1: %lf ms\n", duration * 1.0 / repeat);
@@ -66,7 +70,7 @@ TEST_P(Base_Test, Test){
         }
         {
             auto start = std::chrono::high_resolution_clock::now();
-            for(int i = 0;i < repeat;++i) G2s[i] = ch.GetG2Element();
+            for(int i = 0;i < repeat;++i) element_random(G2s[i]);
             auto end = std::chrono::high_resolution_clock::now();
             auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
             // printf("random in G2: %lf ms\n", duration * 1.0 / repeat);
@@ -74,7 +78,7 @@ TEST_P(Base_Test, Test){
         }
         {
             auto start = std::chrono::high_resolution_clock::now();
-            for(int i = 0;i < repeat;++i) GTs[i] = ch.GetGTElement();
+            for(int i = 0;i < repeat;++i) element_random(GTs[i]);
             auto end = std::chrono::high_resolution_clock::now();
             auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
             // printf("random in GT: %lf ms\n", duration * 1.0 / repeat);
@@ -82,7 +86,7 @@ TEST_P(Base_Test, Test){
         }
         {
             auto start = std::chrono::high_resolution_clock::now();
-            for(int i = 0;i < repeat;++i) Zps[i] = ch.GetZrElement();
+            for(int i = 0;i < repeat;++i) element_random(Zps[i]);
             auto end = std::chrono::high_resolution_clock::now();
             auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
             // printf("random in Zr: %lf ms\n", duration * 1.0 / repeat);

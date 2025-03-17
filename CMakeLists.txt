@@ -108,11 +108,6 @@ if(BUILD_TESTS)
     add_test_executable(RPCH_XNM_2021_test test/scheme_test/PBCH_test/RPCH_XNM_2021_test.cpp)
     
     add_test_executable(base_test test/scheme_test/base_test.cpp)
-
-    add_test_executable(CH_KEF_NoMH_AM_2004_test_time test/scheme_test/time_test/CH_KEF_NoMH_AM_2004.cpp)
-    add_test_executable(CH_KEF_MH_RSA_F_AM_2004_test_time test/scheme_test/time_test/CH_KEF_MH_RSA_F_AM_2004.cpp)
-    add_test_executable(CH_KEF_MH_RSANN_F_AM_2004_test_time test/scheme_test/time_test/CH_KEF_MH_RSANN_F_AM_2004.cpp)
-    add_test_executable(CH_KEF_MH_SDH_DL_AM_2004_test_time test/scheme_test/time_test/CH_KEF_MH_SDH_DL_AM_2004.cpp)
 endif()
 
 install(TARGETS ChameLib ARCHIVE DESTINATION lib)

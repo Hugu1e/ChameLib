@@ -41,56 +41,107 @@ INSTANTIATE_TEST_CASE_P(
 	testing::ValuesIn(test_values)
 );
 
+int op_cnt[][diff_max_len] = {
+    {
+        1, 0, 0, 0, 
+        0, 0, 0, 0, 
+        0, 0, 0, 0, 
+        0, 0, 0, 0, 
+        0
+    }, //0, setup
+
+    {
+        0, 0, 0, 1, 
+        0, 0, 0, 0, 
+        0, 0, 0, 0, 
+        1, 0, 0, 0, 
+        0
+    }, //1, keygen
+    
+    {
+        0, 0, 0, 2, 
+        0, 0, 0, 2, 
+        2, 0, 0, 0, 
+        4, 0, 0, 0, 
+        0
+    }, //2, hash
+
+    {
+        0, 0, 0, 0, 
+        0, 0, 0, 2, 
+        2, 0, 0, 0, 
+        2, 0, 0, 0, 
+        2
+    }, //3, check
+
+    {
+        0, 0, 0, 0, 
+        0, 0, 0, 3, 
+        1, 0, 0, 2, 
+        1, 0, 0, 1, 
+        0
+    }, //4, adapt
+};
+
 TEST_P(CH_KEF_MH_SDH_DL_AM_2004_Test, Test){
-    CH_KEF_MH_SDH_DL_AM_2004 ch(GetParam().curve);
+    for(int i = 0; i < repeat; i++){
+        CH_KEF_MH_SDH_DL_AM_2004 ch(GetParam().curve);
         
-    CH_KEF_MH_SDH_DL_AM_2004_pp pp;
-    CH_KEF_MH_SDH_DL_AM_2004_sk sk;
-    CH_KEF_MH_SDH_DL_AM_2004_pk pk;
-    CH_KEF_MH_SDH_DL_AM_2004_h h;
-    CH_KEF_MH_SDH_DL_AM_2004_r r,r_p;
-
-    element_s *m = ch.GetZrElement();
-    element_s *m_p = ch.GetZrElement();
-    element_s *label = ch.GetZrElement();
-
-    this->start("SetUp");
-    ch.SetUp(pp, pk, sk, h, r, r_p);
-    this->end("SetUp");
-
-    this->start("KeyGen");
-    ch.KeyGen(pk, sk, pp);
-    this->end("KeyGen");
-
-    if(visiable){
-        Logger::PrintPbc("label", label);
-        Logger::PrintPbc("m", m);
+        CH_KEF_MH_SDH_DL_AM_2004_pp pp;
+        CH_KEF_MH_SDH_DL_AM_2004_sk sk;
+        CH_KEF_MH_SDH_DL_AM_2004_pk pk;
+        CH_KEF_MH_SDH_DL_AM_2004_h h;
+        CH_KEF_MH_SDH_DL_AM_2004_r r,r_p;
+    
+        element_s *m = ch.GetZrElement();
+        element_s *m_p = ch.GetZrElement();
+        element_s *label = ch.GetZrElement();
+    
+        this->start("SetUp");
+        ch.SetUp(pp);
+        this->end("SetUp");
+    
+        this->start("KeyGen");
+        ch.KeyGen(pk, sk, pp);
+        this->end("KeyGen");
+    
+        if(visiable){
+            Logger::PrintPbc("label", label);
+            Logger::PrintPbc("m", m);
+        }
+        this->start("Hash");
+        ch.Hash(h, r, m, label, pk, pp);
+        this->end("Hash");
+        if(visiable){
+            Logger::PrintPbc("Hash value", h[0]);
+            Logger::PrintPbc("r", r[0]);
+        }
+    
+        this->start("Check");
+        bool check_result = ch.Check(h, r, m, label, pk, pp);
+        this->end("Check");
+        ASSERT_TRUE(check_result);
+    
+        this->start("Adapt");
+        ch.Adapt(r_p, m_p, h, r, m, label, sk, pp);
+        this->end("Adapt");
+        if(visiable){
+            Logger::PrintPbc("m_p", m_p);
+            Logger::PrintPbc("r_p", r_p[0]);
+        }
+    
+        this->start("Verify");
+        bool verify_result = ch.Verify(h, r_p, m_p, label, pk, pp);
+        this->end("Verify");
+        ASSERT_TRUE(verify_result);
     }
-    this->start("Hash");
-    ch.Hash(h, r, m, label, pk, pp);
-    this->end("Hash");
-    if(visiable){
-        Logger::PrintPbc("Hash value", h[0]);
-        Logger::PrintPbc("r", r[0]);
-    }
-
-    this->start("Check");
-    bool check_result = ch.Check(h, r, m, label, pk, pp);
-    this->end("Check");
-    ASSERT_TRUE(check_result);
-
-    this->start("Adapt");
-    ch.Adapt(r_p, m_p, h, r, m, label, sk, pp);
-    this->end("Adapt");
-    if(visiable){
-        Logger::PrintPbc("m_p", m_p);
-        Logger::PrintPbc("r_p", r_p[0]);
-    }
-
-    this->start("Verify");
-    bool verify_result = ch.Verify(h, r_p, m_p, label, pk, pp);
-    this->end("Verify");
-    ASSERT_TRUE(verify_result);
+    this->average();
+    ASSERT_TRUE(check_time(GetParam().curve, op_cnt[0], "SetUp"));
+    ASSERT_TRUE(check_time(GetParam().curve, op_cnt[1], "KeyGen"));
+    ASSERT_TRUE(check_time(GetParam().curve, op_cnt[2], "Hash"));
+    ASSERT_TRUE(check_time(GetParam().curve, op_cnt[3], "Check"));
+    ASSERT_TRUE(check_time(GetParam().curve, op_cnt[4], "Adapt"));
+    ASSERT_TRUE(check_time(GetParam().curve, op_cnt[3], "Verify"));
 }
 
 int main(int argc, char **argv) 

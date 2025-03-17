@@ -18,14 +18,7 @@ CH_KEF_MH_SDH_DL_AM_2004::CH_KEF_MH_SDH_DL_AM_2004(int curve): PbcScheme(curve) 
  * input : 
  * output: 
  */
-void CH_KEF_MH_SDH_DL_AM_2004::SetUp(CH_KEF_MH_SDH_DL_AM_2004_pp &pp, CH_KEF_MH_SDH_DL_AM_2004_pk &pk, CH_KEF_MH_SDH_DL_AM_2004_sk &sk, CH_KEF_MH_SDH_DL_AM_2004_h &h, CH_KEF_MH_SDH_DL_AM_2004_r &r, CH_KEF_MH_SDH_DL_AM_2004_r &r_p) {
-    pp.init(1);
-    pk.init(1);
-    sk.init(1);
-    h.init(1);
-    r.init(1);
-    r_p.init(1);
-    
+void CH_KEF_MH_SDH_DL_AM_2004::SetUp(CH_KEF_MH_SDH_DL_AM_2004_pp &pp) {    
     element_random(tmp_G);
     pp.set(g, tmp_G);
 }

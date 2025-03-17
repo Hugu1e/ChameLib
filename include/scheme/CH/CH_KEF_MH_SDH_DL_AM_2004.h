@@ -6,11 +6,36 @@
 #include "../../base/PbcElements.h"
 #include "../../utils/Hash.h"
 
-class CH_KEF_MH_SDH_DL_AM_2004_pp : public PbcElements{};
-class CH_KEF_MH_SDH_DL_AM_2004_pk : public PbcElements{};
-class CH_KEF_MH_SDH_DL_AM_2004_sk : public PbcElements{};
-class CH_KEF_MH_SDH_DL_AM_2004_h : public PbcElements{};
-class CH_KEF_MH_SDH_DL_AM_2004_r : public PbcElements{};
+class CH_KEF_MH_SDH_DL_AM_2004_pp : public PbcElements{
+    public:
+        CH_KEF_MH_SDH_DL_AM_2004_pp(){
+            init(1);
+        }
+};
+class CH_KEF_MH_SDH_DL_AM_2004_pk : public PbcElements{
+    public:
+        CH_KEF_MH_SDH_DL_AM_2004_pk(){
+            init(1);
+        }
+};
+class CH_KEF_MH_SDH_DL_AM_2004_sk : public PbcElements{
+    public:
+        CH_KEF_MH_SDH_DL_AM_2004_sk(){
+            init(1);
+        }
+};
+class CH_KEF_MH_SDH_DL_AM_2004_h : public PbcElements{
+    public:
+        CH_KEF_MH_SDH_DL_AM_2004_h(){
+            init(1);
+        }
+};
+class CH_KEF_MH_SDH_DL_AM_2004_r : public PbcElements{
+    public:
+        CH_KEF_MH_SDH_DL_AM_2004_r(){
+            init(1);
+        }
+};
 
 class CH_KEF_MH_SDH_DL_AM_2004: public PbcScheme{
     private:
@@ -21,7 +46,7 @@ class CH_KEF_MH_SDH_DL_AM_2004: public PbcScheme{
     public:
         CH_KEF_MH_SDH_DL_AM_2004(int curve);
         
-        void SetUp(CH_KEF_MH_SDH_DL_AM_2004_pp &pp, CH_KEF_MH_SDH_DL_AM_2004_pk &pk, CH_KEF_MH_SDH_DL_AM_2004_sk &sk, CH_KEF_MH_SDH_DL_AM_2004_h &h, CH_KEF_MH_SDH_DL_AM_2004_r &r, CH_KEF_MH_SDH_DL_AM_2004_r &r_p);
+        void SetUp(CH_KEF_MH_SDH_DL_AM_2004_pp &pp);
 
         void KeyGen(CH_KEF_MH_SDH_DL_AM_2004_pk &pk, CH_KEF_MH_SDH_DL_AM_2004_sk &sk, CH_KEF_MH_SDH_DL_AM_2004_pp &pp);
 

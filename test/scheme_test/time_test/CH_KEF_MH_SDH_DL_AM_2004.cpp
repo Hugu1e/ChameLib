@@ -106,7 +106,7 @@ TEST_P(CH_KEF_MH_SDH_DL_AM_2004_Test, Test){
 
     {
         auto start = std::chrono::high_resolution_clock::now();
-        for(int i = 0;i < repeat;++i) ch.SetUp(pp[i], pk[i], sk[i], h[i], r[i], r_p[i]);
+        for(int i = 0;i < repeat;++i) ch.SetUp(pp[i]);
         auto end = std::chrono::high_resolution_clock::now();
         auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
         // printf("SetUp: %lf ms\n", duration * 1.0 / repeat);
