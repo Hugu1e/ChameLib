@@ -5,11 +5,36 @@
 #include "../../base/PbcScheme.h"
 #include "../../utils/Hash.h"
 
-class IB_CH_MD_LSX_2022_pp: public PbcElements {};
-class IB_CH_MD_LSX_2022_msk: public PbcElements {};
-class IB_CH_MD_LSX_2022_td : public PbcElements {};
-class IB_CH_MD_LSX_2022_h : public PbcElements {};
-class IB_CH_MD_LSX_2022_r : public PbcElements {};
+class IB_CH_MD_LSX_2022_pp: public PbcElements {
+    public:
+        IB_CH_MD_LSX_2022_pp(){
+            init(5);
+        }
+};
+class IB_CH_MD_LSX_2022_msk: public PbcElements {
+    public:
+        IB_CH_MD_LSX_2022_msk(){
+            init(2);
+        }
+};
+class IB_CH_MD_LSX_2022_td : public PbcElements {
+    public:
+        IB_CH_MD_LSX_2022_td(){
+            init(2);
+        }
+};
+class IB_CH_MD_LSX_2022_h : public PbcElements {
+    public:
+        IB_CH_MD_LSX_2022_h(){
+            init(1);
+        }
+};
+class IB_CH_MD_LSX_2022_r : public PbcElements {
+    public:
+        IB_CH_MD_LSX_2022_r(){
+            init(2);
+        }
+};
 
 class IB_CH_MD_LSX_2022: public PbcScheme {
     private:
@@ -18,7 +43,7 @@ class IB_CH_MD_LSX_2022: public PbcScheme {
     public:
         IB_CH_MD_LSX_2022(int curve);
 
-        void SetUp(IB_CH_MD_LSX_2022_pp &pp, IB_CH_MD_LSX_2022_msk &msk, IB_CH_MD_LSX_2022_td &td, IB_CH_MD_LSX_2022_h &h, IB_CH_MD_LSX_2022_r &r, IB_CH_MD_LSX_2022_r &r_p);
+        void SetUp(IB_CH_MD_LSX_2022_pp &pp, IB_CH_MD_LSX_2022_msk &msk);
 
         void KeyGen(IB_CH_MD_LSX_2022_td &td, element_t ID, IB_CH_MD_LSX_2022_msk &msk, IB_CH_MD_LSX_2022_pp &pp);
 

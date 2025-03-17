@@ -33,29 +33,23 @@ bool ID_B_CollRes_XSL_2021::Pairing(element_t res, element_t g1, element_t g2){
     }
 }
 
-void ID_B_CollRes_XSL_2021::SetUp(ID_B_CollRes_XSL_2021_pp &pp, ID_B_CollRes_XSL_2021_msk &msk, ID_B_CollRes_XSL_2021_tk &tk, ID_B_CollRes_XSL_2021_h &h, ID_B_CollRes_XSL_2021_r &r, ID_B_CollRes_XSL_2021_r &r_p, unsigned long int n) {
-    pp.init(3);
+void ID_B_CollRes_XSL_2021::SetUp(ID_B_CollRes_XSL_2021_pp &pp, ID_B_CollRes_XSL_2021_msk &msk, unsigned long int n) {
     pp.get_u().init(n+1);
-    msk.init(1);
-    tk.init(2);
-    h.init(1);
-    r.init(2);
-    r_p.init(2);
 
     pp.set_n(n);
     // g ∈ G1
     element_random(tmp_G);
-    pp.set(g, tmp_G);
+    pp.get_pp().set(g, tmp_G);
 
     element_random(this->a);
 
     // g1 = g^a
     element_pow_zn(tmp_G, tmp_G, this->a);
-    pp.set(g1, tmp_G);
+    pp.get_pp().set(g1, tmp_G);
 
     // g2 ∈ G2
     element_random(tmp_H);
-    pp.set(g2, tmp_H);
+    pp.get_pp().set(g2, tmp_H);
 
     // msk = g2^a
     element_pow_zn(tmp_H, tmp_H, this->a);
@@ -88,7 +82,7 @@ void ID_B_CollRes_XSL_2021::KeyGen(ID_B_CollRes_XSL_2021_tk &tk, ID_B_CollRes_XS
     tk.set(tk1, tmp_H_2);
 
     // compute tk2
-    element_pow_zn(tmp_G_2, pp[g], this->t);
+    element_pow_zn(tmp_G_2, pp.get_pp()[g], this->t);
     tk.set(tk2, tmp_G_2);
 }
  
@@ -112,9 +106,9 @@ void ID_B_CollRes_XSL_2021::Hash(ID_B_CollRes_XSL_2021_h &h, ID_B_CollRes_XSL_20
     r.set(r2, tmp_G);
 
     // compute h
-    Pairing(this->tmp_GT, pp[g1], pp[g2]);
+    Pairing(this->tmp_GT, pp.get_pp()[g1], pp.get_pp()[g2]);
     element_pow_zn(this->tmp_GT, this->tmp_GT, m);
-    Pairing(this->tmp_GT_2, pp[g], tmp_H);  // !!!
+    Pairing(this->tmp_GT_2, pp.get_pp()[g], tmp_H);  // !!!
 
     // tmp
     element_set(this->tmp_H_2, pp.get_u()[0]);
@@ -136,9 +130,9 @@ void ID_B_CollRes_XSL_2021::Hash(ID_B_CollRes_XSL_2021_h &h, ID_B_CollRes_XSL_20
  */
 bool ID_B_CollRes_XSL_2021::Check(ID_B_CollRes_XSL_2021_h &h, element_t m, ID_B_CollRes_XSL_2021_r &r, const char *I, ID_B_CollRes_XSL_2021_pp &pp) {
     // compute h
-    Pairing(this->tmp_GT, pp[g1], pp[g2]);
+    Pairing(this->tmp_GT, pp.get_pp()[g1], pp.get_pp()[g2]);
     element_pow_zn(this->tmp_GT, this->tmp_GT, m);
-    Pairing(this->tmp_GT_2, pp[g], r[r1]);
+    Pairing(this->tmp_GT_2, pp.get_pp()[g], r[r1]);
 
     element_set(this->tmp_H, pp.get_u()[0]);
     for(unsigned long int i = 1; i <= pp.get_n(); i++) {

@@ -16,14 +16,7 @@ IB_CH_MD_LSX_2022::IB_CH_MD_LSX_2022(int curve) : PbcScheme(curve) {
     element_init_same_as(tmp_Zn_3, Zn);
 }
 
-void IB_CH_MD_LSX_2022::SetUp(IB_CH_MD_LSX_2022_pp &pp, IB_CH_MD_LSX_2022_msk &msk, IB_CH_MD_LSX_2022_td &td, IB_CH_MD_LSX_2022_h &h, IB_CH_MD_LSX_2022_r &r, IB_CH_MD_LSX_2022_r &r_p) {
-    pp.init(5);
-    msk.init(2);
-    td.init(2);
-    h.init(1);
-    r.init(2);
-    r_p.init(2);
-
+void IB_CH_MD_LSX_2022::SetUp(IB_CH_MD_LSX_2022_pp &pp, IB_CH_MD_LSX_2022_msk &msk) {
     element_random(tmp_G);
     pp.set(g, tmp_G);
 

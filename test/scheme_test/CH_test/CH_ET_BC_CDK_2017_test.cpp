@@ -32,44 +32,47 @@ INSTANTIATE_TEST_CASE_P(
 );
 
 TEST_P(CH_ET_BC_CDK_2017_Test, Test){
-    CH_ET_BC_CDK_2017 ch;
-    CH_ET_BC_CDK_2017_pp pp;
-    CH_ET_BC_CDK_2017_pk pk;
-    CH_ET_BC_CDK_2017_sk sk;
-    CH_ET_BC_CDK_2017_etd etd;
-    CH_ET_BC_CDK_2017_h h;
-    CH_ET_BC_CDK_2017_r r,r_p;
+    for(int i = 0; UpdateProcBar(i, repeat), i < repeat; i++){
+        CH_ET_BC_CDK_2017 ch;
+        CH_ET_BC_CDK_2017_pp pp;
+        CH_ET_BC_CDK_2017_pk pk;
+        CH_ET_BC_CDK_2017_sk sk;
+        CH_ET_BC_CDK_2017_etd etd;
+        CH_ET_BC_CDK_2017_h h;
+        CH_ET_BC_CDK_2017_r r,r_p;
 
-    std::string m = "123456";
-    std::string m_p = "789101";
+        std::string m = "123456";
+        std::string m_p = "789101";
 
-    this->start("SetUp");
-    ch.SetUp(pp, pk, sk, h, r, r_p, etd, GetParam().lamuda);
-    this->end("SetUp");
+        this->start("SetUp");
+        ch.SetUp(pp, pk, sk, h, r, r_p, etd, GetParam().lamuda);
+        this->end("SetUp");
 
-    this->start("KeyGen");
-    ch.KeyGen(pk, sk, pp);
-    this->end("KeyGen");
+        this->start("KeyGen");
+        ch.KeyGen(pk, sk, pp);
+        this->end("KeyGen");
 
-    this->start("Hash");
-    ch.Hash(h, r, etd, pp, pk, m);
-    this->end("Hash");
-    if(visiable)h.print();
+        this->start("Hash");
+        ch.Hash(h, r, etd, pp, pk, m);
+        this->end("Hash");
+        if(visiable)h.print();
 
-    this->start("Check");
-    bool check_result = ch.Check(h, r, pk, m);
-    this->end("Check");
-    ASSERT_TRUE(check_result);
+        this->start("Check");
+        bool check_result = ch.Check(h, r, pk, m);
+        this->end("Check");
+        ASSERT_TRUE(check_result);
 
-    this->start("Adapt");
-    ch.Adapt(r_p, sk, etd, pk, h, r, m, m_p);
-    this->end("Adapt");
-    if(visiable)r.print();
-    
-    this->start("Verify");
-    bool verify_result = ch.Verify(h, r_p, pk, m_p);
-    this->end("Verify");
-    ASSERT_TRUE(verify_result);
+        this->start("Adapt");
+        ch.Adapt(r_p, sk, etd, pk, h, r, m, m_p);
+        this->end("Adapt");
+        if(visiable)r.print();
+        
+        this->start("Verify");
+        bool verify_result = ch.Verify(h, r_p, pk, m_p);
+        this->end("Verify");
+        ASSERT_TRUE(verify_result);
+    }
+    average();
 }
 
 int main(int argc, char **argv) 

@@ -38,14 +38,7 @@ CR_CH_DSS_2020::CR_CH_DSS_2020(int curve, int group):PbcScheme(curve) {
  * input : 
  * output: 
  */
-void CR_CH_DSS_2020::SetUp(CR_CH_DSS_2020_pp &pp, CR_CH_DSS_2020_pk &pk, CR_CH_DSS_2020_sk &sk, CR_CH_DSS_2020_h &h, CR_CH_DSS_2020_r &r, CR_CH_DSS_2020_r &r_p) {
-    pp.init(1);
-    pk.init(1);
-    sk.init(1);
-    h.init(2);
-    r.init(4);
-    r_p.init(4);
-    
+void CR_CH_DSS_2020::SetUp(CR_CH_DSS_2020_pp &pp) {
     element_random(tmp_G);
     pp.set(g, tmp_G);
 }

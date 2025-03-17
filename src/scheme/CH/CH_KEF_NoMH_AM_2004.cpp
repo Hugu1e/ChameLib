@@ -3,15 +3,7 @@
 CH_KEF_NoMH_AM_2004::CH_KEF_NoMH_AM_2004() {}
 
 
-void CH_KEF_NoMH_AM_2004::Setup(CH_KEF_NoMH_AM_2004_pk &pk, CH_KEF_NoMH_AM_2004_sk &sk, 
-    CH_KEF_NoMH_AM_2004_h &h, CH_KEF_NoMH_AM_2004_r &r, CH_KEF_NoMH_AM_2004_r &r_p){
-    pk.init(4);
-    sk.init(1); 
-    h.init(1);
-    r.init(2);
-    r_p.init(2);
-}
-
+void CH_KEF_NoMH_AM_2004::Setup(){}
 
 void CH_KEF_NoMH_AM_2004::KeyGen(CH_KEF_NoMH_AM_2004_pk &pk, CH_KEF_NoMH_AM_2004_sk &sk, int k) {
     RandomGenerator::RandomPrimeInLength(pk[q], k);

@@ -8,9 +8,19 @@
 #include "../../AE/RSA.h"
 #include "../../utils/Hash.h"
 
-class CH_ET_KOG_CDK_2017_pp: public PbcElements{};
+class CH_ET_KOG_CDK_2017_pp: public PbcElements{
+    public:
+        CH_ET_KOG_CDK_2017_pp(){
+            init(1);
+        }
+};
 
-class CH_ET_KOG_CDK_2017_etd: public PbcElements{};
+class CH_ET_KOG_CDK_2017_etd: public PbcElements{
+    public:
+        CH_ET_KOG_CDK_2017_etd(){
+            init(1);
+        }
+};
 
 class CH_ET_KOG_CDK_2017_pk{
     private:
@@ -18,6 +28,10 @@ class CH_ET_KOG_CDK_2017_pk{
         RSA_pk enc_pk;
         PbcElements pai_pk;
     public:
+        CH_ET_KOG_CDK_2017_pk(){
+            ch_pk.init(1);
+            pai_pk.init(2);
+        }
         PbcElements &get_ch_pk(){
             return ch_pk;
         }
@@ -34,6 +48,9 @@ class CH_ET_KOG_CDK_2017_sk{
         PbcElements ch_sk;
         RSA_sk enc_sk;
     public:
+        CH_ET_KOG_CDK_2017_sk(){
+            ch_sk.init(1);
+        }
         PbcElements &get_ch_sk(){
             return ch_sk;
         }
@@ -47,6 +64,10 @@ class CH_ET_KOG_CDK_2017_h{
         PbcElements hash;  // b, h'
         PbcElements pai_t;
     public:
+        CH_ET_KOG_CDK_2017_h(){
+            hash.init(2);
+            pai_t.init(2);
+        }
         PbcElements &get_hash(){
             return hash;
         }
@@ -61,6 +82,10 @@ class CH_ET_KOG_CDK_2017_r{
         RSA_m enc_c;
         PbcElements pai_p;
     public:
+        CH_ET_KOG_CDK_2017_r(){
+            ch_r.init(1);
+            pai_p.init(2);
+        }
         PbcElements &get_ch_r(){
             return ch_r;
         }
@@ -99,8 +124,7 @@ class CH_ET_KOG_CDK_2017: public PbcScheme{
     public:
         CH_ET_KOG_CDK_2017(int curve, int group);
 
-        void SetUp(CH_ET_KOG_CDK_2017_pp &pp, CH_ET_KOG_CDK_2017_sk &sk, CH_ET_KOG_CDK_2017_pk &pk, 
-            CH_ET_KOG_CDK_2017_h &h, CH_ET_KOG_CDK_2017_etd &etd, CH_ET_KOG_CDK_2017_r &r, CH_ET_KOG_CDK_2017_r &r_p);
+        void SetUp(CH_ET_KOG_CDK_2017_pp &pp);
 
         void KeyGen(CH_ET_KOG_CDK_2017_sk &sk, CH_ET_KOG_CDK_2017_pk &pk, CH_ET_KOG_CDK_2017_pp &pp, short lamuda);
 

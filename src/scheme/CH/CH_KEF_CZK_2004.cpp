@@ -28,13 +28,7 @@ CH_KEF_CZK_2004::CH_KEF_CZK_2004(int curve, int group): PbcScheme(curve){
  * input : 
  * output: 
  */
-void CH_KEF_CZK_2004::SetUp(CH_KEF_CZK_2004_pp &pp, CH_KEF_CZK_2004_pk &pk, CH_KEF_CZK_2004_sk &sk, CH_KEF_CZK_2004_r &r, CH_KEF_CZK_2004_r &r_p) {
-    pp.init(1);
-    pk.init(1);
-    sk.init(1);
-    r.init(2);
-    r_p.init(2);
-    
+void CH_KEF_CZK_2004::SetUp(CH_KEF_CZK_2004_pp &pp) {    
     element_random(tmp_G);
     pp.set(g, tmp_G);
 }

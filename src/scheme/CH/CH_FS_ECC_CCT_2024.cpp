@@ -31,13 +31,7 @@ CH_FS_ECC_CCT_2024::CH_FS_ECC_CCT_2024(int curve, int group): PbcScheme(curve){
 }
 
 
-void CH_FS_ECC_CCT_2024::SetUp(CH_FS_ECC_CCT_2024_pp &pp, CH_FS_ECC_CCT_2024_pk &pk, CH_FS_ECC_CCT_2024_sk &sk, CH_FS_ECC_CCT_2024_r &r, CH_FS_ECC_CCT_2024_r &r_p){
-    pp.init(1);
-    pk.init(1);
-    sk.init(1);
-    r.init(3);
-    r_p.init(3);
-    
+void CH_FS_ECC_CCT_2024::SetUp(CH_FS_ECC_CCT_2024_pp &pp){
     element_random(tmp_G);
     pp.set(g, tmp_G);
 }

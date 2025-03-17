@@ -6,10 +6,30 @@
 #include "../../base/PbcScheme.h"
 #include "../../utils/Hash.h"
 
-class CH_KEF_DLP_LLA_2012_pp : public PbcElements{};
-class CH_KEF_DLP_LLA_2012_pk : public PbcElements{};
-class CH_KEF_DLP_LLA_2012_sk : public PbcElements{};
-class CH_KEF_DLP_LLA_2012_label : public PbcElements{};
+class CH_KEF_DLP_LLA_2012_pp : public PbcElements{
+    public:
+        CH_KEF_DLP_LLA_2012_pp(){
+            init(1);
+        }
+};
+class CH_KEF_DLP_LLA_2012_pk : public PbcElements{
+    public:
+        CH_KEF_DLP_LLA_2012_pk(){
+            init(1);
+        }
+};
+class CH_KEF_DLP_LLA_2012_sk : public PbcElements{
+    public:
+        CH_KEF_DLP_LLA_2012_sk(){
+            init(3);
+        }
+};
+class CH_KEF_DLP_LLA_2012_label : public PbcElements{
+    public:
+        CH_KEF_DLP_LLA_2012_label(){
+            init(2);
+        }
+};
 
 class CH_KEF_DLP_LLA_2012: public PbcScheme{
     private:
@@ -28,7 +48,7 @@ class CH_KEF_DLP_LLA_2012: public PbcScheme{
 
         void LabelManager(CH_KEF_DLP_LLA_2012_label &label, element_t y1, element_t w1, element_t t);
 
-        void SetUp(CH_KEF_DLP_LLA_2012_pp &pp, CH_KEF_DLP_LLA_2012_pk &pk, CH_KEF_DLP_LLA_2012_sk &sk, CH_KEF_DLP_LLA_2012_label &label);
+        void SetUp(CH_KEF_DLP_LLA_2012_pp &pp);
 
         void KeyGen(CH_KEF_DLP_LLA_2012_sk &sk, CH_KEF_DLP_LLA_2012_pk &pk, CH_KEF_DLP_LLA_2012_label &label, CH_KEF_DLP_LLA_2012_pp &pp);
 

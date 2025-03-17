@@ -2,10 +2,7 @@
 
 CH_KEF_MH_RSA_F_AM_2004::CH_KEF_MH_RSA_F_AM_2004(){}
 
-void CH_KEF_MH_RSA_F_AM_2004::SetUp(CH_KEF_MH_RSA_F_AM_2004_pk &pk, CH_KEF_MH_RSA_F_AM_2004_sk &sk){
-    pk.init(2);
-    sk.init(1);
-}
+void CH_KEF_MH_RSA_F_AM_2004::SetUp(){}
 
 /**
  * @param k security parameter

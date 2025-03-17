@@ -6,11 +6,36 @@
 #include "../../utils/Hash.h"
 #include <stdexcept>
 
-class IB_CH_KEF_CZS_2014_pp: public PbcElements {};
-class IB_CH_KEF_CZS_2014_msk: public PbcElements {};
-class IB_CH_KEF_CZS_2014_td: public PbcElements {};
-class IB_CH_KEF_CZS_2014_h: public PbcElements {};
-class IB_CH_KEF_CZS_2014_r: public PbcElements {};
+class IB_CH_KEF_CZS_2014_pp: public PbcElements {
+    public:
+        IB_CH_KEF_CZS_2014_pp(){
+            init(2);
+        }
+};
+class IB_CH_KEF_CZS_2014_msk: public PbcElements {
+    public:
+        IB_CH_KEF_CZS_2014_msk(){
+            init(1);
+        }
+};
+class IB_CH_KEF_CZS_2014_td: public PbcElements {
+    public:
+        IB_CH_KEF_CZS_2014_td(){
+            init(1);
+        }
+};
+class IB_CH_KEF_CZS_2014_h: public PbcElements {
+    public:
+        IB_CH_KEF_CZS_2014_h(){
+            init(1);
+        }
+};
+class IB_CH_KEF_CZS_2014_r: public PbcElements {
+    public:
+        IB_CH_KEF_CZS_2014_r(){
+            init(2);
+        }
+};
 
 
 class IB_CH_KEF_CZS_2014 : public PbcScheme {
@@ -26,7 +51,7 @@ class IB_CH_KEF_CZS_2014 : public PbcScheme {
     public:
         IB_CH_KEF_CZS_2014(int curve, bool swap);
 
-        void SetUp(IB_CH_KEF_CZS_2014_pp &pp, IB_CH_KEF_CZS_2014_msk &msk, IB_CH_KEF_CZS_2014_td &td, IB_CH_KEF_CZS_2014_h &h, IB_CH_KEF_CZS_2014_r &r, IB_CH_KEF_CZS_2014_r &r_p);
+        void SetUp(IB_CH_KEF_CZS_2014_pp &pp, IB_CH_KEF_CZS_2014_msk &msk);
 
         void Extract(IB_CH_KEF_CZS_2014_td &td, std::string ID, IB_CH_KEF_CZS_2014_msk &msk);
 

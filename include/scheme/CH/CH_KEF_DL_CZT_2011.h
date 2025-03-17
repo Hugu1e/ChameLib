@@ -5,10 +5,30 @@
 #include "../../base/PbcScheme.h"
 #include "../../utils/Hash.h"
 
-class CH_KEF_DL_CZT_2011_pp : public PbcElements{};
-class CH_KEF_DL_CZT_2011_pk : public PbcElements{};
-class CH_KEF_DL_CZT_2011_sk : public PbcElements{};
-class CH_KEF_DL_CZT_2011_r : public PbcElements{};
+class CH_KEF_DL_CZT_2011_pp : public PbcElements{
+    public:
+        CH_KEF_DL_CZT_2011_pp(){
+            init(1);
+        }
+};
+class CH_KEF_DL_CZT_2011_pk : public PbcElements{
+    public:
+        CH_KEF_DL_CZT_2011_pk(){
+            init(1);
+        }
+};
+class CH_KEF_DL_CZT_2011_sk : public PbcElements{
+    public:
+        CH_KEF_DL_CZT_2011_sk(){
+            init(1);
+        }
+};
+class CH_KEF_DL_CZT_2011_r : public PbcElements{
+    public:
+        CH_KEF_DL_CZT_2011_r(){
+            init(2);
+        }
+};
 
 class CH_KEF_DL_CZT_2011 : public PbcScheme {
     private:
@@ -19,7 +39,7 @@ class CH_KEF_DL_CZT_2011 : public PbcScheme {
     public:
         CH_KEF_DL_CZT_2011(int curve, int group);
 
-        void SetUp(CH_KEF_DL_CZT_2011_pp &pp, CH_KEF_DL_CZT_2011_pk &pk, CH_KEF_DL_CZT_2011_sk &sk, CH_KEF_DL_CZT_2011_r &r, CH_KEF_DL_CZT_2011_r &r_p);
+        void SetUp(CH_KEF_DL_CZT_2011_pp &pp);
 
         void KeyGen(CH_KEF_DL_CZT_2011_pk &pk, CH_KEF_DL_CZT_2011_sk &sk, CH_KEF_DL_CZT_2011_pp &pp);
 

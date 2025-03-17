@@ -14,14 +14,7 @@ IB_CH_ZSS_S2_2003::IB_CH_ZSS_S2_2003(int curve): PbcScheme(curve) {
     element_init_same_as(tmp_Zn_3, Zn);
 }
 
-void IB_CH_ZSS_S2_2003::SetUp(IB_CH_ZSS_S2_2003_pp &pp, IB_CH_ZSS_S2_2003_msk &msk, IB_CH_ZSS_S2_2003_sk &sk, IB_CH_ZSS_S2_2003_h &h, IB_CH_ZSS_S2_2003_r &r, IB_CH_ZSS_S2_2003_r &r_p) {
-    msk.init(1);
-    pp.init(3);
-    sk.init(1);
-    h.init(1);
-    r.init(1);
-    r_p.init(1);
-    
+void IB_CH_ZSS_S2_2003::SetUp(IB_CH_ZSS_S2_2003_pp &pp, IB_CH_ZSS_S2_2003_msk &msk) {
     element_random(tmp_Zn);
     msk.set(s, tmp_Zn);
     

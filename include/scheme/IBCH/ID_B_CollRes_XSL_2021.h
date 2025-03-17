@@ -6,11 +6,15 @@
 #include "../../utils/Hash.h"
 #include <cstring>
 
-class ID_B_CollRes_XSL_2021_pp: public PbcElements{
+class ID_B_CollRes_XSL_2021_pp{
     private:
         int n;
+        PbcElements pp;
         PbcElements u;
     public:
+        ID_B_CollRes_XSL_2021_pp(){
+            pp.init(3);
+        }
         int get_n(){
             return n;
         }
@@ -20,15 +24,38 @@ class ID_B_CollRes_XSL_2021_pp: public PbcElements{
         PbcElements &get_u(){
             return u;
         }
+        PbcElements &get_pp(){
+            return pp;
+        }
 };
 
-class ID_B_CollRes_XSL_2021_msk: public PbcElements{};
+class ID_B_CollRes_XSL_2021_msk: public PbcElements{
+    public:
+        ID_B_CollRes_XSL_2021_msk(){
+            init(1);
+        }
+};
 
-class ID_B_CollRes_XSL_2021_tk: public PbcElements{};
+class ID_B_CollRes_XSL_2021_tk: public PbcElements{
+    public:
+        ID_B_CollRes_XSL_2021_tk(){
+            init(2);
+        }
+};
 
-class ID_B_CollRes_XSL_2021_h: public PbcElements{};
+class ID_B_CollRes_XSL_2021_h: public PbcElements{
+    public:
+        ID_B_CollRes_XSL_2021_h(){
+            init(1);
+        }
+};
 
-class ID_B_CollRes_XSL_2021_r: public PbcElements{};
+class ID_B_CollRes_XSL_2021_r: public PbcElements{
+    public:
+        ID_B_CollRes_XSL_2021_r(){
+            init(2);
+        }
+};
 
 
 class ID_B_CollRes_XSL_2021: public PbcScheme{
@@ -47,7 +74,7 @@ class ID_B_CollRes_XSL_2021: public PbcScheme{
     public:
         ID_B_CollRes_XSL_2021(int curve, bool swap);
 
-        void SetUp(ID_B_CollRes_XSL_2021_pp &pp, ID_B_CollRes_XSL_2021_msk &msk, ID_B_CollRes_XSL_2021_tk &tk, ID_B_CollRes_XSL_2021_h &h, ID_B_CollRes_XSL_2021_r &r, ID_B_CollRes_XSL_2021_r &r_p, unsigned long int n);
+        void SetUp(ID_B_CollRes_XSL_2021_pp &pp, ID_B_CollRes_XSL_2021_msk &msk, unsigned long int n);
 
         void KeyGen(ID_B_CollRes_XSL_2021_tk &tk, ID_B_CollRes_XSL_2021_msk &msk, const char *I, ID_B_CollRes_XSL_2021_pp &pp);
 

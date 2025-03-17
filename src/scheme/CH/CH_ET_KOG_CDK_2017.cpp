@@ -90,27 +90,9 @@ CH_ET_KOG_CDK_2017::CH_ET_KOG_CDK_2017(int curve, int group): PbcScheme(curve){
     nizkpok.init(G1, Zn);
 }
 
-void CH_ET_KOG_CDK_2017::SetUp(CH_ET_KOG_CDK_2017_pp &pp, CH_ET_KOG_CDK_2017_sk &sk, CH_ET_KOG_CDK_2017_pk &pk, 
-    CH_ET_KOG_CDK_2017_h &h, CH_ET_KOG_CDK_2017_etd &etd, CH_ET_KOG_CDK_2017_r &r, CH_ET_KOG_CDK_2017_r &r_p){
-    pp.init(1);
-    sk.get_ch_sk().init(1);
-    pk.get_ch_pk().init(1);
-    pk.get_pai_pk().init(2);
-
-    h.get_hash().init(2);
-    h.get_pai_t().init(2);
-    r.get_ch_r().init(1);
-    r.get_pai_p().init(2);
-    r_p.get_ch_r().init(1);
-    r_p.get_pai_p().init(2);
-
+void CH_ET_KOG_CDK_2017::SetUp(CH_ET_KOG_CDK_2017_pp &pp){
     element_random(tmp_G);
     pp.set(g, tmp_G);
-
-    enc.SetUp(pk.get_enc_pk(), sk.get_enc_sk(), r.get_enc_c());
-    r_p.get_enc_c().init_same_as(r.get_enc_c());
-
-    etd.init(1);
 }
 
 void CH_ET_KOG_CDK_2017::KeyGen(CH_ET_KOG_CDK_2017_sk &sk, CH_ET_KOG_CDK_2017_pk &pk, CH_ET_KOG_CDK_2017_pp &pp, short lamuda){

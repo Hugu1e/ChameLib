@@ -35,14 +35,7 @@ FCR_CH_PreQA_DKS_2020::FCR_CH_PreQA_DKS_2020(int curve, int group) : PbcScheme(c
     element_init_same_as(tmp_Zn_2, Zn);
 }
 
-void FCR_CH_PreQA_DKS_2020::SetUp(FCR_CH_PreQA_DKS_2020_pp &pp, FCR_CH_PreQA_DKS_2020_pk &pk, FCR_CH_PreQA_DKS_2020_sk &sk, FCR_CH_PreQA_DKS_2020_h &h, FCR_CH_PreQA_DKS_2020_r &r, FCR_CH_PreQA_DKS_2020_r &r_p) {
-    pp.init(2);
-    pk.init(1);
-    sk.init(1);
-    h.init(1);
-    r.init(5);
-    r_p.init(5);
-    
+void FCR_CH_PreQA_DKS_2020::SetUp(FCR_CH_PreQA_DKS_2020_pp &pp) {    
     element_random(tmp_G);
     pp.set(g1, tmp_G);
 
@@ -142,7 +135,6 @@ bool FCR_CH_PreQA_DKS_2020::Check(FCR_CH_PreQA_DKS_2020_h &h, FCR_CH_PreQA_DKS_2
 
 void FCR_CH_PreQA_DKS_2020::Adapt(FCR_CH_PreQA_DKS_2020_r &r_p, element_t m_p, element_t m, FCR_CH_PreQA_DKS_2020_h &h, FCR_CH_PreQA_DKS_2020_r &r, FCR_CH_PreQA_DKS_2020_sk &sk, FCR_CH_PreQA_DKS_2020_pp &pp) {
     FCR_CH_PreQA_DKS_2020_pk tmp_pk;
-    tmp_pk.init(1);
     // y = g1^x
     element_pow_zn(tmp_G, pp[g1], sk[x]);
     tmp_pk.set(y, tmp_G);

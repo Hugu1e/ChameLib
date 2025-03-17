@@ -7,15 +7,40 @@
 #include "../../utils/Func.h"
 #include <stdexcept>
 
-class FCR_CH_PreQA_DKS_2020_pp: public PbcElements{};
+class FCR_CH_PreQA_DKS_2020_pp: public PbcElements{
+    public:
+        FCR_CH_PreQA_DKS_2020_pp(){
+            init(2);
+        }
+};
 
-class FCR_CH_PreQA_DKS_2020_pk: public PbcElements{};
+class FCR_CH_PreQA_DKS_2020_pk: public PbcElements{
+    public:
+        FCR_CH_PreQA_DKS_2020_pk(){
+            init(1);
+        }
+};
 
-class FCR_CH_PreQA_DKS_2020_sk: public PbcElements{};
+class FCR_CH_PreQA_DKS_2020_sk: public PbcElements{
+    public:
+        FCR_CH_PreQA_DKS_2020_sk(){
+            init(1);
+        }
+};
 
-class FCR_CH_PreQA_DKS_2020_h: public PbcElements{};
+class FCR_CH_PreQA_DKS_2020_h: public PbcElements{
+    public:
+        FCR_CH_PreQA_DKS_2020_h(){
+            init(1);
+        }
+};
 
-class FCR_CH_PreQA_DKS_2020_r: public PbcElements{};
+class FCR_CH_PreQA_DKS_2020_r: public PbcElements{
+    public:
+        FCR_CH_PreQA_DKS_2020_r(){
+            init(5);
+        }
+};
 
 class FCR_CH_PreQA_DKS_2020: public PbcScheme{
     private:
@@ -33,7 +58,7 @@ class FCR_CH_PreQA_DKS_2020: public PbcScheme{
     public:
         FCR_CH_PreQA_DKS_2020(int curve, int group);
 
-        void SetUp(FCR_CH_PreQA_DKS_2020_pp &pp, FCR_CH_PreQA_DKS_2020_pk &pk, FCR_CH_PreQA_DKS_2020_sk &sk, FCR_CH_PreQA_DKS_2020_h &h, FCR_CH_PreQA_DKS_2020_r &r, FCR_CH_PreQA_DKS_2020_r &r_p);
+        void SetUp(FCR_CH_PreQA_DKS_2020_pp &pp);
 
         void KeyGen(FCR_CH_PreQA_DKS_2020_pk &pk, FCR_CH_PreQA_DKS_2020_sk &sk, FCR_CH_PreQA_DKS_2020_pp &pp);
 

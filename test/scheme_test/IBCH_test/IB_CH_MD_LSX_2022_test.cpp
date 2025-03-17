@@ -43,62 +43,113 @@ INSTANTIATE_TEST_CASE_P(
 	testing::ValuesIn(test_values)
 );
 
+int op_cnt[][diff_max_len] = {
+    {
+        3, 0, 0, 2, 
+        0, 0, 0, 0, 
+        0, 0, 0, 0, 
+        0, 0, 0, 0, 
+        2
+    }, //0, setup
+
+    {
+        0, 0, 0, 1, 
+        0, 0, 0, 0, 
+        0, 0, 0, 1, 
+        1, 0, 0, 0, 
+        0
+    }, //1, keygen
+    
+    {
+        1, 0, 0, 1, 
+        0, 0, 0, 0, 
+        1, 0, 2, 0, 
+        1, 0, 2, 0, 
+        1
+    }, //2, hash
+
+    {
+        0, 0, 0, 0, 
+        0, 0, 0, 0, 
+        1, 0, 2, 0, 
+        1, 0, 2, 0, 
+        1
+    }, //3, check
+
+    {
+        0, 0, 0, 0, 
+        0, 0, 0, 0, 
+        1, 0, 0, 1, 
+        1, 0, 0, 0, 
+        0
+    }, //4, adapt
+};
+
 TEST_P(IB_CH_MD_LSX_2022_Test, Test){
-    IB_CH_MD_LSX_2022 ch(GetParam().curve);
+    for(int i=0; UpdateProcBar(i, repeat), i<repeat; i++){
+        IB_CH_MD_LSX_2022 ch(GetParam().curve);
 
-    IB_CH_MD_LSX_2022_pp pp;
-    IB_CH_MD_LSX_2022_msk msk;
-    IB_CH_MD_LSX_2022_td td;
-    IB_CH_MD_LSX_2022_h h;
-    IB_CH_MD_LSX_2022_r r,r_p;
+        IB_CH_MD_LSX_2022_pp pp;
+        IB_CH_MD_LSX_2022_msk msk;
+        IB_CH_MD_LSX_2022_td td;
+        IB_CH_MD_LSX_2022_h h;
+        IB_CH_MD_LSX_2022_r r,r_p;
 
-    element_s *m = ch.GetZrElement();
-    element_s *m_p = ch.GetZrElement();
-    element_s *ID = ch.GetZrElement();
+        element_s *m = ch.GetZrElement();
+        element_s *m_p = ch.GetZrElement();
+        element_s *ID = ch.GetZrElement();
 
-    this->start("SetUp");
-    ch.SetUp(pp, msk, td, h, r, r_p);
-    this->end("SetUp");
-    if(visiable){
-        pp.print();
-        msk.print();
+        this->start("SetUp");
+        ch.SetUp(pp, msk);
+        this->end("SetUp");
+        if(visiable){
+            pp.print();
+            msk.print();
+        }
+
+        this->start("KeyGen");
+        ch.KeyGen(td, ID, msk, pp);
+        this->end("KeyGen");
+        if(visiable){
+            Logger::PrintPbc("ID", ID);
+            td.print();
+        }
+        
+        
+        this->start("Hash");
+        ch.Hash(h, r, ID, m, pp);
+        this->end("Hash");
+        if(visiable){
+            Logger::PrintPbc("m", m);
+            h.print();
+            r.print();
+        }
+
+        this->start("Check");
+        bool check_result = ch.Check(h, r, ID, m, pp);
+        this->end("Check");
+        ASSERT_TRUE(check_result);
+
+        this->start("Adapt");
+        ch.Adapt(r_p, h, m, r, m_p, td);
+        this->end("Adapt");
+        if(visiable){    
+            Logger::PrintPbc("m_p", m_p);
+            r_p.print();
+        }
+
+        this->start("Verify");
+        bool verify_result = ch.Verify(h, r_p, ID, m_p, pp);
+        this->end("Verify");
+        ASSERT_TRUE(verify_result);
     }
-
-    this->start("KeyGen");
-    ch.KeyGen(td, ID, msk, pp);
-    this->end("KeyGen");
-    if(visiable){
-        Logger::PrintPbc("ID", ID);
-        td.print();
-    }
-    
-    
-    this->start("Hash");
-    ch.Hash(h, r, ID, m, pp);
-    this->end("Hash");
-    if(visiable){
-        Logger::PrintPbc("m", m);
-        h.print();
-        r.print();
-    }
-
-    this->start("Check");
-    bool check_result = ch.Check(h, r, ID, m, pp);
-    this->end("Check");
-    ASSERT_TRUE(check_result);
-
-    this->start("Adapt");
-    ch.Adapt(r_p, h, m, r, m_p, td);
-    this->end("Adapt");
-    if(visiable){    
-        Logger::PrintPbc("m_p", m_p);
-        r_p.print();
-    }
-
-    this->start("Verify");
-    bool verify_result = ch.Verify(h, r_p, ID, m_p, pp);
-    this->end("Verify");
-    ASSERT_TRUE(verify_result);
+    average();
+    EXPECT_TRUE(check_time(GetParam().curve, op_cnt[0], "SetUp"));
+    EXPECT_TRUE(check_time(GetParam().curve, op_cnt[1], "KeyGen"));
+    EXPECT_TRUE(check_time(GetParam().curve, op_cnt[2], "Hash"));
+    EXPECT_TRUE(check_time(GetParam().curve, op_cnt[3], "Check"));
+    EXPECT_TRUE(check_time(GetParam().curve, op_cnt[4], "Adapt"));
+    EXPECT_TRUE(check_time(GetParam().curve, op_cnt[3], "Verify"));
 }
 
 int main(int argc, char **argv) 

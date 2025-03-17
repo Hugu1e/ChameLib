@@ -84,7 +84,7 @@ int op_cnt[][diff_max_len] = {
 };
 
 TEST_P(CH_KEF_MH_SDH_DL_AM_2004_Test, Test){
-    for(int i = 0; i < repeat; i++){
+    for(int i = 0; UpdateProcBar(i, repeat), i < repeat; i++){
         CH_KEF_MH_SDH_DL_AM_2004 ch(GetParam().curve);
         
         CH_KEF_MH_SDH_DL_AM_2004_pp pp;

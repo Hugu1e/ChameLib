@@ -62,50 +62,53 @@ INSTANTIATE_TEST_CASE_P(
 );
 
 TEST_P(CH_AMV_2017_Test, Test){
-    CH_AMV_2017 ch = CH_AMV_2017(GetParam().curve, GetParam().group);
+    for(int i = 0; UpdateProcBar(i, repeat), i < repeat; i++){
+        CH_AMV_2017 ch = CH_AMV_2017(GetParam().curve, GetParam().group);
 
-    CH_AMV_2017_pk pk;
-    CH_AMV_2017_sk sk;
-    CH_AMV_2017_h h,h_p;
+        CH_AMV_2017_pk pk;
+        CH_AMV_2017_sk sk;
+        CH_AMV_2017_h h,h_p;
 
-    element_s *m = ch.GetZrElement();
-    element_s *m_p = ch.GetZrElement();
+        element_s *m = ch.GetZrElement();
+        element_s *m_p = ch.GetZrElement();
 
-    this->start("SetUp");
-    ch.SetUp(pk, sk, h, h_p);
-    this->end("SetUp");
+        this->start("SetUp");
+        ch.SetUp(pk, sk, h, h_p);
+        this->end("SetUp");
 
-    this->start("KeyGen");
-    ch.KeyGen(pk, sk);
-    this->end("KeyGen");
-    if(visiable){
-        Logger::PrintPbc("g", pk.get_CH_pk()[CH_AMV_2017::g]);
-        Logger::PrintPbc("y", pk.get_CH_pk()[CH_AMV_2017::y]);
-        Logger::PrintPbc("x", sk.get_CH_sk()[CH_AMV_2017::x]);        
+        this->start("KeyGen");
+        ch.KeyGen(pk, sk);
+        this->end("KeyGen");
+        if(visiable){
+            Logger::PrintPbc("g", pk.get_CH_pk()[CH_AMV_2017::g]);
+            Logger::PrintPbc("y", pk.get_CH_pk()[CH_AMV_2017::y]);
+            Logger::PrintPbc("x", sk.get_CH_sk()[CH_AMV_2017::x]);        
+        }
+        
+        this->start("Hash");
+        ch.Hash(h, m, pk);
+        this->end("Hash");
+        if(visiable){
+            Logger::PrintPbc("m", m);
+            Logger::PrintPbc("Hash value", h.get_h()[CH_AMV_2017::h1]);
+        }
+
+        this->start("Check");
+        bool check_result = ch.Check(h, m, pk);
+        this->end("Check");
+        ASSERT_TRUE(check_result);
+
+        this->start("Adapt");
+        ch.Adapt(h_p, m_p, h, m, sk, pk);
+        this->end("Adapt");
+        if(visiable) Logger::PrintPbc("m_p", m_p);
+
+        this->start("Verify");
+        bool verify_result = ch.Verify(h_p, m_p, pk);
+        this->end("Verify");
+        ASSERT_TRUE(verify_result);
     }
-    
-    this->start("Hash");
-    ch.Hash(h, m, pk);
-    this->end("Hash");
-    if(visiable){
-        Logger::PrintPbc("m", m);
-        Logger::PrintPbc("Hash value", h.get_h()[CH_AMV_2017::h1]);
-    }
-
-    this->start("Check");
-    bool check_result = ch.Check(h, m, pk);
-    this->end("Check");
-    ASSERT_TRUE(check_result);
-
-    this->start("Adapt");
-    ch.Adapt(h_p, m_p, h, m, sk, pk);
-    this->end("Adapt");
-    if(visiable) Logger::PrintPbc("m_p", m_p);
-
-    this->start("Verify");
-    bool verify_result = ch.Verify(h_p, m_p, pk);
-    this->end("Verify");
-    ASSERT_TRUE(verify_result);
+    average();
 }
 
 int main(int argc, char **argv) 

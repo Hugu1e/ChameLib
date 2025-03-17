@@ -50,64 +50,67 @@ INSTANTIATE_TEST_CASE_P(
 );
 
 TEST_P(IB_CH_ZSS_S1_2003_Test, Test){
-    IB_CH_ZSS_S1_2003 ch(GetParam().curve, GetParam().swap);
+    for(int i = 0; UpdateProcBar(i, repeat), i < repeat; i++){
+        IB_CH_ZSS_S1_2003 ch(GetParam().curve, GetParam().swap);
 
-    IB_CH_ZSS_S1_2003_pp pp;
-    IB_CH_ZSS_S1_2003_msk msk;
-    IB_CH_ZSS_S1_2003_pk pk;
-    IB_CH_ZSS_S1_2003_sk sk;
-    IB_CH_ZSS_S1_2003_h h;
-    IB_CH_ZSS_S1_2003_r r, r_p;
+        IB_CH_ZSS_S1_2003_pp pp;
+        IB_CH_ZSS_S1_2003_msk msk;
+        IB_CH_ZSS_S1_2003_pk pk;
+        IB_CH_ZSS_S1_2003_sk sk;
+        IB_CH_ZSS_S1_2003_h h;
+        IB_CH_ZSS_S1_2003_r r, r_p;
 
-    element_s *m = ch.GetZrElement();
-    element_s *m_p = ch.GetZrElement();
-    element_s *ID = ch.GetZrElement();
+        element_s *m = ch.GetZrElement();
+        element_s *m_p = ch.GetZrElement();
+        element_s *ID = ch.GetZrElement();
 
-    this->start("SetUp");
-    ch.SetUp(pp, msk, pk, sk, h, r, r_p);
-    this->end("SetUp");
-    if(visiable){
-        pp.print();
-        msk.print();
+        this->start("SetUp");
+        ch.SetUp(pp, msk);
+        this->end("SetUp");
+        if(visiable){
+            pp.print();
+            msk.print();
+        }
+
+        
+        this->start("Extract");
+        ch.Extract(pk, sk, msk, ID);
+        this->end("Extract");
+        if(visiable){
+            Logger::PrintPbc("ID", ID);
+            pk.print();
+            sk.print();
+        }
+
+        this->start("Hash");
+        ch.Hash(h, r, m, ID, pp);
+        this->end("Hash");
+        if(visiable){
+            Logger::PrintPbc("m", m);
+            h.print();
+            r.print();
+        }
+
+        this->start("Check");
+        bool check_result = ch.Check(h, m, r, ID, pp);
+        this->end("Check");
+        ASSERT_TRUE(check_result);
+
+        
+        this->start("Adapt");
+        ch.Adapt(r_p, m_p, h, m, r, ID, sk, pp);
+        this->end("Adapt");
+        if(visiable){
+            Logger::PrintPbc("m_p", m_p);
+            r_p.print();
+        }
+
+        this->start("Verify");
+        bool verify_result = ch.Verify(h, m_p, r_p, ID, pp);
+        this->end("Verify");
+        ASSERT_TRUE(verify_result);
     }
-
-    
-    this->start("Extract");
-    ch.Extract(pk, sk, msk, ID);
-    this->end("Extract");
-    if(visiable){
-        Logger::PrintPbc("ID", ID);
-        pk.print();
-        sk.print();
-    }
-
-    this->start("Hash");
-    ch.Hash(h, r, m, ID, pp);
-    this->end("Hash");
-    if(visiable){
-        Logger::PrintPbc("m", m);
-        h.print();
-        r.print();
-    }
-
-    this->start("Check");
-    bool check_result = ch.Check(h, m, r, ID, pp);
-    this->end("Check");
-    ASSERT_TRUE(check_result);
-
-    
-    this->start("Adapt");
-    ch.Adapt(r_p, m_p, h, m, r, ID, sk, pp);
-    this->end("Adapt");
-    if(visiable){
-        Logger::PrintPbc("m_p", m_p);
-        r_p.print();
-    }
-
-    this->start("Verify");
-    bool verify_result = ch.Verify(h, m_p, r_p, ID, pp);
-    this->end("Verify");
-    ASSERT_TRUE(verify_result);
+    average();
 }
 
 int main(int argc, char **argv) 

@@ -5,10 +5,30 @@
 #include "../../base/PbcElements.h"
 #include "../../base/PbcScheme.h"
 
-class CH_KEF_CZK_2004_pp : public PbcElements{};
-class CH_KEF_CZK_2004_pk : public PbcElements{};
-class CH_KEF_CZK_2004_sk : public PbcElements{};
-class CH_KEF_CZK_2004_r : public PbcElements{};
+class CH_KEF_CZK_2004_pp : public PbcElements{
+    public:
+        CH_KEF_CZK_2004_pp(){
+            init(1);
+        }
+};
+class CH_KEF_CZK_2004_pk : public PbcElements{
+    public:
+        CH_KEF_CZK_2004_pk(){
+            init(1);
+        }
+};
+class CH_KEF_CZK_2004_sk : public PbcElements{
+    public:
+        CH_KEF_CZK_2004_sk(){
+            init(1);
+        }
+};
+class CH_KEF_CZK_2004_r : public PbcElements{
+    public:
+        CH_KEF_CZK_2004_r(){
+            init(2);
+        }
+};
 
 class CH_KEF_CZK_2004: public PbcScheme {
     private:
@@ -17,7 +37,7 @@ class CH_KEF_CZK_2004: public PbcScheme {
     public:
         CH_KEF_CZK_2004(int curve, int group);
 
-        void SetUp(CH_KEF_CZK_2004_pp &pp, CH_KEF_CZK_2004_pk &pk, CH_KEF_CZK_2004_sk &sk, CH_KEF_CZK_2004_r &r, CH_KEF_CZK_2004_r &r_p);
+        void SetUp(CH_KEF_CZK_2004_pp &pp);
 
         void KeyGen(CH_KEF_CZK_2004_pk &pk, CH_KEF_CZK_2004_sk &sk, CH_KEF_CZK_2004_pp &pp);
 

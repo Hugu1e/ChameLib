@@ -24,13 +24,7 @@ CH_KEF_DL_CZT_2011::CH_KEF_DL_CZT_2011(int curve, int group) : PbcScheme(curve) 
     element_init_same_as(tmp_Zn_3, Zn);
 }
 
-void CH_KEF_DL_CZT_2011::SetUp(CH_KEF_DL_CZT_2011_pp &pp, CH_KEF_DL_CZT_2011_pk &pk, CH_KEF_DL_CZT_2011_sk &sk, CH_KEF_DL_CZT_2011_r &r, CH_KEF_DL_CZT_2011_r &r_p) {
-    pp.init(1);
-    pk.init(1);
-    sk.init(1);
-    r.init(2);
-    r_p.init(2);
-    
+void CH_KEF_DL_CZT_2011::SetUp(CH_KEF_DL_CZT_2011_pp &pp) {    
     element_random(tmp_G);
     pp.set(g, tmp_G);
 }

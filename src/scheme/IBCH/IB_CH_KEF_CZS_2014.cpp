@@ -33,14 +33,7 @@ void IB_CH_KEF_CZS_2014::Pairing(element_t res, element_t g1, element_t g2){
  * input : 
  * output: msk, Ppub
  */
-void IB_CH_KEF_CZS_2014::SetUp(IB_CH_KEF_CZS_2014_pp &pp, IB_CH_KEF_CZS_2014_msk &msk, IB_CH_KEF_CZS_2014_td &td, IB_CH_KEF_CZS_2014_h &h, IB_CH_KEF_CZS_2014_r &r, IB_CH_KEF_CZS_2014_r &r_p) {
-    pp.init(2);
-    td.init(1);
-    h.init(1);
-    r.init(2);
-    r_p.init(2);
-    msk.init(1);
-    
+void IB_CH_KEF_CZS_2014::SetUp(IB_CH_KEF_CZS_2014_pp &pp, IB_CH_KEF_CZS_2014_msk &msk) {
     // P
     element_random(tmp_G);
     pp.set(P, tmp_G);

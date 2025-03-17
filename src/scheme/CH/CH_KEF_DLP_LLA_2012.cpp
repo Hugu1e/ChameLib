@@ -31,12 +31,7 @@ CH_KEF_DLP_LLA_2012::CH_KEF_DLP_LLA_2012(int curve, int group): PbcScheme(curve)
  * input : 
  * output: 
  */
-void CH_KEF_DLP_LLA_2012::SetUp(CH_KEF_DLP_LLA_2012_pp &pp, CH_KEF_DLP_LLA_2012_pk &pk, CH_KEF_DLP_LLA_2012_sk &sk, CH_KEF_DLP_LLA_2012_label &label) {
-    pp.init(1);
-    pk.init(1);
-    sk.init(3);
-    label.init(2);
-    
+void CH_KEF_DLP_LLA_2012::SetUp(CH_KEF_DLP_LLA_2012_pp &pp) {    
     element_random(tmp_G);
     pp.set(g, tmp_G);
 }

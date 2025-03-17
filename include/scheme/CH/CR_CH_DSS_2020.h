@@ -6,11 +6,36 @@
 #include "../../utils/Hash.h"
 #include "../../utils/Func.h"
 
-class CR_CH_DSS_2020_pp: public PbcElements{};
-class CR_CH_DSS_2020_pk: public PbcElements{};
-class CR_CH_DSS_2020_sk: public PbcElements{};
-class CR_CH_DSS_2020_h: public PbcElements{};
-class CR_CH_DSS_2020_r: public PbcElements{};
+class CR_CH_DSS_2020_pp: public PbcElements{
+    public:
+        CR_CH_DSS_2020_pp(){
+            init(1);  
+        };
+};
+class CR_CH_DSS_2020_pk: public PbcElements{
+    public:
+        CR_CH_DSS_2020_pk(){
+            init(1);  
+        };
+};
+class CR_CH_DSS_2020_sk: public PbcElements{
+    public:
+        CR_CH_DSS_2020_sk(){
+            init(1);  
+        };
+};
+class CR_CH_DSS_2020_h: public PbcElements{
+    public:
+        CR_CH_DSS_2020_h(){
+            init(2);  
+        };
+};
+class CR_CH_DSS_2020_r: public PbcElements{
+    public:
+        CR_CH_DSS_2020_r(){
+            init(4);  
+        };
+};
 
 class CR_CH_DSS_2020: public PbcScheme{
     private:
@@ -27,7 +52,7 @@ class CR_CH_DSS_2020: public PbcScheme{
     public:
         CR_CH_DSS_2020(int curve, int group);
 
-        void SetUp(CR_CH_DSS_2020_pp &pp, CR_CH_DSS_2020_pk &pk, CR_CH_DSS_2020_sk &sk, CR_CH_DSS_2020_h &h, CR_CH_DSS_2020_r &r, CR_CH_DSS_2020_r &r_p);
+        void SetUp(CR_CH_DSS_2020_pp &pp);
 
         void KeyGen(CR_CH_DSS_2020_pk &pk, CR_CH_DSS_2020_sk &sk, CR_CH_DSS_2020_pp &pp);
 

@@ -32,58 +32,61 @@ INSTANTIATE_TEST_CASE_P(
 );
 
 TEST_P(CH_CDK_2017_Test, Test){
-    CH_CDK_2017 ch;
+    for(int i = 0; UpdateProcBar(i, repeat), i < repeat; i++){
+        CH_CDK_2017 ch;
 
-    CH_CDK_2017_pk pk;
-    CH_CDK_2017_sk sk;
-    CH_CDK_2017_h h;
-    CH_CDK_2017_r r, r_p;
-    mpz_t m, tag, m_p, tag_p;
-    mpz_inits(m, tag, m_p, tag_p, NULL);
+        CH_CDK_2017_pk pk;
+        CH_CDK_2017_sk sk;
+        CH_CDK_2017_h h;
+        CH_CDK_2017_r r, r_p;
+        mpz_t m, tag, m_p, tag_p;
+        mpz_inits(m, tag, m_p, tag_p, NULL);
 
-    this->start("SetUp");
-    ch.SetUp(pk, sk, h, r, r_p);
-    this->end("SetUp");
+        this->start("SetUp");
+        ch.SetUp(pk, sk, h, r, r_p);
+        this->end("SetUp");
 
-    this->start("KeyGen");
-    ch.KeyGen(pk, sk, GetParam().lamuda);
-    this->end("KeyGen");
+        this->start("KeyGen");
+        ch.KeyGen(pk, sk, GetParam().lamuda);
+        this->end("KeyGen");
 
-    RandomGenerator::RandomN(m, pk.get_rsa_pk()[AE_RSA::n]);
-    RandomGenerator::RandomN(tag, pk.get_rsa_pk()[AE_RSA::n]);
-    if(visiable){
-        Logger::PrintGmp("m", m);
-        Logger::PrintGmp("tag", tag);
+        RandomGenerator::RandomN(m, pk.get_rsa_pk()[AE_RSA::n]);
+        RandomGenerator::RandomN(tag, pk.get_rsa_pk()[AE_RSA::n]);
+        if(visiable){
+            Logger::PrintGmp("m", m);
+            Logger::PrintGmp("tag", tag);
+        }
+        this->start("Hash");
+        ch.Hash(h, r, m, tag, pk);
+        this->end("Hash");
+        if(visiable){
+            h.print();
+            r.print();
+        }
+
+        this->start("Check");
+        bool check_result = ch.Check(h, r, m, tag, pk);
+        this->end("Check");
+        ASSERT_TRUE(check_result);
+
+        RandomGenerator::RandomN(m_p, pk.get_rsa_pk()[AE_RSA::n]);
+        if(visiable){
+            Logger::PrintGmp("m_p", m_p);
+        }
+        this->start("Adapt");
+        ch.Adapt(r_p, tag_p, h, r, m_p, sk, pk);
+        this->end("Adapt");
+        if(visiable){
+            r_p.print();
+            Logger::PrintGmp("tag_p", tag_p);
+        }
+
+        this->start("Verify");
+        bool verify_result = ch.Verify(h, r_p, m_p, tag_p, pk);
+        this->end("Verify");
+        ASSERT_TRUE(verify_result);
     }
-    this->start("Hash");
-    ch.Hash(h, r, m, tag, pk);
-    this->end("Hash");
-    if(visiable){
-        h.print();
-        r.print();
-    }
-
-    this->start("Check");
-    bool check_result = ch.Check(h, r, m, tag, pk);
-    this->end("Check");
-    ASSERT_TRUE(check_result);
-
-    RandomGenerator::RandomN(m_p, pk.get_rsa_pk()[AE_RSA::n]);
-    if(visiable){
-        Logger::PrintGmp("m_p", m_p);
-    }
-    this->start("Adapt");
-    ch.Adapt(r_p, tag_p, h, r, m_p, sk, pk);
-    this->end("Adapt");
-    if(visiable){
-        r_p.print();
-        Logger::PrintGmp("tag_p", tag_p);
-    }
-
-    this->start("Verify");
-    bool verify_result = ch.Verify(h, r_p, m_p, tag_p, pk);
-    this->end("Verify");
-    ASSERT_TRUE(verify_result);
+    average();
 }
 
 int main(int argc, char **argv) 

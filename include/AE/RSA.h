@@ -4,11 +4,26 @@
 #include "../base/GmpElements.h"
 #include "../utils/RandomGenerator.h"
 
-class RSA_pk: public GmpElements{};
+class RSA_pk: public GmpElements{
+    public:
+        RSA_pk(){
+            init(2);
+        }
+};
 
-class RSA_sk: public GmpElements{};
+class RSA_sk: public GmpElements{
+    public:
+        RSA_sk(){
+            init(1);
+        }
+};
 
-class RSA_m: public GmpElements{};
+class RSA_m: public GmpElements{
+    public:
+        RSA_m(){
+            init(1);
+        }
+};
 
 class AE_RSA{
     public:

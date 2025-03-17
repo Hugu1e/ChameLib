@@ -31,57 +31,60 @@ INSTANTIATE_TEST_CASE_P(
 );
 
 TEST_P(MCH_CDK_2017_Test, Test){
-    MCH_CDK_2017 ch;
-    MCH_CDK_2017_pk pk;
-    MCH_CDK_2017_sk sk;
-    MCH_CDK_2017_h h;
-    MCH_CDK_2017_r r,r_p;
+    for(int i = 0; UpdateProcBar(i, repeat), i < repeat; i++){
+        MCH_CDK_2017 ch;
+        MCH_CDK_2017_pk pk;
+        MCH_CDK_2017_sk sk;
+        MCH_CDK_2017_h h;
+        MCH_CDK_2017_r r,r_p;
 
-    mpz_t m, m_p;
-    mpz_inits(m, m_p, NULL);
+        mpz_t m, m_p;
+        mpz_inits(m, m_p, NULL);
 
-    this->start("SetUp");
-    ch.SetUp(pk, sk, h, r, r_p);
-    this->end("SetUp");
+        this->start("SetUp");
+        ch.SetUp(pk, sk, h, r, r_p);
+        this->end("SetUp");
 
-    this->start("KeyGen");
-    ch.KeyGen(pk, sk, GetParam().lamuda);
-    this->end("KeyGen");
-    if(visiable){
-        pk.print();
-        sk.print();
+        this->start("KeyGen");
+        ch.KeyGen(pk, sk, GetParam().lamuda);
+        this->end("KeyGen");
+        if(visiable){
+            pk.print();
+            sk.print();
+        }
+
+        RandomGenerator::RandomInLength(m, 100);
+        
+        this->start("Hash");
+        ch.Hash(h, r, m, pk);
+        this->end("Hash");
+        if(visiable){
+            Logger::PrintGmp("m", m);
+            h.print();
+            r.print();
+        }
+
+        this->start("Check");
+        bool check_result = ch.Check(h, r, m, pk);
+        this->end("Check");
+        ASSERT_TRUE(check_result);
+
+        RandomGenerator::RandomInLength(m_p, 100);
+        
+        this->start("Adapt");
+        ch.Adapt(r_p, m_p, m, r, h, sk, pk);
+        this->end("Adapt");
+        if(visiable){
+            Logger::PrintGmp("m_p", m_p);
+            r_p.print();
+        }
+
+        this->start("Verify");
+        bool verify_result = ch.Verify(h, r_p, m_p, pk);
+        this->end("Verify");
+        ASSERT_TRUE(verify_result);
     }
-
-    RandomGenerator::RandomInLength(m, 100);
-    
-    this->start("Hash");
-    ch.Hash(h, r, m, pk);
-    this->end("Hash");
-    if(visiable){
-        Logger::PrintGmp("m", m);
-        h.print();
-        r.print();
-    }
-
-    this->start("Check");
-    bool check_result = ch.Check(h, r, m, pk);
-    this->end("Check");
-    ASSERT_TRUE(check_result);
-
-    RandomGenerator::RandomInLength(m_p, 100);
-    
-    this->start("Adapt");
-    ch.Adapt(r_p, m_p, m, r, h, sk, pk);
-    this->end("Adapt");
-    if(visiable){
-        Logger::PrintGmp("m_p", m_p);
-        r_p.print();
-    }
-
-    this->start("Verify");
-    bool verify_result = ch.Verify(h, r_p, m_p, pk);
-    this->end("Verify");
-    ASSERT_TRUE(verify_result);
+    average();
 }
 
 int main(int argc, char **argv) 

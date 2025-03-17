@@ -5,15 +5,40 @@
 #include "../../base/PbcScheme.h"
 #include "../../utils/Hash.h"
 
-class IB_CH_ZSS_S2_2003_msk:public PbcElements{};
+class IB_CH_ZSS_S2_2003_msk:public PbcElements{
+    public:
+        IB_CH_ZSS_S2_2003_msk(){
+            init(1);
+        }
+};
 
-class IB_CH_ZSS_S2_2003_pp:public PbcElements{};
+class IB_CH_ZSS_S2_2003_pp:public PbcElements{
+    public:
+        IB_CH_ZSS_S2_2003_pp(){
+            init(3);
+        }
+};
 
-class IB_CH_ZSS_S2_2003_sk:public PbcElements{};
+class IB_CH_ZSS_S2_2003_sk:public PbcElements{
+    public:
+        IB_CH_ZSS_S2_2003_sk(){
+            init(1);
+        }
+};
 
-class IB_CH_ZSS_S2_2003_h:public PbcElements{};
+class IB_CH_ZSS_S2_2003_h:public PbcElements{
+    public:
+        IB_CH_ZSS_S2_2003_h(){
+            init(1);
+        }
+};
   
-class IB_CH_ZSS_S2_2003_r:public PbcElements{};
+class IB_CH_ZSS_S2_2003_r:public PbcElements{
+    public:
+        IB_CH_ZSS_S2_2003_r(){
+            init(1);
+        }
+};
 
 class IB_CH_ZSS_S2_2003: public PbcScheme{
     private:
@@ -24,7 +49,7 @@ class IB_CH_ZSS_S2_2003: public PbcScheme{
     public:
         IB_CH_ZSS_S2_2003(int curve);
 
-        void SetUp(IB_CH_ZSS_S2_2003_pp &pp, IB_CH_ZSS_S2_2003_msk &msk, IB_CH_ZSS_S2_2003_sk &sk, IB_CH_ZSS_S2_2003_h &h, IB_CH_ZSS_S2_2003_r &r, IB_CH_ZSS_S2_2003_r &r_p);
+        void SetUp(IB_CH_ZSS_S2_2003_pp &pp, IB_CH_ZSS_S2_2003_msk &msk);
 
         void Extract(IB_CH_ZSS_S2_2003_sk &sk, IB_CH_ZSS_S2_2003_msk &msk, element_t ID, IB_CH_ZSS_S2_2003_pp &pp);
 

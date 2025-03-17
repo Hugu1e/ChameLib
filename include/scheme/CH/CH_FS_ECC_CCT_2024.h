@@ -7,10 +7,30 @@
 #include "../../utils/Hash.h"
 #include "../../utils/Func.h"
 
-class CH_FS_ECC_CCT_2024_pp: public PbcElements{};
-class CH_FS_ECC_CCT_2024_pk: public PbcElements{};
-class CH_FS_ECC_CCT_2024_sk: public PbcElements{};
-class CH_FS_ECC_CCT_2024_r: public PbcElements{};
+class CH_FS_ECC_CCT_2024_pp: public PbcElements{
+    public:
+        CH_FS_ECC_CCT_2024_pp(){
+            init(1);  
+        };
+};
+class CH_FS_ECC_CCT_2024_pk: public PbcElements{
+    public:
+        CH_FS_ECC_CCT_2024_pk(){
+            init(1);  
+        };
+};
+class CH_FS_ECC_CCT_2024_sk: public PbcElements{
+    public:
+        CH_FS_ECC_CCT_2024_sk(){
+            init(1);  
+        };
+};
+class CH_FS_ECC_CCT_2024_r: public PbcElements{
+    public:
+        CH_FS_ECC_CCT_2024_r(){
+            init(3);  
+        };
+};
 
 class CH_FS_ECC_CCT_2024: public PbcScheme{
     private:
@@ -27,7 +47,7 @@ class CH_FS_ECC_CCT_2024: public PbcScheme{
     public:
         CH_FS_ECC_CCT_2024(int curve, int group);
 
-        void SetUp(CH_FS_ECC_CCT_2024_pp &pp, CH_FS_ECC_CCT_2024_pk &pk, CH_FS_ECC_CCT_2024_sk &sk, CH_FS_ECC_CCT_2024_r &r, CH_FS_ECC_CCT_2024_r &r_p);
+        void SetUp(CH_FS_ECC_CCT_2024_pp &pp);
         
         void KeyGen(CH_FS_ECC_CCT_2024_pk &pk, CH_FS_ECC_CCT_2024_sk &sk, CH_FS_ECC_CCT_2024_pp &pp);
 

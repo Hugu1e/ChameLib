@@ -59,53 +59,154 @@ INSTANTIATE_TEST_CASE_P(
 	testing::ValuesIn(test_values)
 );
 
+int op_cnt_G1G2[][diff_max_len] = {
+    {
+        1, 0, 0, 0, 
+        0, 0, 0, 0, 
+        0, 0, 0, 0, 
+        0, 0, 0, 0, 
+        0
+    }, //0, setup
+
+    {
+        0, 0, 0, 2, 
+        0, 0, 0, 1, 
+        0, 0, 0, 1, 
+        2, 0, 0, 0, 
+        0
+    }, //1, keygen
+    
+    {
+        0, 0, 0, 4, 
+        0, 0, 0, 3, 
+        2, 0, 0, 2, 
+        7, 0, 0, 0, 
+        0
+    }, //2, hash
+
+    {
+        0, 0, 0, 0, 
+        0, 0, 0, 3, 
+        4, 0, 0, 0, 
+        7, 0, 0, 0, 
+        0
+    }, //3, check
+
+    {
+        0, 0, 0, 1, 
+        0, 0, 0, 4, 
+        4, 0, 0, 6, 
+        11, 0, 0, 0, 
+        0
+    }, //4, adapt
+};
+
+int op_cnt_GT[][diff_max_len] = {
+    {
+        0, 0, 1, 0, 
+        0, 0, 0, 0, 
+        0, 0, 0, 0, 
+        0, 0, 0, 0, 
+        0
+    }, //0, setup
+
+    {
+        0, 0, 0, 2, 
+        0, 0, 0, 1, 
+        0, 0, 0, 1, 
+        0, 0, 2, 0, 
+        0
+    }, //1, keygen
+    
+    {
+        0, 0, 0, 4, 
+        0, 0, 0, 3, 
+        0, 0, 2, 2, 
+        0, 0, 7, 0, 
+        0
+    }, //2, hash
+
+    {
+        0, 0, 0, 0, 
+        0, 0, 0, 3, 
+        0, 0, 4, 0, 
+        0, 0, 7, 0, 
+        0
+    }, //3, check
+
+    {
+        0, 0, 0, 1, 
+        0, 0, 0, 4, 
+        0, 0, 4, 6, 
+        0, 0, 11, 0, 
+        0
+    }, //4, adapt
+};
 TEST_P(CH_ET_KOG_CDK_2017_Test, Test){
-    CH_ET_KOG_CDK_2017 ch(GetParam().curve, GetParam().group);
+    for(int i = 0; UpdateProcBar(i, repeat), i < repeat; i++){
+        CH_ET_KOG_CDK_2017 ch(GetParam().curve, GetParam().group);
 
-    CH_ET_KOG_CDK_2017_pp pp;
-    CH_ET_KOG_CDK_2017_sk sk;
-    CH_ET_KOG_CDK_2017_pk pk;
-    CH_ET_KOG_CDK_2017_h h;
-    CH_ET_KOG_CDK_2017_r r, r_p;
-    CH_ET_KOG_CDK_2017_etd etd;
+        CH_ET_KOG_CDK_2017_pp pp;
+        CH_ET_KOG_CDK_2017_sk sk;
+        CH_ET_KOG_CDK_2017_pk pk;
+        CH_ET_KOG_CDK_2017_h h;
+        CH_ET_KOG_CDK_2017_r r, r_p;
+        CH_ET_KOG_CDK_2017_etd etd;
 
-    element_s* m = ch.GetZrElement();
-    element_s* m_p = ch.GetZrElement();
+        element_s* m = ch.GetZrElement();
+        element_s* m_p = ch.GetZrElement();
 
-    this->start("SetUp");
-    ch.SetUp(pp, sk, pk, h, etd, r, r_p);
-    this->end("SetUp");
+        this->start("SetUp");
+        ch.SetUp(pp);
+        this->end("SetUp");
 
-    this->start("KeyGen");
-    ch.KeyGen(sk, pk, pp, 1024);
-    this->end("KeyGen");
+        this->start("KeyGen");
+        ch.KeyGen(sk, pk, pp, 1024);
+        this->end("KeyGen");
 
-    this->start("Hash");
-    ch.Hash(h, r, etd, m, pk, pp);
-    this->end("Hash");
-    if(visiable){
-        h.get_hash().print();
-        r.get_ch_r().print();
-        r.get_enc_c().print();
+        this->start("Hash");
+        ch.Hash(h, r, etd, m, pk, pp);
+        this->end("Hash");
+        if(visiable){
+            h.get_hash().print();
+            r.get_ch_r().print();
+            r.get_enc_c().print();
+        }
+
+        this->start("Check");
+        bool check = ch.Check(h, m, r, pk, pp);
+        this->end("Check");
+        ASSERT_TRUE(check);
+
+        this->start("Adapt");
+        ch.Adapt(r_p, m_p, h, m, r, pk, pp, sk, etd);
+        this->end("Adapt");
+        if(visiable){
+            r_p.get_ch_r().print();
+            r_p.get_enc_c().print();
+        }
+
+        this->start("Verify");
+        bool verify = ch.Verify(h, m_p, r_p, pk, pp);
+        this->end("Verify");
+        ASSERT_TRUE(verify);
     }
-
-    this->start("Check");
-    bool check = ch.Check(h, m, r, pk, pp);
-    this->end("Check");
-    ASSERT_TRUE(check);
-
-    this->start("Adapt");
-    ch.Adapt(r_p, m_p, h, m, r, pk, pp, sk, etd);
-    this->end("Adapt");
-    if(visiable){
-        r_p.get_ch_r().print();
-        r_p.get_enc_c().print();
+    average();
+    if(GetParam().group == Group::G1 || GetParam().group == Group::G2){
+        EXPECT_TRUE(check_time(GetParam().curve, op_cnt_G1G2[0], "SetUp"));
+        EXPECT_TRUE(check_time(GetParam().curve, op_cnt_G1G2[1], "KeyGen"));
+        EXPECT_TRUE(check_time(GetParam().curve, op_cnt_G1G2[2], "Hash"));
+        EXPECT_TRUE(check_time(GetParam().curve, op_cnt_G1G2[3], "Check"));
+        EXPECT_TRUE(check_time(GetParam().curve, op_cnt_G1G2[4], "Adapt"));
+        EXPECT_TRUE(check_time(GetParam().curve, op_cnt_G1G2[3], "Verify"));
+    } else if(GetParam().group == Group::GT){
+        EXPECT_TRUE(check_time(GetParam().curve, op_cnt_GT[0], "SetUp"));
+        EXPECT_TRUE(check_time(GetParam().curve, op_cnt_GT[1], "KeyGen"));
+        EXPECT_TRUE(check_time(GetParam().curve, op_cnt_GT[2], "Hash"));
+        EXPECT_TRUE(check_time(GetParam().curve, op_cnt_GT[3], "Check"));
+        EXPECT_TRUE(check_time(GetParam().curve, op_cnt_GT[4], "Adapt"));
+        EXPECT_TRUE(check_time(GetParam().curve, op_cnt_GT[3], "Verify"));
     }
-
-    this->start("Verify");
-    bool verify = ch.Verify(h, m_p, r_p, pk, pp);
-    this->end("Verify");
-    ASSERT_TRUE(verify);
 }
 
 int main(int argc, char **argv) 
