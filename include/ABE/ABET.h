@@ -21,6 +21,9 @@ class ABET_mpk{
         PbcElements gk_pow_a;  // (g^z1)^a, (g^z2)^a,...(g^zk)^a
         PbcElements hk;  // h^z1, h^z2,...h^zk
     public:
+        ABET_mpk(){
+            mpk.init(10);
+        }
         PbcElements& get_mpk(){
             return mpk;
         }
@@ -39,6 +42,9 @@ class ABET_msk{
         PbcElements msk;  // a1, a2, b1, b2, a, b, g_pow_d1, g_pow_d2, g_pow_d3
         PbcElements zk;  // z1,z2,...zk
     public:
+        ABET_msk(){
+            msk.init(9);
+        }
         PbcElements& get_msk(){
             return msk;
         }
@@ -181,6 +187,8 @@ class ABET:public PbcScheme{
         bool UserDelegate(ABET_sks &sk, ABET_mpk &mpk, ABET_msk &msk, ABET_ID &ID, int i);
         bool SkDelegate(ABET_sks &sk, ABET_mpk &mpk, ABET_msk &msk, element_t ID_i_1, element_t I_i_1);
 
+        void initTmp();
+
     public:
         ABET(){}
         ABET(int curve, bool swap);
@@ -191,9 +199,9 @@ class ABET:public PbcScheme{
 
         void KeyGen(ABET_sks &sks, ABET_msk &msk, ABET_mpk &mpk, std::vector<std::string> &attr_list, ABET_ID &ID, int mi);
 
-        void Encrypt(ABET_ciphertext &ciphertext, ABET_mpk &mpk, ABET_msk &msk, element_t r, unsigned char *R, int size_R, std::string policy_str, ABET_ID &ID, int oj, element_t s1, element_t s2);
+        void Encrypt(ABET_ciphertext &ciphertext, ABET_mpk &mpk, ABET_msk &msk, element_t r, unsigned char *R, int size_R, Element_t_matrix *MSP, ABET_ID &ID, int oj, element_t s1, element_t s2);
 
-        void Decrypt(unsigned char *res_R, element_t res_r, ABET_mpk &mpk, ABET_msk &msk, ABET_ciphertext &ciphertext, ABET_sks &sks, std::string policy_str, ABET_ID &ID, int mi);
+        void Decrypt(unsigned char *res_R, element_t res_r, ABET_mpk &mpk, ABET_msk &msk, ABET_ciphertext &ciphertext, ABET_sks &sks, Element_t_matrix *MSP, ABET_ID &ID, int mi);
 
         void Hash(element_t res, std::string m);
         void Hash2(element_t res, element_t m);
@@ -227,9 +235,6 @@ class ABET:public PbcScheme{
         enum{
             ct_1, ct_2, ct_3
         };
-
-
-
 };
 
 

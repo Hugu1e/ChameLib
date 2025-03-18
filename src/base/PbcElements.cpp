@@ -43,12 +43,6 @@ PbcElements &PbcElements::operator=(const PbcElements &other){
     if (this == &other)
         return *this;
 
-    // Clear existing elements
-    for (int i = 0; i < size; i++){
-        element_clear(elements[i]);
-    }
-    delete[] elements;
-
     size = other.size;
 
     elements = new element_s*[other.size];

@@ -151,11 +151,11 @@ class RPCH_XNM_2021: public PbcScheme{
 
         void Rev(RPCH_XNM_2021_RevokedPresonList &rl, element_t id, time_t t);
 
-        void Hash(RPCH_XNM_2021_h &h, RPCH_XNM_2021_r &r, std::string m, RPCH_XNM_2021_pk &pkRPCH, std::string policy_str, time_t t, RPCH_XNM_2021_pp &ppRPCH);
+        void Hash(RPCH_XNM_2021_h &h, RPCH_XNM_2021_r &r, std::string m, RPCH_XNM_2021_pk &pkRPCH, Element_t_matrix *MSP, time_t t, RPCH_XNM_2021_pp &ppRPCH);
 
         bool Check(RPCH_XNM_2021_h &h, RPCH_XNM_2021_r &r, std::string m, RPCH_XNM_2021_pk &pkRPCH);
 
-        void Adapt(RPCH_XNM_2021_r &r_p, std::string m_p, RPCH_XNM_2021_h &h, RPCH_XNM_2021_r &r, std::string m, RPCH_XNM_2021_pk &pkRPCH, RPCH_XNM_2021_dkidt &dkidtRPCH, std::string policy_str);
+        void Adapt(RPCH_XNM_2021_r &r_p, std::string m_p, RPCH_XNM_2021_h &h, RPCH_XNM_2021_r &r, std::string m, RPCH_XNM_2021_pk &pkRPCH, RPCH_XNM_2021_dkidt &dkidtRPCH, Element_t_matrix *MSP);
 
         bool Verify(RPCH_XNM_2021_h &h, RPCH_XNM_2021_r &r_p, std::string m_p, RPCH_XNM_2021_pk &pkRPCH);
 

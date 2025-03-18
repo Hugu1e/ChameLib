@@ -112,11 +112,11 @@ class PCH_DSS_2019: public PbcScheme{
 
         void KeyGen(PCH_DSS_2019_sks &sks, PCH_DSS_2019_sk &sk, PCH_DSS_2019_pk &pk, std::vector<std::string> &attr_list);
 
-        void Hash(PCH_DSS_2019_h &h, PCH_DSS_2019_r &r, std::string m, const std::string &policy_str, PCH_DSS_2019_pk &pk, PCH_DSS_2019_pp &pp);
+        void Hash(PCH_DSS_2019_h &h, PCH_DSS_2019_r &r, std::string m, Element_t_matrix *MSP, std::string policy_str, PCH_DSS_2019_pk &pk, PCH_DSS_2019_pp &pp);
 
         bool Check(PCH_DSS_2019_h &h, PCH_DSS_2019_r &r, std::string m, PCH_DSS_2019_pk &pk);
 
-        void Adapt(PCH_DSS_2019_r &r_p, std::string m_p, PCH_DSS_2019_h &h, PCH_DSS_2019_r &r, std::string m, PCH_DSS_2019_sks &sks, PCH_DSS_2019_pk &pk, const std::string &policy_str);
+        void Adapt(PCH_DSS_2019_r &r_p, std::string m_p, PCH_DSS_2019_h &h, PCH_DSS_2019_r &r, std::string m, PCH_DSS_2019_sks &sks, PCH_DSS_2019_pk &pk, Element_t_matrix *MSP, std::string policy_str);
 
         bool Verify(PCH_DSS_2019_h &h, PCH_DSS_2019_r &r_p, std::string m_p, PCH_DSS_2019_pk &pk);
 

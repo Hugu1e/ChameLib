@@ -77,7 +77,7 @@ void PCHBA_TLL_2020::KeyGen(PCHBA_TLL_2020_sks &sksPCHBA, PCHBA_TLL_2020_pk &pkP
  * input : pkPCHBA, skPCHBA, m, policy_str, ID, oj
  * output: p, h', b(hash), C, c, epk, sigma
  */
-void PCHBA_TLL_2020::Hash(PCHBA_TLL_2020_h &h, PCHBA_TLL_2020_r &random, element_t m, PCHBA_TLL_2020_pk &pkPCHBA, PCHBA_TLL_2020_sk &skPCHBA, std::string policy_str, PCHBA_TLL_2020_ID &ID, int oj) {
+void PCHBA_TLL_2020::Hash(PCHBA_TLL_2020_h &h, PCHBA_TLL_2020_r &random, element_t m, PCHBA_TLL_2020_pk &pkPCHBA, PCHBA_TLL_2020_sk &skPCHBA, Element_t_matrix *MSP, PCHBA_TLL_2020_ID &ID, int oj) {
     // r
     element_random(this->r);
     // R
@@ -90,7 +90,7 @@ void PCHBA_TLL_2020::Hash(PCHBA_TLL_2020_h &h, PCHBA_TLL_2020_r &random, element
     // Logger::PrintPbc("Encrypt:R", this->R);
     // Logger::PrintPbc("Encrypt:r", this->r);
     abet.Encrypt(random.get_C(), pkPCHBA.get_pkABET(), skPCHBA.get_skABET(), 
-        this->r, R, element_length_in_bytes(r) / 2, policy_str, ID.get_IDABET(), oj, this->s1, this->s2);
+        this->r, R, element_length_in_bytes(r) / 2, MSP, ID.get_IDABET(), oj, this->s1, this->s2);
 
     // esk
     element_random(this->esk);
@@ -176,19 +176,19 @@ bool PCHBA_TLL_2020::Check(PCHBA_TLL_2020_h &h, PCHBA_TLL_2020_r &random, elemen
  * input : pkPCHBA, skPCHBA, sksPCHBA, m, p, h', b, C, c, epk, sigma, m_p, policy_str, ID, mi
  * output: p_p, C_p, c_p, epk_p, sigma_p
  */
-void PCHBA_TLL_2020::Adapt(PCHBA_TLL_2020_r &random_p, element_t m_p, PCHBA_TLL_2020_h &h, PCHBA_TLL_2020_r &random, element_t m, std::string policy_str, PCHBA_TLL_2020_ID &ID, int mi, PCHBA_TLL_2020_pk &pkPCHBA, PCHBA_TLL_2020_sk &skPCHBA, PCHBA_TLL_2020_sks &sksPCHBA) {
+void PCHBA_TLL_2020::Adapt(PCHBA_TLL_2020_r &random_p, element_t m_p, PCHBA_TLL_2020_h &h, PCHBA_TLL_2020_r &random, element_t m, Element_t_matrix *MSP, PCHBA_TLL_2020_ID &ID, int mi, PCHBA_TLL_2020_pk &pkPCHBA, PCHBA_TLL_2020_sk &skPCHBA, PCHBA_TLL_2020_sks &sksPCHBA) {
     // R
     unsigned char R[element_length_in_bytes(r) / 2];
     
     // retrieve R, r
-    this->abet.Decrypt(R, this->r, pkPCHBA.get_pkABET(), skPCHBA.get_skABET(), random.get_C(), sksPCHBA.get_sksABET(), policy_str, ID.get_IDABET(), mi);
+    this->abet.Decrypt(R, this->r, pkPCHBA.get_pkABET(), skPCHBA.get_skABET(), random.get_C(), sksPCHBA.get_sksABET(), MSP, ID.get_IDABET(), mi);
     // PrintElement("Decrypt:r", this->r);
 
     element_random(this->s1);
     element_random(this->s2);
     // C
     abet.Encrypt(random_p.get_C(), pkPCHBA.get_pkABET(), skPCHBA.get_skABET(), 
-        this->r, R, element_length_in_bytes(r) / 2, policy_str, ID.get_IDABET(), mi, this->s1, this->s2);
+        this->r, R, element_length_in_bytes(r) / 2, MSP, ID.get_IDABET(), mi, this->s1, this->s2);
 
     // esk
     element_random(this->esk);
@@ -244,24 +244,10 @@ bool PCHBA_TLL_2020::Verify(PCHBA_TLL_2020_h &h_p, PCHBA_TLL_2020_r &random_p, e
 }
 
 PCHBA_TLL_2020::~PCHBA_TLL_2020() {
-    element_clear(this->r);
-    element_clear(this->s1);
-    element_clear(this->s2);
-    element_clear(this->esk);   
-
-    element_clear(this->tmp_G);
-    element_clear(this->tmp_G_2);
-    element_clear(this->tmp_H);
-    element_clear(this->tmp_H_2);
-    element_clear(this->tmp_GT);
-    element_clear(this->tmp_GT_2);
-    element_clear(this->tmp_GT_3);
-    element_clear(this->tmp_Zn);
-    element_clear(this->tmp_Zn_2);
-    element_clear(this->tmp_Zn_3);
-
-    element_clear(this->G1);
-    element_clear(this->G2);
-    element_clear(this->GT);
-    element_clear(this->Zn);
+    element_s *clear_list[] = {r, s1, s2, esk, 
+        tmp_G, tmp_G_2, tmp_H, tmp_H_2, tmp_GT, tmp_GT_2, tmp_GT_3, tmp_Zn, tmp_Zn_2, tmp_Zn_3, 
+        G1, G2, GT, Zn};
+    for(int i=0;i<sizeof(clear_list)/sizeof(clear_list[0]);i++){
+        element_clear(clear_list[i]);
+    }
 }

@@ -10,9 +10,19 @@
 #include "../utils/Hash.h"
 
 
-class CP_ABE_mpk : public PbcElements{};
+class CP_ABE_mpk : public PbcElements{
+    public:
+        CP_ABE_mpk(){
+            this->init(5);
+        }
+};
 
-class CP_ABE_msk : public PbcElements{};
+class CP_ABE_msk : public PbcElements{
+    public:
+        CP_ABE_msk(){
+            this->init(9);
+        }
+};
 
 class CP_ABE_sks{
     private:
@@ -50,6 +60,10 @@ class CP_ABE_ciphertext{
         PbcElements ct_prime;
 
     public:
+        CP_ABE_ciphertext(){
+            ct_0.init(3);
+            ct_prime.init(1);
+        }
         PbcElements &get_ct_0()
         {
             return ct_0;
@@ -95,6 +109,8 @@ class CP_ABE:public PbcScheme{
 
         void Pairing(element_t res, element_t a, element_t b);
 
+        void initTmp();
+
     public:
         CP_ABE(){}
         CP_ABE(int curve, bool swap);
@@ -105,10 +121,10 @@ class CP_ABE:public PbcScheme{
 
         void KeyGen(CP_ABE_sks &sks, CP_ABE_msk &msk, CP_ABE_mpk &mpk, std::vector<std::string> &attr_list);
 
-        void Encrypt(CP_ABE_ciphertext &ciphertext, CP_ABE_mpk &mpk, element_t msg, std::string policy_str);
-        void Encrypt(CP_ABE_ciphertext &ciphertext, CP_ABE_mpk &mpk, element_t msg, std::string policy_str, element_t s1, element_t s2);
+        void Encrypt(CP_ABE_ciphertext &ciphertext, CP_ABE_mpk &mpk, element_t msg, Element_t_matrix *MSP);
+        void Encrypt(CP_ABE_ciphertext &ciphertext, CP_ABE_mpk &mpk, element_t msg, Element_t_matrix *MSP, element_t s1, element_t s2);
 
-        void Decrypt(element_t res, CP_ABE_ciphertext &ciphertext, std::string policy_str, CP_ABE_mpk &mpk, CP_ABE_sks &sks);
+        void Decrypt(element_t res, CP_ABE_ciphertext &ciphertext, Element_t_matrix *MSP, CP_ABE_mpk &mpk, CP_ABE_sks &sks);
 
         ~CP_ABE();
 

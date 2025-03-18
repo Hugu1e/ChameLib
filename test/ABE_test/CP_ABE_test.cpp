@@ -50,42 +50,65 @@ INSTANTIATE_TEST_CASE_P(
 );
 
 TEST_P(CP_ABE_Test, Test){
-    std::vector<std::string> attr_list = {"ONE","TWO","THREE"};
-    const int SIZE_OF_ATTR = attr_list.size();
-    const std::string POLICY = "(ONE&THREE)&(TWO|FOUR)";
-    const int SIZE_OF_POLICY = 4;
+    for(int i = 0; UpdateProcBar(i, repeat), i < repeat; i++){
 
-    CP_ABE abe(GetParam().curve, GetParam().swap);
-    CP_ABE_mpk mpk;
-    CP_ABE_msk msk;
-    CP_ABE_sks sks;
-    CP_ABE_ciphertext ciphertext;
+        CP_ABE abe(GetParam().curve, GetParam().swap);
+        CP_ABE_mpk mpk;
+        CP_ABE_msk msk;
+        CP_ABE_sks sks;
+        CP_ABE_ciphertext ciphertext;
 
-    element_s* msg = abe.GetGTElement();
-    element_s* res = abe.GetGTElement();
-    
-    this->start("Setup");
-    abe.Setup(msk, mpk);
-    this->end("Setup");
+        std::vector<std::string> attr_list = {"ONE","TWO","THREE"};
+        const int SIZE_OF_ATTR = attr_list.size();
+        const std::string POLICY = "(ONE&THREE)&(TWO|FOUR)";
+        const int SIZE_OF_POLICY = 4;
 
-    this->start("KeyGen");
-    abe.KeyGen(sks, msk, mpk, attr_list);
-    this->end("KeyGen");
+        // compute MSP
+        Policy_resolution pr;
+        Policy_generation pg;
+        std::vector<std::string>* postfix_expression = pr.infixToPostfix(POLICY);
+        if(visiable){
+            printf("postfix_expression of Policy: ");
+            for(int i = 0;i < postfix_expression->size();i++){
+                printf("%s ", postfix_expression->at(i).c_str());
+            }
+            printf("\n");
+        }
+        Binary_tree_policy* binary_tree_expression = pr.postfixToBinaryTree(postfix_expression, abe.GetZrElement());
+        pg.generatePolicyInMatrixForm(binary_tree_expression);
+        Element_t_matrix* MSP = pg.getPolicyInMatrixFormFromTree(binary_tree_expression);
+        if(visiable){
+            printf("Policy Matrix:\n");
+            MSP->printMatrix();
+        }
 
-    if(visiable){
-        Logger::PrintPbcWithSize("msg", msg);
+        element_s* msg = abe.GetGTElement();
+        element_s* res = abe.GetGTElement();
+        
+        this->start("Setup");
+        abe.Setup(msk, mpk);
+        this->end("Setup");
+
+        this->start("KeyGen");
+        abe.KeyGen(sks, msk, mpk, attr_list);
+        this->end("KeyGen");
+
+        if(visiable){
+            Logger::PrintPbcWithSize("msg", msg);
+        }
+        this->start("Encrypt");
+        abe.Encrypt(ciphertext, mpk, msg, MSP);
+        this->end("Encrypt");
+
+        this->start("Decrypt");
+        abe.Decrypt(res, ciphertext, MSP, mpk, sks);
+        this->end("Decrypt");
+        if(visiable){
+            Logger::PrintPbc("res", res);        
+        }
+        ASSERT_TRUE(element_cmp(msg, res) == 0);
     }
-    this->start("Encrypt");
-    abe.Encrypt(ciphertext, mpk, msg, POLICY);
-    this->end("Encrypt");
-
-    this->start("Decrypt");
-    abe.Decrypt(res, ciphertext, POLICY, mpk, sks);
-    this->end("Decrypt");
-    if(visiable){
-        Logger::PrintPbc("res", res);        
-    }
-    ASSERT_TRUE(element_cmp(msg, res) == 0);
+    average();
 }
 
 int main(int argc, char **argv) 

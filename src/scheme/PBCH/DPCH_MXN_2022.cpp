@@ -117,7 +117,7 @@ void DPCH_MXN_2022::ModKeyGen(DPCH_MXN_2022_skGidA &skGidA, DPCH_MXN_2022_pp &pp
  * @param pkThetas: public keys of Theta
  * @param polocy: policy
  */
-void DPCH_MXN_2022::Hash(DPCH_MXN_2022_h &h, DPCH_MXN_2022_r &r, std::string m, DPCH_MXN_2022_pp &pp, DPCH_MXN_2022_pk &pkDPCH, std::vector<DPCH_MXN_2022_pkTheta *> &pkThetas, std::string polocy){
+void DPCH_MXN_2022::Hash(DPCH_MXN_2022_h &h, DPCH_MXN_2022_r &r, std::string m, DPCH_MXN_2022_pp &pp, DPCH_MXN_2022_pk &pkDPCH, std::vector<DPCH_MXN_2022_pkTheta *> &pkThetas, Element_t_matrix *MSP, std::string polocy){
     CH_ET_BC_CDK_2017_etd etd;
     etd.init(1);
 
@@ -150,7 +150,7 @@ void DPCH_MXN_2022::Hash(DPCH_MXN_2022_h &h, DPCH_MXN_2022_r &r, std::string m, 
     element_from_bytes(tmp_Zn_2, tmp);
 
     Encode(tmp_GT, K, R, k_bytes, k_bytes);
-    ma_abe.Encrypt(r.get_c_abe(), tmp_GT, tmp_Zn_2, pp.get_gpk_MA_ABE(), pkThetas_ABE, polocy);
+    ma_abe.Encrypt(r.get_c_abe(), tmp_GT, tmp_Zn_2, pp.get_gpk_MA_ABE(), pkThetas_ABE, MSP, polocy);
 }
 
 /**
@@ -177,7 +177,7 @@ bool DPCH_MXN_2022::Check(DPCH_MXN_2022_pk &pkDPCH, std::string m, DPCH_MXN_2022
  */
 void DPCH_MXN_2022::Adapt(DPCH_MXN_2022_r &r_p, std::string m_p, DPCH_MXN_2022_h &h, DPCH_MXN_2022_r &r, std::string m,
     DPCH_MXN_2022_pk &pkDPCH, DPCH_MXN_2022_skGid &skGid, std::vector<DPCH_MXN_2022_skGidA *> &skGidAs,
-    DPCH_MXN_2022_pp &pp, std::vector<DPCH_MXN_2022_pkTheta *> &pkThetas, std::string polocy){
+    DPCH_MXN_2022_pp &pp, std::vector<DPCH_MXN_2022_pkTheta *> &pkThetas, Element_t_matrix *MSP, std::string policy_str){
     if(m == m_p){
         r_p.get_r().set(CH_ET_BC_CDK_2017::r0, r.get_r()[CH_ET_BC_CDK_2017::r0]);
         r_p.get_r().set(CH_ET_BC_CDK_2017::r1, r.get_r()[CH_ET_BC_CDK_2017::r1]);
@@ -188,7 +188,7 @@ void DPCH_MXN_2022::Adapt(DPCH_MXN_2022_r &r_p, std::string m_p, DPCH_MXN_2022_h
     for(int i=0;i<skGidAs.size();i++){
         skgidAs_ABE[i] = &skGidAs[i]->get_sk();
     }
-    ma_abe.Decrypt(tmp_GT, skgidAs_ABE, r.get_c_abe());
+    ma_abe.Decrypt(tmp_GT, skgidAs_ABE, r.get_c_abe(), MSP);
 
     int k_bits = 128;
     int k_bytes = k_bits / 8;
@@ -212,7 +212,7 @@ void DPCH_MXN_2022::Adapt(DPCH_MXN_2022_r &r_p, std::string m_p, DPCH_MXN_2022_h
     memcpy(tmp, R, k_bytes);
     element_from_bytes(tmp_Zn_2, tmp);
 
-    ma_abe.Encrypt(tmp_c, tmp_GT, tmp_Zn_2, pp.get_gpk_MA_ABE(), pkThetas_ABE, polocy);
+    ma_abe.Encrypt(tmp_c, tmp_GT, tmp_Zn_2, pp.get_gpk_MA_ABE(), pkThetas_ABE, MSP, policy_str);
     if(!(tmp_c == r.get_c_abe())){
         throw std::runtime_error("DPCH_MXN_2022::Adapt(): c' != c");
     }
@@ -242,13 +242,8 @@ bool DPCH_MXN_2022::Verify(DPCH_MXN_2022_pk &pkDPCH, std::string m_p, DPCH_MXN_2
 
 
 DPCH_MXN_2022::~DPCH_MXN_2022() {
-    element_clear(tmp_G);
-    element_clear(tmp_GT);
-    element_clear(tmp_Zn);
-    element_clear(tmp_Zn_2);
-
-    element_clear(G1);
-    element_clear(G2);
-    element_clear(GT);
-    element_clear(Zn);
+    element_s *clear_list[] = {tmp_G, tmp_GT, tmp_Zn, tmp_Zn_2, G1, G2, GT, Zn};
+    for(int i=0;i<sizeof(clear_list)/sizeof(clear_list[0]);i++){
+        element_clear(clear_list[i]);
+    }
 }

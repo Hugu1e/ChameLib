@@ -12,8 +12,18 @@
 #include "../utils/TimeUtils.h"
 #include "../base/Binary_tree_RABE.h"
 
-class RABE_XNM_mpk: public PbcElements{};
-class RABE_XNM_msk: public PbcElements{};
+class RABE_XNM_mpk: public PbcElements{
+    public:
+        RABE_XNM_mpk(){
+            this->init(5);
+        }
+};
+class RABE_XNM_msk: public PbcElements{
+    public:
+        RABE_XNM_msk(){
+            this->init(9);
+        }
+};
 class RABE_XNM_skid{
     private:
         PbcElements sk0;
@@ -22,6 +32,10 @@ class RABE_XNM_skid{
         std::vector<std::pair<Binary_tree_RABE_node*,PbcElements>> sk_theta;
         std::unordered_map<std::string, unsigned long int> attr2id;
     public:
+        RABE_XNM_skid(){
+            sk0.init(3);
+            sk_prime.init(2);
+        }
         PbcElements& get_sk0()
         {
             return sk0;
@@ -118,6 +132,10 @@ class RABE_XNM_ciphertext{
         std::vector<PbcElements> ct_y;
         PbcElements ct_prime;
     public:
+        RABE_XNM_ciphertext(){
+            ct0.init(4);
+            ct_prime.init(1);
+        }
         void setTime(time_t t){
             this->t = t;
         }
@@ -158,6 +176,8 @@ class RABE_XNM: public PbcScheme{
         bool swap;
 
         void Pairing(element_t res, element_t a, element_t b);
+
+        void initTmp();
     
     public:
         RABE_XNM(){}
@@ -179,9 +199,9 @@ class RABE_XNM: public PbcScheme{
 
         void DKGen(RABE_XNM_dkidt &dkidt, RABE_XNM_mpk &mpk, RABE_XNM_skid &skid, RABE_XNM_kut &kut);
 
-        void Enc(RABE_XNM_ciphertext &ciphertext, RABE_XNM_mpk &mpk, element_t msg, std::string policy_str, time_t t, element_t s1, element_t s2);
+        void Enc(RABE_XNM_ciphertext &ciphertext, RABE_XNM_mpk &mpk, element_t msg, Element_t_matrix *MSP, time_t t, element_t s1, element_t s2);
 
-        void Dec(element_t res, RABE_XNM_mpk &mpk, RABE_XNM_ciphertext &ciphertext, RABE_XNM_dkidt &dkidt, std::string policy_str);
+        void Dec(element_t res, RABE_XNM_mpk &mpk, RABE_XNM_ciphertext &ciphertext, RABE_XNM_dkidt &dkidt, Element_t_matrix *MSP);
 
         void Rev(std::vector<RABE_XNM_revokedPreson> &rl, element_t id, time_t t);
 

@@ -69,7 +69,7 @@ void MAPCH_ZLW_2021::KeyGen(MAPCH_ZLW_2021_mski &msk, MAPCH_ZLW_2021_mtk &mtk, M
  * @param m: message
  * @param polocy: policy
  */
-void MAPCH_ZLW_2021::Hash(MAPCH_ZLW_2021_h &h, MAPCH_ZLW_2021_r &r, std::string m, MAPCH_ZLW_2021_pp &pp, std::vector<MAPCH_ZLW_2021_mhk *> &mhks, std::string policy){
+void MAPCH_ZLW_2021::Hash(MAPCH_ZLW_2021_h &h, MAPCH_ZLW_2021_r &r, std::string m, MAPCH_ZLW_2021_pp &pp, std::vector<MAPCH_ZLW_2021_mhk *> &mhks, Element_t_matrix *MSP, std::string policy){
     CH_ET_BC_CDK_2017_etd etd;
     etd.init(1);
 
@@ -87,7 +87,7 @@ void MAPCH_ZLW_2021::Hash(MAPCH_ZLW_2021_h &h, MAPCH_ZLW_2021_r &r, std::string 
     TypeConverter::mpz_to_element(tmp_GT, etd[CH_ET_BC_CDK_2017::d1]);
     
     element_random(tmp_Zn);
-    ma_abe.Encrypt(r.get_c(), tmp_GT, tmp_Zn, mhks.at(0)->get_gpk_ABE(), pkThetas, policy);
+    ma_abe.Encrypt(r.get_c(), tmp_GT, tmp_Zn, mhks.at(0)->get_gpk_ABE(), pkThetas, MSP, policy);
 }
 
 /**
@@ -108,7 +108,7 @@ bool MAPCH_ZLW_2021::Check(MAPCH_ZLW_2021_h &h, MAPCH_ZLW_2021_r &r, std::string
  * @param m_p: message
  * @param h: hash value
  */
-void MAPCH_ZLW_2021::Adapt(MAPCH_ZLW_2021_r &r_p, std::string m_p, MAPCH_ZLW_2021_h &h, MAPCH_ZLW_2021_r &r, std::string m, std::vector<MAPCH_ZLW_2021_mhk *> &mhks, std::vector<MAPCH_ZLW_2021_mski *> &msks){
+void MAPCH_ZLW_2021::Adapt(MAPCH_ZLW_2021_r &r_p, std::string m_p, MAPCH_ZLW_2021_h &h, MAPCH_ZLW_2021_r &r, std::string m, std::vector<MAPCH_ZLW_2021_mhk *> &mhks, std::vector<MAPCH_ZLW_2021_mski *> &msks, Element_t_matrix *MSP){
     if(!Check(h, r, m, mhks)){
         throw std::runtime_error("Forge: Hash Check failed!");
     }
@@ -121,7 +121,7 @@ void MAPCH_ZLW_2021::Adapt(MAPCH_ZLW_2021_r &r_p, std::string m_p, MAPCH_ZLW_202
         skgidAs.push_back(skgidA);
     }
 
-    ma_abe.Decrypt(tmp_GT, skgidAs, r.get_c());
+    ma_abe.Decrypt(tmp_GT, skgidAs, r.get_c(), MSP);
 
     CH_ET_BC_CDK_2017_etd etd;
     etd.init(1);
@@ -150,12 +150,8 @@ bool MAPCH_ZLW_2021::Verify(MAPCH_ZLW_2021_h &h, MAPCH_ZLW_2021_r &r, std::strin
 
 
 MAPCH_ZLW_2021::~MAPCH_ZLW_2021() {
-    element_clear(tmp_G);
-    element_clear(tmp_GT);
-    element_clear(tmp_Zn);
-    element_clear(tmp_Zn_2);
-
-    element_clear(G1);
-    element_clear(GT);
-    element_clear(Zn);
+    element_s *clear_list[] = {tmp_G, tmp_GT, tmp_Zn, tmp_Zn_2, G1, GT, Zn};
+    for(int i=0;i<sizeof(clear_list)/sizeof(clear_list[0]);i++){
+        element_clear(clear_list[i]);
+    }
 }

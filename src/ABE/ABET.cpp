@@ -12,44 +12,7 @@ ABET::ABET(int curve, bool swap):PbcScheme(curve){
     element_init_GT(GT, pairing);
     element_init_Zr(Zn, pairing);
 
-    element_init_same_as(this->d1, Zn);
-    element_init_same_as(this->d2, Zn);
-    element_init_same_as(this->d3, Zn);
-
-    element_init_same_as(this->r1, Zn);
-    element_init_same_as(this->r2, Zn);
-    element_init_same_as(this->R, Zn);
-
-    element_init_same_as(this->b1r1a1, Zn);
-    element_init_same_as(this->b1r1a2, Zn);
-    element_init_same_as(this->b2r2a1, Zn);
-    element_init_same_as(this->b2r2a2, Zn);
-    element_init_same_as(this->r1r2a1, Zn);
-    element_init_same_as(this->r1r2a2, Zn);
-
-    element_init_same_as(this->s1, Zn);
-    element_init_same_as(this->s2, Zn);
-
-    element_init_same_as(this->z_1, Zn);
-    element_init_same_as(this->z_2, Zn);
-    element_init_same_as(this->z, Zn);
-
-    element_init_same_as(ID_i_1, G1);
-
-    element_init_same_as(this->alpha_a_1, Zn);
-    element_init_same_as(this->alpha_a_2, Zn);
-
-    element_init_same_as(this->tmp_G, G1);
-    element_init_same_as(this->tmp_G_2, G1);
-    element_init_same_as(this->tmp_G_3, G1);
-    element_init_same_as(this->tmp_G_4, G1);
-    element_init_same_as(this->tmp_H, G2);
-    element_init_same_as(this->tmp_H_2, G2);
-    element_init_same_as(this->tmp_GT, GT);
-    element_init_same_as(this->tmp_GT_2, GT);
-    element_init_same_as(this->tmp_GT_3, GT);
-    element_init_same_as(this->tmp_Zn, Zn);
-    element_init_same_as(this->tmp_Zn_2, Zn);
+    initTmp();
 }
 
 void ABET::init(element_t _G1, element_t _G2, element_t _GT, element_t _Zn, bool swap){
@@ -60,44 +23,30 @@ void ABET::init(element_t _G1, element_t _G2, element_t _GT, element_t _Zn, bool
     element_init_same_as(GT, _GT);
     element_init_same_as(Zn, _Zn);
 
-    element_init_same_as(this->d1, Zn);
-    element_init_same_as(this->d2, Zn);
-    element_init_same_as(this->d3, Zn);
+    initTmp();
+}
 
-    element_init_same_as(this->r1, Zn);
-    element_init_same_as(this->r2, Zn);
-    element_init_same_as(this->R, Zn);
+void ABET::initTmp(){
+    element_s *zr_list[] = {d1, d2, d3, r1, r2, R, 
+        b1r1a1, b1r1a2, b2r2a1, b2r2a2, r1r2a1, r1r2a2, 
+        s1, s2, z_1, z_2, z, alpha_a_1, alpha_a_2, 
+        tmp_Zn, tmp_Zn_2};
+    element_s *G1_list[] = {ID_i_1, tmp_G, tmp_G_2, tmp_G_3, tmp_G_4};
+    element_s *G2_list[] = {tmp_H, tmp_H_2};
+    element_s *GT_list[] = {tmp_GT, tmp_GT_2, tmp_GT_3};
 
-    element_init_same_as(this->b1r1a1, Zn);
-    element_init_same_as(this->b1r1a2, Zn);
-    element_init_same_as(this->b2r2a1, Zn);
-    element_init_same_as(this->b2r2a2, Zn);
-    element_init_same_as(this->r1r2a1, Zn);
-    element_init_same_as(this->r1r2a2, Zn);
-
-    element_init_same_as(this->s1, Zn);
-    element_init_same_as(this->s2, Zn);
-
-    element_init_same_as(this->z_1, Zn);
-    element_init_same_as(this->z_2, Zn);
-    element_init_same_as(this->z, Zn);
-
-    element_init_same_as(ID_i_1, G1);
-
-    element_init_same_as(this->alpha_a_1, Zn);
-    element_init_same_as(this->alpha_a_2, Zn);
-
-    element_init_same_as(this->tmp_G, G1);
-    element_init_same_as(this->tmp_G_2, G1);
-    element_init_same_as(this->tmp_G_3, G1);
-    element_init_same_as(this->tmp_G_4, G1);
-    element_init_same_as(this->tmp_H, G2);
-    element_init_same_as(this->tmp_H_2, G2);
-    element_init_same_as(this->tmp_GT, GT);
-    element_init_same_as(this->tmp_GT_2, GT);
-    element_init_same_as(this->tmp_GT_3, GT);
-    element_init_same_as(this->tmp_Zn, Zn);
-    element_init_same_as(this->tmp_Zn_2, Zn);
+    for(int i = 0;i < sizeof(zr_list)/sizeof(element_s*);i++){
+        element_init_same_as(zr_list[i], Zn);
+    }
+    for(int i = 0;i < sizeof(G1_list)/sizeof(element_s*);i++){
+        element_init_same_as(G1_list[i], G1);
+    }
+    for(int i = 0;i < sizeof(G2_list)/sizeof(element_s*);i++){
+        element_init_same_as(G2_list[i], G2);
+    }
+    for(int i = 0;i < sizeof(GT_list)/sizeof(element_s*);i++){
+        element_init_same_as(GT_list[i], GT);
+    }
 }
 
 void ABET::Pairing(element_t res, element_t a, element_t b){
@@ -107,13 +56,12 @@ void ABET::Pairing(element_t res, element_t a, element_t b){
         element_pairing(res, a, b);
     }
 }
+
 /**
  * output: mpk, msk
  */
 void ABET::Setup(ABET_msk &msk, ABET_mpk &mpk, int k){
-    msk.get_msk().init(9);
     msk.get_zk().init(k);
-    mpk.get_mpk().init(10);
     mpk.get_gk().init(k);
     mpk.get_gk_pow_a().init(k);
     mpk.get_hk().init(k);
@@ -428,30 +376,9 @@ void ABET::Hash2(element_t res, element_t m){
  * input: mpk, msk,msg(r,R), policy_str, ID, oj, s1, s2
  * output: ct
  */
-void ABET::Encrypt(ABET_ciphertext &ciphertext, ABET_mpk &mpk, ABET_msk &msk, element_t r, unsigned char *R, int size_R, std::string policy_str, ABET_ID &ID, int oj, element_t s1, element_t s2){
-    Policy_resolution pr;
-    Policy_generation pg;
-    element_random(this->tmp_Zn);
-
-    std::vector<std::string>* postfix_expression = pr.infixToPostfix(policy_str);
-    // for(int i = 0;i < postfix_expression->size();i++){
-    //     printf("%s ", postfix_expression->at(i).c_str());
-    // }
-    // printf("\n");
-    Binary_tree_policy* binary_tree_expression = pr.postfixToBinaryTree(postfix_expression, this->tmp_Zn);
-    pg.generatePolicyInMatrixForm(binary_tree_expression);
-    Element_t_matrix* M = pg.getPolicyInMatrixFormFromTree(binary_tree_expression);
-
-    unsigned long int rows = M->row();
-    unsigned long int cols = M->col();
-
-    // printf("rows: %ld, cols: %ld\n", rows, cols);
-    // for(int i = 0;i < rows;i++){
-    //     for(int j = 0;j < cols;j++){
-    //         element_printf("%B ", M->getElement(i, j));
-    //     }
-    //     printf("\n");
-    // }
+void ABET::Encrypt(ABET_ciphertext &ciphertext, ABET_mpk &mpk, ABET_msk &msk, element_t r, unsigned char *R, int size_R, Element_t_matrix *MSP, ABET_ID &ID, int oj, element_t s1, element_t s2){
+    unsigned long int rows = MSP->row();
+    unsigned long int cols = MSP->col();
 
     // s1,s2
     element_set(this->s1, s1);
@@ -500,7 +427,6 @@ void ABET::Encrypt(ABET_ciphertext &ciphertext, ABET_mpk &mpk, ABET_msk &msk, el
     element_to_bytes(tmp_Zn_bytes, this->tmp_Zn);
     for(int i = 0; i < size_R; ++i) tmp_Zn_bytes[i] ^= R[i];
     ciphertext.set_ct_prime(tmp_Zn_bytes, element_length_in_bytes(this->tmp_Zn));
-    
 
     // ct1 = IDj^(a*s)
     // ct2 = IDj^s
@@ -519,7 +445,7 @@ void ABET::Encrypt(ABET_ciphertext &ciphertext, ABET_mpk &mpk, ABET_msk &msk, el
     // for i = 1,2,...,rows
     ciphertext.get_ct_y().resize(rows);
     for(unsigned long int i = 0; i < rows; i++){
-        std::string attr = M->getName(i);
+        std::string attr = MSP->getName(i);
         // printf("attr: %s\n", attr.c_str());
 
         // l = 1
@@ -546,7 +472,7 @@ void ABET::Encrypt(ABET_ciphertext &ciphertext, ABET_mpk &mpk, ABET_msk &msk, el
             // H(0jl1)^s1 * H(0jl2)^s2
             element_mul(this->tmp_G_3, this->tmp_G, this->tmp_G_2);
             // (H(0jl1)^s1 * H(0jl2)^s2)^M[i][j]
-            element_pow_zn(this->tmp_G_3, this->tmp_G_3, M->getElement(i, j));
+            element_pow_zn(this->tmp_G_3, this->tmp_G_3, MSP->getElement(i, j));
             element_mul(tmp_G_4, tmp_G_4, this->tmp_G_3);
         }
 
@@ -577,7 +503,7 @@ void ABET::Encrypt(ABET_ciphertext &ciphertext, ABET_mpk &mpk, ABET_msk &msk, el
             // H(0jl1)^s1 * H(0jl2)^s2
             element_mul(this->tmp_G_3, this->tmp_G, this->tmp_G_2);
             // (H(0jl1)^s1 * H(0jl2)^s2)^M[i][j]
-            element_pow_zn(this->tmp_G_3, this->tmp_G_3, M->getElement(i, j));
+            element_pow_zn(this->tmp_G_3, this->tmp_G_3, MSP->getElement(i, j));
             element_mul(tmp_G_4, tmp_G_4, this->tmp_G_3);
         }
 
@@ -606,7 +532,7 @@ void ABET::Encrypt(ABET_ciphertext &ciphertext, ABET_mpk &mpk, ABET_msk &msk, el
             // H(0jl1)^s1 * H(0jl2)^s2
             element_mul(this->tmp_G_3, this->tmp_G, this->tmp_G_2);
             // (H(0jl1)^s1 * H(0jl2)^s2)^M[i][j]
-            element_pow_zn(this->tmp_G_3, this->tmp_G_3, M->getElement(i, j));
+            element_pow_zn(this->tmp_G_3, this->tmp_G_3, MSP->getElement(i, j));
             element_mul(tmp_G_4, tmp_G_4, this->tmp_G_3);
         }
 
@@ -730,7 +656,7 @@ bool ABET::UserDelegate(ABET_sks &sk, ABET_mpk &mpk, ABET_msk &msk, ABET_ID &ID,
  * input: mpk, ciphertext, sks
  * output: res_R, res_r
  */
-void ABET::Decrypt(unsigned char *res_R, element_t res_r, ABET_mpk &mpk, ABET_msk &msk, ABET_ciphertext &ciphertext, ABET_sks &sks, std::string policy_str, ABET_ID &ID, int mi){
+void ABET::Decrypt(unsigned char *res_R, element_t res_r, ABET_mpk &mpk, ABET_msk &msk, ABET_ciphertext &ciphertext, ABET_sks &sks, Element_t_matrix *MSP, ABET_ID &ID, int mi){
     ABET_sks sk_p(sks);
     for(int i = mi; i < ciphertext.get_ownerId_length(); ++i) if(!UserDelegate(sk_p, mpk, msk, ID, i)) throw std::runtime_error("delegate failed");
 
@@ -757,25 +683,17 @@ void ABET::Decrypt(unsigned char *res_R, element_t res_r, ABET_mpk &mpk, ABET_ms
 
     // retrive r
     // compute Yi
-    // get original matrix
-    Policy_resolution pr;
-    Policy_generation pg;
-    element_random(this->tmp_Zn);
-    std::vector<std::string>* postfix_expression = pr.infixToPostfix(policy_str);
-    Binary_tree_policy* binary_tree_expression = pr.postfixToBinaryTree(postfix_expression, this->tmp_Zn);
-    pg.generatePolicyInMatrixForm(binary_tree_expression);
-    Element_t_matrix* M = pg.getPolicyInMatrixFormFromTree(binary_tree_expression);
     // get matrix with attributes
     Element_t_matrix* attributesMatrix = new Element_t_matrix();
     unsigned long int rows = ciphertext.get_ct_y().size();
     for(unsigned long int i = 0; i < rows; i++){
         // judge whether the attribute is in the policy
-        if(sk_p.get_attr2id().find(M->getName(i)) == sk_p.get_attr2id().end()){
+        if(sk_p.get_attr2id().find(MSP->getName(i)) == sk_p.get_attr2id().end()){
             continue;
         }
         Element_t_vector *v = new Element_t_vector();
-        for(signed long int j = 0; j < M->col(); ++j) {
-            v->pushBack(M->getElement(i, j));
+        for(signed long int j = 0; j < MSP->col(); ++j) {
+            v->pushBack(MSP->getElement(i, j));
         }
         attributesMatrix->pushBack(v);
     }
@@ -784,13 +702,7 @@ void ABET::Decrypt(unsigned char *res_R, element_t res_r, ABET_mpk &mpk, ABET_ms
 
     unsigned long int r = inverse_attributesMatrix->row();
     unsigned long int c = inverse_attributesMatrix->col();
-    // printf("rows: %ld, cols: %ld\n", r, c);
-    // for(int i = 0; i < r; i++){
-    //     for(int j = 0; j < c; j++){
-    //         element_printf("%B ", inverse_attributesMatrix->getElement(i, j));
-    //     }
-    //     printf("\n");
-    // }
+
     Element_t_vector* unit = inverse_attributesMatrix->getCoordinateAxisUnitVector();
 
     Element_t_vector* x = new Element_t_vector(inverse_attributesMatrix->col(), inverse_attributesMatrix->getElement(0, 0));
@@ -799,10 +711,6 @@ void ABET::Decrypt(unsigned char *res_R, element_t res_r, ABET_mpk &mpk, ABET_ms
     if(-1 == type) {
         throw std::runtime_error("POLICY_NOT_SATISFIED");
     }
-    // printf("type: %ld\n", type);
-    // // print x
-    // printf("Yi:\n");
-    // x->printVector();
 
     // retrive r
     // num
@@ -816,7 +724,7 @@ void ABET::Decrypt(unsigned char *res_R, element_t res_r, ABET_mpk &mpk, ABET_ms
     int count = 0;
     for(unsigned long int i = 0; i < rows; i++){
         // judge whether the attribute is in the policy
-        if(sk_p.get_attr2id().find(M->getName(i)) == sk_p.get_attr2id().end()){
+        if(sk_p.get_attr2id().find(MSP->getName(i)) == sk_p.get_attr2id().end()){
             continue;
         }
         element_pow_zn(this->tmp_G_4, ciphertext.get_ct_y(i)[ct_1], x->getElement(count));
@@ -842,14 +750,14 @@ void ABET::Decrypt(unsigned char *res_R, element_t res_r, ABET_mpk &mpk, ABET_ms
     count = 0;
     for(unsigned long int i = 0; i < rows; i++){
         // judge whether the attribute is in the policy
-        if(sk_p.get_attr2id().find(M->getName(i)) == sk_p.get_attr2id().end()){
+        if(sk_p.get_attr2id().find(MSP->getName(i)) == sk_p.get_attr2id().end()){
             continue;
         }
-        element_pow_zn(this->tmp_G_4, sk_p.get_sk_y(sk_p.get_attr2id()[M->getName(i)])[sk_1], x->getElement(count));
+        element_pow_zn(this->tmp_G_4, sk_p.get_sk_y(sk_p.get_attr2id()[MSP->getName(i)])[sk_1], x->getElement(count));
         element_mul(this->tmp_G, this->tmp_G, this->tmp_G_4);
-        element_pow_zn(this->tmp_G_4, sk_p.get_sk_y(sk_p.get_attr2id()[M->getName(i)])[sk_2], x->getElement(count));
+        element_pow_zn(this->tmp_G_4, sk_p.get_sk_y(sk_p.get_attr2id()[MSP->getName(i)])[sk_2], x->getElement(count));
         element_mul(this->tmp_G_2, this->tmp_G_2, this->tmp_G_4);
-        element_pow_zn(this->tmp_G_4, sk_p.get_sk_y(sk_p.get_attr2id()[M->getName(i)])[sk_3], x->getElement(count));
+        element_pow_zn(this->tmp_G_4, sk_p.get_sk_y(sk_p.get_attr2id()[MSP->getName(i)])[sk_3], x->getElement(count));
         element_mul(this->tmp_G_3, this->tmp_G_3, this->tmp_G_4);
         count++;
     }
@@ -903,37 +811,15 @@ void ABET::GetID_(element_t ID_, ABET_mpk &mpk, ABET_ID &ID, int mi_oj, int type
 
 
 ABET::~ABET(){
-    element_clear(this->d1);
-    element_clear(this->d2);
-    element_clear(this->d3);
-
-    element_clear(this->r1);
-    element_clear(this->r2);
-
-    element_clear(this->b1r1a1);
-    element_clear(this->b1r1a2);
-    element_clear(this->b2r2a1);
-    element_clear(this->b2r2a2);
-    element_clear(this->r1r2a1);
-    element_clear(this->r1r2a2);
-
-    element_clear(this->s1);
-    element_clear(this->s2);
-
-    element_clear(this->tmp_G);
-    element_clear(this->tmp_G_2);
-    element_clear(this->tmp_G_3);
-    element_clear(this->tmp_G_4);
-    element_clear(this->tmp_H);
-    element_clear(this->tmp_H_2);
-    element_clear(this->tmp_GT);
-    element_clear(this->tmp_GT_2);
-    element_clear(this->tmp_GT_3);
-    element_clear(this->tmp_Zn);
-    element_clear(this->tmp_Zn_2);
-
-    element_clear(this->G1);
-    element_clear(this->G2);
-    element_clear(this->GT);
-    element_clear(this->Zn);
+    element_s *clear_list[] = {d1, d2, d3, r1, r2, 
+        b1r1a1, b1r1a2, b2r2a1, b2r2a2, r1r2a1, r1r2a2, 
+        s1, s2, tmp_G, tmp_G_2, tmp_G_3, tmp_G_4, 
+        tmp_H, tmp_H_2, 
+        tmp_GT, tmp_GT_2, tmp_GT_3, 
+        tmp_Zn, tmp_Zn_2, 
+        G1, G2, GT, Zn};
+    
+    for(int i = 0; i < sizeof(clear_list)/sizeof(clear_list[0]); i++){
+        element_clear(clear_list[i]);
+    }
 }

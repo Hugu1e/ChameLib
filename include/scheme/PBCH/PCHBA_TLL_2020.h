@@ -111,11 +111,11 @@ class PCHBA_TLL_2020: public PbcScheme{
 
         void KeyGen(PCHBA_TLL_2020_sks &sksPCHBA, PCHBA_TLL_2020_pk &pkPCHBA, PCHBA_TLL_2020_sk &skPCHBA, std::vector<std::string> &attr_list, PCHBA_TLL_2020_ID &ID, int mi);
 
-        void Hash(PCHBA_TLL_2020_h &h, PCHBA_TLL_2020_r &r, element_t m, PCHBA_TLL_2020_pk &pkPCHBA, PCHBA_TLL_2020_sk &skPCHBA, std::string policy_str, PCHBA_TLL_2020_ID &ID, int oj);
+        void Hash(PCHBA_TLL_2020_h &h, PCHBA_TLL_2020_r &r, element_t m, PCHBA_TLL_2020_pk &pkPCHBA, PCHBA_TLL_2020_sk &skPCHBA, Element_t_matrix *MSP, PCHBA_TLL_2020_ID &ID, int oj);
 
         bool Check(PCHBA_TLL_2020_h &h, PCHBA_TLL_2020_r &random, element_t m, PCHBA_TLL_2020_pk &pkPCHBA);
 
-        void Adapt(PCHBA_TLL_2020_r &random_p, element_t m_p, PCHBA_TLL_2020_h &h, PCHBA_TLL_2020_r &random, element_t m, std::string policy_str, PCHBA_TLL_2020_ID &ID, int mi, PCHBA_TLL_2020_pk &pkPCHBA, PCHBA_TLL_2020_sk &skPCHBA, PCHBA_TLL_2020_sks &sksPCHBA);
+        void Adapt(PCHBA_TLL_2020_r &random_p, element_t m_p, PCHBA_TLL_2020_h &h, PCHBA_TLL_2020_r &random, element_t m, Element_t_matrix *MSP, PCHBA_TLL_2020_ID &ID, int mi, PCHBA_TLL_2020_pk &pkPCHBA, PCHBA_TLL_2020_sk &skPCHBA, PCHBA_TLL_2020_sks &sksPCHBA);
 
         bool Verify(PCHBA_TLL_2020_h &h_p, PCHBA_TLL_2020_r &random_p, element_t m_p, PCHBA_TLL_2020_pk &pkPCHBA);
 

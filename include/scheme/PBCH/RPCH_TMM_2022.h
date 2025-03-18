@@ -136,11 +136,11 @@ class RPCH_TMM_2022: public PbcScheme{
 
         void Rev(RPCH_TMM_2022_RevokedPresonList &rl, element_t id, time_t t);
 
-        void Hash(RPCH_TMM_2022_h &h, element_t m, RPCH_TMM_2022_pk &pkRPCH, std::string policy_str, time_t t);
+        void Hash(RPCH_TMM_2022_h &h, element_t m, RPCH_TMM_2022_pk &pkRPCH, Element_t_matrix *MSP, time_t t);
 
         bool Check(RPCH_TMM_2022_pk &pkRPCH, element_t m, RPCH_TMM_2022_h &h);
 
-        void Adapt(RPCH_TMM_2022_h &h_p, element_t m_p, element_t m, RPCH_TMM_2022_h &h, RPCH_TMM_2022_pk &pkRPCH, RPCH_TMM_2022_dkidt &dkidtRPCH, std::string policy_str);
+        void Adapt(RPCH_TMM_2022_h &h_p, element_t m_p, element_t m, RPCH_TMM_2022_h &h, RPCH_TMM_2022_pk &pkRPCH, RPCH_TMM_2022_dkidt &dkidtRPCH, Element_t_matrix *MSP);
 
         bool Verify(RPCH_TMM_2022_pk &pkRPCH, element_t m_p, RPCH_TMM_2022_h &h_p);
 

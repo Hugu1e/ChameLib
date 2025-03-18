@@ -5,16 +5,7 @@ MA_ABE::MA_ABE(int curve): PbcScheme(curve){
     element_init_GT(GT, pairing);
     element_init_Zr(Zn, pairing);
 
-    element_init_same_as(this->z, Zn);
-
-    element_init_same_as(this->tmp_G, G1);
-    element_init_same_as(this->tmp_G_2, G1);
-    element_init_same_as(this->tmp_G_3, G1);
-    element_init_same_as(this->tmp_G_4, G1);
-    element_init_same_as(this->tmp_GT, GT);
-    element_init_same_as(this->tmp_GT_2, GT);
-    element_init_same_as(this->tmp_GT_3, GT);
-    element_init_same_as(this->tmp_Zn, Zn);
+    initTmp();
 }
 
 void MA_ABE::init(element_t _G1, element_t _GT, element_t _Zn){
@@ -22,8 +13,11 @@ void MA_ABE::init(element_t _G1, element_t _GT, element_t _Zn){
     element_init_same_as(GT, _GT);
     element_init_same_as(Zn, _Zn);
 
-    element_init_same_as(this->z, Zn);
+    initTmp();
+}
 
+void MA_ABE::initTmp(){
+    element_init_same_as(this->z, Zn);
     element_init_same_as(this->tmp_G, G1);
     element_init_same_as(this->tmp_G_2, G1);
     element_init_same_as(this->tmp_G_3, G1);
@@ -39,8 +33,6 @@ void MA_ABE::init(element_t _G1, element_t _GT, element_t _Zn){
  * @param gpk global public key
  */
 void MA_ABE::GlobalSetup(MA_ABE_gpk &gpk){
-    gpk.init(1);
-    
     element_random(tmp_G);
     gpk.set(g, tmp_G);
 }
@@ -49,9 +41,7 @@ void MA_ABE::GlobalSetup(MA_ABE_gpk &gpk){
  * @param gpk global public key
  * @param g generator g
  */
-void MA_ABE::GlobalSetup(MA_ABE_gpk &gpk, element_t _g){
-    gpk.init(1);
-    
+void MA_ABE::GlobalSetup(MA_ABE_gpk &gpk, element_t _g){    
     gpk.set(g, _g);
 }
 
@@ -64,9 +54,6 @@ void MA_ABE::GlobalSetup(MA_ABE_gpk &gpk, element_t _g){
  * @param A an attribute of the authority
  */
 void MA_ABE::AuthSetup(MA_ABE_pkTheta &pkTheta, MA_ABE_skTheta &skTheta, MA_ABE_gpk &gpk, std::string A){
-    pkTheta.init(2);
-    skTheta.init(2);
-    
     element_random(tmp_Zn);
     skTheta.set(aTheta, tmp_Zn);
     element_random(tmp_Zn);
@@ -122,9 +109,7 @@ void MA_ABE::Ht(element_t res, element_t rt, std::string A){
  * @param gid a global identifier
  * @param A an attribute
  */
-void MA_ABE::KeyGen(MA_ABE_skgidA &skgidA, MA_ABE_gpk &gpk, MA_ABE_skTheta &skTheta, std::string gid, std::string A){
-    skgidA.init(2);
-    
+void MA_ABE::KeyGen(MA_ABE_skgidA &skgidA, MA_ABE_gpk &gpk, MA_ABE_skTheta &skTheta, std::string gid, std::string A){  
     // t
     element_random(this->tmp_Zn);
     // g^aTheta * HGID(0,gid)^yTheta * Hu(A)^t
@@ -155,38 +140,14 @@ void MA_ABE::KeyGen(MA_ABE_skgidA &skgidA, MA_ABE_gpk &gpk, MA_ABE_skTheta &skTh
  * @param policy access policy
 
  */
-void MA_ABE::Encrypt(MA_ABE_ciphertext &C, element_t m, element_t rt, MA_ABE_gpk &gpk, std::vector<MA_ABE_pkTheta *> &pkThetas, std::string policy){
-    C.get_ct_0().init(1);
-    
-    Policy_resolution pr;
-    Policy_generation pg;
-    element_random(this->tmp_Zn);
+void MA_ABE::Encrypt(MA_ABE_ciphertext &C, element_t m, element_t rt, MA_ABE_gpk &gpk, std::vector<MA_ABE_pkTheta *> &pkThetas, Element_t_matrix *MSP, std::string policy_str){    
+    unsigned long int rows = MSP->row();
+    unsigned long int cols = MSP->col();
 
-    std::vector<std::string>* postfix_expression = pr.infixToPostfix(policy);
-    // for(int i = 0;i < postfix_expression->size();i++){
-    //     printf("%s ", postfix_expression->at(i).c_str());
-    // }
-    // printf("\n");
-
-    Binary_tree_policy* binary_tree_expression = pr.postfixToBinaryTree(postfix_expression, this->tmp_Zn);
-    pg.generatePolicyInMatrixForm(binary_tree_expression);
-    Element_t_matrix* M = pg.getPolicyInMatrixFormFromTree(binary_tree_expression);
-
-    unsigned long int rows = M->row();
-    unsigned long int cols = M->col();
-
-    // printf("rows: %ld, cols: %ld\n", rows, cols);
-    // for(int i = 0;i < rows;i++){
-    //     for(int j = 0;j < cols;j++){
-    //         element_printf("%B ", M->getElement(i, j));
-    //     }
-    //     printf("\n");
-    // }
-
-    C.setPolicy(policy);
+    C.setPolicy(policy_str);
 
     // z = Ht(rt, policy)
-    this->Ht(this->z, rt, policy);
+    this->Ht(this->z, rt, policy_str);
 
     // c0 = m * e(g,g)^z
     element_pairing(tmp_GT, gpk[g], gpk[g]);
@@ -200,7 +161,7 @@ void MA_ABE::Encrypt(MA_ABE_ciphertext &C, element_t m, element_t rt, MA_ABE_gpk
     for(int i = 0;i<rows;i++){
         element_s *tmp_ti = new element_s();
         element_init_same_as(tmp_ti, this->Zn);
-        std::string str_ti = policy + "0" + std::to_string(i);
+        std::string str_ti = policy_str + "0" + std::to_string(i);
         this->Ht(tmp_ti, rt, str_ti);
         ti[i] = tmp_ti;
     }
@@ -210,13 +171,13 @@ void MA_ABE::Encrypt(MA_ABE_ciphertext &C, element_t m, element_t rt, MA_ABE_gpk
     for(int i = 0;i<cols;i++){
         element_s *tmp_vi = new element_s();
         element_init_same_as(tmp_vi, this->Zn);
-        std::string str_vi = policy + "1" + std::to_string(i);
+        std::string str_vi = policy_str + "1" + std::to_string(i);
         this->Ht(tmp_vi, rt, str_vi);
         vi[i] = tmp_vi;
 
         element_s *tmp_wi = new element_s();
         element_init_same_as(tmp_wi, this->Zn);
-        std::string str_wi = policy + "2" + std::to_string(i);
+        std::string str_wi = policy_str + "2" + std::to_string(i);
         this->Ht(tmp_wi, rt, str_wi);
         wi[i] = tmp_wi;
     }
@@ -251,7 +212,7 @@ void MA_ABE::Encrypt(MA_ABE_ciphertext &C, element_t m, element_t rt, MA_ABE_gpk
         element_init_same_as(tmp_lamuda, this->Zn);
         element_set0(tmp_lamuda);
         for(int j=0;j<cols;j++){
-            element_mul(this->tmp_Zn, M->getElement(i, j), v[j]);
+            element_mul(this->tmp_Zn, MSP->getElement(i, j), v[j]);
             element_add(tmp_lamuda, tmp_lamuda, this->tmp_Zn);
         }
         lamuda[i] = tmp_lamuda;
@@ -263,7 +224,7 @@ void MA_ABE::Encrypt(MA_ABE_ciphertext &C, element_t m, element_t rt, MA_ABE_gpk
         element_init_same_as(tmp_w, this->Zn);
         element_set0(tmp_w);
         for(int j=0;j<cols;j++){
-            element_mul(this->tmp_Zn, M->getElement(i, j), w[j]);
+            element_mul(this->tmp_Zn, MSP->getElement(i, j), w[j]);
             element_add(tmp_w, tmp_w, this->tmp_Zn);
         }
         w_tmp[i] = tmp_w;
@@ -272,7 +233,7 @@ void MA_ABE::Encrypt(MA_ABE_ciphertext &C, element_t m, element_t rt, MA_ABE_gpk
 
     for(int i=0;i<rows;i++){
         // ci_1 = e(g,g)^lamuda_i * e(g,g)^(a*ti)
-        std::string attr = M->getName(i);
+        std::string attr = MSP->getName(i);
         element_pairing(tmp_GT, gpk[g], gpk[g]);
         element_pow_zn(tmp_GT, tmp_GT, lamuda[i]);
         for(int j=0;j<pkThetas.size();j++){
@@ -334,26 +295,18 @@ void MA_ABE::Encrypt(MA_ABE_ciphertext &C, element_t m, element_t rt, MA_ABE_gpk
  * @param skgidAs secret keys of the authorities
  * @param C ciphertext
  */
-void MA_ABE::Decrypt(element_t res, std::vector<MA_ABE_skgidA *> &skgidAs, MA_ABE_ciphertext &C){
+void MA_ABE::Decrypt(element_t res, std::vector<MA_ABE_skgidA *> &skgidAs, MA_ABE_ciphertext &C, Element_t_matrix *MSP){
     // compute Yi
-    // get original matrix
-    Policy_resolution pr;
-    Policy_generation pg;
-    element_random(this->tmp_Zn);
-    std::vector<std::string>* postfix_expression = pr.infixToPostfix(C.get_policy());
-    Binary_tree_policy* binary_tree_expression = pr.postfixToBinaryTree(postfix_expression, this->tmp_Zn);
-    pg.generatePolicyInMatrixForm(binary_tree_expression);
-    Element_t_matrix* M = pg.getPolicyInMatrixFormFromTree(binary_tree_expression);
     // get matrix with attributes
     Element_t_matrix* attributesMatrix = new Element_t_matrix();
     unsigned long int rows = C.get_ct_i().size();
     for(unsigned long int i=0; i<rows;i++){
         // judge whether the attribute of the policy is in the skgidAs
         for(int k=0;k<skgidAs.size();k++){
-            if(skgidAs[k]->get_A() == M->getName(i)){
+            if(skgidAs[k]->get_A() == MSP->getName(i)){
                 Element_t_vector *v = new Element_t_vector();
-                for (signed long int j = 0; j < M->col(); ++j) {
-                    v->pushBack(M->getElement(i, j));
+                for (signed long int j = 0; j < MSP->col(); ++j) {
+                    v->pushBack(MSP->getElement(i, j));
                 }
                 attributesMatrix->pushBack(v);
                 break;
@@ -365,13 +318,7 @@ void MA_ABE::Decrypt(element_t res, std::vector<MA_ABE_skgidA *> &skgidAs, MA_AB
 
     unsigned long int r = inverse_attributesMatrix->row();
     unsigned long int c = inverse_attributesMatrix->col();
-    // printf("rows: %ld, cols: %ld\n", r, c);
-    // for(int i = 0;i < r;i++){
-    //     for(int j = 0;j < c;j++){
-    //         element_printf("%B ", inverse_attributesMatrix->getElement(i, j));
-    //     }
-    //     printf("\n");
-    // }
+
     Element_t_vector* unit = inverse_attributesMatrix->getCoordinateAxisUnitVector();
 
     Element_t_vector* x= new Element_t_vector(inverse_attributesMatrix->col(), inverse_attributesMatrix->getElement(0, 0));
@@ -380,18 +327,13 @@ void MA_ABE::Decrypt(element_t res, std::vector<MA_ABE_skgidA *> &skgidAs, MA_AB
     if (-1 == type) {
         throw std::runtime_error("POLICY_NOT_SATISFIED");
     }
-    // printf("type: %ld\n", type);
-    // // print x
-    // printf("Yi:\n");
-    // x->printVector();
-
 
     element_set1(tmp_GT_3);
     int count = 0;
     for(int i=0;i<rows;i++){
         // judge whether the attribute of the policy is in the skgidAs
         for(int k=0;k<skgidAs.size();k++){
-            if(skgidAs[k]->get_A() == M->getName(i)){
+            if(skgidAs[k]->get_A() == MSP->getName(i)){
                 element_set(tmp_GT, C.get_ct_i(i)[ct_1]);
                 // e(skgidA_0,ci_2)
                 element_pairing(tmp_GT_2, skgidAs[k]->get(skgidA_0), C.get_ct_i(i)[ct_2]);
@@ -417,18 +359,8 @@ void MA_ABE::Decrypt(element_t res, std::vector<MA_ABE_skgidA *> &skgidAs, MA_AB
 }
 
 MA_ABE::~MA_ABE(){
-    element_clear(this->z);
-
-    element_clear(this->tmp_G);
-    element_clear(this->tmp_G_2);
-    element_clear(this->tmp_G_3);
-    element_clear(this->tmp_G_4);
-    element_clear(this->tmp_GT);
-    element_clear(this->tmp_GT_2);
-    element_clear(this->tmp_GT_3);
-    element_clear(this->tmp_Zn);
-
-    element_clear(G1);
-    element_clear(GT);
-    element_clear(Zn);
+    element_s *clear_list[] = {z, tmp_G, tmp_G_2, tmp_G_3, tmp_G_4, tmp_GT, tmp_GT_2, tmp_GT_3, tmp_Zn, G1, GT, Zn};
+    for(int i=0;i<sizeof(clear_list)/sizeof(element_s*);i++){
+        element_clear(clear_list[i]);
+    }
 }

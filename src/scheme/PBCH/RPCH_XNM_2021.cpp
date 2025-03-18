@@ -68,7 +68,7 @@ void RPCH_XNM_2021::Rev(RPCH_XNM_2021_RevokedPresonList &rl, element_t id, time_
  * input : pkRPCH, policy_str, t
  * output: h
  */
-void RPCH_XNM_2021::Hash(RPCH_XNM_2021_h &h, RPCH_XNM_2021_r &r, std::string m, RPCH_XNM_2021_pk &pkRPCH, std::string policy_str, time_t t, RPCH_XNM_2021_pp &ppRPCH) {
+void RPCH_XNM_2021::Hash(RPCH_XNM_2021_h &h, RPCH_XNM_2021_r &r, std::string m, RPCH_XNM_2021_pk &pkRPCH, Element_t_matrix *MSP, time_t t, RPCH_XNM_2021_pp &ppRPCH) {
     CH_ET_BC_CDK_2017_etd etd;
     
     ch.Hash(h.get_h(), r.get_rCHET(), etd, ppRPCH.get_ppCHET(), pkRPCH.get_pkCHET(), m);
@@ -78,7 +78,7 @@ void RPCH_XNM_2021::Hash(RPCH_XNM_2021_h &h, RPCH_XNM_2021_r &r, std::string m, 
     element_random(this->s1);
     element_random(this->s2);
 
-    this->rabe.Enc(h.get_ct(), pkRPCH.get_mpkRABE(), this->K, policy_str, t, this->s1, this->s2);
+    this->rabe.Enc(h.get_ct(), pkRPCH.get_mpkRABE(), this->K, MSP, t, this->s1, this->s2);
 
     // cSE = EncSE(kk, d2)
     this->aes.Enc(h.get_cSE()[0], K, etd[0]);
@@ -96,8 +96,8 @@ bool RPCH_XNM_2021::Check(RPCH_XNM_2021_h &h, RPCH_XNM_2021_r &r, std::string m,
  * input : pkRPCH, dkidtRPCH, h
  * output: h_p
  */
-void RPCH_XNM_2021::Adapt(RPCH_XNM_2021_r &r_p, std::string m_p, RPCH_XNM_2021_h &h, RPCH_XNM_2021_r &r, std::string m, RPCH_XNM_2021_pk &pkRPCH, RPCH_XNM_2021_dkidt &dkidtRPCH, std::string policy_str) {
-    rabe.Dec(this->K, pkRPCH.get_mpkRABE(), h.get_ct(), dkidtRPCH.get_dkidtRABE(), policy_str);
+void RPCH_XNM_2021::Adapt(RPCH_XNM_2021_r &r_p, std::string m_p, RPCH_XNM_2021_h &h, RPCH_XNM_2021_r &r, std::string m, RPCH_XNM_2021_pk &pkRPCH, RPCH_XNM_2021_dkidt &dkidtRPCH, Element_t_matrix *MSP) {
+    rabe.Dec(this->K, pkRPCH.get_mpkRABE(), h.get_ct(), dkidtRPCH.get_dkidtRABE(), MSP);
 
     CH_ET_BC_CDK_2017_etd etd;
     // DecSE(kk, ct_) -> d2
@@ -116,12 +116,8 @@ bool RPCH_XNM_2021::Verify(RPCH_XNM_2021_h &h, RPCH_XNM_2021_r &r_p, std::string
 
 
 RPCH_XNM_2021::~RPCH_XNM_2021() {
-    element_clear(this->s1);
-    element_clear(this->s2);
-    element_clear(this->K);
-    
-    element_clear(G1);
-    element_clear(G2);
-    element_clear(GT);
-    element_clear(Zn);
+    element_s *clear_list[] = {s1, s2, K, G1, G2, GT, Zn};
+    for(int i=0;i<sizeof(clear_list)/sizeof(clear_list[0]);i++){
+        element_clear(clear_list[i]);
+    }
 }

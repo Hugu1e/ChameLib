@@ -12,34 +12,7 @@ RABE_XNM::RABE_XNM(int curve, bool swap): PbcScheme(curve){
     element_init_GT(GT, pairing);
     element_init_Zr(Zn, pairing);
 
-    element_init_same_as(this->d1, Zn);
-    element_init_same_as(this->d2, Zn);
-    element_init_same_as(this->d3, Zn);
-
-    element_init_same_as(this->r1, Zn);
-    element_init_same_as(this->r2, Zn);
-
-    element_init_same_as(this->b1r1a1, Zn);
-    element_init_same_as(this->b1r1a2, Zn);
-    element_init_same_as(this->b2r2a1, Zn);
-    element_init_same_as(this->b2r2a2, Zn);
-    element_init_same_as(this->r1r2a1, Zn);
-    element_init_same_as(this->r1r2a2, Zn);
-
-    element_init_same_as(this->s1, Zn);
-    element_init_same_as(this->s2, Zn);
-
-    element_init_same_as(this->tmp_G, G1);
-    element_init_same_as(this->tmp_G_2, G1);
-    element_init_same_as(this->tmp_G_3, G1);
-    element_init_same_as(this->tmp_G_4, G1);
-    element_init_same_as(this->tmp_H, G2);
-    element_init_same_as(this->tmp_GT, GT);
-    element_init_same_as(this->tmp_GT_2, GT);
-    element_init_same_as(this->tmp_GT_3, GT);
-    element_init_same_as(this->tmp_GT_4, GT);
-    element_init_same_as(this->tmp_Zn, Zn);
-    element_init_same_as(this->tmp_Zn_2, Zn);
+    initTmp();
 }
 
 void RABE_XNM::init(element_t _G1, element_t _G2, element_t _GT, element_t _Zn, bool swap){
@@ -49,34 +22,29 @@ void RABE_XNM::init(element_t _G1, element_t _G2, element_t _GT, element_t _Zn, 
     element_init_same_as(GT, _GT);
     element_init_same_as(Zn, _Zn);
 
-    element_init_same_as(this->d1, Zn);
-    element_init_same_as(this->d2, Zn);
-    element_init_same_as(this->d3, Zn);
+    initTmp();
+}
 
-    element_init_same_as(this->r1, Zn);
-    element_init_same_as(this->r2, Zn);
+void RABE_XNM::initTmp(){
+    element_s *zr_list[] = {d1, d2, d3, r1, r2, 
+        b1r1a1, b1r1a2, b2r2a1, b2r2a2, r1r2a1, r1r2a2, 
+        s1, s2, tmp_Zn, tmp_Zn_2};
+    element_s *G1_list[] = {tmp_G, tmp_G_2, tmp_G_3, tmp_G_4};
+    element_s *G2_list[] = {tmp_H};
+    element_s *GT_list[] = {tmp_GT, tmp_GT_2, tmp_GT_3, tmp_GT_4};
 
-    element_init_same_as(this->b1r1a1, Zn);
-    element_init_same_as(this->b1r1a2, Zn);
-    element_init_same_as(this->b2r2a1, Zn);
-    element_init_same_as(this->b2r2a2, Zn);
-    element_init_same_as(this->r1r2a1, Zn);
-    element_init_same_as(this->r1r2a2, Zn);
-
-    element_init_same_as(this->s1, Zn);
-    element_init_same_as(this->s2, Zn);
-
-    element_init_same_as(this->tmp_G, G1);
-    element_init_same_as(this->tmp_G_2, G1);
-    element_init_same_as(this->tmp_G_3, G1);
-    element_init_same_as(this->tmp_G_4, G1);
-    element_init_same_as(this->tmp_H, G2);
-    element_init_same_as(this->tmp_GT, GT);
-    element_init_same_as(this->tmp_GT_2, GT);
-    element_init_same_as(this->tmp_GT_3, GT);
-    element_init_same_as(this->tmp_GT_4, GT);
-    element_init_same_as(this->tmp_Zn, Zn);
-    element_init_same_as(this->tmp_Zn_2, Zn);
+    for(int i = 0;i < sizeof(zr_list)/sizeof(element_s*);i++){
+        element_init_same_as(zr_list[i], Zn);
+    }
+    for(int i = 0;i < sizeof(G1_list)/sizeof(element_s*);i++){
+        element_init_same_as(G1_list[i], G1);
+    }
+    for(int i = 0;i < sizeof(G2_list)/sizeof(element_s*);i++){
+        element_init_same_as(G2_list[i], G2);
+    }
+    for(int i = 0;i < sizeof(GT_list)/sizeof(element_s*);i++){
+        element_init_same_as(GT_list[i], GT);
+    }
 }
 
 void RABE_XNM::Pairing(element_t res, element_t a, element_t b){
@@ -101,9 +69,6 @@ void RABE_XNM::Hash(element_t res, std::string m){
  * output: mpk, msk, st, rl
  */
 void RABE_XNM::Setup(RABE_XNM_mpk &mpk, RABE_XNM_msk &msk, std::vector<RABE_XNM_revokedPreson> &rl, Binary_tree_RABE &st, int n){
-    mpk.init(5);
-    msk.init(9);
-    
     element_random(tmp_G);
     msk.set(g, tmp_G);
     element_random(tmp_H);
@@ -165,9 +130,6 @@ void RABE_XNM::Setup(RABE_XNM_mpk &mpk, RABE_XNM_msk &msk, std::vector<RABE_XNM_
  * @param[in] re_time revoke time
  */
 void RABE_XNM::KGen(RABE_XNM_skid &skid, Binary_tree_RABE &st, RABE_XNM_mpk &mpk, RABE_XNM_msk &msk, std::vector<std::string> &attr_list, element_t id, time_t re_time){
-    skid.get_sk0().init(3);
-    skid.get_sk_prime().init(2);
-    
     element_random(this->r1);
     element_random(this->r2);
     // sk0 = (h^(b1r1), h^(b2r2), h^(r1+r2))
@@ -435,34 +397,9 @@ void RABE_XNM::DKGen(RABE_XNM_dkidt &dkidt, RABE_XNM_mpk &mpk, RABE_XNM_skid &sk
  * input: mpk, msg, policy_str, t, s1, s2
  * output: ciphertext
  */
-void RABE_XNM::Enc(RABE_XNM_ciphertext &ciphertext, RABE_XNM_mpk &mpk, element_t msg, std::string policy_str, time_t t, element_t s1, element_t s2)
-{
-    ciphertext.get_ct0().init(4);
-    ciphertext.get_ct_prime().init(1);
-
-    Policy_resolution pr;
-    Policy_generation pg;
-    element_random(this->tmp_Zn);
-
-    std::vector<std::string>* postfix_expression = pr.infixToPostfix(policy_str);
-    // for(int i = 0;i < postfix_expression->size();i++){
-    //     printf("%s ", postfix_expression->at(i).c_str());
-    // }
-    // printf("\n");
-    Binary_tree_policy* binary_tree_expression = pr.postfixToBinaryTree(postfix_expression, this->tmp_Zn);
-    pg.generatePolicyInMatrixForm(binary_tree_expression);
-    Element_t_matrix* M = pg.getPolicyInMatrixFormFromTree(binary_tree_expression);
-
-    unsigned long int rows = M->row();
-    unsigned long int cols = M->col();
-
-    // printf("rows: %ld, cols: %ld\n", rows, cols);
-    // for(int i = 0;i < rows;i++){
-    //     for(int j = 0;j < cols;j++){
-    //         element_printf("%B ", M->getElement(i, j));
-    //     }
-    //     printf("\n");
-    // }
+void RABE_XNM::Enc(RABE_XNM_ciphertext &ciphertext, RABE_XNM_mpk &mpk, element_t msg, Element_t_matrix *MSP, time_t t, element_t s1, element_t s2){
+    unsigned long int rows = MSP->row();
+    unsigned long int cols = MSP->col();
 
     // s1,s2
     element_set(this->s1, s1);
@@ -499,7 +436,7 @@ void RABE_XNM::Enc(RABE_XNM_ciphertext &ciphertext, RABE_XNM_mpk &mpk, element_t
     // for i = 1,2,...,rows
     ciphertext.get_ct_y().resize(rows);
     for(unsigned long int i=0; i<rows;i++){
-        std::string attr = M->getName(i);
+        std::string attr = MSP->getName(i);
         // printf("attr: %s\n", attr.c_str());
 
         // l = 1
@@ -526,7 +463,7 @@ void RABE_XNM::Enc(RABE_XNM_ciphertext &ciphertext, RABE_XNM_mpk &mpk, element_t
             // H(0jl1)^s1 * H(0jl2)^s2
             element_mul(this->tmp_G_3, this->tmp_G, this->tmp_G_2);
             // (H(0jl1)^s1 * H(0jl2)^s2)^M[i][j]
-            element_pow_zn(this->tmp_G_3, this->tmp_G_3, M->getElement(i, j));
+            element_pow_zn(this->tmp_G_3, this->tmp_G_3, MSP->getElement(i, j));
             element_mul(tmp_G_4, tmp_G_4, this->tmp_G_3);
         }
 
@@ -557,7 +494,7 @@ void RABE_XNM::Enc(RABE_XNM_ciphertext &ciphertext, RABE_XNM_mpk &mpk, element_t
             // H(0jl1)^s1 * H(0jl2)^s2
             element_mul(this->tmp_G_3, this->tmp_G, this->tmp_G_2);
             // (H(0jl1)^s1 * H(0jl2)^s2)^M[i][j]
-            element_pow_zn(this->tmp_G_3, this->tmp_G_3, M->getElement(i, j));
+            element_pow_zn(this->tmp_G_3, this->tmp_G_3, MSP->getElement(i, j));
             element_mul(tmp_G_4, tmp_G_4, this->tmp_G_3);
         }
         tmp_ct_y.set(ct_2, tmp_G_4);
@@ -585,7 +522,7 @@ void RABE_XNM::Enc(RABE_XNM_ciphertext &ciphertext, RABE_XNM_mpk &mpk, element_t
             // H(0jl1)^s1 * H(0jl2)^s2
             element_mul(this->tmp_G_3, this->tmp_G, this->tmp_G_2);
             // (H(0jl1)^s1 * H(0jl2)^s2)^M[i][j]
-            element_pow_zn(this->tmp_G_3, this->tmp_G_3, M->getElement(i, j));
+            element_pow_zn(this->tmp_G_3, this->tmp_G_3, MSP->getElement(i, j));
             element_mul(tmp_G_4, tmp_G_4, this->tmp_G_3);
         }
         tmp_ct_y.set(ct_3, tmp_G_4);
@@ -598,27 +535,19 @@ void RABE_XNM::Enc(RABE_XNM_ciphertext &ciphertext, RABE_XNM_mpk &mpk, element_t
  * input: mpk, ciphertext, dkidt, 
  * output: res
  */
-void RABE_XNM::Dec(element_t res, RABE_XNM_mpk &mpk, RABE_XNM_ciphertext &ciphertext, RABE_XNM_dkidt &dkidt, std::string policy_str){ 
+void RABE_XNM::Dec(element_t res, RABE_XNM_mpk &mpk, RABE_XNM_ciphertext &ciphertext, RABE_XNM_dkidt &dkidt, Element_t_matrix *MSP){ 
     // compute Yi
-    // get original matrix
-    Policy_resolution pr;
-    Policy_generation pg;
-    element_random(this->tmp_Zn);
-    std::vector<std::string>* postfix_expression = pr.infixToPostfix(policy_str);
-    Binary_tree_policy* binary_tree_expression = pr.postfixToBinaryTree(postfix_expression, this->tmp_Zn);
-    pg.generatePolicyInMatrixForm(binary_tree_expression);
-    Element_t_matrix* M = pg.getPolicyInMatrixFormFromTree(binary_tree_expression);
     // get matrix with attributes
     Element_t_matrix* attributesMatrix = new Element_t_matrix();
     unsigned long int rows = ciphertext.get_ct_y().size();
     for(unsigned long int i=0; i<rows;i++){
         // judge whether the attribute is in the policy
-        if(dkidt.get_attr2id().find(M->getName(i)) == dkidt.get_attr2id().end()){
+        if(dkidt.get_attr2id().find(MSP->getName(i)) == dkidt.get_attr2id().end()){
             continue;
         }
         Element_t_vector *v = new Element_t_vector();
-        for (signed long int j = 0; j < M->col(); ++j) {
-            v->pushBack(M->getElement(i, j));
+        for (signed long int j = 0; j < MSP->col(); ++j) {
+            v->pushBack(MSP->getElement(i, j));
         }
         attributesMatrix->pushBack(v);
     }
@@ -660,7 +589,7 @@ void RABE_XNM::Dec(element_t res, RABE_XNM_mpk &mpk, RABE_XNM_ciphertext &cipher
     int count = 0;
     for(unsigned long int i=0; i<rows;i++){
         // judge whether the attribute is in the policy
-        if(dkidt.get_attr2id().find(M->getName(i)) == dkidt.get_attr2id().end()){
+        if(dkidt.get_attr2id().find(MSP->getName(i)) == dkidt.get_attr2id().end()){
             continue;
         }
         element_pow_zn(this->tmp_G_4, ciphertext.get_ct_y(i).get(ct_1), x->getElement(count));
@@ -689,14 +618,14 @@ void RABE_XNM::Dec(element_t res, RABE_XNM_mpk &mpk, RABE_XNM_ciphertext &cipher
     count = 0;
     for(unsigned long int i=0; i<rows;i++){
         // judge whether the attribute is in the policy
-        if(dkidt.get_attr2id().find(M->getName(i)) == dkidt.get_attr2id().end()){
+        if(dkidt.get_attr2id().find(MSP->getName(i)) == dkidt.get_attr2id().end()){
             continue;
         }
-        element_pow_zn(this->tmp_G_4, dkidt.get_sk_y(dkidt.get_attr2id()[M->getName(i)]).get(sk_1), x->getElement(count));
+        element_pow_zn(this->tmp_G_4, dkidt.get_sk_y(dkidt.get_attr2id()[MSP->getName(i)]).get(sk_1), x->getElement(count));
         element_mul(this->tmp_G, this->tmp_G, this->tmp_G_4);
-        element_pow_zn(this->tmp_G_4, dkidt.get_sk_y(dkidt.get_attr2id()[M->getName(i)]).get(sk_2), x->getElement(count));
+        element_pow_zn(this->tmp_G_4, dkidt.get_sk_y(dkidt.get_attr2id()[MSP->getName(i)]).get(sk_2), x->getElement(count));
         element_mul(this->tmp_G_2, this->tmp_G_2, this->tmp_G_4);
-        element_pow_zn(this->tmp_G_4, dkidt.get_sk_y(dkidt.get_attr2id()[M->getName(i)]).get(sk_3), x->getElement(count));
+        element_pow_zn(this->tmp_G_4, dkidt.get_sk_y(dkidt.get_attr2id()[MSP->getName(i)]).get(sk_3), x->getElement(count));
         element_mul(this->tmp_G_3, this->tmp_G_3, this->tmp_G_4);
         count++;
     }
@@ -742,33 +671,13 @@ void RABE_XNM::Rev(std::vector<RABE_XNM_revokedPreson> &rl, element_t id, time_t
 
 
 RABE_XNM::~RABE_XNM(){
-    element_clear(this->d1);
-    element_clear(this->d2);
-    element_clear(this->d3);
+    element_s *clear_list[] = {d1, d2, d3, r1, r2, 
+        b1r1a1, b1r1a2, b2r2a1, b2r2a2, r1r2a1, r1r2a2, 
+        s1, s2, tmp_G, tmp_G_2, tmp_G_3, tmp_G_4, 
+        tmp_H, tmp_GT, tmp_GT_2, tmp_GT_3, tmp_GT_4, tmp_Zn, tmp_Zn_2,
+        G1, G2, GT, Zn};
 
-    element_clear(this->r1);
-    element_clear(this->r2);
-
-    element_clear(this->b1r1a1);
-    element_clear(this->b1r1a2);
-    element_clear(this->b2r2a1);
-    element_clear(this->b2r2a2);
-    element_clear(this->r1r2a1);
-    element_clear(this->r1r2a2);
-
-    element_clear(this->s1);
-    element_clear(this->s2);
-
-
-    element_clear(this->tmp_G);
-    element_clear(this->tmp_G_2);
-    element_clear(this->tmp_G_3);
-    element_clear(this->tmp_G_4);
-    element_clear(this->tmp_H);
-    element_clear(this->tmp_GT);
-    element_clear(this->tmp_GT_2);
-    element_clear(this->tmp_GT_3);
-    element_clear(this->tmp_GT_4);
-    element_clear(this->tmp_Zn);
-    element_clear(this->tmp_Zn_2);
+    for(int i = 0; i < sizeof(clear_list)/sizeof(clear_list[0]); i++){
+        element_clear(clear_list[i]);
+    }
 }

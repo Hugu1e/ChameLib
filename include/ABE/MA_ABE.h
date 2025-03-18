@@ -10,12 +10,20 @@
 #include "Policy_generation.h"
 #include "../utils/Hash.h"
 
-class MA_ABE_gpk: public PbcElements{};
+class MA_ABE_gpk: public PbcElements{
+    public:
+        MA_ABE_gpk(){
+            init(1);
+        }
+};
 
 class MA_ABE_pkTheta: public PbcElements{
     private:
         std::string A;
     public: 
+        MA_ABE_pkTheta(){
+            init(2);
+        }
         void set_A(std::string A){
             this->A = A;
         }
@@ -31,13 +39,21 @@ class MA_ABE_pkTheta: public PbcElements{
         }
 };
 
-class MA_ABE_skTheta: public PbcElements{};
+class MA_ABE_skTheta: public PbcElements{
+    public:
+        MA_ABE_skTheta(){
+            init(2);
+        }
+};
 
 class MA_ABE_skgidA: public PbcElements{
     private:
         std::string gid;
         std::string A;
     public:
+        MA_ABE_skgidA(){
+            init(2);
+        }
         void set_gid(std::string gid){
             this->gid = gid;
         }
@@ -66,6 +82,9 @@ class MA_ABE_ciphertext{
         PbcElements ct_0;
         std::vector<PbcElements> ct_i;
     public:
+        MA_ABE_ciphertext(){
+            ct_0.init(1);
+        }
         void setPolicy(std::string policy){
             this->policy = policy;
         }
@@ -104,6 +123,8 @@ class MA_ABE: public PbcScheme{
         void Hu(element_t res, std::string u);
         void Ht(element_t res, element_t rt, std::string A);
 
+        void initTmp();
+
     public:
         MA_ABE(){}
         MA_ABE(int curve);
@@ -117,9 +138,9 @@ class MA_ABE: public PbcScheme{
 
         void KeyGen(MA_ABE_skgidA &skgidA, MA_ABE_gpk &gpk, MA_ABE_skTheta &skTheta, std::string gid, std::string A);        
 
-        void Encrypt(MA_ABE_ciphertext &C, element_t m, element_t rt, MA_ABE_gpk &gpk, std::vector<MA_ABE_pkTheta *> &pkThetas, std::string policy);
+        void Encrypt(MA_ABE_ciphertext &C, element_t m, element_t rt, MA_ABE_gpk &gpk, std::vector<MA_ABE_pkTheta *> &pkThetas, Element_t_matrix *MSP, std::string policy_str);
 
-        void Decrypt(element_t res, std::vector<MA_ABE_skgidA *> &skgidAs, MA_ABE_ciphertext &C);
+        void Decrypt(element_t res, std::vector<MA_ABE_skgidA *> &skgidAs, MA_ABE_ciphertext &C, Element_t_matrix *MSP);
 
         ~MA_ABE();
 

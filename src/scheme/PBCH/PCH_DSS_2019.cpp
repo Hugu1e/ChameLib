@@ -92,7 +92,7 @@ void PCH_DSS_2019::Decode(unsigned char *k, unsigned char * r, element_t res){
  * input : pkPCH, m, policy_str
  * output: h, r
  */
-void PCH_DSS_2019::Hash(PCH_DSS_2019_h &h, PCH_DSS_2019_r &r, std::string m, const std::string &policy_str, PCH_DSS_2019_pk &pk, PCH_DSS_2019_pp &pp) {
+void PCH_DSS_2019::Hash(PCH_DSS_2019_h &h, PCH_DSS_2019_r &r, std::string m, Element_t_matrix *MSP, std::string policy_str, PCH_DSS_2019_pk &pk, PCH_DSS_2019_pp &pp) {
     CH_ET_BC_CDK_2017_etd etd;
     ch.Hash(h.get_h(), r.get_rCHET(), etd, pp.get_ppCHET(), pk.get_pkCHET(), m);
 
@@ -110,7 +110,7 @@ void PCH_DSS_2019::Hash(PCH_DSS_2019_h &h, PCH_DSS_2019_r &r, std::string m, con
     // Encode(k, r) -> K
     Encode(tmp_GT, K, R, k_bytes, k_bytes);
 
-    cp_abe.Encrypt(h.getCt(), pk.getMpkABE(), tmp_GT, policy_str, tmp_Zn_3, tmp_Zn_4);
+    cp_abe.Encrypt(h.getCt(), pk.getMpkABE(), tmp_GT, MSP, tmp_Zn_3, tmp_Zn_4);
 
     // ct_
     aes.Enc(h.getCt_()[0], K, etd[0], k_bits);
@@ -128,8 +128,8 @@ bool PCH_DSS_2019::Check(PCH_DSS_2019_h &h, PCH_DSS_2019_r &r, std::string m, PC
  * input : pkPCH, sksPCH, m, m', h, r
  * output: r'
  */
-void PCH_DSS_2019::Adapt(PCH_DSS_2019_r &r_p, std::string m_p, PCH_DSS_2019_h &h, PCH_DSS_2019_r &r, std::string m, PCH_DSS_2019_sks &sks, PCH_DSS_2019_pk &pk, const std::string &policy_str) {
-    cp_abe.Decrypt(tmp_GT, h.getCt(), policy_str, pk.getMpkABE(),  sks.getSksABE());
+void PCH_DSS_2019::Adapt(PCH_DSS_2019_r &r_p, std::string m_p, PCH_DSS_2019_h &h, PCH_DSS_2019_r &r, std::string m, PCH_DSS_2019_sks &sks, PCH_DSS_2019_pk &pk, Element_t_matrix *MSP, std::string policy_str) {
+    cp_abe.Decrypt(tmp_GT, h.getCt(), MSP, pk.getMpkABE(),  sks.getSksABE());
 
     int k_bits = 128;
     int k_bytes = k_bits / 8;
@@ -144,7 +144,7 @@ void PCH_DSS_2019::Adapt(PCH_DSS_2019_r &r_p, std::string m_p, PCH_DSS_2019_h &h
     // (u1,u2)<-H4((r,A))
     H4(tmp_Zn_3, tmp_Zn_4, R, k_bytes, policy_str);
     CP_ABE_ciphertext tmp_ct;
-    cp_abe.Encrypt(tmp_ct, pk.getMpkABE(), tmp_GT, policy_str, tmp_Zn_3, tmp_Zn_4);
+    cp_abe.Encrypt(tmp_ct, pk.getMpkABE(), tmp_GT, MSP, tmp_Zn_3, tmp_Zn_4);
     if(!(tmp_ct == h.getCt())){
         throw std::runtime_error("PCH_DSS_2019::Adapt(): ct != ct'");
     }
@@ -175,14 +175,8 @@ bool PCH_DSS_2019::Verify(PCH_DSS_2019_h &h, PCH_DSS_2019_r &r_p, std::string m_
 
 
 PCH_DSS_2019::~PCH_DSS_2019() {
-    element_clear(tmp_GT);
-    element_clear(tmp_Zn);
-    element_clear(tmp_Zn_2);
-    element_clear(tmp_Zn_3);
-    element_clear(tmp_Zn_4);
-
-    element_clear(G1);
-    element_clear(G2);
-    element_clear(GT);
-    element_clear(Zn);
+    element_s *clear_list[] = {tmp_GT, tmp_Zn, tmp_Zn_2, tmp_Zn_3, tmp_Zn_4, G1, G2, GT, Zn};
+    for(int i=0;i<sizeof(clear_list)/sizeof(clear_list[0]);i++){
+        element_clear(clear_list[i]);
+    }
 }
