@@ -15,8 +15,6 @@ class CH_KEF_DLP_LLA_2012_Test : public BaseTest<TestParams>{
         void SetUp() override {
             BaseTest::SetUp();
 
-            repeat = 2;
-
             std::string testName = ::testing::UnitTest::GetInstance()->current_test_info()->name();
             std::string curveName = Curve::curve_names[GetParam().curve];
             std::string groupName = Curve::group_names[GetParam().group];
@@ -66,18 +64,18 @@ int op_cnt_G1G2[][diff_max_len] = {
     }, //0, setup
 
     {
-        1, 0, 0, 3, 
-        0, 0, 0, 1, 
-        1, 0, 0, 0, 
-        6, 0, 0, 0, 
+        0, 0, 0, 3, 
+        0, 0, 0, 0, 
+        0, 0, 0, 0, 
+        3, 0, 0, 0, 
         0
     }, //1, keygen
     
     {
-        0, 0, 0, 1, 
-        0, 0, 0, 1, 
-        2, 0, 0, 0, 
+        1, 0, 0, 1, 
+        0, 0, 0, 2, 
         3, 0, 0, 0, 
+        5, 0, 0, 0, 
         0
     }, //2, hash
 
@@ -92,7 +90,7 @@ int op_cnt_G1G2[][diff_max_len] = {
     {
         0, 0, 0, 0, 
         0, 0, 0, 3, 
-        3, 0, 0, 3, 
+        3, 0, 0, 5, 
         5, 0, 0, 0, 
         0
     }, //4, Uforge
@@ -115,18 +113,18 @@ int op_cnt_GT[][diff_max_len] = {
     }, //0, setup
 
     {
-        0, 0, 1, 3, 
-        0, 0, 0, 1, 
-        0, 0, 1, 0, 
-        0, 0, 6, 0, 
+        0, 0, 0, 3, 
+        0, 0, 0, 0, 
+        0, 0, 0, 0, 
+        0, 0, 3, 0, 
         0
     }, //1, keygen
     
     {
-        0, 0, 0, 1, 
-        0, 0, 0, 1, 
-        0, 0, 2, 0, 
+        0, 0, 1, 1, 
+        0, 0, 0, 2, 
         0, 0, 3, 0, 
+        0, 0, 5, 0, 
         0
     }, //2, hash
 
@@ -141,7 +139,7 @@ int op_cnt_GT[][diff_max_len] = {
     {
         0, 0, 0, 0, 
         0, 0, 0, 3, 
-        0, 0, 3, 3, 
+        0, 0, 3, 5, 
         0, 0, 5, 0, 
         0
     }, //4, Uforge
@@ -158,6 +156,7 @@ TEST_P(CH_KEF_DLP_LLA_2012_Test, Test){
     CH_KEF_DLP_LLA_2012 ch(GetParam().curve, GetParam().group);
 
     CH_KEF_DLP_LLA_2012_pp pp[repeat];
+    CH_KEF_DLP_LLA_2012_labelManager LM;
     CH_KEF_DLP_LLA_2012_sk sk[repeat];
     CH_KEF_DLP_LLA_2012_pk pk[repeat];
     CH_KEF_DLP_LLA_2012_label label[repeat];
@@ -181,11 +180,11 @@ TEST_P(CH_KEF_DLP_LLA_2012_Test, Test){
     this->end("SetUp");
 
     this->start("KeyGen");
-    for(int i = 0; i < repeat; i++) ch.KeyGen(sk[i], pk[i], label[i], pp[i]);
+    for(int i = 0; i < repeat; i++) ch.KeyGen(sk[i], pk[i], LM, pp[i]);
     this->end("KeyGen");
 
     this->start("Hash");
-    for(int i = 0; i < repeat; i++) ch.Hash(h[i], r[i], pk[i], m[i], label[i], pp[i]);
+    for(int i = 0; i < repeat; i++) ch.Hash(h[i], r[i], label[i], pk[i], m[i], LM, pp[i]);
     this->end("Hash");
 
     bool check_result[repeat];

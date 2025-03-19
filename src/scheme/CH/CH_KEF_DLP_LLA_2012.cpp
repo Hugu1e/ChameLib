@@ -16,15 +16,10 @@ CH_KEF_DLP_LLA_2012::CH_KEF_DLP_LLA_2012(int curve, int group): PbcScheme(curve)
     }
     element_init_Zr(Zn, pairing);
 
-    element_init_same_as(this->y, G1);
-    element_init_same_as(this->y1, G1);
-    element_init_same_as(this->t, G1);
-
     element_init_same_as(tmp_G, G1);
     element_init_same_as(tmp_G_2, G1);
     element_init_same_as(tmp_Zn, Zn);
     element_init_same_as(tmp_Zn_2, Zn);
-    element_init_same_as(tmp_Zn_3, Zn);
 }
 
 /**
@@ -40,44 +35,55 @@ void CH_KEF_DLP_LLA_2012::SetUp(CH_KEF_DLP_LLA_2012_pp &pp) {
  * input : 
  * output: sk, pk, label
  */
-void CH_KEF_DLP_LLA_2012::KeyGen(CH_KEF_DLP_LLA_2012_sk &sk, CH_KEF_DLP_LLA_2012_pk &pk, CH_KEF_DLP_LLA_2012_label &label, CH_KEF_DLP_LLA_2012_pp &pp) {  
+void CH_KEF_DLP_LLA_2012::KeyGen(CH_KEF_DLP_LLA_2012_sk &sk, CH_KEF_DLP_LLA_2012_pk &pk, CH_KEF_DLP_LLA_2012_labelManager &lm, CH_KEF_DLP_LLA_2012_pp &pp) {  
+    // alpha
     element_random(tmp_Zn);
     sk.set(alpha, tmp_Zn);
-    element_random(tmp_Zn_2);
-    sk.set(x1, tmp_Zn_2);
-    element_random(tmp_Zn_3);
-    sk.set(x2, tmp_Zn_3);
 
-    // y = g^alpha
-    element_pow_zn(this->y, pp[g], tmp_Zn);
+    // x_1
+    element_random(tmp_Zn);
+    sk.set(x1, tmp_Zn);
 
-    // y1 = g^x1
-    element_pow_zn(this->y1, pp[g], tmp_Zn_2);
-    // y2 = g^x2
-    element_pow_zn(tmp_G, pp[g], tmp_Zn_3);
+    // x_2
+    element_random(tmp_Zn);
+    sk.set(x2, tmp_Zn);
+
+    CH_KEF_DLP_LLA_2012_labelGen* lg = new CH_KEF_DLP_LLA_2012_labelGen();
+
+    // lg.y_1 = g^x_1
+    element_pow_zn(tmp_G, pp[g], sk[x1]);
+    lg->set(y_1, tmp_G);
+
+    // lg.omega_1 = y_1^alpha
+    element_pow_zn(tmp_G, lg->get(y_1), sk[alpha]);
+    lg->set(omega_1, tmp_G);
+
+    // y_2 = g^x_2
+    element_pow_zn(tmp_G, pp[g], sk[x2]);
     pk.set(y2, tmp_G);
-    // omega_1 = y^x1
-    element_pow_zn(tmp_G_2, this->y, tmp_Zn_2);
-
-    // obtain a label
-    element_random(this->t);
-    LabelManager(label, this->y1, tmp_G_2, this->t);
+  
+    lm.add(pk, lg);
 }
 
 /**
  * input: y1, w1, t
  * output: label
  */
-void CH_KEF_DLP_LLA_2012::LabelManager(CH_KEF_DLP_LLA_2012_label &label, element_t y1, element_t omega_1, element_t t) {
+void CH_KEF_DLP_LLA_2012::getLabel(CH_KEF_DLP_LLA_2012_label &label, CH_KEF_DLP_LLA_2012_labelManager &lm, CH_KEF_DLP_LLA_2012_pk &pk){
+    // t
+    element_random(tmp_G);
     // H2(t)
-    this->H2(this->tmp_Zn, t);
+    H2(tmp_Zn, tmp_G);
+
+    CH_KEF_DLP_LLA_2012_labelGen *lg = lm.get_lg(pk.toString());
+
     // L = y1^H2(t)
-    element_pow_zn(tmp_G, y1, this->tmp_Zn);
-    label.set(L, tmp_G);
+    element_pow_zn(tmp_G_2, lg->get(y_1), tmp_Zn);
+    label.set(L, tmp_G_2);
 
     // R = t*(w1^H2(t))
-    element_pow_zn(this->tmp_G, omega_1, this->tmp_Zn);
-    element_mul(tmp_G, t, this->tmp_G);
+    element_pow_zn(tmp_G_2, lg->get(omega_1), tmp_Zn);
+    element_mul(tmp_G, tmp_G, tmp_G_2);
     label.set(R, tmp_G);
 }
 
@@ -101,7 +107,9 @@ void CH_KEF_DLP_LLA_2012::H2(element_t res, element_t m) {
  * input : pk, m, r, lable
  * output: S
  */
-void CH_KEF_DLP_LLA_2012::Hash(element_t h, element_t r, CH_KEF_DLP_LLA_2012_pk &pk, element_t m, CH_KEF_DLP_LLA_2012_label &label, CH_KEF_DLP_LLA_2012_pp &pp) {
+void CH_KEF_DLP_LLA_2012::Hash(element_t h, element_t r, CH_KEF_DLP_LLA_2012_label &label, CH_KEF_DLP_LLA_2012_pk &pk, element_t m, CH_KEF_DLP_LLA_2012_labelManager &lm, CH_KEF_DLP_LLA_2012_pp &pp) {
+    getLabel(label, lm, pk);
+    
     element_random(r);
     
     // c = H1(label, L)
@@ -150,12 +158,12 @@ void CH_KEF_DLP_LLA_2012::UForge(element_t r_p, CH_KEF_DLP_LLA_2012_sk &sk, CH_K
     }
     // t = R / (L^alpha)
     element_pow_zn(this->tmp_G, label[L], sk[alpha]);
-    element_div(this->t, label[R], this->tmp_G);
+    element_div(tmp_G_2, label[R], this->tmp_G);
     
-    // TODO
     // check if y1^H2(t) = L
-    this->H2(this->tmp_Zn, this->t);
-    element_pow_zn(this->tmp_G, this->y1, this->tmp_Zn);
+    this->H2(this->tmp_Zn, tmp_G_2);
+    element_mul(tmp_Zn_2, tmp_Zn, sk[x1]);
+    element_pow_zn(this->tmp_G, pp[g], this->tmp_Zn_2);
 
     if(element_cmp(this->tmp_G, label[L]) != 0){
         throw std::invalid_argument("UForge failed, label is not correct");
@@ -201,15 +209,10 @@ bool CH_KEF_DLP_LLA_2012::Verify(element_t m_p, element_t r_p, CH_KEF_DLP_LLA_20
 }
 
 CH_KEF_DLP_LLA_2012::~CH_KEF_DLP_LLA_2012() {
-    element_clear(this->y);
-    element_clear(this->y1);
-    element_clear(this->t);
-
     element_clear(tmp_G);
     element_clear(tmp_G_2);
     element_clear(tmp_Zn);
     element_clear(tmp_Zn_2);
-    element_clear(tmp_Zn_3);
     element_clear(G1);
     element_clear(Zn);
 }
