@@ -45,7 +45,7 @@ class BaseTest : public testing::TestWithParam<T>  {
 
         bool out_file = true;
         bool check_visiable = true;
-        bool visiable = false;
+        bool visiable = true;
 
         std::stack<std::string> current_test_name;
         std::stack<std::chrono::_V2::system_clock::time_point> ts;

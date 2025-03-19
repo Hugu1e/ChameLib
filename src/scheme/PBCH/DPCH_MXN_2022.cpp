@@ -60,7 +60,7 @@ void DPCH_MXN_2022::SetUp(DPCH_MXN_2022_pp &pp, DPCH_MXN_2022_pk &pkDPCH, DPCH_M
     
     element_random(tmp_G);
 
-    ch_et.SetUp(pp.get_pp_CH(), pkDPCH.get_pk_CH(), skDPCH.get_sk_CH(), h.get_h(), r.get_r(), r_p.get_r(), k);
+    ch_et.SetUp(pp.get_pp_CH(), k);
     ch_et.KeyGen(pkDPCH.get_pk_CH(), skDPCH.get_sk_CH(), pp.get_pp_CH());
 
     ma_abe.GlobalSetup(pp.get_gpk_MA_ABE(), tmp_G);

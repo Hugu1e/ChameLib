@@ -1,5 +1,7 @@
 #include "AE/RSA.h"
 
+void AE_RSA::SetUp(){}
+
 void AE_RSA::SetUp(RSA_pk &pk, RSA_sk &sk){
     pk.init(2);
     sk.init(1);

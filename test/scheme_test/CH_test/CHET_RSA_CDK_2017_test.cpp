@@ -5,6 +5,10 @@ struct TestParams{
 	int lamuda;
 };
 
+std::ostream& operator<<(std::ostream& os, const TestParams& params) {
+    return os << "lamuda=" << params.lamuda;
+}
+
 const TestParams test_values[] = {
     {128},
     {256},
@@ -30,59 +34,47 @@ INSTANTIATE_TEST_CASE_P(
 );
 
 TEST_P(CHET_RSA_CDK_2017_Test, Test){
-    for(int i = 0; UpdateProcBar(i, repeat), i < repeat; i++){
-        CHET_RSA_CDK_2017 ch;
-        CHET_RSA_CDK_2017_pk pk;
-        CHET_RSA_CDK_2017_sk sk;
-        CHET_RSA_CDK_2017_h h;
-        CHET_RSA_CDK_2017_etd etd;
+    CHET_RSA_CDK_2017 ch;
 
-        mpz_t r, r_p;
-        mpz_t m, m_p;
-        mpz_inits(r, r_p, m, m_p, NULL);
+    CHET_RSA_CDK_2017_pk pk[repeat];
+    CHET_RSA_CDK_2017_sk sk[repeat];
+    CHET_RSA_CDK_2017_h h[repeat];
+    CHET_RSA_CDK_2017_etd etd[repeat];
 
-        this->start("SetUp");
-        ch.SetUp(pk, sk, h, etd);
-        this->end("SetUp");
+    mpz_t r[repeat], r_p[repeat], m[repeat], m_p[repeat];
+    for (int i = 0; i < repeat; i++) mpz_inits(r[i], r_p[i], m[i], m_p[i], NULL);
 
-        this->start("KeyGen");
-        ch.KeyGen(pk, sk, GetParam().lamuda);
-        this->end("KeyGen");
-        if(visiable){
-            pk.print();
-            sk.print();
-        }
+    for (int i = 0; i < repeat; i++) RandomGenerator::RandomInLength(m[i], 100);
+    for (int i = 0; i < repeat; i++) RandomGenerator::RandomInLength(m_p[i], 100);
 
-        RandomGenerator::RandomInLength(m, 100);
-        this->start("Hash");
-        ch.Hash(h, r, etd, m, pk);
-        this->end("Hash");
-        if(visiable){
-            Logger::PrintGmp("m", m);
-            h.print();
-            Logger::PrintGmp("r", r);
-            etd.print();
-        }
+    this->start("SetUp");
+    for (int i = 0; i < repeat; i++) ch.SetUp();
+    this->end("SetUp");
 
-        this->start("Check");
-        bool check_result = ch.Check(h, r, m, pk);
-        this->end("Check");
-        ASSERT_TRUE(check_result);
+    this->start("KeyGen");
+    for (int i = 0; i < repeat; i++) ch.KeyGen(pk[i], sk[i], GetParam().lamuda);
+    this->end("KeyGen");
 
-        RandomGenerator::RandomInLength(m_p, 100);
-        this->start("Adapt");
-        ch.Adapt(r_p, m_p, m, r, h, sk, etd, pk);
-        this->end("Adapt");
-        if(visiable){
-            Logger::PrintGmp("m_p", m_p);
-            Logger::PrintGmp("r_p", r_p);
-        }
+    this->start("Hash");
+    for (int i = 0; i < repeat; i++) ch.Hash(h[i], r[i], etd[i], m[i], pk[i]);
+    this->end("Hash");
 
-        this->start("Verify");
-        bool verify_result = ch.Verify(h, r_p, m_p, pk);
-        this->end("Verify");
-        ASSERT_TRUE(verify_result);
-    }
+    bool check_result[repeat];
+    this->start("Check");
+    for (int i = 0; i < repeat; i++) check_result[i] = ch.Check(h[i], r[i], m[i], pk[i]);
+    this->end("Check");
+    for (int i = 0; i < repeat; i++) ASSERT_TRUE(check_result[i]);
+
+    this->start("Adapt");
+    for (int i = 0; i < repeat; i++) ch.Adapt(r_p[i], m_p[i], m[i], r[i], h[i], sk[i], etd[i], pk[i]);
+    this->end("Adapt");
+
+    bool verify_result[repeat];
+    this->start("Verify");
+    for (int i = 0; i < repeat; i++) verify_result[i] = ch.Verify(h[i], r_p[i], m_p[i], pk[i]);
+    this->end("Verify");
+    for (int i = 0; i < repeat; i++) ASSERT_TRUE(verify_result[i]);
+
     average();
 }
 

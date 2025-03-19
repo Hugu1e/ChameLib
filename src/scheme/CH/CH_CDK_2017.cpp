@@ -2,12 +2,7 @@
 
 CH_CDK_2017::CH_CDK_2017(){}
 
-void CH_CDK_2017::SetUp(CH_CDK_2017_pk &pk, CH_CDK_2017_sk &sk, CH_CDK_2017_h &h, CH_CDK_2017_r &r, CH_CDK_2017_r &r_p){
-    rsa.SetUp(pk.get_rsa_pk(), sk.get_rsa_sk());
-    h.init(1);
-    r.init(1);
-    r_p.init(1);
-}
+void CH_CDK_2017::SetUp(){}
 
 void CH_CDK_2017::KeyGen(CH_CDK_2017_pk &pk, CH_CDK_2017_sk &sk, short k){
     rsa.KeyGen(pk.get_rsa_pk(), sk.get_rsa_sk(), k);
@@ -51,7 +46,6 @@ bool CH_CDK_2017::Check(CH_CDK_2017_h &h, CH_CDK_2017_r &r, mpz_t m, mpz_t tag, 
     mpz_set(e, pk.get_rsa_pk()[AE_RSA::e]);
     mpz_set(_h, h[h1]);
 
-
     // Let g ← Hn(τ, m)
     this->H(g, tag, m, n);
     
@@ -79,8 +73,6 @@ void CH_CDK_2017::Adapt(CH_CDK_2017_r &r_p, mpz_t tag_p, CH_CDK_2017_h &h, CH_CD
     
 
     RandomGenerator::RandomN(tag_p, n);
-
-    
 
     this->H(tmp_1,tag_p, m_p, n);
     mpz_invert(tmp_2, tmp_1, n);  

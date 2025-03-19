@@ -5,6 +5,10 @@ struct TestParams{
 	int lamuda;
 };
 
+std::ostream& operator<<(std::ostream& os, const TestParams& params) {
+    return os << "lamuda=" << params.lamuda;
+}
+
 const TestParams test_values[] = {
     {128},
     {256},
@@ -32,46 +36,50 @@ INSTANTIATE_TEST_CASE_P(
 );
 
 TEST_P(CH_ET_BC_CDK_2017_Test, Test){
-    for(int i = 0; UpdateProcBar(i, repeat), i < repeat; i++){
-        CH_ET_BC_CDK_2017 ch;
-        CH_ET_BC_CDK_2017_pp pp;
-        CH_ET_BC_CDK_2017_pk pk;
-        CH_ET_BC_CDK_2017_sk sk;
-        CH_ET_BC_CDK_2017_etd etd;
-        CH_ET_BC_CDK_2017_h h;
-        CH_ET_BC_CDK_2017_r r,r_p;
+    CH_ET_BC_CDK_2017 ch;
 
-        std::string m = "123456";
-        std::string m_p = "789101";
+    CH_ET_BC_CDK_2017_pp pp[repeat];
+    CH_ET_BC_CDK_2017_pk pk[repeat];
+    CH_ET_BC_CDK_2017_sk sk[repeat];
+    CH_ET_BC_CDK_2017_etd etd[repeat];
+    CH_ET_BC_CDK_2017_h h[repeat];
+    CH_ET_BC_CDK_2017_r r[repeat], r_p[repeat];
 
-        this->start("SetUp");
-        ch.SetUp(pp, pk, sk, h, r, r_p, etd, GetParam().lamuda);
-        this->end("SetUp");
+    std::string m[repeat], m_p[repeat];
 
-        this->start("KeyGen");
-        ch.KeyGen(pk, sk, pp);
-        this->end("KeyGen");
-
-        this->start("Hash");
-        ch.Hash(h, r, etd, pp, pk, m);
-        this->end("Hash");
-        if(visiable)h.print();
-
-        this->start("Check");
-        bool check_result = ch.Check(h, r, pk, m);
-        this->end("Check");
-        ASSERT_TRUE(check_result);
-
-        this->start("Adapt");
-        ch.Adapt(r_p, sk, etd, pk, h, r, m, m_p);
-        this->end("Adapt");
-        if(visiable)r.print();
-        
-        this->start("Verify");
-        bool verify_result = ch.Verify(h, r_p, pk, m_p);
-        this->end("Verify");
-        ASSERT_TRUE(verify_result);
+    for (int i = 0; i < repeat; i++) {
+        m[i] = "123456";
+        m_p[i] = "789101";
     }
+
+    this->start("SetUp");
+    for (int i = 0; i < repeat; i++) ch.SetUp(pp[i], GetParam().lamuda);
+    this->end("SetUp");
+
+    this->start("KeyGen");
+    for (int i = 0; i < repeat; i++) ch.KeyGen(pk[i], sk[i], pp[i]);
+    this->end("KeyGen");
+
+    this->start("Hash");
+    for (int i = 0; i < repeat; i++) ch.Hash(h[i], r[i], etd[i], pp[i], pk[i], m[i]);
+    this->end("Hash");
+
+    bool check_result[repeat];
+    this->start("Check");
+    for (int i = 0; i < repeat; i++) check_result[i] = ch.Check(h[i], r[i], pk[i], m[i]);
+    this->end("Check");
+    for (int i = 0; i < repeat; i++) ASSERT_TRUE(check_result[i]);
+
+    this->start("Adapt");
+    for (int i = 0; i < repeat; i++) ch.Adapt(r_p[i], sk[i], etd[i], pk[i], h[i], r[i], m[i], m_p[i]);
+    this->end("Adapt");
+
+    bool verify_result[repeat];
+    this->start("Verify");
+    for (int i = 0; i < repeat; i++) verify_result[i] = ch.Verify(h[i], r_p[i], pk[i], m_p[i]);
+    this->end("Verify");
+    for (int i = 0; i < repeat; i++) ASSERT_TRUE(verify_result[i]);
+
     average();
 }
 

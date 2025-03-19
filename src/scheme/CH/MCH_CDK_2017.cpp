@@ -2,13 +2,7 @@
 
 MCH_CDK_2017::MCH_CDK_2017(){}
 
-void MCH_CDK_2017::SetUp(MCH_CDK_2017_pk &pk, MCH_CDK_2017_sk &sk, MCH_CDK_2017_h &h, MCH_CDK_2017_r &r, MCH_CDK_2017_r &r_p){
-    pk.init(2);
-    sk.init(1);
-    h.init(1);
-    r.init(1);
-    r_p.init(1);
-}
+void MCH_CDK_2017::SetUp(){}
 
 void MCH_CDK_2017::KeyGen(MCH_CDK_2017_pk &pk, MCH_CDK_2017_sk &sk, short k){
     rsa.KeyGen(pk[n], pk[e], sk[d], k, 1);

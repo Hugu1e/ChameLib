@@ -6,13 +6,33 @@
 #include "../../AE/RSA.h"
 #include <stdexcept>
 
-class MCH_CDK_2017_pk : public GmpElements{};
+class MCH_CDK_2017_pk : public GmpElements{
+    public:
+        MCH_CDK_2017_pk(){
+            init(2);
+        }
+};
 
-class MCH_CDK_2017_sk : public GmpElements{};
+class MCH_CDK_2017_sk : public GmpElements{
+    public:
+        MCH_CDK_2017_sk(){
+            init(1);
+        }
+};
 
-class MCH_CDK_2017_h : public GmpElements{};
+class MCH_CDK_2017_h : public GmpElements{
+    public:
+        MCH_CDK_2017_h(){
+            init(1);
+        }
+};
 
-class MCH_CDK_2017_r : public GmpElements{};
+class MCH_CDK_2017_r : public GmpElements{
+    public:
+        MCH_CDK_2017_r(){
+            init(1);
+        }
+};
 
 class MCH_CDK_2017{
     private:
@@ -23,7 +43,7 @@ class MCH_CDK_2017{
     public:
         MCH_CDK_2017();
 
-        void SetUp(MCH_CDK_2017_pk &pk, MCH_CDK_2017_sk &sk, MCH_CDK_2017_h &h, MCH_CDK_2017_r &r, MCH_CDK_2017_r &r_p);
+        void SetUp();
 
         void KeyGen(MCH_CDK_2017_pk &pk, MCH_CDK_2017_sk &sk, short k);
 

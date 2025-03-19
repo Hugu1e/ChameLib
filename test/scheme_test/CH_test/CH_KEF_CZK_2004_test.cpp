@@ -6,6 +6,10 @@ struct TestParams{
     int group;
 };
 
+std::ostream& operator<<(std::ostream& os, const TestParams& params) {
+    return os << "curve=" << Curve::curve_names[params.curve] << " group=" << params.group;
+}
+
 class CH_KEF_CZK_2004_Test : public BaseTest<TestParams>{
     protected:
         void SetUp() override {
@@ -13,16 +17,7 @@ class CH_KEF_CZK_2004_Test : public BaseTest<TestParams>{
 
             std::string testName = ::testing::UnitTest::GetInstance()->current_test_info()->name();
             std::string curveName = Curve::curve_names[GetParam().curve];
-            std::string groupName;
-            if (GetParam().group == Group::G1) {
-                groupName = "G1";
-            } else if (GetParam().group == Group::G2) {
-                groupName = "G2";
-            } else if (GetParam().group == Group::GT) {
-                groupName = "GT";
-            } else {
-                groupName = "UNKNOWN";
-            }
+            std::string groupName = Curve::group_names[GetParam().group];
             fprintf(out, "%s %s %s\n", testName.c_str(), curveName.c_str(), groupName.c_str());
             if(visiable)printf("%s %s %s\n", testName.c_str(), curveName.c_str(), groupName.c_str());
         }
@@ -144,55 +139,50 @@ int op_cnt_GT[][diff_max_len] = {
 };
 
 TEST_P(CH_KEF_CZK_2004_Test, Test){
-    for(int i = 0; UpdateProcBar(i, repeat), i < repeat; i++){
-        CH_KEF_CZK_2004 ch(GetParam().curve, GetParam().group);
-        CH_KEF_CZK_2004_pp pp;
-        CH_KEF_CZK_2004_pk pk;
-        CH_KEF_CZK_2004_sk sk;
-        CH_KEF_CZK_2004_r r,r_p;
-        element_s *I = ch.GetG1Element();
-        element_s *h = ch.GetG1Element();
-        element_s *m = ch.GetZrElement();
-        element_s *m_p = ch.GetZrElement();
+    CH_KEF_CZK_2004 ch(GetParam().curve, GetParam().group);
+    CH_KEF_CZK_2004_pp pp[repeat];
+    CH_KEF_CZK_2004_pk pk[repeat];
+    CH_KEF_CZK_2004_sk sk[repeat];
+    CH_KEF_CZK_2004_r r[repeat], r_p[repeat];
+    element_s *I[repeat], *h[repeat], *m[repeat], *m_p[repeat];
 
-        this->start("SetUp");
-        ch.SetUp(pp);
-        this->end("SetUp");
-
-        this->start("KeyGen");
-        ch.KeyGen(pk, sk, pp);
-        this->end("KeyGen");
-
-        this->start("Hash");
-        ch.Hash(h, r, m, I, pk, pp);
-        this->end("Hash");
-        if(visiable){
-            Logger::PrintPbc("m", m);
-            Logger::PrintPbc("I", I);
-            Logger::PrintPbc("h", h);
-            r.print();
-        }
-
-        this->start("Check");
-        bool check_result = ch.Check(I, m, r, h, pp);
-        this->end("Check");
-        ASSERT_TRUE(check_result);
-
-    
-        this->start("Adapt");
-        ch.Adapt(r_p, sk, h, m, r, m_p, I, pp);
-        this->end("Adapt");
-        if(visiable){
-            r_p.print();
-            Logger::PrintPbc("m_p", m_p);
-        }
-
-        this->start("Verify");
-        bool verify_result = ch.Verify(I, m_p, r_p, h, pp);
-        this->end("Verify");
-        ASSERT_TRUE(verify_result);
+    for(int i = 0; i < repeat; i++) {
+        I[i] = ch.GetG1Element();
+        h[i] = ch.GetG1Element();
+        m[i] = ch.GetZrElement();
+        m_p[i] = ch.GetZrElement();
     }
+
+    this->start("SetUp");
+    for(int i = 0; i < repeat; i++) ch.SetUp(pp[i]);
+    this->end("SetUp");
+
+    this->start("KeyGen");
+    for(int i = 0; i < repeat; i++) ch.KeyGen(pk[i], sk[i], pp[i]);
+    this->end("KeyGen");
+
+    this->start("Hash");
+    for(int i = 0; i < repeat; i++) ch.Hash(h[i], r[i], m[i], I[i], pk[i], pp[i]);
+    this->end("Hash");
+
+    bool check_result[repeat];
+    this->start("Check");
+    for(int i = 0; i < repeat; i++) check_result[i] = ch.Check(I[i], m[i], r[i], h[i], pp[i]);
+    this->end("Check");
+    for(int i = 0; i < repeat; i++) ASSERT_TRUE(check_result[i]);
+
+    this->start("Adapt");
+    for(int i = 0; i < repeat; i++) ch.Adapt(r_p[i], sk[i], h[i], m[i], r[i], m_p[i], I[i], pp[i]);
+    this->end("Adapt");
+
+    bool verify_result[repeat];
+    this->start("Verify");
+    for(int i = 0; i < repeat; i++) verify_result[i] = ch.Verify(I[i], m_p[i], r_p[i], h[i], pp[i]);
+    this->end("Verify");
+    for(int i = 0; i < repeat; i++) ASSERT_TRUE(verify_result[i]);
+
     average();
+
     if(GetParam().group == Group::G1 || GetParam().group == Group::G2){
         EXPECT_TRUE(check_time(GetParam().curve, op_cnt_G1G2[0], "SetUp"));
         EXPECT_TRUE(check_time(GetParam().curve, op_cnt_G1G2[1], "KeyGen"));

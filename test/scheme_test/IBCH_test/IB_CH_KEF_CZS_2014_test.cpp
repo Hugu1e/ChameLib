@@ -6,6 +6,10 @@ struct TestParams{
     bool swap;
 };
 
+std::ostream& operator<<(std::ostream& os, const TestParams& params) {
+    return os << "curve=" << Curve::curve_names[params.curve] << " swap=" << params.swap;
+}
+
 class IB_CH_KEF_CZS_2014_Test : public BaseTest<TestParams>{
     protected:
         void SetUp() override {
@@ -92,63 +96,53 @@ INSTANTIATE_TEST_CASE_P(
 );
 
 TEST_P(IB_CH_KEF_CZS_2014_Test, Test){
-    for(int i = 0; UpdateProcBar(i, repeat), i < repeat; i++){
-        IB_CH_KEF_CZS_2014 ch(GetParam().curve, GetParam().swap);
+    IB_CH_KEF_CZS_2014 ch(GetParam().curve, GetParam().swap);
 
-        IB_CH_KEF_CZS_2014_pp pp;
-        IB_CH_KEF_CZS_2014_msk msk;
-        IB_CH_KEF_CZS_2014_td td;
-        IB_CH_KEF_CZS_2014_h h;
-        IB_CH_KEF_CZS_2014_r r,r_p;
+    IB_CH_KEF_CZS_2014_pp pp[repeat];
+    IB_CH_KEF_CZS_2014_msk msk[repeat];
+    IB_CH_KEF_CZS_2014_td td[repeat];
+    IB_CH_KEF_CZS_2014_h h[repeat];
+    IB_CH_KEF_CZS_2014_r r[repeat], r_p[repeat];
 
-        std::string ID = "identity string ID";
-        std::string L = "customozed identity L";
+    std::string ID = "identity string ID";
+    std::string L = "customized identity L";
 
-        element_s *m = ch.GetZrElement();
-        element_s *m_p = ch.GetZrElement();
-
-        this->start("SetUp");
-        ch.SetUp(pp, msk);
-        this->end("SetUp");
-        if(visiable){
-            pp.print();
-        }
-
-        this->start("Extract");
-        ch.Extract(td, ID, msk);
-        this->end("Extract");
-        if(visiable){
-            td.print();
-        }
-    
-        this->start("Hash");
-        ch.Hash(h, r, ID, L, m, pp);
-        this->end("Hash");
-        if(visiable){
-            Logger::PrintPbc("m", m);
-            h.print();
-            r.print();
-        }
-
-        this->start("Check");
-        bool check_result = ch.Check(h, r, L, m, td);
-        this->end("Check");
-        ASSERT_TRUE(check_result);
-
-        this->start("Adapt");
-        ch.Adapt(r_p, m_p, h, r, L, m, td);
-        this->end("Adapt");
-        if(visiable){    
-            Logger::PrintPbc("m_p", m_p);
-            r_p.print();
-        }
-
-        this->start("Verify");
-        bool verify_result = ch.Verify(h, r_p, L, m_p, td);
-        this->end("Verify");
-        ASSERT_TRUE(verify_result);
+    element_s *m[repeat], *m_p[repeat];
+    for (int i = 0; i < repeat; i++) {
+        m[i] = ch.GetZrElement();
+        m_p[i] = ch.GetZrElement();
     }
+
+    this->start("SetUp");
+    for (int i = 0; i < repeat; i++) ch.SetUp(pp[i], msk[i]);
+    this->end("SetUp");
+
+    this->start("Extract");
+    for (int i = 0; i < repeat; i++) ch.Extract(td[i], ID, msk[i]);
+    this->end("Extract");
+
+    this->start("Hash");
+    for (int i = 0; i < repeat; i++) ch.Hash(h[i], r[i], ID, L, m[i], pp[i]);
+    this->end("Hash");
+
+    bool check_result[repeat];
+    this->start("Check");
+    for (int i = 0; i < repeat; i++) check_result[i] = ch.Check(h[i], r[i], L, m[i], td[i]);
+    this->end("Check");
+    for (int i = 0; i < repeat; i++) ASSERT_TRUE(check_result[i]);
+
+    this->start("Adapt");
+    for (int i = 0; i < repeat; i++) ch.Adapt(r_p[i], m_p[i], h[i], r[i], L, m[i], td[i]);
+    this->end("Adapt");
+
+    bool verify_result[repeat];
+    this->start("Verify");
+    for (int i = 0; i < repeat; i++) verify_result[i] = ch.Verify(h[i], r_p[i], L, m_p[i], td[i]);
+    this->end("Verify");
+    for (int i = 0; i < repeat; i++) ASSERT_TRUE(verify_result[i]);
+
     average();
+
     EXPECT_TRUE(check_time(GetParam().curve, op_cnt[0], "SetUp"));
     EXPECT_TRUE(check_time(GetParam().curve, op_cnt[1], "Extract"));
     EXPECT_TRUE(check_time(GetParam().curve, op_cnt[2], "Hash"));

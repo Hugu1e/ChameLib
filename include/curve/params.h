@@ -51,6 +51,7 @@ class Curve{
         const static int G_149 = 16;
 
         const static std::string curve_names[17];
+        const static std::string group_names[4];
 };
 
 class Group{

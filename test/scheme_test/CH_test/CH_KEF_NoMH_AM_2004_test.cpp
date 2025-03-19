@@ -5,6 +5,10 @@ struct TestParams{
 	int k;
 };
 
+std::ostream& operator<<(std::ostream& os, const TestParams& params) {
+    return os << "k=" << params.k;
+}
+
 const TestParams test_values[] = {
     {512}
 };
@@ -28,58 +32,46 @@ INSTANTIATE_TEST_CASE_P(
 );
 
 TEST_P(CH_KEF_NoMH_AM_2004_Test, Test){
-    for(int i = 0; UpdateProcBar(i, repeat), i < repeat; i++){
-        CH_KEF_NoMH_AM_2004 ch = CH_KEF_NoMH_AM_2004();
+    CH_KEF_NoMH_AM_2004 ch;
 
-        CH_KEF_NoMH_AM_2004_pk pk;
-        CH_KEF_NoMH_AM_2004_sk sk;
-        CH_KEF_NoMH_AM_2004_h h;
-        CH_KEF_NoMH_AM_2004_r r, r_p;
+    CH_KEF_NoMH_AM_2004_pk pk[repeat];
+    CH_KEF_NoMH_AM_2004_sk sk[repeat];
+    CH_KEF_NoMH_AM_2004_h h[repeat];
+    CH_KEF_NoMH_AM_2004_r r[repeat], r_p[repeat];
+    mpz_t m[repeat], m_p[repeat];
 
-        mpz_t m,m_p;
-        mpz_inits(m, m_p, NULL);
-        RandomGenerator::RandomInLength(m, 1024);
-        RandomGenerator::RandomInLength(m_p, 1024);
+    for (int i = 0; i < repeat; i++) mpz_inits(m[i], m_p[i], NULL);
+    for (int i = 0; i < repeat; i++) RandomGenerator::RandomInLength(m[i], 1024);
+    for (int i = 0; i < repeat; i++) RandomGenerator::RandomInLength(m_p[i], 1024);
 
-        this->start("Setup");
-        ch.Setup();
-        this->end("Setup");
+    this->start("Setup");
+    for (int i = 0; i < repeat; i++) ch.Setup();
+    this->end("Setup");
 
-        this->start("KeyGen");
-        ch.KeyGen(pk, sk, GetParam().k);
-        this->end("KeyGen");
-        if(visiable){
-            pk.print();
-            sk.print();
-        }
+    this->start("KeyGen");
+    for (int i = 0; i < repeat; i++) ch.KeyGen(pk[i], sk[i], GetParam().k);
+    this->end("KeyGen");
 
-        this->start("Hash");
-        ch.Hash(h, r, m, pk);
-        this->end("Hash");
-        if(visiable){
-            Logger::PrintGmp("m", m);
-            h.print();
-            r.print();
-        }
+    this->start("Hash");
+    for (int i = 0; i < repeat; i++) ch.Hash(h[i], r[i], m[i], pk[i]);
+    this->end("Hash");
 
-        this->start("Check");
-        bool check_result = ch.Check(h, r, m, pk);
-        this->end("Check");
-        ASSERT_TRUE(check_result);
+    bool check_result[repeat];
+    this->start("Check");
+    for (int i = 0; i < repeat; i++) check_result[i] = ch.Check(h[i], r[i], m[i], pk[i]);
+    this->end("Check");
+    for (int i = 0; i < repeat; i++) ASSERT_TRUE(check_result[i]);
 
-        this->start("Adapt");
-        ch.Adapt(r_p, m_p, h, r, m, pk, sk);
-        this->end("Adapt");
-        if(visiable){
-            Logger::PrintGmp("m_p", m_p);
-            r_p.print();
-        }
+    this->start("Adapt");
+    for (int i = 0; i < repeat; i++) ch.Adapt(r_p[i], m_p[i], h[i], r[i], m[i], pk[i], sk[i]);
+    this->end("Adapt");
 
-        this->start("Verify");
-        bool verify_result = ch.Verify(h, r_p, m_p, pk);
-        this->end("Verify");
-        ASSERT_TRUE(verify_result);
-    }
+    bool verify_result[repeat];
+    this->start("Verify");
+    for (int i = 0; i < repeat; i++) verify_result[i] = ch.Verify(h[i], r_p[i], m_p[i], pk[i]);
+    this->end("Verify");
+    for (int i = 0; i < repeat; i++) ASSERT_TRUE(verify_result[i]);
+
     average();
 }
 

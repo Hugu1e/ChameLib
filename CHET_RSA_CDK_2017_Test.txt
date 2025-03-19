@@ -1,0 +1,45 @@
+Test/0 lamuda 128
+Adapt average time: 2.135000 ms.
+Check average time: 0.433000 ms.
+Hash average time: 11.537000 ms.
+KeyGen average time: 7.039000 ms.
+SetUp average time: 0.003000 ms.
+Verify average time: 0.533000 ms.
+
+
+Test/1 lamuda 256
+Adapt average time: 3.820000 ms.
+Check average time: 0.784000 ms.
+Hash average time: 20.802000 ms.
+KeyGen average time: 17.464000 ms.
+SetUp average time: 0.001000 ms.
+Verify average time: 1.005000 ms.
+
+
+Test/2 lamuda 512
+Adapt average time: 6.981000 ms.
+Check average time: 3.734000 ms.
+Hash average time: 15.250000 ms.
+KeyGen average time: 110.874000 ms.
+SetUp average time: 0.001000 ms.
+Verify average time: 2.841000 ms.
+
+
+Test/0 lamuda 128
+Adapt average time: 1.824080 ms.
+Check average time: 0.508660 ms.
+Hash average time: 12.727940 ms.
+KeyGen average time: 5.531470 ms.
+SetUp average time: 0.000020 ms.
+Verify average time: 0.618500 ms.
+
+
+Test/1 lamuda 256
+Adapt average time: 3.842510 ms.
+Check average time: 1.378920 ms.
+Hash average time: 17.280330 ms.
+KeyGen average time: 17.337440 ms.
+SetUp average time: 0.000010 ms.
+Verify average time: 1.422900 ms.
+
+

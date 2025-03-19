@@ -24,7 +24,7 @@ MAPCH_ZLW_2021::MAPCH_ZLW_2021(int curve): PbcScheme(curve){
  * @param As: attributes
  */
 void MAPCH_ZLW_2021::GlobalSetup(CH_ET_BC_CDK_2017_pk &pkCH, CH_ET_BC_CDK_2017_sk &skCH, MA_ABE_gpk &gpkABE, MAPCH_ZLW_2021_pp &pp, MAPCH_ZLW_2021_h &h, MAPCH_ZLW_2021_r &r, MAPCH_ZLW_2021_r &r_p, int k){
-    ch_et.SetUp(pp.get_pp_CH(), pkCH, skCH, h.get_h(), r.get_r(), r_p.get_r(), k);
+    ch_et.SetUp(pp.get_pp_CH(), k);
     ch_et.KeyGen(pkCH, skCH, pp.get_pp_CH());
 
     element_random(tmp_G);

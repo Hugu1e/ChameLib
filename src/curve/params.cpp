@@ -278,3 +278,10 @@ const std::string Curve::curve_names[17] = {
     "F",
     "G_149"
 };
+
+const std::string Curve::group_names[4] = {
+    "G1",
+    "G2",
+    "GT",
+    "Zr"
+};

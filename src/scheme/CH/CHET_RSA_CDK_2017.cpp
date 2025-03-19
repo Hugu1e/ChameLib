@@ -2,12 +2,7 @@
 
 CHET_RSA_CDK_2017::CHET_RSA_CDK_2017(){}
 
-void CHET_RSA_CDK_2017::SetUp(CHET_RSA_CDK_2017_pk &pk, CHET_RSA_CDK_2017_sk &sk, CHET_RSA_CDK_2017_h &h, CHET_RSA_CDK_2017_etd &etd){
-    pk.init(2);
-    sk.init(2);
-    h.init(2);
-    etd.init(2);
-}
+void CHET_RSA_CDK_2017::SetUp(){}
 
 void CHET_RSA_CDK_2017::KeyGen(CHET_RSA_CDK_2017_pk &pk, CHET_RSA_CDK_2017_sk &sk, short k){
     // e > n^3

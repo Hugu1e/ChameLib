@@ -7,6 +7,10 @@ struct TestParams{
     int length;
 };
 
+std::ostream& operator<<(std::ostream& os, const TestParams& params) {
+    return os << "curve=" << Curve::curve_names[params.curve] << " swap=" << params.swap << " length=" << params.length;
+}
+
 class ID_B_CollRes_XSL_2021_Test : public BaseTest<TestParams>{
     protected:
         void SetUp() override {
@@ -55,63 +59,50 @@ INSTANTIATE_TEST_CASE_P(
 );
 
 TEST_P(ID_B_CollRes_XSL_2021_Test, Test){
-    for(int i = 0; UpdateProcBar(i, repeat), i < repeat; i++){
-        ID_B_CollRes_XSL_2021 ch(GetParam().curve, GetParam().swap);
+    ID_B_CollRes_XSL_2021 ch(GetParam().curve, GetParam().swap);
 
-        ID_B_CollRes_XSL_2021_pp pp;
-        ID_B_CollRes_XSL_2021_msk msk;
-        ID_B_CollRes_XSL_2021_tk tk;
-        ID_B_CollRes_XSL_2021_h h;
-        ID_B_CollRes_XSL_2021_r r,r_p;
+    ID_B_CollRes_XSL_2021_pp pp[repeat];
+    ID_B_CollRes_XSL_2021_msk msk[repeat];
+    ID_B_CollRes_XSL_2021_tk tk[repeat];
+    ID_B_CollRes_XSL_2021_h h[repeat];
+    ID_B_CollRes_XSL_2021_r r[repeat], r_p[repeat];
 
-        std::string I = "IDENTITYIDENTITYIDENTITYIDENTITY";
-        
-        element_s *m = ch.GetZrElement();
-        element_s *m_p = ch.GetZrElement();    
+    std::string I = "IDENTITYIDENTITYIDENTITYIDENTITY";
 
-        this->start("SetUp");
-        ch.SetUp(pp, msk, GetParam().length);
-        this->end("SetUp");
-        if(visiable){
-            pp.get_pp().print();
-            msk.print();
-        }
-
-        this->start("KeyGen");
-        ch.KeyGen(tk, msk, I.c_str(), pp);
-        this->end("KeyGen");
-        if(visiable){
-            tk.print();
-        }
-        
-        this->start("Hash");
-        ch.Hash(h, r, m, I.c_str(), pp);
-        this->end("Hash");
-        if(visiable){
-            Logger::PrintPbc("m", m);
-            h.print();
-            r.print();
-        }
-
-        this->start("Check");
-        bool check_result = ch.Check(h, m, r, I.c_str(), pp);
-        this->end("Check");
-        ASSERT_TRUE(check_result);
-
-        this->start("Adapt");
-        ch.Adapt(r_p, m_p, h, m, r, tk);
-        this->end("Adapt");
-        if(visiable){
-            Logger::PrintPbc("m_p", m_p);
-            h.print();
-            r_p.print();
-        }
-        
-        this->start("Verify");
-        bool verify_result = ch.Verify(h, m_p, r_p, I.c_str(), pp);
-        this->end("Verify");
-        ASSERT_TRUE(verify_result);
+    element_s *m[repeat], *m_p[repeat];
+    for (int i = 0; i < repeat; i++) {
+        m[i] = ch.GetZrElement();
+        m_p[i] = ch.GetZrElement();
     }
+
+    this->start("SetUp");
+    for (int i = 0; i < repeat; i++) ch.SetUp(pp[i], msk[i], GetParam().length);
+    this->end("SetUp");
+
+    this->start("KeyGen");
+    for (int i = 0; i < repeat; i++) ch.KeyGen(tk[i], msk[i], I.c_str(), pp[i]);
+    this->end("KeyGen");
+
+    this->start("Hash");
+    for (int i = 0; i < repeat; i++) ch.Hash(h[i], r[i], m[i], I.c_str(), pp[i]);
+    this->end("Hash");
+
+    bool check_result[repeat];
+    this->start("Check");
+    for (int i = 0; i < repeat; i++) check_result[i] = ch.Check(h[i], m[i], r[i], I.c_str(), pp[i]);
+    this->end("Check");
+    for (int i = 0; i < repeat; i++) ASSERT_TRUE(check_result[i]);
+
+    this->start("Adapt");
+    for (int i = 0; i < repeat; i++) ch.Adapt(r_p[i], m_p[i], h[i], m[i], r[i], tk[i]);
+    this->end("Adapt");
+
+    bool verify_result[repeat];
+    this->start("Verify");
+    for (int i = 0; i < repeat; i++) verify_result[i] = ch.Verify(h[i], m_p[i], r_p[i], I.c_str(), pp[i]);
+    this->end("Verify");
+    for (int i = 0; i < repeat; i++) ASSERT_TRUE(verify_result[i]);
+
     average();
 }
 

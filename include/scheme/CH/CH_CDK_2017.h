@@ -24,9 +24,19 @@ class CH_CDK_2017_sk{
         }
 };
 
-class CH_CDK_2017_h: public GmpElements{};
+class CH_CDK_2017_h: public GmpElements{
+    public:
+        CH_CDK_2017_h(){
+            init(1);
+        }
+};
 
-class CH_CDK_2017_r: public GmpElements{};
+class CH_CDK_2017_r: public GmpElements{
+    public:
+        CH_CDK_2017_r(){
+            init(1);
+        }
+};
 
 class CH_CDK_2017{
     private:
@@ -37,7 +47,7 @@ class CH_CDK_2017{
     public:
         CH_CDK_2017();
 
-        void SetUp(CH_CDK_2017_pk &pk, CH_CDK_2017_sk &sk, CH_CDK_2017_h &h, CH_CDK_2017_r &r, CH_CDK_2017_r &r_p);
+        void SetUp();
 
         void KeyGen(CH_CDK_2017_pk &pk, CH_CDK_2017_sk &sk, short k);
 

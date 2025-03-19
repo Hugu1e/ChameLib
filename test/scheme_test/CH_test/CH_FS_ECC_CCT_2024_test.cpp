@@ -6,6 +6,10 @@ struct TestParams{
     int group;
 };
 
+std::ostream& operator<<(std::ostream& os, const TestParams& params) {
+    return os << "curve=" << Curve::curve_names[params.curve] << " group=" << Curve::group_names[params.group];
+}
+
 class CH_FS_ECC_CCT_2024_Test : public BaseTest<TestParams>{
     protected:
         void SetUp() override {
@@ -13,16 +17,7 @@ class CH_FS_ECC_CCT_2024_Test : public BaseTest<TestParams>{
 
             std::string testName = ::testing::UnitTest::GetInstance()->current_test_info()->name();
             std::string curveName = Curve::curve_names[GetParam().curve];
-            std::string groupName;
-            if (GetParam().group == Group::G1) {
-                groupName = "G1";
-            } else if (GetParam().group == Group::G2) {
-                groupName = "G2";
-            } else if (GetParam().group == Group::GT) {
-                groupName = "GT";
-            } else {
-                groupName = "UNKNOWN";
-            }
+            std::string groupName = Curve::group_names[GetParam().group];
             fprintf(out, "%s %s %s\n", testName.c_str(), curveName.c_str(), groupName.c_str());
             if(visiable)printf("%s %s %s\n", testName.c_str(), curveName.c_str(), groupName.c_str());
         }
@@ -143,52 +138,50 @@ int op_cnt_GT[][diff_max_len] = {
     }, //4, adapt
 };
 TEST_P(CH_FS_ECC_CCT_2024_Test, Test){
-    for(int i = 0; UpdateProcBar(i, repeat), i < repeat; i++){
+    CH_FS_ECC_CCT_2024 ch(GetParam().curve, GetParam().group);
 
-        CH_FS_ECC_CCT_2024 ch(GetParam().curve, GetParam().group);
+    CH_FS_ECC_CCT_2024_pp pp[repeat];
+    CH_FS_ECC_CCT_2024_pk pk[repeat];
+    CH_FS_ECC_CCT_2024_sk sk[repeat];
+    CH_FS_ECC_CCT_2024_r r[repeat], r_p[repeat];
+    
+    element_s* m[repeat];
+    element_s* m_p[repeat];
+    element_s* h[repeat];
 
-        CH_FS_ECC_CCT_2024_pp pp;
-        CH_FS_ECC_CCT_2024_pk pk;
-        CH_FS_ECC_CCT_2024_sk sk;
-        CH_FS_ECC_CCT_2024_r r,r_p;
-        
-        element_s* m = ch.GetZrElement();
-        element_s* m_p = ch.GetZrElement();
-
-        element_s* h = ch.GetG1Element();
-
-        this->start("SetUp");
-        ch.SetUp(pp);
-        this->end("SetUp");
-
-        this->start("KeyGen");
-        ch.KeyGen(pk, sk, pp);
-        this->end("KeyGen");
-
-        this->start("Hash");
-        ch.Hash(h, r, pk, m, pp);
-        this->end("Hash");
-        if(visiable){
-            r.print(CH_FS_ECC_CCT_2024::c1);
-            r.print(CH_FS_ECC_CCT_2024::z1);
-            r.print(CH_FS_ECC_CCT_2024::z2);
-            Logger::PrintPbc("h", h);
-        }
-
-        this->start("Check");
-        bool check_result = ch.Check(pk, m, h, r, pp);
-        this->end("Check");
-        ASSERT_TRUE(check_result);
-
-        this->start("Adapt");
-        ch.Adapt(r_p, pk, sk, m, m_p, h, r, pp);
-        this->end("Adapt");
-
-        this->start("Verify");
-        bool verify_result = ch.Verify(pk, m_p, h, r_p, pp);
-        this->end("Verify");
-        ASSERT_TRUE(verify_result);
+    for(int i = 0; i < repeat; i++) {
+        m[i] = ch.GetZrElement();
+        m_p[i] = ch.GetZrElement();
+        h[i] = ch.GetG1Element();
     }
+
+    this->start("SetUp");
+    for(int i = 0; i < repeat; i++) ch.SetUp(pp[i]);
+    this->end("SetUp");
+
+    this->start("KeyGen");
+    for(int i = 0; i < repeat; i++) ch.KeyGen(pk[i], sk[i], pp[i]);
+    this->end("KeyGen");
+
+    this->start("Hash");
+    for(int i = 0; i < repeat; i++) ch.Hash(h[i], r[i], pk[i], m[i], pp[i]);
+    this->end("Hash");
+
+    bool check_result[repeat];
+    this->start("Check");
+    for(int i = 0; i < repeat; i++) check_result[i] = ch.Check(pk[i], m[i], h[i], r[i], pp[i]);
+    this->end("Check");
+    for(int i = 0; i < repeat; i++) ASSERT_TRUE(check_result[i]);
+
+    this->start("Adapt");
+    for(int i = 0; i < repeat; i++) ch.Adapt(r_p[i], pk[i], sk[i], m[i], m_p[i], h[i], r[i], pp[i]);
+    this->end("Adapt");
+
+    bool verify_result[repeat];
+    this->start("Verify");
+    for(int i = 0; i < repeat; i++) verify_result[i] = ch.Verify(pk[i], m_p[i], h[i], r_p[i], pp[i]);
+    this->end("Verify");
+    for(int i = 0; i < repeat; i++) ASSERT_TRUE(verify_result[i]);
 
     average();
 
