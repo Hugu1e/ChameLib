@@ -29,7 +29,7 @@ class RABE_XNM_skid{
         PbcElements sk0;
         std::vector<PbcElements> sk_y;
         PbcElements sk_prime;
-        std::vector<std::pair<Binary_tree_RABE_node*,PbcElements>> sk_theta;
+        std::vector<std::pair<Binary_tree_RABE_node*, PbcElements*>> sk_theta;
         std::unordered_map<std::string, unsigned long int> attr2id;
     public:
         RABE_XNM_skid(){
@@ -52,13 +52,18 @@ class RABE_XNM_skid{
         {
             return sk_prime;
         }
-        std::vector<std::pair<Binary_tree_RABE_node*,PbcElements>>& get_sk_theta()
+        std::vector<std::pair<Binary_tree_RABE_node*, PbcElements*>>& get_sk_theta()
         {
             return sk_theta;
         }
         std::unordered_map<std::string, unsigned long int> &get_attr2id()
         {
             return attr2id;
+        }
+        ~RABE_XNM_skid(){
+            for(int i = 0; i < sk_theta.size(); i++){
+                delete sk_theta[i].second;
+            }
         }
 };
 class RABE_XNM_revokedPreson: public PbcElements{
@@ -77,7 +82,7 @@ class RABE_XNM_revokedPreson: public PbcElements{
 class RABE_XNM_kut{
     private:
         time_t t;
-        std::vector<std::pair<Binary_tree_RABE_node*,PbcElements>> ku_theta;
+        std::vector<std::pair<Binary_tree_RABE_node*, PbcElements*>> ku_theta;
     public:
         void setTime(time_t t){
             this->t = t;
@@ -85,9 +90,14 @@ class RABE_XNM_kut{
         time_t getTime(){
             return this->t;
         }
-        std::vector<std::pair<Binary_tree_RABE_node*,PbcElements>>& get_ku_theta()
+        std::vector<std::pair<Binary_tree_RABE_node*, PbcElements*>>& get_ku_theta()
         {
             return ku_theta;
+        }
+        ~RABE_XNM_kut(){
+            for(int i = 0; i < ku_theta.size(); i++){
+                delete ku_theta[i].second;
+            }
         }
 };
 class RABE_XNM_dkidt{

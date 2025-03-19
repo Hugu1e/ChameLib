@@ -31,6 +31,10 @@ class CP_ABE_sks{
         PbcElements sk_prime;
         std::unordered_map<std::string, unsigned long int> attr2id;
     public:
+        CP_ABE_sks(){
+            sk_0.init(3);
+            sk_prime.init(3);
+        }
         PbcElements &get_sk_0()
         {
             return sk_0;
@@ -121,7 +125,6 @@ class CP_ABE:public PbcScheme{
 
         void KeyGen(CP_ABE_sks &sks, CP_ABE_msk &msk, CP_ABE_mpk &mpk, std::vector<std::string> &attr_list);
 
-        void Encrypt(CP_ABE_ciphertext &ciphertext, CP_ABE_mpk &mpk, element_t msg, Element_t_matrix *MSP);
         void Encrypt(CP_ABE_ciphertext &ciphertext, CP_ABE_mpk &mpk, element_t msg, Element_t_matrix *MSP, element_t s1, element_t s2);
 
         void Decrypt(element_t res, CP_ABE_ciphertext &ciphertext, Element_t_matrix *MSP, CP_ABE_mpk &mpk, CP_ABE_sks &sks);

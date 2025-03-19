@@ -162,6 +162,7 @@ void RABE_TMM::KGen(RABE_TMM_skid &skid, Binary_tree_RABE &st, RABE_TMM_mpk &mpk
     // compute sk_y
     skid.get_sk_y().resize(attr_list.size());
     for(int i = 0;i < attr_list.size();i++){
+        skid.get_sk_y()[i].init(3);
         skid.get_attr2id()[attr_list[i]] = i;
         // sigma_y
         element_random(this->tmp_Zn);
@@ -186,9 +187,7 @@ void RABE_TMM::KGen(RABE_TMM_skid &skid, Binary_tree_RABE &st, RABE_TMM_mpk &mpk
         element_mul(tmp_G, tmp_G, this->tmp_G_3);
         element_mul(tmp_G, tmp_G, this->tmp_G_4);
 
-        PbcElements sk_y;
-        sk_y.init(3);
-        sk_y.set(sk_1, tmp_G);
+        skid.get_sk_y()[i].set(sk_1, tmp_G);
 
         // t = 2
         // H(y12)^b1r1a2
@@ -210,14 +209,12 @@ void RABE_TMM::KGen(RABE_TMM_skid &skid, Binary_tree_RABE &st, RABE_TMM_mpk &mpk
         element_mul(tmp_G, this->tmp_G, this->tmp_G_2);
         element_mul(tmp_G, tmp_G, this->tmp_G_3);
         element_mul(tmp_G, tmp_G, this->tmp_G_4);
-        sk_y.set(sk_2, tmp_G);
+        skid.get_sk_y()[i].set(sk_2, tmp_G);
 
         // sky3 = g^(-sigma_y)
         element_neg(this->tmp_Zn, this->tmp_Zn);
         element_pow_zn(tmp_G, mpk[g], this->tmp_Zn);
-        sk_y.set(sk_3, tmp_G);
-
-        skid.get_sk_y()[i] = sk_y;
+        skid.get_sk_y()[i].set(sk_3, tmp_G);
     }
 
     // sk_prime
@@ -295,13 +292,11 @@ void RABE_TMM::KGen(RABE_TMM_skid &skid, Binary_tree_RABE &st, RABE_TMM_mpk &mpk
         // sk'3 = g^d3 * g^(-sigma_prime) / gtheta
         element_div(this->tmp_G_2, tmp_sk_prime_sk_3, this->tmp_G);
 
-        PbcElements tmp_sk_theta;
-        tmp_sk_theta.init(3);
-
-        tmp_sk_theta.set(sk_1, tmp_sk_prime_sk_1);
-        tmp_sk_theta.set(sk_2, tmp_sk_prime_sk_2);
-        tmp_sk_theta.set(sk_3, this->tmp_G_2);
-        skid.get_sk_prime().emplace_back(std::make_pair(node, tmp_sk_theta));
+        skid.get_sk_prime().emplace_back(std::make_pair(node, new PbcElements()));
+        skid.get_sk_prime().back().second->init(3);
+        skid.get_sk_prime().back().second->set(sk_1, tmp_sk_prime_sk_1);
+        skid.get_sk_prime().back().second->set(sk_2, tmp_sk_prime_sk_2);
+        skid.get_sk_prime().back().second->set(sk_3, this->tmp_G_2);
 
         node = node->getParent();
     }
@@ -340,12 +335,10 @@ void RABE_TMM::KUpt(RABE_TMM_kut &kut, RABE_TMM_mpk &mpk, Binary_tree_RABE &st, 
         // h^rtheta
         element_pow_zn(this->tmp_H, mpk[h], this->tmp_Zn);
 
-        PbcElements tmp_ku_theta;
-        tmp_ku_theta.init(2);
-
-        tmp_ku_theta.set(ku_theta_1, this->tmp_G);
-        tmp_ku_theta.set(ku_theta_2, this->tmp_H);
-        kut.get_ku_theta().emplace_back(std::make_pair(thetas[i], tmp_ku_theta));
+        kut.get_ku_theta().emplace_back(std::make_pair(thetas[i], new PbcElements()));
+        kut.get_ku_theta().back().second->init(2);
+        kut.get_ku_theta().back().second->set(ku_theta_1, this->tmp_G);
+        kut.get_ku_theta().back().second->set(ku_theta_2, this->tmp_H);
     }
 }
 
@@ -380,14 +373,14 @@ void RABE_TMM::DKGen(RABE_TMM_dkidt &dkidt, RABE_TMM_mpk &mpk, RABE_TMM_skid &sk
     dkidt.get_sk0().init(3);
 
     // sk' = (sk1', sk2', sk3')
-    dkidt.get_sk_prime().set(sk_1, skid.get_sk_prime(index_skid).second.get(sk_1));
-    dkidt.get_sk_prime().set(sk_2, skid.get_sk_prime(index_skid).second.get(sk_2));
+    dkidt.get_sk_prime().set(sk_1, skid.get_sk_prime(index_skid).second->get(sk_1));
+    dkidt.get_sk_prime().set(sk_2, skid.get_sk_prime(index_skid).second->get(sk_2));
     // sk3' = g^d3 * g^(-sigma_prime) * H(1t)^(rtheta + rtheta')
-    element_mul(tmp_G, skid.get_sk_prime(index_skid).second.get(sk_3), kut.get_ku_theta(index_kut).second.get(ku_theta_1));
+    element_mul(tmp_G, skid.get_sk_prime(index_skid).second->get(sk_3), kut.get_ku_theta(index_kut).second->get(ku_theta_1));
     dkidt.get_sk_prime().set(sk_3, tmp_G);
 
     // TODO kut 是公开的，先直接放入dkidt中
-    dkidt.get_skt1().set(skt1, kut.get_ku_theta(index_kut).second.get(ku_theta_2));
+    dkidt.get_skt1().set(skt1, kut.get_ku_theta(index_kut).second->get(ku_theta_2));
 
     // sk0 = (sk01, sk02, sk03)
     dkidt.get_sk0().set(sk0_1, skid.get_sk0().get(sk0_1));
@@ -395,13 +388,12 @@ void RABE_TMM::DKGen(RABE_TMM_dkidt &dkidt, RABE_TMM_mpk &mpk, RABE_TMM_skid &sk
     dkidt.get_sk0().set(sk0_3, skid.get_sk0().get(sk0_3));
 
     // sky
+    dkidt.get_sk_y().resize(skid.get_sk_y().size());
     for(int i = 0; i < skid.get_sk_y().size(); i++){
-        PbcElements tmp_sk_y;
-        tmp_sk_y.init(3);
-        tmp_sk_y.set(sk_1, skid.get_sk_y(i).get(sk_1));
-        tmp_sk_y.set(sk_2, skid.get_sk_y(i).get(sk_2));
-        tmp_sk_y.set(sk_3, skid.get_sk_y(i).get(sk_3));
-        dkidt.get_sk_y().push_back(tmp_sk_y);
+        dkidt.get_sk_y()[i].init(3);
+        dkidt.get_sk_y()[i].set(sk_1, skid.get_sk_y(i).get(sk_1));
+        dkidt.get_sk_y()[i].set(sk_2, skid.get_sk_y(i).get(sk_2));
+        dkidt.get_sk_y()[i].set(sk_3, skid.get_sk_y(i).get(sk_3));
     }
 }
 /**
@@ -449,6 +441,7 @@ void RABE_TMM::Enc(RABE_TMM_ciphertext &ciphertext, RABE_TMM_mpk &mpk, element_t
     // for i = 1,2,...,rows
     ciphertext.get_ct_y().resize(rows);
     for(unsigned long int i=0; i<rows;i++){
+        ciphertext.get_ct_y()[i].init(3);
         std::string attr = MSP->getName(i);
         // printf("attr: %s\n", attr.c_str());
 
@@ -480,9 +473,7 @@ void RABE_TMM::Enc(RABE_TMM_ciphertext &ciphertext, RABE_TMM_mpk &mpk, element_t
             element_mul(tmp_G_4, tmp_G_4, this->tmp_G_3);
         }
 
-        PbcElements tmp_ct_y;
-        tmp_ct_y.init(3);
-        tmp_ct_y.set(ct_1, tmp_G_4);
+        ciphertext.get_ct_y()[i].set(ct_1, tmp_G_4);
     
         // l = 2
         attr_l_1 = attr + "2" + "1";
@@ -510,7 +501,7 @@ void RABE_TMM::Enc(RABE_TMM_ciphertext &ciphertext, RABE_TMM_mpk &mpk, element_t
             element_pow_zn(this->tmp_G_3, this->tmp_G_3, MSP->getElement(i, j));
             element_mul(tmp_G_4, tmp_G_4, this->tmp_G_3);
         }
-        tmp_ct_y.set(ct_2, tmp_G_4);
+        ciphertext.get_ct_y()[i].set(ct_2, tmp_G_4);
 
         // l = 3
         attr_l_1 = attr + "3" + "1";
@@ -538,9 +529,7 @@ void RABE_TMM::Enc(RABE_TMM_ciphertext &ciphertext, RABE_TMM_mpk &mpk, element_t
             element_pow_zn(this->tmp_G_3, this->tmp_G_3, MSP->getElement(i, j));
             element_mul(tmp_G_4, tmp_G_4, this->tmp_G_3);
         }
-        tmp_ct_y.set(ct_3, tmp_G_4);
-
-        ciphertext.get_ct_y()[i] = tmp_ct_y;
+        ciphertext.get_ct_y()[i].set(ct_3, tmp_G_4);
     }
 }
 /**

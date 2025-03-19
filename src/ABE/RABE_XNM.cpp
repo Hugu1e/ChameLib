@@ -158,6 +158,7 @@ void RABE_XNM::KGen(RABE_XNM_skid &skid, Binary_tree_RABE &st, RABE_XNM_mpk &mpk
     // compute sk_y
     skid.get_sk_y().resize(attr_list.size());
     for(int i = 0; i < attr_list.size(); i++){
+        skid.get_sk_y()[i].init(3);
         skid.get_attr2id()[attr_list[i]] = i;
         // sigma_y
         element_random(this->tmp_Zn);
@@ -182,9 +183,7 @@ void RABE_XNM::KGen(RABE_XNM_skid &skid, Binary_tree_RABE &st, RABE_XNM_mpk &mpk
         element_mul(tmp_G, tmp_G, this->tmp_G_3);
         element_mul(tmp_G, tmp_G, this->tmp_G_4);
 
-        PbcElements sk_y;
-        sk_y.init(3);
-        sk_y.set(sk_1, tmp_G);
+        skid.get_sk_y()[i].set(sk_1, tmp_G);
 
         // t = 2
         // H(y12)^b1r1a2
@@ -206,14 +205,12 @@ void RABE_XNM::KGen(RABE_XNM_skid &skid, Binary_tree_RABE &st, RABE_XNM_mpk &mpk
         element_mul(tmp_G, this->tmp_G, this->tmp_G_2);
         element_mul(tmp_G, tmp_G, this->tmp_G_3);
         element_mul(tmp_G, tmp_G, this->tmp_G_4);
-        sk_y.set(sk_2, tmp_G);
+        skid.get_sk_y()[i].set(sk_2, tmp_G);
 
         // sky3 = g^(-sigma_y)
         element_neg(this->tmp_Zn, this->tmp_Zn);
         element_pow_zn(tmp_G, msk[g], this->tmp_Zn);
-        sk_y.set(sk_3, tmp_G);
-
-        skid.get_sk_y()[i] = sk_y;
+        skid.get_sk_y()[i].set(sk_3, tmp_G);
     }
 
     // sk_prime
@@ -287,10 +284,9 @@ void RABE_XNM::KGen(RABE_XNM_skid &skid, Binary_tree_RABE &st, RABE_XNM_mpk &mpk
         // sk_theta = g^d3 * g^(-sigma_prime) / gtheta
         element_div(this->tmp_G_2, tmp_G_3, this->tmp_G);
 
-        PbcElements tmp_sk_theta;
-        tmp_sk_theta.init(1);
-        tmp_sk_theta.set(sk_theta, this->tmp_G_2);
-        skid.get_sk_theta().emplace_back(std::make_pair(node, tmp_sk_theta));
+        skid.get_sk_theta().emplace_back(std::make_pair(node, new PbcElements()));
+        skid.get_sk_theta().back().second->init(1);
+        skid.get_sk_theta().back().second->set(sk_theta, this->tmp_G_2);
 
         node = node->getParent();
     }
@@ -324,11 +320,10 @@ void RABE_XNM::KUpt(RABE_XNM_kut &kut, RABE_XNM_mpk &mpk, Binary_tree_RABE &st, 
         // h^rtheta
         element_pow_zn(this->tmp_H, mpk[h], this->tmp_Zn);
 
-        PbcElements tmp_ku_theta;
-        tmp_ku_theta.init(2);
-        tmp_ku_theta.set(ku_theta_1, this->tmp_G);
-        tmp_ku_theta.set(ku_theta_2, this->tmp_H);
-        kut.get_ku_theta().emplace_back(std::make_pair(thetas[i], tmp_ku_theta));
+        kut.get_ku_theta().emplace_back(std::make_pair(thetas[i], new PbcElements()));
+        kut.get_ku_theta().back().second->init(2);
+        kut.get_ku_theta().back().second->set(ku_theta_1, this->tmp_G);
+        kut.get_ku_theta().back().second->set(ku_theta_2, this->tmp_H);
     }
 }
 
@@ -369,8 +364,8 @@ void RABE_XNM::DKGen(RABE_XNM_dkidt &dkidt, RABE_XNM_mpk &mpk, RABE_XNM_skid &sk
     std::string _1t = "1" + std::to_string(dkidt.getTime());
     this->Hash(this->tmp_G, _1t);
     element_pow_zn(this->tmp_G, this->tmp_G, this->tmp_Zn);
-    element_mul(tmp_G, skid.get_sk_theta()[index_skid].second[sk_theta], this->tmp_G);
-    element_mul(tmp_G, kut.get_ku_theta()[index_kut].second[ku_theta_1], this->tmp_G);
+    element_mul(tmp_G, skid.get_sk_theta()[index_skid].second->get(sk_theta), this->tmp_G);
+    element_mul(tmp_G, kut.get_ku_theta()[index_kut].second->get(ku_theta_1), this->tmp_G);
     dkidt.get_sk_prime_prime().set(sk_3, tmp_G);
 
     // sk0' = (sk01, sk02, sk03, sk04)
@@ -380,7 +375,7 @@ void RABE_XNM::DKGen(RABE_XNM_dkidt &dkidt, RABE_XNM_mpk &mpk, RABE_XNM_skid &sk
     dkidt.get_sk0_prime().set(sk0_3, skid.get_sk0().get(sk0_3));
     // sk04 = ku_theta_2 * h^(rtheta')
     element_pow_zn(tmp_H, mpk[h], this->tmp_Zn);
-    element_mul(tmp_H, kut.get_ku_theta()[index_kut].second[ku_theta_2], tmp_H);
+    element_mul(tmp_H, kut.get_ku_theta()[index_kut].second->get(ku_theta_2), tmp_H);
     dkidt.get_sk0_prime().set(sk0_4, tmp_H);
 
     // sky
@@ -436,6 +431,7 @@ void RABE_XNM::Enc(RABE_XNM_ciphertext &ciphertext, RABE_XNM_mpk &mpk, element_t
     // for i = 1,2,...,rows
     ciphertext.get_ct_y().resize(rows);
     for(unsigned long int i=0; i<rows;i++){
+        ciphertext.get_ct_y()[i].init(3);
         std::string attr = MSP->getName(i);
         // printf("attr: %s\n", attr.c_str());
 
@@ -467,9 +463,7 @@ void RABE_XNM::Enc(RABE_XNM_ciphertext &ciphertext, RABE_XNM_mpk &mpk, element_t
             element_mul(tmp_G_4, tmp_G_4, this->tmp_G_3);
         }
 
-        PbcElements tmp_ct_y;
-        tmp_ct_y.init(3);
-        tmp_ct_y.set(ct_1, tmp_G_4);
+        ciphertext.get_ct_y()[i].set(ct_1, tmp_G_4);
     
         // l = 2
         attr_l_1 = attr + "2" + "1";
@@ -497,7 +491,7 @@ void RABE_XNM::Enc(RABE_XNM_ciphertext &ciphertext, RABE_XNM_mpk &mpk, element_t
             element_pow_zn(this->tmp_G_3, this->tmp_G_3, MSP->getElement(i, j));
             element_mul(tmp_G_4, tmp_G_4, this->tmp_G_3);
         }
-        tmp_ct_y.set(ct_2, tmp_G_4);
+        ciphertext.get_ct_y()[i].set(ct_2, tmp_G_4);
 
         // l = 3
         attr_l_1 = attr + "3" + "1";
@@ -525,9 +519,7 @@ void RABE_XNM::Enc(RABE_XNM_ciphertext &ciphertext, RABE_XNM_mpk &mpk, element_t
             element_pow_zn(this->tmp_G_3, this->tmp_G_3, MSP->getElement(i, j));
             element_mul(tmp_G_4, tmp_G_4, this->tmp_G_3);
         }
-        tmp_ct_y.set(ct_3, tmp_G_4);
-
-        ciphertext.get_ct_y()[i] = tmp_ct_y;
+        ciphertext.get_ct_y()[i].set(ct_3, tmp_G_4);
     }
 }
 
@@ -556,13 +548,7 @@ void RABE_XNM::Dec(element_t res, RABE_XNM_mpk &mpk, RABE_XNM_ciphertext &cipher
 
     unsigned long int r = inverse_attributesMatrix->row();
     unsigned long int c = inverse_attributesMatrix->col();
-    // printf("rows: %ld, cols: %ld\n", r, c);
-    // for(int i = 0;i < r;i++){
-    //     for(int j = 0;j < c;j++){
-    //         element_printf("%B ", inverse_attributesMatrix->getElement(i, j));
-    //     }
-    //     printf("\n");
-    // }
+
     Element_t_vector* unit = inverse_attributesMatrix->getCoordinateAxisUnitVector();
 
     Element_t_vector* x= new Element_t_vector(inverse_attributesMatrix->col(), inverse_attributesMatrix->getElement(0, 0));
@@ -571,18 +557,12 @@ void RABE_XNM::Dec(element_t res, RABE_XNM_mpk &mpk, RABE_XNM_ciphertext &cipher
     if (-1 == type) {
         throw std::runtime_error("POLICY_NOT_SATISFIED");
     }
-    // printf("type: %ld\n", type);
-    // // print x
-    // printf("Yi:\n");
-    // x->printVector();
-
 
     // num
     element_t num,den;
     element_init_same_as(num, this->GT);
     element_init_same_as(den, this->GT);
 
-    
     element_set1(this->tmp_G);
     element_set1(this->tmp_G_2);
     element_set1(this->tmp_G_3);

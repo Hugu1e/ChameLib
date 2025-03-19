@@ -113,10 +113,7 @@ void CP_ABE::Setup(CP_ABE_msk &msk, CP_ABE_mpk &mpk){
  * input: msk, mpk, attr
  * output: sks
  */
-void CP_ABE::KeyGen(CP_ABE_sks &sks, CP_ABE_msk &msk, CP_ABE_mpk &mpk, std::vector<std::string> &attr_list){
-    sks.get_sk_0().init(3);
-    sks.get_sk_prime().init(3);
-    
+void CP_ABE::KeyGen(CP_ABE_sks &sks, CP_ABE_msk &msk, CP_ABE_mpk &mpk, std::vector<std::string> &attr_list){    
     element_random(this->r1);
     element_random(this->r2);
     // sk0 = (h^(b1r1), h^(b2r2), h^(r1+r2))
@@ -145,6 +142,7 @@ void CP_ABE::KeyGen(CP_ABE_sks &sks, CP_ABE_msk &msk, CP_ABE_mpk &mpk, std::vect
     // compute sk_y
     sks.get_sk_y().resize(attr_list.size());
     for(int i = 0;i < attr_list.size();i++){
+        sks.get_sk_y()[i].init(3);
         sks.get_attr2id()[attr_list[i]] = i;
         // sigma_y
         element_random(this->tmp_Zn);
@@ -169,9 +167,7 @@ void CP_ABE::KeyGen(CP_ABE_sks &sks, CP_ABE_msk &msk, CP_ABE_mpk &mpk, std::vect
         element_mul(sk_1_G, sk_1_G, this->tmp_G_3);
         element_mul(sk_1_G, sk_1_G, this->tmp_G_4);
 
-        PbcElements tmp_sky;
-        tmp_sky.init(3);
-        tmp_sky.set(sk_1, sk_1_G);
+        sks.get_sk_y()[i].set(sk_1, sk_1_G);
 
         // t = 2
         // H(y12)^b1r1a2
@@ -193,14 +189,12 @@ void CP_ABE::KeyGen(CP_ABE_sks &sks, CP_ABE_msk &msk, CP_ABE_mpk &mpk, std::vect
         element_mul(sk_2_G, this->tmp_G, this->tmp_G_2);
         element_mul(sk_2_G, sk_2_G, this->tmp_G_3);
         element_mul(sk_2_G, sk_2_G, this->tmp_G_4);
-        tmp_sky.set(sk_2, sk_2_G);
+        sks.get_sk_y()[i].set(sk_2, sk_2_G);
 
         // sky3 = g^(-sigma_y)
         element_neg(this->tmp_Zn, this->tmp_Zn);
         element_pow_zn(sk_3_G, msk[g], this->tmp_Zn);
-        tmp_sky.set(sk_3, sk_3_G);
-
-        sks.get_sk_y()[i] = tmp_sky;
+        sks.get_sk_y()[i].set(sk_3, sk_3_G);
     }
 
     // sk_prime
@@ -274,22 +268,6 @@ void CP_ABE::Hash(element_t res, std::string m){
 
 /**
  * Encrypt a message msg under a policy string.
- * input: mpk, msg, policy_str
- * output: ct
- */
-void CP_ABE::Encrypt(CP_ABE_ciphertext &ciphertext, CP_ABE_mpk &mpk, element_t msg, Element_t_matrix *MSP){
-    element_t s1, s2;
-    element_init_same_as(s1, Zn);
-    element_init_same_as(s2, Zn);
-    element_random(s1);
-    element_random(s2);
-    Encrypt(ciphertext, mpk, msg, MSP, s1, s2);
-    element_clear(s1);
-    element_clear(s2);
-}
-
-/**
- * Encrypt a message msg under a policy string.
  * input: mpk, msg, policy_str, s1, s2
  * output: ct
  */
@@ -297,25 +275,21 @@ void CP_ABE::Encrypt(CP_ABE_ciphertext &ciphertext, CP_ABE_mpk &mpk, element_t m
     unsigned long int rows = MSP->row();
     unsigned long int cols = MSP->col();
 
-    // s1, s2
-    element_set(this->s1, s1);
-    element_set(this->s2, s2);
-
     // ct0
     // ct0_1 = H1^s1
-    element_pow_zn(ct_1_H, mpk[H1], this->s1);
+    element_pow_zn(ct_1_H, mpk[H1], s1);
     ciphertext.get_ct_0().set(ct_1, ct_1_H);
     // ct0_2 = H2^s2
-    element_pow_zn(ct_2_H, mpk[H2], this->s2);
+    element_pow_zn(ct_2_H, mpk[H2], s2);
     ciphertext.get_ct_0().set(ct_2, ct_2_H);
     // ct0_3 = h^(s1+s2)
-    element_add(this->tmp_Zn_2, this->s1, this->s2);
+    element_add(this->tmp_Zn_2, s1, s2);
     element_pow_zn(ct_3_H, mpk[h], this->tmp_Zn_2);
     ciphertext.get_ct_0().set(ct_3, ct_3_H);
 
     // ct_prime = T1^s1 * T2^s2 * msg
-    element_pow_zn(this->tmp_GT, mpk[T1], this->s1);
-    element_pow_zn(this->tmp_GT_2, mpk[T2], this->s2);
+    element_pow_zn(this->tmp_GT, mpk[T1], s1);
+    element_pow_zn(this->tmp_GT_2, mpk[T2], s2);
     element_mul(this->tmp_GT_3, this->tmp_GT, this->tmp_GT_2);
     element_mul(tmp_GT_3, this->tmp_GT_3, msg);
     ciphertext.get_ct_prime().set(0, tmp_GT_3);
@@ -324,17 +298,18 @@ void CP_ABE::Encrypt(CP_ABE_ciphertext &ciphertext, CP_ABE_mpk &mpk, element_t m
     // for i = 1, 2, ..., rows
     ciphertext.get_ct_y().resize(rows);
     for(unsigned long int i = 0; i < rows; i++){
+        ciphertext.get_ct_y()[i].init(3);
         std::string attr = MSP->getName(i);
 
         // l = 1
         std::string attr_l_1 = attr + "1" + "1";
         // H(attr_l_1)^s1
         this->Hash(this->tmp_G, attr_l_1);
-        element_pow_zn(this->tmp_G, this->tmp_G, this->s1);
+        element_pow_zn(this->tmp_G, this->tmp_G, s1);
         std::string attr_l_2 = attr + "1" + "2";
         // H(attr_l_2)^s2
         this->Hash(this->tmp_G_2, attr_l_2);
-        element_pow_zn(this->tmp_G_2, this->tmp_G_2, this->s2);
+        element_pow_zn(this->tmp_G_2, this->tmp_G_2, s2);
         element_mul(ct_1_G, this->tmp_G, this->tmp_G_2);
         // for j = 1, 2, ..., cols
         std::string str_0jl1, str_0jl2;
@@ -343,29 +318,28 @@ void CP_ABE::Encrypt(CP_ABE_ciphertext &ciphertext, CP_ABE_mpk &mpk, element_t m
             str_0jl2 = "0" + std::to_string(j + 1) + "1" + "2";
             // H(0jl1)^s1
             this->Hash(this->tmp_G, str_0jl1);
-            element_pow_zn(this->tmp_G, this->tmp_G, this->s1);
+            element_pow_zn(this->tmp_G, this->tmp_G, s1);
             // H(0jl2)^s2
             this->Hash(this->tmp_G_2, str_0jl2);
-            element_pow_zn(this->tmp_G_2, this->tmp_G_2, this->s2);
+            element_pow_zn(this->tmp_G_2, this->tmp_G_2, s2);
             // H(0jl1)^s1 * H(0jl2)^s2
             element_mul(this->tmp_G_3, this->tmp_G, this->tmp_G_2);
             // (H(0jl1)^s1 * H(0jl2)^s2)^M[i][j]
             element_pow_zn(this->tmp_G_4, this->tmp_G_3, MSP->getElement(i, j));
             element_mul(ct_1_G, ct_1_G, this->tmp_G_4);
         }
-        PbcElements tmp_ct_y;
-        tmp_ct_y.init(3);
-        tmp_ct_y.set(ct_1, ct_1_G);
+
+        ciphertext.get_ct_y()[i].set(ct_1, ct_1_G);
 
         // l = 2
         attr_l_1 = attr + "2" + "1";
         // H(attr_l_1)^s1
         this->Hash(this->tmp_G, attr_l_1);
-        element_pow_zn(this->tmp_G, this->tmp_G, this->s1);
+        element_pow_zn(this->tmp_G, this->tmp_G, s1);
         attr_l_2 = attr + "2" + "2";
         // H(attr_l_2)^s2
         this->Hash(this->tmp_G_2, attr_l_2);
-        element_pow_zn(this->tmp_G_2, this->tmp_G_2, this->s2);
+        element_pow_zn(this->tmp_G_2, this->tmp_G_2, s2);
         element_mul(ct_2_G, this->tmp_G, this->tmp_G_2);
         // for j = 1, 2, ..., cols
         for(unsigned long int j = 0; j < cols; j++){
@@ -373,27 +347,27 @@ void CP_ABE::Encrypt(CP_ABE_ciphertext &ciphertext, CP_ABE_mpk &mpk, element_t m
             str_0jl2 = "0" + std::to_string(j + 1) + "2" + "2";
             // H(0jl1)^s1
             this->Hash(this->tmp_G, str_0jl1);
-            element_pow_zn(this->tmp_G, this->tmp_G, this->s1);
+            element_pow_zn(this->tmp_G, this->tmp_G, s1);
             // H(0jl2)^s2
             this->Hash(this->tmp_G_2, str_0jl2);
-            element_pow_zn(this->tmp_G_2, this->tmp_G_2, this->s2);
+            element_pow_zn(this->tmp_G_2, this->tmp_G_2, s2);
             // H(0jl1)^s1 * H(0jl2)^s2
             element_mul(this->tmp_G_3, this->tmp_G, this->tmp_G_2);
             // (H(0jl1)^s1 * H(0jl2)^s2)^M[i][j]
             element_pow_zn(this->tmp_G_4, this->tmp_G_3, MSP->getElement(i, j));
             element_mul(ct_2_G, ct_2_G, this->tmp_G_4);
         }
-        tmp_ct_y.set(ct_2, ct_2_G);
+        ciphertext.get_ct_y()[i].set(ct_2, ct_2_G);
 
         // l = 3
         attr_l_1 = attr + "3" + "1";
         // H(attr_l_1)^s1
         this->Hash(this->tmp_G, attr_l_1);
-        element_pow_zn(this->tmp_G, this->tmp_G, this->s1);
+        element_pow_zn(this->tmp_G, this->tmp_G, s1);
         attr_l_2 = attr + "3" + "2";
         // H(attr_l_2)^s2
         this->Hash(this->tmp_G_2, attr_l_2);
-        element_pow_zn(this->tmp_G_2, this->tmp_G_2, this->s2);
+        element_pow_zn(this->tmp_G_2, this->tmp_G_2, s2);
         element_mul(ct_3_G, this->tmp_G, this->tmp_G_2);
         // for j = 1, 2, ..., cols
         for(unsigned long int j = 0; j < cols; j++){
@@ -401,19 +375,17 @@ void CP_ABE::Encrypt(CP_ABE_ciphertext &ciphertext, CP_ABE_mpk &mpk, element_t m
             str_0jl2 = "0" + std::to_string(j + 1) + "3" + "2";
             // H(0jl1)^s1
             this->Hash(this->tmp_G, str_0jl1);
-            element_pow_zn(this->tmp_G, this->tmp_G, this->s1);
+            element_pow_zn(this->tmp_G, this->tmp_G, s1);
             // H(0jl2)^s2
             this->Hash(this->tmp_G_2, str_0jl2);
-            element_pow_zn(this->tmp_G_2, this->tmp_G_2, this->s2);
+            element_pow_zn(this->tmp_G_2, this->tmp_G_2, s2);
             // H(0jl1)^s1 * H(0jl2)^s2
             element_mul(this->tmp_G_3, this->tmp_G, this->tmp_G_2);
             // (H(0jl1)^s1 * H(0jl2)^s2)^M[i][j]
             element_pow_zn(this->tmp_G_4, this->tmp_G_3, MSP->getElement(i, j));
             element_mul(ct_3_G, ct_3_G, this->tmp_G_4);
         }
-        tmp_ct_y.set(ct_3, ct_3_G);
-
-        ciphertext.get_ct_y()[i] = tmp_ct_y;
+        ciphertext.get_ct_y()[i].set(ct_3, ct_3_G);
     }
 }
 /**

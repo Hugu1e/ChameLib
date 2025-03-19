@@ -28,7 +28,7 @@ class RABE_TMM_skid{
     private:
         PbcElements sk0;
         std::vector<PbcElements> sk_y;
-        std::vector<std::pair<Binary_tree_RABE_node*,PbcElements>> sk_prime;
+        std::vector<std::pair<Binary_tree_RABE_node*, PbcElements*>> sk_prime;
         std::unordered_map<std::string, unsigned long int> attr2id;
     public:
         RABE_TMM_skid(){
@@ -46,17 +46,22 @@ class RABE_TMM_skid{
         {
             return sk_y;
         }
-        std::vector<std::pair<Binary_tree_RABE_node*,PbcElements>>& get_sk_prime()
+        std::vector<std::pair<Binary_tree_RABE_node*, PbcElements*>>& get_sk_prime()
         {
             return sk_prime;
         }
-        std::pair<Binary_tree_RABE_node*,PbcElements>& get_sk_prime(int i)
+        std::pair<Binary_tree_RABE_node*, PbcElements*>& get_sk_prime(int i)
         {
             return sk_prime[i];
         }
         std::unordered_map<std::string, unsigned long int>& get_attr2id()
         {
             return attr2id;
+        }
+        ~RABE_TMM_skid(){
+            for(int i = 0; i < sk_prime.size(); i++){
+                delete sk_prime[i].second;
+            }
         }
 };
 class RABE_TMM_revokedPreson: public PbcElements{
@@ -75,7 +80,7 @@ class RABE_TMM_revokedPreson: public PbcElements{
 class RABE_TMM_kut{
     private:
         time_t t;
-        std::vector<std::pair<Binary_tree_RABE_node*,PbcElements>> ku_theta;
+        std::vector<std::pair<Binary_tree_RABE_node*, PbcElements*>> ku_theta;
     public:
         void setTime(time_t t){
             this->t = t;
@@ -83,13 +88,18 @@ class RABE_TMM_kut{
         time_t getTime(){
             return this->t;
         }
-        std::vector<std::pair<Binary_tree_RABE_node*,PbcElements>>& get_ku_theta()
+        std::vector<std::pair<Binary_tree_RABE_node*, PbcElements*>>& get_ku_theta()
         {
             return ku_theta;
         }
-        std::pair<Binary_tree_RABE_node*,PbcElements>& get_ku_theta(int i)
+        std::pair<Binary_tree_RABE_node*, PbcElements*>& get_ku_theta(int i)
         {
             return ku_theta[i];
+        }
+        ~RABE_TMM_kut(){
+            for(int i = 0; i < ku_theta.size(); i++){
+                delete ku_theta[i].second;
+            }
         }
 };
 class RABE_TMM_dkidt{

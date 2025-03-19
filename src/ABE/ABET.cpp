@@ -203,6 +203,7 @@ void ABET::KeyGen(ABET_sks &sks, ABET_msk &msk, ABET_mpk &mpk, std::vector<std::
     // compute sk_y
     sks.get_sk_y().resize(attr_list.size());
     for (int i = 0; i < attr_list.size(); i++) {
+        sks.get_sk_y()[i].init(3);
         sks.get_attr2id()[attr_list[i]] = i;
         // sigma_y
         element_random(this->tmp_Zn);
@@ -229,9 +230,7 @@ void ABET::KeyGen(ABET_sks &sks, ABET_msk &msk, ABET_mpk &mpk, std::vector<std::
         element_mul(tmp_G, tmp_G, this->tmp_G_3);
         element_mul(tmp_G, tmp_G, this->tmp_G_4);
 
-        PbcElements sk_y;
-        sk_y.init(3);
-        sk_y.set(sk_1, tmp_G);
+        sks.get_sk_y()[i].set(sk_1, tmp_G);
 
         // t = 2
         // H(y12)^b1r1a2
@@ -256,15 +255,13 @@ void ABET::KeyGen(ABET_sks &sks, ABET_msk &msk, ABET_mpk &mpk, std::vector<std::
         element_mul(tmp_G, tmp_G, this->tmp_G_3);
         element_mul(tmp_G, tmp_G, this->tmp_G_4);
 
-        sk_y.set(sk_2, tmp_G);
+        sks.get_sk_y()[i].set(sk_2, tmp_G);
 
         // sky3 = g^(-sigma_y)
         element_neg(this->tmp_Zn, this->tmp_Zn);
         element_pow_zn(tmp_G, mpk.get_mpk()[g], this->tmp_Zn);
 
-        sk_y.set(sk_3, tmp_G);
-
-        sks.get_sk_y()[i] = sk_y;
+        sks.get_sk_y()[i].set(sk_3, tmp_G);
     }
 
     // sk_prime
@@ -445,6 +442,7 @@ void ABET::Encrypt(ABET_ciphertext &ciphertext, ABET_mpk &mpk, ABET_msk &msk, el
     // for i = 1,2,...,rows
     ciphertext.get_ct_y().resize(rows);
     for(unsigned long int i = 0; i < rows; i++){
+        ciphertext.get_ct_y()[i].init(3);
         std::string attr = MSP->getName(i);
         // printf("attr: %s\n", attr.c_str());
 
@@ -476,9 +474,7 @@ void ABET::Encrypt(ABET_ciphertext &ciphertext, ABET_mpk &mpk, ABET_msk &msk, el
             element_mul(tmp_G_4, tmp_G_4, this->tmp_G_3);
         }
 
-        PbcElements ct_y;
-        ct_y.init(3);
-        ct_y.set(ct_1, tmp_G_4);
+        ciphertext.get_ct_y()[i].set(ct_1, tmp_G_4);
     
         // l = 2
         attr_l_1 = attr + "2" + "1";
@@ -507,7 +503,7 @@ void ABET::Encrypt(ABET_ciphertext &ciphertext, ABET_mpk &mpk, ABET_msk &msk, el
             element_mul(tmp_G_4, tmp_G_4, this->tmp_G_3);
         }
 
-        ct_y.set(ct_2, tmp_G_4);
+        ciphertext.get_ct_y()[i].set(ct_2, tmp_G_4);
 
         // l = 3
         attr_l_1 = attr + "3" + "1";
@@ -536,9 +532,7 @@ void ABET::Encrypt(ABET_ciphertext &ciphertext, ABET_mpk &mpk, ABET_msk &msk, el
             element_mul(tmp_G_4, tmp_G_4, this->tmp_G_3);
         }
 
-        ct_y.set(ct_3, tmp_G_4);
-
-        ciphertext.get_ct_y()[i] = ct_y;
+        ciphertext.get_ct_y()[i].set(ct_3, tmp_G_4);
     }
     ciphertext.set_ownerId_length(oj);
 }
