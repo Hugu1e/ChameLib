@@ -89,6 +89,10 @@ class BaseTest : public testing::TestWithParam<T>  {
             }
         }
 
+        void average(std::string name, int repeat_time){
+            average_time[name] /= repeat_time;
+        }
+
         bool check_time(int type, int ops[diff_max_len], std::string test_name) {
             if(average_time.find(test_name) == average_time.end()){
                 throw std::runtime_error("check_time(): wrong test name");
@@ -147,7 +151,22 @@ class BaseTest : public testing::TestWithParam<T>  {
             ts.push(std::chrono::system_clock::now());
         }
 
+        void start(std::string current_test_name, bool visiable) {
+            if(visiable)std::cout<<"——————————" << current_test_name <<" start——————————" << std::endl;
+            this->current_test_name.push(current_test_name);
+            ts.push(std::chrono::system_clock::now());
+        }
+
         void end(std::string current_test_name) {
+            std::chrono::_V2::system_clock::time_point te = std::chrono::system_clock::now();
+            if(this->current_test_name.empty() || this->current_test_name.top() != current_test_name) throw std::runtime_error("end(): wrong test pair");
+            OutTime(current_test_name, ::testing::UnitTest::GetInstance()->current_test_info()->name(), std::chrono::duration_cast<std::chrono::microseconds>(te - ts.top()).count());
+            if(visiable)std::cout<<"——————————" << current_test_name <<" end——————————" << std::endl;
+            this->current_test_name.pop();
+            ts.pop();
+        }
+
+        void end(std::string current_test_name, bool visiable) {
             std::chrono::_V2::system_clock::time_point te = std::chrono::system_clock::now();
             if(this->current_test_name.empty() || this->current_test_name.top() != current_test_name) throw std::runtime_error("end(): wrong test pair");
             OutTime(current_test_name, ::testing::UnitTest::GetInstance()->current_test_info()->name(), std::chrono::duration_cast<std::chrono::microseconds>(te - ts.top()).count());

@@ -46,116 +46,104 @@ INSTANTIATE_TEST_CASE_P(
 );
 
 TEST_P(MA_ABE_Test, Test){
-    for(int i = 0; UpdateProcBar(i, repeat), i < repeat; i++){
-        MA_ABE abe(GetParam().curve);
+    MA_ABE abe(GetParam().curve);
 
-        const std::string POLICY = "(ONE&THREE)&(TWO|FOUR)";
-        const int SIZE_OF_POLICY = 4;
-        // compute policy matrix
-        Policy_resolution pr;
-        Policy_generation pg;
-        std::vector<std::string>* postfix_expression = pr.infixToPostfix(POLICY);
-        if(visiable){
-            printf("postfix_expression of Policy: ");
-            for(int i = 0;i < postfix_expression->size();i++){
-                printf("%s ", postfix_expression->at(i).c_str());
-            }
-            printf("\n");
-        }
-        Binary_tree_policy* binary_tree_expression = pr.postfixToBinaryTree(postfix_expression, abe.GetZrElement());
-        pg.generatePolicyInMatrixForm(binary_tree_expression);
-        Element_t_matrix* MSP = pg.getPolicyInMatrixFormFromTree(binary_tree_expression);
-        if(visiable){
-            printf("Policy Matrix:\n");
-            MSP->printMatrix();
-        }
+    const std::string POLICY = "(ONE&THREE)&(TWO|FOUR)";
+    // compute MSP
+    Policy_resolution pr;
+    Policy_generation pg;
+    std::vector<std::string>* postfix_expression = pr.infixToPostfix(POLICY);
+    Binary_tree_policy* binary_tree_expression = pr.postfixToBinaryTree(postfix_expression, abe.GetZrElement());
+    pg.generatePolicyInMatrixForm(binary_tree_expression);
+    Element_t_matrix* MSP = pg.getPolicyInMatrixFormFromTree(binary_tree_expression);
 
-        // attribute
-        const std::string A = "ONE";
-        const std::string B = "TWO";
-        const std::string C = "THREE";
-        const std::string D = "FOUR";
-        const std::string ATTRIBUTES[] = {A, B, C, D};
-        const int SIZE_OF_ATTRIBUTES = sizeof(ATTRIBUTES) / sizeof(ATTRIBUTES[0]);
+    // attribute
+    const std::string A = "ONE";
+    const std::string B = "TWO";
+    const std::string C = "THREE";
+    const std::string D = "FOUR";
+    const std::string ATTRIBUTES[] = {A, B, C, D};
+    const int SIZE_OF_ATTRIBUTES = sizeof(ATTRIBUTES) / sizeof(ATTRIBUTES[0]);
 
-        const std::string GID = "GID of A B C D with attribute ONE TOW THREE FOUR";
+    const std::string GID = "GID of A B C D with attribute ONE TOW THREE FOUR";
 
-        std::vector<MA_ABE_pkTheta *> pkThetas;
-        std::vector<MA_ABE_skTheta *> skThetas;
-        std::vector<MA_ABE_skgidA *> skgidAs;
+    std::vector<std::vector<MA_ABE_pkTheta *>> pkThetas(repeat);
+    std::vector<std::vector<MA_ABE_skTheta *>> skThetas(repeat);
+    std::vector<std::vector<MA_ABE_skgidA *>> skgidAs(repeat);
 
-        MA_ABE_gpk gpk;
+    MA_ABE_gpk gpk[repeat];
 
-        MA_ABE_ciphertext c;
+    MA_ABE_ciphertext c[repeat];
 
+    element_s *msg[repeat], *res[repeat], *rt[repeat];
+    for (int i = 0; i < repeat; i++){
+        msg[i] = abe.GetGTElement();
+        res[i] = abe.GetGTElement();
+        rt[i] = abe.GetZrElement();
+    }
 
-        element_s *msg = abe.GetGTElement();
-        element_s *res = abe.GetGTElement();
-        element_s *rt = abe.GetZrElement();
+    this->start("GlobalSetup");
+    for (int i = 0; i < repeat; i++) abe.GlobalSetup(gpk[i]);
+    this->end("GlobalSetup");
 
-        this->start("GlobalSetup");
-        abe.GlobalSetup(gpk);
-        this->end("GlobalSetup");
-
-        for(int i = 0; i < GetParam().authNum; i++) {
+    for (int i = 0; i < repeat; i++){
+        for(int j = 0; j < GetParam().authNum; j++) {
             MA_ABE_pkTheta *pkTheta = new MA_ABE_pkTheta();
             MA_ABE_skTheta *skTheta = new MA_ABE_skTheta();
 
-            if(i < SIZE_OF_ATTRIBUTES){
-                this->start("AuthSetup");
-                abe.AuthSetup(*pkTheta, *skTheta, gpk, ATTRIBUTES[i]);
-                this->end("AuthSetup");    
+            if(j < SIZE_OF_ATTRIBUTES){
+                this->start("AuthSetup", false);
+                abe.AuthSetup(*pkTheta, *skTheta, gpk[i], ATTRIBUTES[j]);
+                this->end("AuthSetup", false);    
             }else{
-                this->start("AuthSetup");
-                abe.AuthSetup(*pkTheta, *skTheta, gpk, "ATTRIBUTE@AUTHORITY_" + std::to_string(i));
-                this->end("AuthSetup");
+                this->start("AuthSetup", false);
+                abe.AuthSetup(*pkTheta, *skTheta, gpk[i], "ATTRIBUTE@AUTHORITY_" + std::to_string(j));
+                this->end("AuthSetup", false);
             }
 
-            pkThetas.push_back(pkTheta);
-            skThetas.push_back(skTheta);
+            pkThetas[i].push_back(pkTheta);
+            skThetas[i].push_back(skTheta);
         }
-
-        for(int i = 0; i < GetParam().authNum; i++) {
+    }
+    average("AuthSetup", GetParam().authNum);
+    
+    for (int i = 0; i < repeat; i++){
+        for(int j = 0; j < GetParam().authNum; j++) {
             MA_ABE_skgidA *skgidA = new MA_ABE_skgidA();
 
-            if(i < SIZE_OF_ATTRIBUTES){
-                this->start("KeyGen");
-                abe.KeyGen(*skgidA, gpk, *skThetas[i], GID, ATTRIBUTES[i]);
-                this->end("KeyGen");
+            if(j < SIZE_OF_ATTRIBUTES){
+                this->start("KeyGen", false);
+                abe.KeyGen(*skgidA, gpk[i], *skThetas[i][j], GID, ATTRIBUTES[j]);
+                this->end("KeyGen", false);
             }else{
-                this->start("KeyGen");
-                abe.KeyGen(*skgidA, gpk, *skThetas[i], GID, "ATTRIBUTE@AUTHORITY_" + std::to_string(i));
-                this->end("KeyGen");
+                this->start("KeyGen", false);
+                abe.KeyGen(*skgidA, gpk[i], *skThetas[i][j], GID, "ATTRIBUTE@AUTHORITY_" + std::to_string(j));
+                this->end("KeyGen", false);
             }
 
-            skgidAs.push_back(skgidA);
+            skgidAs[i].push_back(skgidA);
         }
-
-        if(visiable){
-            Logger::PrintPbc("msg", msg);
-            Logger::PrintPbc("rt", rt);        
-        }
-
-        this->start("Encrypt");
-        abe.Encrypt(c, msg, rt, gpk, pkThetas, MSP, POLICY);
-        this->end("Encrypt");
-        
-        // choose partial secret keys
-        std::vector<MA_ABE_skgidA *> _skgidAs;  
-        _skgidAs.push_back(skgidAs[0]);
-        _skgidAs.push_back(skgidAs[1]);
-        _skgidAs.push_back(skgidAs[2]);
-        
-        this->start("Decrypt");
-        abe.Decrypt(res, _skgidAs, c, MSP);
-        this->end("Decrypt");
-
-        if(visiable){
-            Logger::PrintPbc("msg", msg);
-            Logger::PrintPbc("res", res);
-        }
-        ASSERT_TRUE(element_cmp(msg, res) == 0);
     }
+    average("KeyGen", GetParam().authNum);
+
+    this->start("Encrypt");
+    for (int i = 0; i < repeat; i++) abe.Encrypt(c[i], msg[i], rt[i], gpk[i], pkThetas[i], MSP, POLICY);
+    this->end("Encrypt");
+    
+    // choose partial secret keys
+    std::vector<std::vector<MA_ABE_skgidA *>> _skgidAs(repeat); 
+    for (int i = 0; i < repeat; i++){
+        _skgidAs[i].push_back(skgidAs[i][0]);
+        _skgidAs[i].push_back(skgidAs[i][1]);
+        _skgidAs[i].push_back(skgidAs[i][2]);
+    }
+    
+    this->start("Decrypt");
+    for (int i = 0; i < repeat; i++) abe.Decrypt(res[i], _skgidAs[i], c[i], MSP);
+    this->end("Decrypt");
+
+    for (int i = 0; i < repeat; i++) ASSERT_TRUE(element_cmp(msg[i], res[i]) == 0);
+    
     average();
 }
 

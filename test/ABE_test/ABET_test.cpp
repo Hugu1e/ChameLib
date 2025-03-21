@@ -56,112 +56,95 @@ INSTANTIATE_TEST_CASE_P(
 );
 
 TEST_P(ABET_Test, Test){
-    for(int i = 0; UpdateProcBar(i, repeat), i < repeat; i++){
-        ABET abe(GetParam().curve, GetParam().swap);
+    ABET abe(GetParam().curve, GetParam().swap);
 
-        const std::string POLICY = "A&(DDDD|(BB&CCC))";
-        const int SIZE_OF_POLICY = 4;
-        // compute policy matrix
-        Policy_resolution pr;
-        Policy_generation pg;
-        std::vector<std::string>* postfix_expression = pr.infixToPostfix(POLICY);
-        if(visiable){
-            printf("postfix_expression of Policy: ");
-            for(int i = 0;i < postfix_expression->size();i++){
-                printf("%s ", postfix_expression->at(i).c_str());
-            }
-            printf("\n");
-        }
-        Binary_tree_policy* binary_tree_expression = pr.postfixToBinaryTree(postfix_expression, abe.GetZrElement());
-        pg.generatePolicyInMatrixForm(binary_tree_expression);
-        Element_t_matrix* MSP = pg.getPolicyInMatrixFormFromTree(binary_tree_expression);
-        if(visiable){
-            printf("Policy Matrix:\n");
-            MSP->printMatrix();
-        }
+    const std::string POLICY = "A&(DDDD|(BB&CCC))";
+    const int SIZE_OF_POLICY = 4;
+    // compute MSP
+    Policy_resolution pr;
+    Policy_generation pg;
+    std::vector<std::string>* postfix_expression = pr.infixToPostfix(POLICY);
+    Binary_tree_policy* binary_tree_expression = pr.postfixToBinaryTree(postfix_expression, abe.GetZrElement());
+    pg.generatePolicyInMatrixForm(binary_tree_expression);
+    Element_t_matrix* MSP = pg.getPolicyInMatrixFormFromTree(binary_tree_expression);
 
-        std::vector<std::string> S1 = {"A","DDDD"};
-        const int SIZE_OF_S1 = S1.size();
+    std::vector<std::string> S1 = {"A","DDDD"};
+    const int SIZE_OF_S1 = S1.size();
 
-        std::vector<std::string> S2 = {"BB","CCC"};
-        const int SIZE_OF_S2 = S2.size();
+    std::vector<std::string> S2 = {"BB","CCC"};
+    const int SIZE_OF_S2 = S2.size();
 
-        int K = GetParam().k;
-        const int U1 = K/3;  // length of U1
-        const int U2 = K/2;  // length of U2
-        ABET_ID id_12;
-        id_12.init(K);
-        for(int i = 1;i<=K;i++){
-            element_s *tmp_Zn = abe.GetZrElement();
-            id_12.set(i-1, tmp_Zn);
-            element_clear(tmp_Zn);
-        }
-        // if(visiable) id_12.print();
-
-        
-        ABET_mpk mpk;
-        ABET_msk msk;
-        ABET_sks sks_1;
-        ABET_sks sks_2;
-
-        ABET_ciphertext ciphertext_1;
-        ABET_ciphertext ciphertext_2;
-
-        // r
-        element_s *r = abe.GetZrElement();
-        element_s *res_r = abe.GetZrElement();
-        // R
-        unsigned char R[element_length_in_bytes(r) / 2];
-        unsigned char res_R[element_length_in_bytes(r) / 2];
-        RandomGenerator::Random_bytes(R, element_length_in_bytes(r) / 2);
-        if(visiable){
-            Logger::PrintPbc("r", r);
-            printf("R: %s\n", R);        
-        }
-
-        element_s *s1 = abe.GetZrElement();
-        element_s *s2 = abe.GetZrElement();
-
-        this->start("Setup");
-        abe.Setup(msk, mpk, K);
-        this->end("Setup");
-
-        // U1
-        this->start("KeyGen");
-        abe.KeyGen(sks_1, msk, mpk, S1, id_12, U1);
-        this->end("KeyGen");
-        // U2
-        abe.KeyGen(sks_2, msk, mpk, S2, id_12, U2);
-
-        this->start("Encrypt");
-        abe.Encrypt(ciphertext_1, mpk, msk, r, R, element_length_in_bytes(r) / 2, MSP, id_12, U1, s1, s2);
-        this->end("Encrypt");
-        abe.Encrypt(ciphertext_2, mpk, msk, r, R, element_length_in_bytes(r) / 2, MSP, id_12, U2, s1, s2);
-
-        this->start("Decrypt");
-        abe.Decrypt(res_R, res_r, mpk, msk, ciphertext_1, sks_1, MSP, id_12, U1);
-        this->end("Decrypt");
-        ASSERT_TRUE(memcmp(R, res_R, element_length_in_bytes(r) / 2) == 0);
-        ASSERT_TRUE(element_cmp(r, res_r) == 0);
-        if(visiable){
-            Logger::PrintPbc("res_r", res_r);
-            printf("res_R_1: %s\n", res_R);
-        }
-
-        try{
-            abe.Decrypt(res_R, res_r, mpk, msk, ciphertext_2, sks_2, MSP, id_12, U2);
-        }catch(const std::runtime_error& e){
-            if(visiable) printf("%s\n", e.what());
-        }
-
-        element_random(res_r);
-        RandomGenerator::Random_bytes(R, element_length_in_bytes(r) / 2);
-        abe.Decrypt(res_R, res_r, mpk, msk, ciphertext_2, sks_1, MSP, id_12, U1);
-        if(visiable){
-            Logger::PrintPbc("res_r", res_r);
-            printf("res_R_2: %s\n", res_R);
-        }
+    int K = GetParam().k;
+    const int U1 = K/3;  // length of U1
+    const int U2 = K/2;  // length of U2
+    ABET_ID id_12;
+    id_12.init(K);
+    for(int i = 1;i<=K;i++){
+        element_s *tmp_Zn = abe.GetZrElement();
+        id_12.set(i-1, tmp_Zn);
+        element_clear(tmp_Zn);
     }
+    
+    ABET_mpk mpk[repeat];
+    ABET_msk msk[repeat];
+    ABET_sks sks_1[repeat];
+    ABET_sks sks_2[repeat];
+
+    ABET_ciphertext ciphertext_1[repeat];
+    ABET_ciphertext ciphertext_2[repeat];
+
+    // r
+    element_s *r[repeat], *res_r[repeat];
+    for (int i = 0; i < repeat; i++){
+        r[i] = abe.GetZrElement();
+        res_r[i] = abe.GetZrElement();
+    }
+    
+    int len_r_half = element_length_in_bytes(r[0]) / 2;
+    // R
+    unsigned char R[repeat][len_r_half];
+    unsigned char res_R[repeat][len_r_half];
+    for (int i = 0; i < repeat; i++) RandomGenerator::Random_bytes(R[i], len_r_half);
+
+    element_s *s1[repeat], *s2[repeat];
+    for (int i = 0; i < repeat; i++){
+        s1[i] = abe.GetZrElement();
+        s2[i] = abe.GetZrElement();
+    }
+
+    this->start("Setup");
+    for (int i = 0; i < repeat; i++) abe.Setup(msk[i], mpk[i], K);
+    this->end("Setup");
+
+    // U1
+    this->start("KeyGen");
+    for (int i = 0; i < repeat; i++) abe.KeyGen(sks_1[i], msk[i], mpk[i], S1, id_12, U1);
+    this->end("KeyGen");
+    // U2
+    for (int i = 0; i < repeat; i++) abe.KeyGen(sks_2[i], msk[i], mpk[i], S2, id_12, U2);
+
+    this->start("Encrypt");
+    for (int i = 0; i < repeat; i++) abe.Encrypt(ciphertext_1[i], mpk[i], msk[i], r[i], R[i], element_length_in_bytes(r[i]) / 2, MSP, id_12, U1, s1[i], s2[i]);
+    this->end("Encrypt");
+    for (int i = 0; i < repeat; i++) abe.Encrypt(ciphertext_2[i], mpk[i], msk[i], r[i], R[i], element_length_in_bytes(r[i]) / 2, MSP, id_12, U2, s1[i], s2[i]);
+
+    this->start("Decrypt");
+    for (int i = 0; i < repeat; i++) abe.Decrypt(res_R[i], res_r[i], mpk[i], msk[i], ciphertext_1[i], sks_1[i], MSP, id_12, U1);
+    this->end("Decrypt");
+    for (int i = 0; i < repeat; i++) ASSERT_TRUE(memcmp(R[i], res_R[i], element_length_in_bytes(r[i]) / 2) == 0);
+    for (int i = 0; i < repeat; i++) ASSERT_TRUE(element_cmp(r[i], res_r[i]) == 0);
+    for (int i = 0; i < repeat; i++){
+        try{
+            abe.Decrypt(res_R[i], res_r[i], mpk[i], msk[i], ciphertext_2[i], sks_2[i], MSP, id_12, U2);
+        }catch(const std::runtime_error& e){}
+
+        element_random(res_r[i]);
+        RandomGenerator::Random_bytes(res_R[i], element_length_in_bytes(r[0]) / 2);
+        abe.Decrypt(res_R[i], res_r[i], mpk[i], msk[i], ciphertext_2[i], sks_1[i], MSP, id_12, U1);
+        ASSERT_TRUE(memcmp(R[i], res_R[i], element_length_in_bytes(r[i]) / 2) == 0);    
+        ASSERT_TRUE(element_cmp(r[i], res_r[i]) == 0);
+    }
+
     average();
 }
 
