@@ -11,8 +11,6 @@ class CP_ABE_Test : public BaseTest<TestParams>{
         void SetUp() override {
             BaseTest::SetUp();
 
-            repeat = 10;
-
             std::string testName = ::testing::UnitTest::GetInstance()->current_test_info()->name();
             std::string curveName = Curve::curve_names[GetParam().curve];
             fprintf(out, "%s %s swap: %d\n", testName.c_str(), curveName.c_str(), GetParam().swap);
@@ -87,69 +85,55 @@ int op_cnt[][diff_max_len] = {
 
 TEST_P(CP_ABE_Test, Test){
     std::vector<std::string> attr_list = {"ONE","TWO","THREE"};
-    int rows, cols;  // MSP
     
-    for(int i = 0; UpdateProcBar(i, repeat), i < repeat; i++){
+    CP_ABE abe(GetParam().curve, GetParam().swap);
+    CP_ABE_mpk mpk[repeat];
+    CP_ABE_msk msk[repeat];
+    CP_ABE_sks sks[repeat];
+    CP_ABE_ciphertext ciphertext[repeat];
 
-        CP_ABE abe(GetParam().curve, GetParam().swap);
-        CP_ABE_mpk mpk;
-        CP_ABE_msk msk;
-        CP_ABE_sks sks;
-        CP_ABE_ciphertext ciphertext;
+    const std::string POLICY = "(ONE&THREE)&(TWO|FOUR)";
+    // compute MSP
+    Policy_resolution pr;
+    Policy_generation pg;
+    std::vector<std::string>* postfix_expression = pr.infixToPostfix(POLICY);
 
-        
-        const std::string POLICY = "(ONE&THREE)&(TWO|FOUR)";
-        const int SIZE_OF_POLICY = 4;
+    Binary_tree_policy* binary_tree_expression = pr.postfixToBinaryTree(postfix_expression, abe.GetZrElement());
+    pg.generatePolicyInMatrixForm(binary_tree_expression);
+    Element_t_matrix* MSP = pg.getPolicyInMatrixFormFromTree(binary_tree_expression);
 
-        // compute MSP
-        Policy_resolution pr;
-        Policy_generation pg;
-        std::vector<std::string>* postfix_expression = pr.infixToPostfix(POLICY);
-        if(visiable){
-            printf("postfix_expression of Policy: ");
-            for(int i = 0;i < postfix_expression->size();i++){
-                printf("%s ", postfix_expression->at(i).c_str());
-            }
-            printf("\n");
-        }
-        Binary_tree_policy* binary_tree_expression = pr.postfixToBinaryTree(postfix_expression, abe.GetZrElement());
-        pg.generatePolicyInMatrixForm(binary_tree_expression);
-        Element_t_matrix* MSP = pg.getPolicyInMatrixFormFromTree(binary_tree_expression);
-        if(visiable){
-            printf("Policy Matrix:\n");
-            MSP->printMatrix();
-        }
-        rows = MSP->row();
-        cols = MSP->col();
+    int rows = MSP->row();
+    int cols = MSP->col();
 
-        element_s* msg = abe.GetGTElement();
-        element_s* res = abe.GetGTElement();
-        
-        this->start("SetUp");
-        abe.Setup(msk, mpk);
-        this->end("SetUp");
-
-        this->start("KeyGen");
-        abe.KeyGen(sks, msk, mpk, attr_list);
-        this->end("KeyGen");
-
-        if(visiable){
-            Logger::PrintPbcWithSize("msg", msg);
-        }
-        element_s *s1 = abe.GetZrElement();
-        element_s *s2 = abe.GetZrElement();
-        this->start("Encrypt");
-        abe.Encrypt(ciphertext, mpk, msg, MSP, s1, s2);
-        this->end("Encrypt");
-
-        this->start("Decrypt");
-        abe.Decrypt(res, ciphertext, MSP, mpk, sks);
-        this->end("Decrypt");
-        if(visiable){
-            Logger::PrintPbc("res", res);        
-        }
-        ASSERT_TRUE(element_cmp(msg, res) == 0);
+    element_s *msg[repeat], *res[repeat];
+    for (int i = 0; i < repeat; i++){
+        msg[i] = abe.GetGTElement();
+        res[i] = abe.GetGTElement();
     }
+    
+    this->start("SetUp");
+    for (int i = 0; i < repeat; i++) abe.Setup(msk[i], mpk[i]);
+    this->end("SetUp");
+
+    this->start("KeyGen");
+    for (int i = 0; i < repeat; i++) abe.KeyGen(sks[i], msk[i], mpk[i], attr_list);
+    this->end("KeyGen");
+
+    element_s *s1[repeat], *s2[repeat];
+    for (int i = 0; i < repeat; i++){
+        s1[i] = abe.GetZrElement();
+        s2[i] = abe.GetZrElement();
+    }
+    this->start("Encrypt");
+    for (int i = 0; i < repeat; i++) abe.Encrypt(ciphertext[i], mpk[i], msg[i], MSP, s1[i], s2[i]);
+    this->end("Encrypt");
+
+    this->start("Decrypt");
+    for (int i = 0; i < repeat; i++) abe.Decrypt(res[i], ciphertext[i], MSP, mpk[i], sks[i]);
+    this->end("Decrypt");
+
+    for (int i = 0; i < repeat; i++) ASSERT_TRUE(element_cmp(msg[i], res[i]) == 0);
+    
     average();
 
     EXPECT_TRUE(check_time(GetParam().curve, op_cnt[0], "SetUp"));

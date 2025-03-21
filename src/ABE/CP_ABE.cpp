@@ -201,8 +201,6 @@ void CP_ABE::KeyGen(CP_ABE_sks &sks, CP_ABE_msk &msk, CP_ABE_mpk &mpk, std::vect
     // sigma_prime
     element_random(this->tmp_Zn);
     // t = 1
-    // g^d1
-    element_pow_zn(sk_1_G, msk[g], this->d1);
     // H(0111)^b1r1a1
     std::string y0111 = "0111";
     this->Hash(this->tmp_G, y0111);
@@ -219,15 +217,13 @@ void CP_ABE::KeyGen(CP_ABE_sks &sks, CP_ABE_msk &msk, CP_ABE_mpk &mpk, std::vect
     element_div(this->tmp_Zn_2, this->tmp_Zn, msk[a1]);
     element_pow_zn(this->tmp_G_4, msk[g], this->tmp_Zn_2);
     // sk_prime1
-    element_mul(sk_1_G, sk_1_G, this->tmp_G);
+    element_mul(sk_1_G, msk[g_pow_d1], this->tmp_G);
     element_mul(sk_1_G, sk_1_G, this->tmp_G_2);
     element_mul(sk_1_G, sk_1_G, this->tmp_G_3);
     element_mul(sk_1_G, sk_1_G, this->tmp_G_4);
     sks.get_sk_prime().set(sk_1, sk_1_G);
 
     // t = 2
-    // g^d2
-    element_pow_zn(sk_2_G, msk[g], this->d2);
     // H(0112)^b1r1a2
     std::string y0112 = "0112";
     this->Hash(this->tmp_G, y0112);
@@ -244,7 +240,7 @@ void CP_ABE::KeyGen(CP_ABE_sks &sks, CP_ABE_msk &msk, CP_ABE_mpk &mpk, std::vect
     element_div(this->tmp_Zn_2, this->tmp_Zn, msk[a2]);
     element_pow_zn(this->tmp_G_4, msk[g], this->tmp_Zn_2);
     // sk_prime2
-    element_mul(sk_2_G, sk_2_G, this->tmp_G);
+    element_mul(sk_2_G, msk[g_pow_d2], this->tmp_G);
     element_mul(sk_2_G, sk_2_G, this->tmp_G_2);
     element_mul(sk_2_G, sk_2_G, this->tmp_G_3);
     element_mul(sk_2_G, sk_2_G, this->tmp_G_4);
