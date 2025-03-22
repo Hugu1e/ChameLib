@@ -112,6 +112,9 @@ class DPCH_MXN_2022_r {
         GmpElements c_etd;
         MA_ABE_ciphertext c_abe;
     public:
+        DPCH_MXN_2022_r(){
+            c_etd.init(1);
+        }
         CH_ET_BC_CDK_2017_r &get_r() {
             return r;
         }
@@ -140,7 +143,7 @@ class DPCH_MXN_2022: public PbcScheme{
     public:
         DPCH_MXN_2022(int curve);
 
-        void SetUp(DPCH_MXN_2022_pp &pp, DPCH_MXN_2022_pk &pkDPCH, DPCH_MXN_2022_sk &skDPCH, DPCH_MXN_2022_h &h, DPCH_MXN_2022_r &r, DPCH_MXN_2022_r &r_p, DPCH_MXN_2022_sigmaGid &sigmaGid, DPCH_MXN_2022_skGid &skGid,int k);
+        void SetUp(DPCH_MXN_2022_pp &pp, DPCH_MXN_2022_pk &pkDPCH, DPCH_MXN_2022_sk &skDPCH, DPCH_MXN_2022_sigmaGid &sigmaGid, int k);
 
         void ModSetUp(DPCH_MXN_2022_skGid &skGid, DPCH_MXN_2022_sigmaGid &sigmaGid, DPCH_MXN_2022_sk &skDPCH, std::string gid);
 

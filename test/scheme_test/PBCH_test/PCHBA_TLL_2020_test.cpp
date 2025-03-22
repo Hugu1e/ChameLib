@@ -55,101 +55,89 @@ INSTANTIATE_TEST_CASE_P(
 );
 
 TEST_P(PCHBA_TLL_2020_Test, Test){
-    for(int i = 0; UpdateProcBar(i, repeat), i < repeat; i++){
-        PCHBA_TLL_2020 ch(GetParam().curve, GetParam().swap);
+    PCHBA_TLL_2020 ch(GetParam().curve, GetParam().swap);
 
-        const std::string POLICY = "A&(DDDD|(BB&CCC))";
-        const int SIZE_OF_POLICY = 4;
+    const std::string POLICY = "A&(DDDD|(BB&CCC))";
+    // compute MSP
+    Policy_resolution pr;
+    Policy_generation pg;
+    std::vector<std::string>* postfix_expression = pr.infixToPostfix(POLICY);
+    Binary_tree_policy* binary_tree_expression = pr.postfixToBinaryTree(postfix_expression, ch.GetZrElement());
+    pg.generatePolicyInMatrixForm(binary_tree_expression);
+    Element_t_matrix* MSP = pg.getPolicyInMatrixFormFromTree(binary_tree_expression);
 
-        // compute policy matrix
-        Policy_resolution pr;
-        Policy_generation pg;
-        std::vector<std::string>* postfix_expression = pr.infixToPostfix(POLICY);
-        if(visiable){
-            printf("postfix_expression of Policy: ");
-            for(int i = 0;i < postfix_expression->size();i++){
-                printf("%s ", postfix_expression->at(i).c_str());
-            }
-            printf("\n");
-        }
-        Binary_tree_policy* binary_tree_expression = pr.postfixToBinaryTree(postfix_expression, ch.GetZrElement());
-        pg.generatePolicyInMatrixForm(binary_tree_expression);
-        Element_t_matrix* MSP = pg.getPolicyInMatrixFormFromTree(binary_tree_expression);
-        if(visiable){
-            printf("Policy Matrix:\n");
-            MSP->printMatrix();
-        }
+    std::vector<std::string> S1 = {"A","DDDD"};
+    const int SIZE_OF_S1 = S1.size();
 
-        std::vector<std::string> S1 = {"A","DDDD"};
-        const int SIZE_OF_S1 = S1.size();
+    std::vector<std::string> S2 = {"BB","CCC"};
+    const int SIZE_OF_S2 = S2.size();
 
-        std::vector<std::string> S2 = {"BB","CCC"};
-        const int SIZE_OF_S2 = S2.size();
+    int K = GetParam().k;
+    const int U1 = K/3;  // length of U1
+    const int U2 = K/2;  // length of U2
+    PCHBA_TLL_2020_ID ID12;
+    ID12.get_IDABET().init(K);
+    for(int i = 1;i<=K;i++){
+        element_s *tmp_Zn = ch.GetZrElement();
 
-        int K = GetParam().k;
-        const int U1 = K/3;  // length of U1
-        const int U2 = K/2;  // length of U2
-        PCHBA_TLL_2020_ID ID12;
-        ID12.get_IDABET().init(K);
-        for(int i = 1;i<=K;i++){
-            element_s *tmp_Zn = ch.GetZrElement();
-
-            ID12.get_IDABET().set(i-1, tmp_Zn);
-            element_clear(tmp_Zn);
-        }
-        // if(visiable) ID12.get_IDABET().print();
-
-        PCHBA_TLL_2020_sk skPCHBA;
-        PCHBA_TLL_2020_pk pkPCHBA;
-        
-        PCHBA_TLL_2020_sks sksPCHBA_1, sksPCHBA_2;
-        PCHBA_TLL_2020_h h1, h2;
-        PCHBA_TLL_2020_r r1, r2, r_p;
-
-        element_s *m1 = ch.GetZrElement();
-        element_s *m2 = ch.GetZrElement();
-        element_s *m_p = ch.GetZrElement();
-
-        this->start("SetUp");
-        ch.SetUp(pkPCHBA, skPCHBA, K);
-        this->end("SetUp");
-        
-        this->start("KeyGen");
-        ch.KeyGen(sksPCHBA_1, pkPCHBA, skPCHBA, S1, ID12, U1);
-        this->end("KeyGen");
-        ch.KeyGen(sksPCHBA_2, pkPCHBA, skPCHBA, S2, ID12, U2);
-        
-        this->start("Hash");
-        ch.Hash(h1, r1, m1, pkPCHBA, skPCHBA, MSP, ID12, U1);
-        this->end("Hash");
-        
-        this->start("Check");
-        bool check_result = ch.Check(h1, r1, m1, pkPCHBA);
-        this->end("Check");
-        ASSERT_TRUE(check_result);
-
-        this->start("Adapt");
-        ch.Adapt(r_p, m_p, h1, r1, m1, MSP, ID12, U1, pkPCHBA, skPCHBA, sksPCHBA_1);
-        this->end("Adapt");
-
-        this->start("Verify");
-        bool verify_result = ch.Verify(h1, r_p, m_p, pkPCHBA);
-        this->end("Verify");
-        ASSERT_TRUE(verify_result);
-
-        ch.Hash(h2, r2, m2, pkPCHBA, skPCHBA, MSP, ID12, U2);
-        check_result = ch.Check(h2, r2, m2, pkPCHBA);
-        ASSERT_TRUE(check_result);
-        try{
-            ch.Adapt(r_p, m_p, h2, r2, m2, MSP, ID12, U2, pkPCHBA, skPCHBA, sksPCHBA_2);
-        }catch(const std::runtime_error& e){
-            if(visiable) printf("%s\n", e.what());
-        }
-
-        ch.Adapt(r_p, m_p, h2, r2, m2, MSP, ID12, U1, pkPCHBA, skPCHBA, sksPCHBA_1);
-        verify_result = ch.Verify(h2, r_p, m_p, pkPCHBA);
-        ASSERT_TRUE(verify_result);
+        ID12.get_IDABET().set(i-1, tmp_Zn);
+        element_clear(tmp_Zn);
     }
+
+    PCHBA_TLL_2020_sk skPCHBA[repeat];
+    PCHBA_TLL_2020_pk pkPCHBA[repeat];
+    
+    PCHBA_TLL_2020_sks sksPCHBA_1[repeat], sksPCHBA_2[repeat];
+    PCHBA_TLL_2020_h h1[repeat], h2[repeat];
+    PCHBA_TLL_2020_r r1[repeat], r2[repeat], r_p[repeat];
+
+    element_s *m1[repeat], *m2[repeat], *m_p[repeat];
+    for (int i = 0; i < repeat; i++){
+        m1[i] = ch.GetZrElement();
+        m2[i] = ch.GetZrElement();
+        m_p[i] = ch.GetZrElement();
+    }
+
+    this->start("SetUp");
+    for (int i = 0; i < repeat; i++) ch.SetUp(pkPCHBA[i], skPCHBA[i], K);
+    this->end("SetUp");
+    
+    this->start("KeyGen");
+    for (int i = 0; i < repeat; i++) ch.KeyGen(sksPCHBA_1[i], pkPCHBA[i], skPCHBA[i], S1, ID12, U1);
+    this->end("KeyGen");
+    for (int i = 0; i < repeat; i++) ch.KeyGen(sksPCHBA_2[i], pkPCHBA[i], skPCHBA[i], S2, ID12, U2);
+    
+    this->start("Hash");
+    for (int i = 0; i < repeat; i++) ch.Hash(h1[i], r1[i], m1[i], pkPCHBA[i], skPCHBA[i], MSP, ID12, U1);
+    this->end("Hash");
+    
+    bool check_result[repeat];
+    this->start("Check");
+    for (int i = 0; i < repeat; i++) check_result[i] = ch.Check(h1[i], r1[i], m1[i], pkPCHBA[i]);
+    this->end("Check");
+    for (int i = 0; i < repeat; i++) ASSERT_TRUE(check_result[i]);
+
+    this->start("Adapt");
+    for (int i = 0; i < repeat; i++) ch.Adapt(r_p[i], m_p[i], h1[i], r1[i], m1[i], MSP, ID12, U1, pkPCHBA[i], skPCHBA[i], sksPCHBA_1[i]);
+    this->end("Adapt");
+
+    bool verify_result[repeat];
+    this->start("Verify");
+    for (int i = 0; i < repeat; i++) verify_result[i] = ch.Verify(h1[i], r_p[i], m_p[i], pkPCHBA[i]);
+    this->end("Verify");
+    for (int i = 0; i < repeat; i++) ASSERT_TRUE(verify_result[i]);
+
+    for (int i = 0; i < repeat; i++) ch.Hash(h2[i], r2[i], m2[i], pkPCHBA[i], skPCHBA[i], MSP, ID12, U2);
+    for (int i = 0; i < repeat; i++) check_result[i] = ch.Check(h2[i], r2[i], m2[i], pkPCHBA[i]);
+    for (int i = 0; i < repeat; i++) ASSERT_TRUE(check_result[i]);
+    try{
+        for (int i = 0; i < repeat; i++) ch.Adapt(r_p[i], m_p[i], h2[i], r2[i], m2[i], MSP, ID12, U2, pkPCHBA[i], skPCHBA[i], sksPCHBA_2[i]);
+    }catch(const std::runtime_error& e){}
+
+    for (int i = 0; i < repeat; i++) ch.Adapt(r_p[i], m_p[i], h2[i], r2[i], m2[i], MSP, ID12, U1, pkPCHBA[i], skPCHBA[i], sksPCHBA_1[i]);
+    for (int i = 0; i < repeat; i++) verify_result[i] = ch.Verify(h2[i], r_p[i], m_p[i], pkPCHBA[i]);
+    for (int i = 0; i < repeat; i++) ASSERT_TRUE(verify_result[i]);
+    
     average();
 }
 

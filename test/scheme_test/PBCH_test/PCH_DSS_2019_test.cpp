@@ -55,76 +55,57 @@ INSTANTIATE_TEST_CASE_P(
 );
 
 TEST_P(PCH_DSS_2019_Test, Test){
-    for(int i = 0; UpdateProcBar(i, repeat), i < repeat; i++){
+    PCH_DSS_2019 ch(GetParam().curve, GetParam().swap);
 
-        PCH_DSS_2019 ch(GetParam().curve, GetParam().swap);
+    std::vector<std::string> attr_list = {"ONE","TWO","THREE"};
+    const std::string POLICY = "(ONE&THREE)&(TWO|FOUR)";
+    // compute MSP
+    Policy_resolution pr;
+    Policy_generation pg;
+    std::vector<std::string>* postfix_expression = pr.infixToPostfix(POLICY);
+    Binary_tree_policy* binary_tree_expression = pr.postfixToBinaryTree(postfix_expression, ch.GetZrElement());
+    pg.generatePolicyInMatrixForm(binary_tree_expression);
+    Element_t_matrix* MSP = pg.getPolicyInMatrixFormFromTree(binary_tree_expression);
 
-        std::vector<std::string> attr_list = {"ONE","TWO","THREE"};
-        const int SIZE_OF_ATTR = attr_list.size();
-        const std::string POLICY = "(ONE&THREE)&(TWO|FOUR)";
-        const int SIZE_OF_POLICY = 4;
-        // compute MSP
-        Policy_resolution pr;
-        Policy_generation pg;
-        std::vector<std::string>* postfix_expression = pr.infixToPostfix(POLICY);
-        if(visiable){
-            printf("postfix_expression of Policy: ");
-            for(int i = 0;i < postfix_expression->size();i++){
-                printf("%s ", postfix_expression->at(i).c_str());
-            }
-            printf("\n");
-        }
-        Binary_tree_policy* binary_tree_expression = pr.postfixToBinaryTree(postfix_expression, ch.GetZrElement());
-        pg.generatePolicyInMatrixForm(binary_tree_expression);
-        Element_t_matrix* MSP = pg.getPolicyInMatrixFormFromTree(binary_tree_expression);
-        if(visiable){
-            printf("Policy Matrix:\n");
-            MSP->printMatrix();
-        }
+    PCH_DSS_2019_pp ppPCH[repeat];
+    PCH_DSS_2019_sk skPCH[repeat];
+    PCH_DSS_2019_pk pkPCH[repeat];
+    PCH_DSS_2019_sks sksPCH[repeat];
 
-        PCH_DSS_2019_pp ppPCH;
-        PCH_DSS_2019_sk skPCH;
-        PCH_DSS_2019_pk pkPCH;
-        PCH_DSS_2019_sks sksPCH;
+    PCH_DSS_2019_h h[repeat];
+    PCH_DSS_2019_r r[repeat], r_p[repeat];
 
-        PCH_DSS_2019_h h;
-        PCH_DSS_2019_r r,r_p;
+    std::string m = "message to hash";
+    std::string m_p = "message to adapt";
 
-        std::string m = "message to hash";
-        std::string m_p = "message to adapt";
+    this->start("SetUp");
+    for (int i = 0; i < repeat; i++) ch.SetUp(ppPCH[i], pkPCH[i], skPCH[i], GetParam().k);
+    this->end("SetUp");
 
-        this->start("SetUp");
-        ch.SetUp(ppPCH, pkPCH, skPCH, GetParam().k);
-        this->end("SetUp");
+    this->start("KeyGen");
+    for (int i = 0; i < repeat; i++) ch.KeyGen(sksPCH[i], skPCH[i], pkPCH[i], attr_list);
+    this->end("KeyGen");
 
-        this->start("KeyGen");
-        ch.KeyGen(sksPCH, skPCH, pkPCH, attr_list);
-        this->end("KeyGen");
+    this->start("Hash");
+    for (int i = 0; i < repeat; i++) ch.Hash(h[i], r[i], m, MSP, POLICY, pkPCH[i], ppPCH[i]);
+    this->end("Hash");
 
-        this->start("Hash");
-        ch.Hash(h, r, m, MSP, POLICY, pkPCH, ppPCH);
-        this->end("Hash");
-        if(visiable){
-            h.get_h().print();
-        }
+    bool check_result[repeat];
+    this->start("Check");
+    for (int i = 0; i < repeat; i++) check_result[i] = ch.Check(h[i], r[i], m, pkPCH[i]);
+    this->end("Check");
+    for (int i = 0; i < repeat; i++) ASSERT_TRUE(check_result[i]);
+    
+    this->start("Adapt");
+    for (int i = 0; i < repeat; i++) ch.Adapt(r_p[i], m_p, h[i], r[i], m, sksPCH[i], pkPCH[i], MSP, POLICY);
+    this->end("Adapt");
 
-        this->start("Check");
-        bool check_result = ch.Check(h, r, m, pkPCH);
-        this->end("Check");
-        ASSERT_TRUE(check_result);
-        
-        this->start("Adapt");
-        ch.Adapt(r_p, m_p, h, r, m, sksPCH, pkPCH, MSP, POLICY);
-        this->end("Adapt");
-        if(visiable){
-            r_p.get_rCHET().print();
-        }
-
-        this->start("Verify");
-        bool verify_result = ch.Verify(h, r_p, m_p, pkPCH);
-        this->end("Verify");
-        ASSERT_TRUE(verify_result);
-    }
+    bool verify_result[repeat];
+    this->start("Verify");
+    for (int i = 0; i < repeat; i++) verify_result[i] = ch.Verify(h[i], r_p[i], m_p, pkPCH[i]);
+    this->end("Verify");
+    for (int i = 0; i < repeat; i++) ASSERT_TRUE(verify_result[i]);
+    
     average();
 }
 

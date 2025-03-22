@@ -50,151 +50,117 @@ INSTANTIATE_TEST_CASE_P(
 );
 
 TEST_P(DPCH_MXN_2022_Test, Test){    
-    for(int i = 0; UpdateProcBar(i, repeat), i < repeat; i++){
+    DPCH_MXN_2022 ch(GetParam().curve);
 
-        DPCH_MXN_2022 ch(GetParam().curve);
+    const std::string POLICY = "(ONE&THREE)&(TWO|FOUR)";
+    // compute MSP
+    Policy_resolution pr;
+    Policy_generation pg;
+    std::vector<std::string>* postfix_expression = pr.infixToPostfix(POLICY);
+    Binary_tree_policy* binary_tree_expression = pr.postfixToBinaryTree(postfix_expression, ch.GetZrElement());
+    pg.generatePolicyInMatrixForm(binary_tree_expression);
+    Element_t_matrix* MSP = pg.getPolicyInMatrixFormFromTree(binary_tree_expression);
 
-        const std::string POLICY = "(ONE&THREE)&(TWO|FOUR)";
-        const int SIZE_OF_POLICY = 4;
-        // compute policy matrix
-        Policy_resolution pr;
-        Policy_generation pg;
-        std::vector<std::string>* postfix_expression = pr.infixToPostfix(POLICY);
-        if(visiable){
-            printf("postfix_expression of Policy: ");
-            for(int i = 0;i < postfix_expression->size();i++){
-                printf("%s ", postfix_expression->at(i).c_str());
-            }
-            printf("\n");
-        }
-        Binary_tree_policy* binary_tree_expression = pr.postfixToBinaryTree(postfix_expression, ch.GetZrElement());
-        pg.generatePolicyInMatrixForm(binary_tree_expression);
-        Element_t_matrix* MSP = pg.getPolicyInMatrixFormFromTree(binary_tree_expression);
-        if(visiable){
-            printf("Policy Matrix:\n");
-            MSP->printMatrix();
-        }
-        // attribute
-        const std::string A = "ONE";
-        const std::string B = "TWO";
-        const std::string C = "THREE";
-        const std::string D = "FOUR";
-        const std::string ATTRIBUTES[] = {A, B, C, D};
-        const int SIZE_OF_ATTRIBUTES = sizeof(ATTRIBUTES) / sizeof(ATTRIBUTES[0]);
-        const std::string GID = "GID of A B C D with attribute ONE TOW THREE FOUR";
+    // attributes
+    const std::string A = "ONE";
+    const std::string B = "TWO";
+    const std::string C = "THREE";
+    const std::string D = "FOUR";
+    const std::string ATTRIBUTES[] = {A, B, C, D};
+    const int SIZE_OF_ATTRIBUTES = sizeof(ATTRIBUTES) / sizeof(ATTRIBUTES[0]);
 
-        std::vector<DPCH_MXN_2022_pkTheta *> pkThetas;
-        std::vector<DPCH_MXN_2022_skTheta *> skThetas;
-        std::vector<DPCH_MXN_2022_skGidA *> skGidAs;
+    const std::string GID = "GID of A B C D with attribute ONE TOW THREE FOUR";
 
-        DPCH_MXN_2022_pp ppDPCH;
-        DPCH_MXN_2022_pk pkDPCH;
-        DPCH_MXN_2022_sk skDPCH;
-        DPCH_MXN_2022_skGid skGid;
-        DPCH_MXN_2022_sigmaGid sigmaGid;
-        DPCH_MXN_2022_h h;
-        DPCH_MXN_2022_r r,r_p;
-        std::string m = "message";
-        std::string m_p = "message_p";
+    std::vector<std::vector<DPCH_MXN_2022_pkTheta *>> pkThetas(repeat);
+    std::vector<std::vector<DPCH_MXN_2022_skTheta *>> skThetas(repeat);
+    std::vector<std::vector<DPCH_MXN_2022_skGidA *>> skGidAs(repeat);
 
-        this->start("SetUp");
-        ch.SetUp(ppDPCH, pkDPCH, skDPCH, h, r, r_p, sigmaGid, skGid, GetParam().lamuda);
-        this->end("SetUp");
-        if(visiable){
-            ppDPCH.get_gpk_MA_ABE().print();
-            pkDPCH.get_pk_CH().print();
-            skDPCH.get_sk_CH().print();
-            pkDPCH.get_pk_BLS().print();
-            skDPCH.get_sk_BLS().print();
-        }
+    DPCH_MXN_2022_pp ppDPCH[repeat];
+    DPCH_MXN_2022_pk pkDPCH[repeat];
+    DPCH_MXN_2022_sk skDPCH[repeat];
+    DPCH_MXN_2022_skGid skGid[repeat];
+    DPCH_MXN_2022_sigmaGid sigmaGid[repeat];
+    DPCH_MXN_2022_h h[repeat];
+    DPCH_MXN_2022_r r[repeat], r_p[repeat];
+    std::string m = "message";
+    std::string m_p = "message_p";
 
-        this->start("ModSetUp");
-        ch.ModSetUp(skGid, sigmaGid, skDPCH, GID);
-        this->end("ModSetUp");
-        if(visiable){
-            skGid.get_sk_CH().print();
-            sigmaGid.get_signature().print();
-        }
+    this->start("SetUp");
+    for (int i = 0; i < repeat; i++) ch.SetUp(ppDPCH[i], pkDPCH[i], skDPCH[i], sigmaGid[i], GetParam().lamuda);
+    this->end("SetUp");
 
-        
-        for(int i = 0; i < GetParam().authNum; i++) {
+    this->start("ModSetUp");
+    for (int i = 0; i < repeat; i++) ch.ModSetUp(skGid[i], sigmaGid[i], skDPCH[i], GID);
+    this->end("ModSetUp");
+    
+    for (int i = 0; i < repeat; i++){
+        for(int j = 0; j < GetParam().authNum; j++) {
             DPCH_MXN_2022_pkTheta *pkTheta = new DPCH_MXN_2022_pkTheta; 
             DPCH_MXN_2022_skTheta *skTheta = new DPCH_MXN_2022_skTheta;
-
-            if(i < SIZE_OF_ATTRIBUTES){
-                this->start("AuthSetUp");
-                ch.AuthSetUp(*pkTheta, *skTheta, ppDPCH, ATTRIBUTES[i]);
-                this->end("AuthSetUp");
+    
+            if(j < SIZE_OF_ATTRIBUTES){
+                this->start("AuthSetUp", false);
+                ch.AuthSetUp(*pkTheta, *skTheta, ppDPCH[i], ATTRIBUTES[j]);
+                this->end("AuthSetUp", false);
             }else{
-                this->start("AuthSetUp");
-                ch.AuthSetUp(*pkTheta, *skTheta, ppDPCH, "ATTRIBUTE@AUTHORITY_" + std::to_string(i));
-                this->end("AuthSetUp");
+                this->start("AuthSetUp", false);
+                ch.AuthSetUp(*pkTheta, *skTheta, ppDPCH[i], "ATTRIBUTE@AUTHORITY_" + std::to_string(j));
+                this->end("AuthSetUp", false);
             }
-
-            pkThetas.push_back(pkTheta);
-            skThetas.push_back(skTheta);
-            
-            // if(visiable){
-            //     pkTheta->get_pk().print();
-            //     skTheta->get_sk().print();
-            // }
+    
+            pkThetas[i].push_back(pkTheta);
+            skThetas[i].push_back(skTheta);
         }
-
-        for(int i = 0; i < GetParam().authNum; i++) {
-            DPCH_MXN_2022_skGidA *skGidA = new DPCH_MXN_2022_skGidA;
-
-            if (i < SIZE_OF_ATTRIBUTES) {
-                this->start("ModKeyGen");
-                ch.ModKeyGen(*skGidA, ppDPCH, pkDPCH, GID, sigmaGid, *skThetas[i], ATTRIBUTES[i]);
-                this->end("ModKeyGen");
-            } else {
-                this->start("ModKeyGen");
-                ch.ModKeyGen(*skGidA, ppDPCH, pkDPCH, GID, sigmaGid, *skThetas[i], "ATTRIBUTE@AUTHORITY_" + std::to_string(i));
-                this->end("ModKeyGen");
-            }
-            
-            skGidAs.push_back(skGidA);
-            
-            // if(visiable){
-            //     printf("skGidA->gid: %s\n", skGidA->get_sk().get_gid().c_str());
-            //     printf("skGidA->A: %s\n", skGidA->get_sk().get_A().c_str());
-            //     skGidA->get_sk().print();
-            // }
-        }
-
-        this->start("Hash");
-        ch.Hash(h, r, m, ppDPCH, pkDPCH, pkThetas, MSP, POLICY);
-        this->end("Hash");
-        if(visiable){
-            // h0, h1, r0, r1
-            h.get_h().print();
-            r.get_r().print();
-        }
-
-        this->start("Check");
-        bool check_result = ch.Check(pkDPCH, m, h, r);
-        this->end("Check");
-        ASSERT_TRUE(check_result);
-
-        // choose partial secret keys
-        std::vector<DPCH_MXN_2022_skGidA *> _skGidAs;
-        _skGidAs.push_back(skGidAs[0]);
-        _skGidAs.push_back(skGidAs[1]);
-        _skGidAs.push_back(skGidAs[2]);
-
-        this->start("Adapt");
-        ch.Adapt(r_p, m_p, h, r, m, pkDPCH, skGid, _skGidAs, ppDPCH, pkThetas, MSP, POLICY);
-        this->end("Adapt");
-        if(visiable){
-            // r0, r1
-            r_p.get_r().print();
-        }
-
-        this->start("Verify");
-        bool verify_result = ch.Verify(pkDPCH, m_p, h, r_p);
-        this->end("Verify");
-        ASSERT_TRUE(verify_result);
     }
+    average("AuthSetUp", GetParam().authNum);
+    
+    for (int i = 0; i < repeat; i++){
+        for(int j = 0; j < GetParam().authNum; j++) {
+            DPCH_MXN_2022_skGidA *skGidA = new DPCH_MXN_2022_skGidA;
+    
+            if (j < SIZE_OF_ATTRIBUTES) {
+                this->start("ModKeyGen", false);
+                ch.ModKeyGen(*skGidA, ppDPCH[i], pkDPCH[i], GID, sigmaGid[i], *skThetas[i][j], ATTRIBUTES[j]);
+                this->end("ModKeyGen", false);
+            } else {
+                this->start("ModKeyGen", false);
+                ch.ModKeyGen(*skGidA, ppDPCH[i], pkDPCH[i], GID, sigmaGid[i], *skThetas[i][j], "ATTRIBUTE@AUTHORITY_" + std::to_string(j));
+                this->end("ModKeyGen", false);
+            }
+            
+            skGidAs[i].push_back(skGidA);
+        }
+    }
+    average("ModKeyGen", GetParam().authNum);
+
+    this->start("Hash");
+    for (int i = 0; i < repeat; i++) ch.Hash(h[i], r[i], m, ppDPCH[i], pkDPCH[i], pkThetas[i], MSP, POLICY);
+    this->end("Hash");
+
+    bool check_result[repeat];
+    this->start("Check");
+    for (int i = 0; i < repeat; i++) check_result[i] = ch.Check(pkDPCH[i], m, h[i], r[i]);
+    this->end("Check");
+    for (int i = 0; i < repeat; i++) ASSERT_TRUE(check_result[i]);
+
+    // choose partial secret keys
+    std::vector<std::vector<DPCH_MXN_2022_skGidA *>> _skGidAs(repeat);
+    for (int i = 0; i < repeat; i++){
+        _skGidAs[i].push_back(skGidAs[i][0]);
+        _skGidAs[i].push_back(skGidAs[i][1]);
+        _skGidAs[i].push_back(skGidAs[i][2]);
+    }
+
+    this->start("Adapt");
+    for (int i = 0; i < repeat; i++) ch.Adapt(r_p[i], m_p, h[i], r[i], m, pkDPCH[i], skGid[i], _skGidAs[i], ppDPCH[i], pkThetas[i], MSP, POLICY);
+    this->end("Adapt");
+
+    bool verify_result[repeat];
+    this->start("Verify");
+    for (int i = 0; i < repeat; i++) verify_result[i] = ch.Verify(pkDPCH[i], m_p, h[i], r_p[i]);
+    this->end("Verify");
+    for (int i = 0; i < repeat; i++) ASSERT_TRUE(verify_result[i]);
+    
     average();
 }
 

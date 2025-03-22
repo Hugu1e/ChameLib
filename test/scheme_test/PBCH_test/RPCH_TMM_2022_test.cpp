@@ -60,116 +60,108 @@ INSTANTIATE_TEST_CASE_P(
 );
 
 TEST_P(RPCH_TMM_2022_Test, Test){
-    for(int i = 0; UpdateProcBar(i, repeat), i < repeat; i++){
+    RPCH_TMM_2022 ch(GetParam().curve, GetParam().swap);
 
-        RPCH_TMM_2022 ch(GetParam().curve, GetParam().swap);
+    std::vector<std::string> attr_list = {"ONE","TWO","THREE"};
+    const std::string POLICY = "(ONE&THREE)&(TWO|FOUR)";
+    // compute MSP
+    Policy_resolution pr;
+    Policy_generation pg;
+    std::vector<std::string>* postfix_expression = pr.infixToPostfix(POLICY);
+    Binary_tree_policy* binary_tree_expression = pr.postfixToBinaryTree(postfix_expression, ch.GetZrElement());
+    pg.generatePolicyInMatrixForm(binary_tree_expression);
+    Element_t_matrix* MSP = pg.getPolicyInMatrixFormFromTree(binary_tree_expression);
 
-        std::vector<std::string> attr_list = {"ONE","TWO","THREE"};
-        const int SIZE_OF_ATTR = attr_list.size();  // S
-        const std::string POLICY = "(ONE&THREE)&(TWO|FOUR)";
-        const int SIZE_OF_POLICY = 4;
-        // compute policy matrix
-        Policy_resolution pr;
-        Policy_generation pg;
-        std::vector<std::string>* postfix_expression = pr.infixToPostfix(POLICY);
-        if(visiable){
-            printf("postfix_expression of Policy: ");
-            for(int i = 0;i < postfix_expression->size();i++){
-                printf("%s ", postfix_expression->at(i).c_str());
-            }
-            printf("\n");
-        }
-        Binary_tree_policy* binary_tree_expression = pr.postfixToBinaryTree(postfix_expression, ch.GetZrElement());
-        pg.generatePolicyInMatrixForm(binary_tree_expression);
-        Element_t_matrix* MSP = pg.getPolicyInMatrixFormFromTree(binary_tree_expression);
-        if(visiable){
-            printf("Policy Matrix:\n");
-            MSP->printMatrix();
-        }
-
-        element_s *id_1 = ch.GetZrElement();
-        element_s *id_2 = ch.GetZrElement();
-        element_s *id_3 = ch.GetZrElement();
-
-        // T1 < T3 < T_present < T2
-        const time_t T_present = TimeUtils::TimeCast(2025, 2, 1, 0, 0, 0);  // present time
-        const time_t re_time_1 = TimeUtils::TimeCast(2025, 1, 1, 0, 0, 0);
-        const time_t re_time_2 = TimeUtils::TimeCast(2025, 2, 31, 0, 0, 0);
-        const time_t re_time_3 = TimeUtils::TimeCast(2025, 1, 2, 0, 0, 0);
-        
-        RPCH_TMM_2022_sk skRPCH;
-        RPCH_TMM_2022_pk pkRPCH;
-
-        RPCH_TMM_2022_skid skidRPCH_1;
-        RPCH_TMM_2022_skid skidRPCH_2;
-        RPCH_TMM_2022_skid skidRPCH_3;
-
-        RPCH_TMM_2022_dkidt dkidtRPCH_1;
-        RPCH_TMM_2022_dkidt dkidtRPCH_2;
-        RPCH_TMM_2022_dkidt dkidtRPCH_3;
-
-        RPCH_TMM_2022_kut kut;
-
-        RPCH_TMM_2022_h h,h_p;
-
-        RPCH_TMM_2022_RevokedPresonList rl;
-        RPCH_TMM_2022_Binary_tree st;
-
-        element_s *m = ch.GetZrElement();
-        element_s *m_p = ch.GetZrElement();
-        
-        this->start("SetUp");
-        ch.SetUp(skRPCH, pkRPCH, rl, st, GetParam().k, GetParam().leafNodeSize);
-        this->end("SetUp");
-        
-        this->start("KeyGen");
-        ch.KeyGen(skidRPCH_1, pkRPCH, skRPCH, st, attr_list, id_1, re_time_1);
-        this->end("KeyGen");
-        ch.KeyGen(skidRPCH_2, pkRPCH, skRPCH, st, attr_list, id_2, re_time_2);
-        ch.KeyGen(skidRPCH_3, pkRPCH, skRPCH, st, attr_list, id_3, re_time_3);
-
-        this->start("Rev");
-        ch.Rev(rl, id_1, re_time_1);
-        this->end("Rev");
-        ch.Rev(rl, id_2, re_time_2);
-        ch.Rev(rl, id_3, re_time_3);
-
-        this->start("Hash");
-        ch.Hash(h, m, pkRPCH, MSP, T_present);
-        this->end("Hash");
-            
-        this->start("Check");
-        bool check = ch.Check(pkRPCH, m, h);
-        this->end("Check");
-        ASSERT_TRUE(check);
-        
-        this->start("KUpt");
-        ch.KUpt(kut, pkRPCH, st, rl, T_present);
-        this->end("KUpt");
-        
-        try{
-            ch.DKGen(dkidtRPCH_1, pkRPCH, skidRPCH_1, kut);
-        }catch(const std::runtime_error& e){
-            if(visiable) printf("%s\n", e.what());
-        }
-        try{
-            ch.DKGen(dkidtRPCH_3, pkRPCH, skidRPCH_3, kut);
-        }catch(const std::runtime_error& e){
-            if(visiable) printf("%s\n", e.what());
-        }
-        this->start("DKGen");
-        ch.DKGen(dkidtRPCH_2, pkRPCH, skidRPCH_2, kut);
-        this->end("DKGen");
-
-        this->start("Adapt");
-        ch.Adapt(h_p, m_p, m, h, pkRPCH, dkidtRPCH_2, MSP);
-        this->end("Adapt");
-        
-        this->start("Verify");
-        bool verify = ch.Verify(pkRPCH, m_p, h_p);
-        this->end("Verify");
-        ASSERT_TRUE(verify);
+    element_s *id_1[repeat], *id_2[repeat], *id_3[repeat];
+    for (int i = 0; i < repeat; i++){
+        id_1[i] = ch.GetZrElement();
+        id_2[i] = ch.GetZrElement();
+        id_3[i] = ch.GetZrElement();
     }
+
+    // T1 < T3 < T_present < T2
+    const time_t T_present = TimeUtils::TimeCast(2025, 2, 1, 0, 0, 0);  // present time
+    const time_t re_time_1 = TimeUtils::TimeCast(2025, 1, 1, 0, 0, 0);
+    const time_t re_time_2 = TimeUtils::TimeCast(2025, 2, 31, 0, 0, 0);
+    const time_t re_time_3 = TimeUtils::TimeCast(2025, 1, 2, 0, 0, 0);
+    
+    RPCH_TMM_2022_sk skRPCH[repeat];
+    RPCH_TMM_2022_pk pkRPCH[repeat];
+
+    RPCH_TMM_2022_skid skidRPCH_1[repeat];
+    RPCH_TMM_2022_skid skidRPCH_2[repeat];
+    RPCH_TMM_2022_skid skidRPCH_3[repeat];
+
+    RPCH_TMM_2022_dkidt dkidtRPCH_1[repeat];
+    RPCH_TMM_2022_dkidt dkidtRPCH_2[repeat];
+    RPCH_TMM_2022_dkidt dkidtRPCH_3[repeat];
+
+    RPCH_TMM_2022_kut kut[repeat];
+
+    RPCH_TMM_2022_h h[repeat], h_p[repeat];
+
+    RPCH_TMM_2022_RevokedPresonList rl[repeat];
+    RPCH_TMM_2022_Binary_tree st[repeat];
+
+    element_s *m[repeat], *m_p[repeat];
+    for (int i = 0; i < repeat; i++){
+        m[i] = ch.GetZrElement();
+        m_p[i] = ch.GetZrElement();
+    }
+    
+    this->start("SetUp");
+    for (int i = 0; i < repeat; i++) ch.SetUp(skRPCH[i], pkRPCH[i], rl[i], st[i], GetParam().k, GetParam().leafNodeSize);
+    this->end("SetUp");
+    
+    this->start("KeyGen");
+    for (int i = 0; i < repeat; i++) ch.KeyGen(skidRPCH_1[i], pkRPCH[i], skRPCH[i], st[i], attr_list, id_1[i], re_time_1);
+    this->end("KeyGen");
+    for (int i = 0; i < repeat; i++) ch.KeyGen(skidRPCH_2[i], pkRPCH[i], skRPCH[i], st[i], attr_list, id_2[i], re_time_2);
+    for (int i = 0; i < repeat; i++) ch.KeyGen(skidRPCH_3[i], pkRPCH[i], skRPCH[i], st[i], attr_list, id_3[i], re_time_3);
+
+    this->start("Rev");
+    for (int i = 0; i < repeat; i++) ch.Rev(rl[i], id_1[i], re_time_1);
+    this->end("Rev");
+    for (int i = 0; i < repeat; i++) ch.Rev(rl[i], id_2[i], re_time_2);
+    for (int i = 0; i < repeat; i++) ch.Rev(rl[i], id_3[i], re_time_3);
+
+    this->start("Hash");
+    for (int i = 0; i < repeat; i++) ch.Hash(h[i], m[i], pkRPCH[i], MSP, T_present);
+    this->end("Hash");
+        
+    bool check[repeat];
+    this->start("Check");
+    for (int i = 0; i < repeat; i++) check[i] = ch.Check(pkRPCH[i], m[i], h[i]);
+    this->end("Check");
+    for (int i = 0; i < repeat; i++) ASSERT_TRUE(check[i]);
+    
+    this->start("KUpt");
+    for (int i = 0; i < repeat; i++) ch.KUpt(kut[i], pkRPCH[i], st[i], rl[i], T_present);
+    this->end("KUpt");
+    
+    for (int i = 0; i < repeat; i++){
+        try{
+            ch.DKGen(dkidtRPCH_1[i], pkRPCH[i], skidRPCH_1[i], kut[i]);
+        }catch(const std::runtime_error& e){}
+        try{
+            ch.DKGen(dkidtRPCH_3[i], pkRPCH[i], skidRPCH_3[i], kut[i]);
+        }catch(const std::runtime_error& e){}
+    }
+
+    this->start("DKGen");
+    for (int i = 0; i < repeat; i++) ch.DKGen(dkidtRPCH_2[i], pkRPCH[i], skidRPCH_2[i], kut[i]);
+    this->end("DKGen");
+
+    this->start("Adapt");
+    for (int i = 0; i < repeat; i++) ch.Adapt(h_p[i], m_p[i], m[i], h[i], pkRPCH[i], dkidtRPCH_2[i], MSP);
+    this->end("Adapt");
+    
+    bool verify[repeat];
+    this->start("Verify");
+    for (int i = 0; i < repeat; i++) verify[i] = ch.Verify(pkRPCH[i], m_p[i], h_p[i]);
+    this->end("Verify");
+    for (int i = 0; i < repeat; i++) ASSERT_TRUE(verify[i]);
+
     average();
 }
 

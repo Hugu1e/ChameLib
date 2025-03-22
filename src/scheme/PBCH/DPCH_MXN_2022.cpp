@@ -54,10 +54,7 @@ void DPCH_MXN_2022::Decode(unsigned char *k, unsigned char * r, element_t res){
  * @param skDPCH: secret key of DPCH
  * @param k: key size
  */
-void DPCH_MXN_2022::SetUp(DPCH_MXN_2022_pp &pp, DPCH_MXN_2022_pk &pkDPCH, DPCH_MXN_2022_sk &skDPCH, DPCH_MXN_2022_h &h, DPCH_MXN_2022_r &r, DPCH_MXN_2022_r &r_p, DPCH_MXN_2022_sigmaGid &sigmaGid, DPCH_MXN_2022_skGid &skGid, int k) {
-    skGid.get_sk_CH().init(1);
-    r.get_c_etd().init(1);
-    
+void DPCH_MXN_2022::SetUp(DPCH_MXN_2022_pp &pp, DPCH_MXN_2022_pk &pkDPCH, DPCH_MXN_2022_sk &skDPCH, DPCH_MXN_2022_sigmaGid &sigmaGid, int k) {    
     element_random(tmp_G);
 
     ch_et.SetUp(pp.get_pp_CH(), k);
