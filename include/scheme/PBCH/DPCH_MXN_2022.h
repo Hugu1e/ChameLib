@@ -109,20 +109,30 @@ class DPCH_MXN_2022_h {
 class DPCH_MXN_2022_r {
     private:
         CH_ET_BC_CDK_2017_r r;
-        GmpElements c_etd;
+        unsigned char *c_etd = nullptr;
+        int c_etd_len = 0;
         MA_ABE_ciphertext c_abe;
     public:
-        DPCH_MXN_2022_r(){
-            c_etd.init(1);
-        }
         CH_ET_BC_CDK_2017_r &get_r() {
             return r;
         }
-        GmpElements &get_c_etd() {
+        unsigned char *get_c_etd() {
             return c_etd;
+        }
+        int get_c_etd_len() {
+            return c_etd_len;
+        }
+        void set_c_etd(unsigned char *c_etd, int c_etd_len) {
+            this->c_etd = c_etd;
+            this->c_etd_len = c_etd_len;
         }
         MA_ABE_ciphertext &get_c_abe() {
             return c_abe;
+        }
+        ~DPCH_MXN_2022_r(){
+            if(c_etd != nullptr){
+                delete []c_etd;
+            }
         }
 };
 

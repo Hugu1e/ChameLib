@@ -81,7 +81,10 @@ void RPCH_XNM_2021::Hash(RPCH_XNM_2021_h &h, RPCH_XNM_2021_r &r, std::string m, 
     this->rabe.Enc(h.get_ct(), pkRPCH.get_mpkRABE(), this->K, MSP, t, this->s1, this->s2);
 
     // cSE = EncSE(kk, d2)
-    this->aes.Enc(h.get_cSE()[0], K, etd[0]);
+    int enc_len;
+    unsigned char *enc = aes.Enc(&enc_len, K, etd[0]);
+    h.set_cSE(enc, enc_len);
+    
 }
 
 /**
@@ -101,7 +104,7 @@ void RPCH_XNM_2021::Adapt(RPCH_XNM_2021_r &r_p, std::string m_p, RPCH_XNM_2021_h
 
     CH_ET_BC_CDK_2017_etd etd;
     // DecSE(kk, ct_) -> d2
-    this->aes.Dec(etd[0], this->K, h.get_cSE()[0]);
+    aes.Dec(etd[0], this->K, h.get_cSE(), h.get_cSE_len());
 
     ch.Adapt(r_p.get_rCHET(), dkidtRPCH.get_skCHET(), etd, pkRPCH.get_pkCHET(), h.get_h(), r.get_rCHET(), m, m_p);
 }

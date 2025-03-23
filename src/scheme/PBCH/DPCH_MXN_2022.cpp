@@ -129,11 +129,9 @@ void DPCH_MXN_2022::Hash(DPCH_MXN_2022_h &h, DPCH_MXN_2022_r &r, std::string m, 
     aes.KGen(K, k_bits);
     RAND_bytes(R, k_bytes);
 
-    mpz_t c_etd;
-    mpz_init(c_etd);
-    aes.Enc(c_etd, K, etd[CH_ET_BC_CDK_2017::d1], k_bits);
-    r.get_c_etd().set(0, c_etd);
-    mpz_clear(c_etd);
+    int enc_len;
+    unsigned char* enc = aes.Enc(&enc_len, K, etd[CH_ET_BC_CDK_2017::d1], k_bits);
+    r.set_c_etd(enc, enc_len);
 
     std::vector<MA_ABE_pkTheta *> pkThetas_ABE(pkThetas.size());
     for(int i=0;i<pkThetas.size();i++){
@@ -216,7 +214,7 @@ void DPCH_MXN_2022::Adapt(DPCH_MXN_2022_r &r_p, std::string m_p, DPCH_MXN_2022_h
 
     mpz_t c_etd;
     mpz_init(c_etd);
-    aes.Dec(c_etd, K, r.get_c_etd()[0], k_bits);
+    aes.Dec(c_etd, K, r.get_c_etd(), r.get_c_etd_len(), k_bits);
 
     CH_ET_BC_CDK_2017_etd etd;
     etd.init(1);

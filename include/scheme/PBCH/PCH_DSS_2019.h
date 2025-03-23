@@ -71,19 +71,29 @@ class PCH_DSS_2019_h{
     private:
         CH_ET_BC_CDK_2017_h h;
         CP_ABE_ciphertext ct;
-        GmpElements ct_;
+        unsigned char *ct_ = nullptr;
+        int ct__len = 0;
     public:
-        PCH_DSS_2019_h(){
-            ct_.init(1);
-        }
         CH_ET_BC_CDK_2017_h& get_h(){
             return h;
         }
         CP_ABE_ciphertext& getCt(){
             return ct;
         }
-        GmpElements& getCt_(){
+        unsigned char* getCt_(){
             return ct_;
+        }
+        int getCt__len(){
+            return ct__len;
+        }
+        void setCt_(unsigned char *ct_, int ct__len){
+            this->ct_ = ct_;
+            this->ct__len = ct__len;
+        }
+        ~PCH_DSS_2019_h(){
+            if(ct_ != nullptr){
+                delete []ct_;
+            }
         }
 };
 

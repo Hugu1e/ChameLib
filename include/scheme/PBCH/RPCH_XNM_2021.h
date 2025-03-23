@@ -84,19 +84,29 @@ class RPCH_XNM_2021_h{
     private:
         CH_ET_BC_CDK_2017_h h;
         RABE_XNM_ciphertext ct;
-        GmpElements cSE;
+        unsigned char *cSE = nullptr;
+        int cSE_len = 0;
     public:
-        RPCH_XNM_2021_h(){
-            cSE.init(1);
-        }
         CH_ET_BC_CDK_2017_h& get_h(){
             return h;
         }
         RABE_XNM_ciphertext& get_ct(){
             return ct;
         }
-        GmpElements& get_cSE(){
+        unsigned char *get_cSE(){
             return cSE;
+        }
+        int get_cSE_len(){
+            return cSE_len;
+        }
+        void set_cSE(unsigned char *cSE, int cSE_len){
+            this->cSE = cSE;
+            this->cSE_len = cSE_len;
+        }
+        ~RPCH_XNM_2021_h(){
+            if(cSE != nullptr){
+                delete []cSE;
+            }
         }
 };
 

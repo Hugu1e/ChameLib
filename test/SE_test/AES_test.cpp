@@ -115,46 +115,51 @@ INSTANTIATE_TEST_CASE_P(
 
 TEST_P(AES_Test, Test){
     AES aes;
-    // element_t key;
-    mpz_t plaintext;
-    mpz_t ciphertext;
-    mpz_t decrypted_plaintext;
+    
+    // test key in unsigned char[]
+    mpz_t plaintext, decrypted_plaintext;
+    mpz_inits(plaintext, decrypted_plaintext, NULL);
+    RandomGenerator::RandomInLength(plaintext, 128);
 
-    pairing_t pairing;
-    initCurve(pairing, GetParam().curve);
-
-    // element_init_GT(key, pairing);
-    mpz_inits(plaintext, ciphertext, decrypted_plaintext, NULL);
-
-    int k=128;
-    unsigned char key[128];
+    int ciphertext_len;
+    
+    int k = 128;
+    unsigned char key[k/8];
     this->start("KGen");
     aes.KGen(key, k);
     this->end("KGen");
-    if(visiable){
-        printf("key: %s\n", key);
-    }
 
-    RandomGenerator::RandomInLength(plaintext, 128);
     this->start("Encrypt");
-    aes.Enc(ciphertext, key, plaintext);
+    unsigned char *ciphertext = aes.Enc(&ciphertext_len, key, plaintext, k);
     this->end("Encrypt");
-    if(visiable){
-        Logger::PrintGmp("plaintext", plaintext);
-    }
 
     this->start("Decrypt");
-    aes.Dec(decrypted_plaintext, key, ciphertext);
+    aes.Dec(decrypted_plaintext, key, ciphertext, ciphertext_len, k);
     this->end("Decrypt");
-    if(visiable){
-        Logger::PrintGmp("decrypted_plaintext", decrypted_plaintext);
-    }
 
     bool result = mpz_cmp(plaintext, decrypted_plaintext) == 0;
     
-    // element_clear(key);
-    mpz_clears(plaintext, ciphertext, decrypted_plaintext, NULL);
     ASSERT_TRUE(result);
+
+    // test key in element_t
+    pairing_t pairing;
+    initCurve(pairing, GetParam().curve);
+    element_t key_2;
+    element_init_GT(key_2, pairing);
+    element_random(key_2);
+
+    RandomGenerator::RandomInLength(plaintext, 128);
+    RandomGenerator::RandomInLength(decrypted_plaintext, 128);
+
+    unsigned char *ciphertext_2 = aes.Enc(&ciphertext_len, key_2, plaintext, k);
+    aes.Dec(decrypted_plaintext, key_2, ciphertext_2, ciphertext_len, k);
+    result = mpz_cmp(plaintext, decrypted_plaintext) == 0;
+    ASSERT_TRUE(result);
+
+    mpz_clears(plaintext, decrypted_plaintext, NULL);
+    element_clear(key_2);
+    delete[] ciphertext_2;
+    delete[] ciphertext;
 }
 
 int main(int argc, char **argv) 

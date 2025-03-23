@@ -113,7 +113,9 @@ void PCH_DSS_2019::Hash(PCH_DSS_2019_h &h, PCH_DSS_2019_r &r, std::string m, Ele
     cp_abe.Encrypt(h.getCt(), pk.getMpkABE(), tmp_GT, MSP, tmp_Zn_3, tmp_Zn_4);
 
     // ct_
-    aes.Enc(h.getCt_()[0], K, etd[0], k_bits);
+    int enc_len;
+    unsigned char *enc = aes.Enc(&enc_len, K, etd[0], k_bits);
+    h.setCt_(enc, enc_len);
 }
 
 /**
@@ -151,7 +153,7 @@ void PCH_DSS_2019::Adapt(PCH_DSS_2019_r &r_p, std::string m_p, PCH_DSS_2019_h &h
 
     CH_ET_BC_CDK_2017_etd etd;
     // DecSE(K, ct_) -> d2
-    this->aes.Dec(etd[0], K, h.getCt_()[0], k_bits);
+    this->aes.Dec(etd[0], K, h.getCt_(), h.getCt__len(),k_bits);
 
     // Hash Check
     if(!(Check(h, r, m, pk))){
