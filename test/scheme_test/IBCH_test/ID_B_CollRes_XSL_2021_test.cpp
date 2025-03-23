@@ -58,6 +58,48 @@ INSTANTIATE_TEST_CASE_P(
 	testing::ValuesIn(test_values)
 );
 
+int op_cnt[][diff_max_len] = {
+    {
+        1, 1, 0, 1, 
+        0, 0, 0, 0, 
+        0, 0, 0, 0, 
+        1, 1, 0, 0, 
+        0
+    }, //0, setup
+
+    {
+        0, 0, 0, 0, 
+        0, 1, 0, 0, 
+        0, 1, 0, 0, 
+        0, 0, 0, 0, 
+        0
+    }, //1, KeyGen
+    
+    {
+        0, 0, 0, 1, 
+        1, 1, 0, 0, 
+        2, 0, 0, 0, 
+        1, 0, 0, 0, 
+        1
+    }, //2, hash
+
+    {
+        0, 0, 0, 0, 
+        1, 0, 0, 0, 
+        1, 0, 0, 0, 
+        0, 0, 0, 0, 
+        1
+    }, //3, check
+
+    {
+        0, 0, 0, 0, 
+        1, 0, 0, 0, 
+        1, 0, 1, 0, 
+        0, 0, 1, 0, 
+        2
+    }, //4, adapt
+};
+
 TEST_P(ID_B_CollRes_XSL_2021_Test, Test){
     ID_B_CollRes_XSL_2021 ch(GetParam().curve, GetParam().swap);
 
@@ -104,6 +146,20 @@ TEST_P(ID_B_CollRes_XSL_2021_Test, Test){
     for (int i = 0; i < repeat; i++) ASSERT_TRUE(verify_result[i]);
 
     average();
+
+    int op_cnt_SetUp[diff_max_len];
+    for(int i=0; i<diff_max_len; i++) op_cnt_SetUp[i] = op_cnt[0][i];
+    int delta_SetUp[] = {
+        0, 1, 0, 0, 
+        0, 0, 0, 0, 
+        0, 0, 0, 0, 
+        0, 0, 0, 0, 
+        0
+    };
+    for(int j=0;j<GetParam().length;j++){
+        for(int i=0;i<diff_max_len;i++) op_cnt_SetUp[i] += delta_SetUp[i];
+    }
+    EXPECT_TRUE(check_time(GetParam().curve, op_cnt_SetUp, "SetUp"));
 }
 
 int main(int argc, char **argv) 

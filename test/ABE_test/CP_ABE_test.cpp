@@ -62,7 +62,7 @@ int op_cnt[][diff_max_len] = {
         0, 0, 0, 3, 
         6, 0, 0, 0, 
         9, 0, 0, 10, 
-        11, 3, 0, 0, 
+        9, 3, 0, 0, 
         0
     }, //1, keygen
     
@@ -77,9 +77,9 @@ int op_cnt[][diff_max_len] = {
     {
         0, 0, 0, 0, 
         0, 0, 0, 0, 
+        3, 0, 6, 0, 
         0, 0, 0, 0, 
-        0, 0, 0, 0, 
-        0
+        6
     }, //3, Decrypt
 };
 
@@ -181,6 +181,24 @@ TEST_P(CP_ABE_Test, Test){
         }
     }
     EXPECT_TRUE(check_time(GetParam().curve, op_cnt_Encrypt, "Encrypt"));
+
+    int op_cnt_Decrypt[diff_max_len];
+    for(int i=0; i<diff_max_len; i++) op_cnt_Decrypt[i] = op_cnt[3][i];
+    int delta_num_den[] = {
+        0, 0, 0, 0, 
+        0, 0, 0, 0, 
+        6, 0, 0, 0, 
+        6, 0, 0, 0, 
+        0
+    };
+    for(unsigned long int i=0; i<rows;i++){
+        if(sks[0].get_attr2id().find(MSP->getName(i)) == sks[0].get_attr2id().end()){
+            for(int j=0; j<diff_max_len; j++){
+                op_cnt_Decrypt[j] += delta_num_den[j];
+            }
+        }
+    }
+    EXPECT_TRUE(check_time(GetParam().curve, op_cnt_Decrypt, "Decrypt"));
 }
 
 int main(int argc, char **argv) 
