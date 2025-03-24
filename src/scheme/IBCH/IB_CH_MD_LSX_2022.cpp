@@ -1,4 +1,4 @@
-#include <scheme/IBCH/IB_CH_MD_LSX_2022.h>
+#include "scheme/IBCH/IB_CH_MD_LSX_2022.h"
 
 IB_CH_MD_LSX_2022::IB_CH_MD_LSX_2022(int curve) : PbcScheme(curve) {
     element_init_G1(G1, pairing);
@@ -16,6 +16,13 @@ IB_CH_MD_LSX_2022::IB_CH_MD_LSX_2022(int curve) : PbcScheme(curve) {
     element_init_same_as(tmp_Zn_3, Zn);
 }
 
+/**
+ * @brief 
+ * 
+ * @param  pp[out]   
+ * @param  msk[out]  
+ * 
+ */
 void IB_CH_MD_LSX_2022::SetUp(IB_CH_MD_LSX_2022_pp &pp, IB_CH_MD_LSX_2022_msk &msk) {
     element_random(tmp_G);
     pp.set(g, tmp_G);
@@ -36,6 +43,15 @@ void IB_CH_MD_LSX_2022::SetUp(IB_CH_MD_LSX_2022_pp &pp, IB_CH_MD_LSX_2022_msk &m
     pp.set(eg2g, tmp_GT);
 }
 
+/**
+ * @brief 
+ * 
+ * @param  td[out]   
+ * @param  ID[in]    
+ * @param  msk[in]  
+ * @param  pp[in]   
+ * 
+ */
 void IB_CH_MD_LSX_2022::KeyGen(IB_CH_MD_LSX_2022_td &td, element_t ID, IB_CH_MD_LSX_2022_msk &msk, IB_CH_MD_LSX_2022_pp &pp) {
     // t
     element_random(tmp_Zn);
@@ -51,6 +67,16 @@ void IB_CH_MD_LSX_2022::KeyGen(IB_CH_MD_LSX_2022_td &td, element_t ID, IB_CH_MD_
     td.set(td2, tmp_G);
 }
 
+/**
+ * @brief 
+ * 
+ * @param  h[out]   
+ * @param  r[out]   
+ * @param  ID[in]   
+ * @param  m[in]    
+ * @param  pp[in]  
+ * 
+ */
 void IB_CH_MD_LSX_2022::Hash(IB_CH_MD_LSX_2022_h &h, IB_CH_MD_LSX_2022_r &r, element_t ID, element_t m, IB_CH_MD_LSX_2022_pp &pp) {
     // r1
     element_random(tmp_Zn);
@@ -71,6 +97,17 @@ void IB_CH_MD_LSX_2022::Hash(IB_CH_MD_LSX_2022_h &h, IB_CH_MD_LSX_2022_r &r, ele
     h.set(h1, tmp_GT);
 }
 
+/**
+ * @brief 
+ * 
+ * @param  h[in]   
+ * @param  r[in]   
+ * @param  ID[in]   
+ * @param  m[in]    
+ * @param  pp[in]  
+ * 
+ * @return 
+ */
 bool IB_CH_MD_LSX_2022::Check(IB_CH_MD_LSX_2022_h &h, IB_CH_MD_LSX_2022_r &r, element_t ID, element_t m, IB_CH_MD_LSX_2022_pp &pp){
     element_set(tmp_Zn, r[r1]);
     element_set(tmp_G, r[r2]);
@@ -88,6 +125,17 @@ bool IB_CH_MD_LSX_2022::Check(IB_CH_MD_LSX_2022_h &h, IB_CH_MD_LSX_2022_r &r, el
     return element_cmp(h[h1], tmp_GT) == 0;
 }
 
+/**
+ * @brief 
+ * 
+ * @param  r_p[out]  
+ * @param  h[in]    
+ * @param  m[in]     
+ * @param  r[in]    
+ * @param  m_p[in]   
+ * @param  td[in]   
+ * 
+ */
 void IB_CH_MD_LSX_2022::Adapt(IB_CH_MD_LSX_2022_r &r_p, IB_CH_MD_LSX_2022_h &h, element_t m, IB_CH_MD_LSX_2022_r &r, element_t m_p, IB_CH_MD_LSX_2022_td &td) {
     element_sub(this->tmp_Zn, m, m_p);
     element_mul(this->tmp_Zn_2, this->tmp_Zn, td[td1]);
@@ -99,6 +147,17 @@ void IB_CH_MD_LSX_2022::Adapt(IB_CH_MD_LSX_2022_r &r_p, IB_CH_MD_LSX_2022_h &h, 
     r_p.set(r2, tmp_G);
 }
 
+/**
+ * @brief 
+ * 
+ * @param  h[in]    
+ * @param  r_p[in]  
+ * @param  ID[in]    
+ * @param  m_p[in]   
+ * @param  pp[in]   
+ * 
+ * @return 
+ */
 bool IB_CH_MD_LSX_2022::Verify(IB_CH_MD_LSX_2022_h &h, IB_CH_MD_LSX_2022_r &r_p, element_t ID, element_t m_p, IB_CH_MD_LSX_2022_pp &pp) {
     return Check(h, r_p, ID, m_p, pp);
 }

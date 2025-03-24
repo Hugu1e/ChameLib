@@ -35,6 +35,12 @@ FCR_CH_PreQA_DKS_2020::FCR_CH_PreQA_DKS_2020(int curve, int group) : PbcScheme(c
     element_init_same_as(tmp_Zn_2, Zn);
 }
 
+/**
+ * @brief 
+ * 
+ * @param  pp[out]  
+ * 
+ */
 void FCR_CH_PreQA_DKS_2020::SetUp(FCR_CH_PreQA_DKS_2020_pp &pp) {    
     element_random(tmp_G);
     pp.set(g1, tmp_G);
@@ -43,6 +49,14 @@ void FCR_CH_PreQA_DKS_2020::SetUp(FCR_CH_PreQA_DKS_2020_pp &pp) {
     pp.set(g2, tmp_G_2);
 }
 
+/**
+ * @brief 
+ * 
+ * @param  pk[out]  
+ * @param  sk[out]  
+ * @param  pp[in]  
+ * 
+ */
 void FCR_CH_PreQA_DKS_2020::KeyGen(FCR_CH_PreQA_DKS_2020_pk &pk, FCR_CH_PreQA_DKS_2020_sk &sk, FCR_CH_PreQA_DKS_2020_pp &pp) {  
     // secret key x ∈ Zp
     element_random(tmp_Zn);
@@ -71,6 +85,16 @@ void FCR_CH_PreQA_DKS_2020::H2(element_t res, element_t m){
     HASH::hash(res, m);
 }
 
+/**
+ * @brief 
+ * 
+ * @param  h[out]   
+ * @param  r[out]   
+ * @param  m[in]    
+ * @param  pk[in]  
+ * @param  pp[in]  
+ * 
+ */
 void FCR_CH_PreQA_DKS_2020::Hash(FCR_CH_PreQA_DKS_2020_h &h, FCR_CH_PreQA_DKS_2020_r &r, element_t m, FCR_CH_PreQA_DKS_2020_pk &pk, FCR_CH_PreQA_DKS_2020_pp &pp) {
     element_init_same_as(r[e2], Zn);
     element_init_same_as(r[s2], Zn);
@@ -111,6 +135,17 @@ void FCR_CH_PreQA_DKS_2020::Hash(FCR_CH_PreQA_DKS_2020_h &h, FCR_CH_PreQA_DKS_20
     element_add(r[s12], this->k12, this->tmp_Zn);
 }
 
+/**
+ * @brief 
+ * 
+ * @param  h[in]   
+ * @param  r[in]   
+ * @param  m[in]    
+ * @param  pk[in]  
+ * @param  pp[in]  
+ * 
+ * @return 
+ */
 bool FCR_CH_PreQA_DKS_2020::Check(FCR_CH_PreQA_DKS_2020_h &h, FCR_CH_PreQA_DKS_2020_r &r, element_t m, FCR_CH_PreQA_DKS_2020_pk &pk, FCR_CH_PreQA_DKS_2020_pp &pp) {
     // e1 + e2
     element_add(this->tmp_Zn, r[e1], r[e2]);
@@ -133,6 +168,18 @@ bool FCR_CH_PreQA_DKS_2020::Check(FCR_CH_PreQA_DKS_2020_h &h, FCR_CH_PreQA_DKS_2
     return element_cmp(this->tmp_Zn, this->tmp_Zn_2) == 0;
 }
 
+/**
+ * @brief 
+ * 
+ * @param  r_p[out]  
+ * @param  m_p[in]   
+ * @param  m[in]     
+ * @param  h[in]    
+ * @param  r[in]    
+ * @param  sk[in]   
+ * @param  pp[in]   
+ * 
+ */
 void FCR_CH_PreQA_DKS_2020::Adapt(FCR_CH_PreQA_DKS_2020_r &r_p, element_t m_p, element_t m, FCR_CH_PreQA_DKS_2020_h &h, FCR_CH_PreQA_DKS_2020_r &r, FCR_CH_PreQA_DKS_2020_sk &sk, FCR_CH_PreQA_DKS_2020_pp &pp) {
     FCR_CH_PreQA_DKS_2020_pk tmp_pk;
     // y = g1^x
@@ -172,6 +219,17 @@ void FCR_CH_PreQA_DKS_2020::Adapt(FCR_CH_PreQA_DKS_2020_r &r_p, element_t m_p, e
     element_add(r_p[s2], this->k12, this->tmp_Zn);
 }
 
+/**
+ * @brief 
+ * 
+ * @param  h[in]    
+ * @param  r_p[in]  
+ * @param  m_p[in]   
+ * @param  pk[in]   
+ * @param  pp[in]   
+ * 
+ * @return 
+ */
 bool FCR_CH_PreQA_DKS_2020::Verify(FCR_CH_PreQA_DKS_2020_h &h, FCR_CH_PreQA_DKS_2020_r &r_p, element_t m_p, FCR_CH_PreQA_DKS_2020_pk &pk, FCR_CH_PreQA_DKS_2020_pp &pp) {
     return this->Check(h, r_p, m_p, pk, pp);
 }

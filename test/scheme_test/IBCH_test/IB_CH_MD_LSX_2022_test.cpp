@@ -1,4 +1,4 @@
-#include "scheme/IBCH/IB_CH_MD_LSX_2022.h"
+#include "ChameLib.h"
 #include "CommonTest.h"
 
 struct TestParams{
@@ -146,6 +146,14 @@ TEST_P(IB_CH_MD_LSX_2022_Test, Test){
 
 int main(int argc, char **argv) 
 {
+    if (argc > 1) {
+        repeat = std::atoi(argv[1]);
+        if (repeat <= 0) {
+            std::cerr << "Invalid value for repeat. It must be a positive integer." << std::endl;
+            return 1;
+        }
+    }
+
 	::testing::InitGoogleTest(&argc, argv);
 	return RUN_ALL_TESTS();
 }

@@ -2,19 +2,24 @@
 
 CH_ET_BC_CDK_2017::CH_ET_BC_CDK_2017(){}
 
-
 /**
- * @param pp: public parameters
- * @param k: length of n(RSA)
+ * @brief 
+ * 
+ * @param  pp[out]  public parameters
+ * @param  k[in]    length of n(RSA)
+ * 
  */
 void CH_ET_BC_CDK_2017::SetUp(CH_ET_BC_CDK_2017_pp &pp, int k){
     pp.setK(k);
 }
 
 /**
- * @param pk: public key
- * @param sk: secret key
- * @param pp: public parameters
+ * @brief 
+ * 
+ * @param  pk[out]  public key
+ * @param  sk[out]  secret key
+ * @param  pp[in]  public parameters
+ * 
  */
 void CH_ET_BC_CDK_2017::KeyGen(CH_ET_BC_CDK_2017_pk &pk, CH_ET_BC_CDK_2017_sk &sk, CH_ET_BC_CDK_2017_pp &pp){
     RSA_pk rsa_pk;
@@ -27,23 +32,20 @@ void CH_ET_BC_CDK_2017::KeyGen(CH_ET_BC_CDK_2017_pk &pk, CH_ET_BC_CDK_2017_sk &s
     sk.set(d0, rsa_sk[AE_RSA::d]);
 }
 
-/**
- * H(m) -> res mod n
- * @param res: result
- * @param m: message
- * @param n: modulus
- */
 void CH_ET_BC_CDK_2017::H(mpz_t res, std::string m, mpz_t n){
     HASH::hash_n(res, m, n);
 }
 
 /**
- * @param h: hash value
- * @param r: random value
- * @param etd: ephemeral trapdoor
- * @param pp: public parameters
- * @param pk: public key
- * @param m: message
+ * @brief 
+ * 
+ * @param  h[out]    hash value
+ * @param  r[out]    random value
+ * @param  etd[out]  ephemeral trapdoor
+ * @param  pp[in]   public parameters
+ * @param  pk[in]   public key
+ * @param  m[in]     message
+ * 
  */
 void CH_ET_BC_CDK_2017::Hash(CH_ET_BC_CDK_2017_h &h, CH_ET_BC_CDK_2017_r &r, CH_ET_BC_CDK_2017_etd &etd, CH_ET_BC_CDK_2017_pp &pp, CH_ET_BC_CDK_2017_pk &pk, std::string m){
     mpz_t tmp1;
@@ -77,11 +79,14 @@ void CH_ET_BC_CDK_2017::Hash(CH_ET_BC_CDK_2017_h &h, CH_ET_BC_CDK_2017_r &r, CH_
 }
 
 /**
- * @param h: hash value
- * @param r: random value
- * @param pk: public key
- * @param m: message
- * @return bool
+ * @brief 
+ * 
+ * @param  h[in]   hash value
+ * @param  r[in]   random value
+ * @param  pk[in]  public key
+ * @param  m[in]    message
+ * 
+ * @return 
  */
 bool CH_ET_BC_CDK_2017::Check(CH_ET_BC_CDK_2017_h &h, CH_ET_BC_CDK_2017_r &r, CH_ET_BC_CDK_2017_pk &pk, std::string m){
     bool CheckResult = false;
@@ -112,14 +117,17 @@ bool CH_ET_BC_CDK_2017::Check(CH_ET_BC_CDK_2017_h &h, CH_ET_BC_CDK_2017_r &r, CH
 }
 
 /**
- * @param r_p: adapted random value
- * @param sk: secret key
- * @param etd: ephemeral trapdoor
- * @param pk: public key
- * @param h: hash value
- * @param r: random value
- * @param m: message
- * @param m_p: adapted message
+ * @brief 
+ * 
+ * @param  r_p[out]  adapted random value
+ * @param  sk[in]   secret key
+ * @param  etd[in]  ephemeral trapdoor
+ * @param  pk[in]   public key
+ * @param  h[in]    hash value
+ * @param  r[in]    random value
+ * @param  m[in]     message
+ * @param  m_p[in]   adapted message
+ * 
  */
 void CH_ET_BC_CDK_2017::Adapt(CH_ET_BC_CDK_2017_r &r_p, CH_ET_BC_CDK_2017_sk &sk, CH_ET_BC_CDK_2017_etd &etd, CH_ET_BC_CDK_2017_pk &pk, CH_ET_BC_CDK_2017_h &h, CH_ET_BC_CDK_2017_r &r, std::string m, std::string m_p){
     if(!Check(h, r, pk, m)){
@@ -146,11 +154,14 @@ void CH_ET_BC_CDK_2017::Adapt(CH_ET_BC_CDK_2017_r &r_p, CH_ET_BC_CDK_2017_sk &sk
 }
 
 /**
- * @param h: hash value
- * @param r_p: adapted random value
- * @param pk: public key
- * @param m_p: adapted message
- * @return bool
+ * @brief 
+ * 
+ * @param  h[in]    hash value
+ * @param  r_p[in]  adapted random value
+ * @param  pk[in]   public key
+ * @param  m_p[in]   adapted message
+ * 
+ * @return 
  */
 bool CH_ET_BC_CDK_2017::Verify(CH_ET_BC_CDK_2017_h &h, CH_ET_BC_CDK_2017_r &r_p, CH_ET_BC_CDK_2017_pk &pk, std::string m_p){
     return Check(h, r_p, pk, m_p);   

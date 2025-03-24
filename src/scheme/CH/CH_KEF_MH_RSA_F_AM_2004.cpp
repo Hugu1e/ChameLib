@@ -1,14 +1,22 @@
-#include <scheme/CH/CH_KEF_MH_RSA_F_AM_2004.h>
+#include "scheme/CH/CH_KEF_MH_RSA_F_AM_2004.h"
 
 CH_KEF_MH_RSA_F_AM_2004::CH_KEF_MH_RSA_F_AM_2004(){}
 
+/**
+ * @brief 
+ * 
+ * 
+ */
 void CH_KEF_MH_RSA_F_AM_2004::SetUp(){}
 
 /**
- * @param k security parameter
- * @param t security parameter
- * @param pk public key
- * @param sk secret key
+ * @brief 
+ * 
+ * @param  pk[out]  
+ * @param  sk[out]  
+ * @param  k[in]    
+ * @param  t[in]    
+ * 
  */
 void CH_KEF_MH_RSA_F_AM_2004::KeyGen(CH_KEF_MH_RSA_F_AM_2004_pk &pk, CH_KEF_MH_RSA_F_AM_2004_sk &sk, int k, int t){
     this->k = k;
@@ -20,10 +28,6 @@ void CH_KEF_MH_RSA_F_AM_2004::KeyGen(CH_KEF_MH_RSA_F_AM_2004_pk &pk, CH_KEF_MH_R
     rsa.KeyGen_E(pk[n],sk[d],pk[e],k);
 }
 
-/**
- * a collision-resistanthash function mapping strings of arbitrary length to strings of ﬁxed length τ .
- * 
- */
 void CH_KEF_MH_RSA_F_AM_2004::H(mpz_t res, mpz_t m, int t){
     mpz_t n;
     mpz_init(n);
@@ -34,13 +38,16 @@ void CH_KEF_MH_RSA_F_AM_2004::H(mpz_t res, mpz_t m, int t){
 }
 
 /**
- * @param pk public key
- * @param sk secret key
- * @param m message
- * @param tag tag
- * @param h hash
- * @param B secret trapdoor
- * @param r random number
+ * @brief 
+ * 
+ * @param  h[out]    
+ * @param  r[out]    
+ * @param  B[out]    secret trapdoor
+ * @param  pk[in]  
+ * @param  sk[in]  
+ * @param  m[in]    
+ * @param  tag[in]  
+ * 
  */
 void CH_KEF_MH_RSA_F_AM_2004::Hash(mpz_t h, mpz_t r, mpz_t B, CH_KEF_MH_RSA_F_AM_2004_pk &pk, CH_KEF_MH_RSA_F_AM_2004_sk &sk, mpz_t m, mpz_t tag){
     mpz_t J,tmp,tmp_2;
@@ -66,11 +73,15 @@ void CH_KEF_MH_RSA_F_AM_2004::Hash(mpz_t h, mpz_t r, mpz_t B, CH_KEF_MH_RSA_F_AM
 }
 
 /**
- * @param pk public key
- * @param m message
- * @param tag tag
- * @param h hash
- * @param r random number
+ * @brief 
+ * 
+ * @param  pk[in]  
+ * @param  m[in]    
+ * @param  tag[in]  
+ * @param  h[in]    
+ * @param  r[in]    
+ * 
+ * @return 
  */
 bool CH_KEF_MH_RSA_F_AM_2004::Check(CH_KEF_MH_RSA_F_AM_2004_pk &pk, mpz_t m, mpz_t tag, mpz_t h, mpz_t r){
     mpz_t J,tmp,tmp_2,tmp_3;
@@ -96,14 +107,17 @@ bool CH_KEF_MH_RSA_F_AM_2004::Check(CH_KEF_MH_RSA_F_AM_2004_pk &pk, mpz_t m, mpz
 }
 
 /**
- * @param pk public key
- * @param m message m
- * @param m_p message m'
- * @param tag tag
- * @param h hash
- * @param B secret trapdoor
- * @param r random number r
- * @param r_p random number r'
+ * @brief 
+ * 
+ * @param  r_p[out]  
+ * @param  pk[in]  
+ * @param  m[in]    
+ * @param  m_p[in]  
+ * @param  tag[in]  
+ * @param  h[in]    
+ * @param  B[in]    
+ * @param  r[in]    
+ * 
  */
 void CH_KEF_MH_RSA_F_AM_2004::Adapt(mpz_t r_p, CH_KEF_MH_RSA_F_AM_2004_pk &pk, mpz_t m, mpz_t m_p, mpz_t tag, mpz_t h, mpz_t B, mpz_t r){
     mpz_t tmp,tmp_2;
@@ -120,6 +134,17 @@ void CH_KEF_MH_RSA_F_AM_2004::Adapt(mpz_t r_p, CH_KEF_MH_RSA_F_AM_2004_pk &pk, m
     mpz_clears(tmp,tmp_2,NULL);
 }
 
+/**
+ * @brief 
+ * 
+ * @param  pk[in]  
+ * @param  m_p[in]  
+ * @param  tag[in]  
+ * @param  h[in]    
+ * @param  r_p[in]  
+ * 
+ * @return 
+ */
 bool CH_KEF_MH_RSA_F_AM_2004::Verify(CH_KEF_MH_RSA_F_AM_2004_pk &pk, mpz_t m_p, mpz_t tag, mpz_t h, mpz_t r_p){
     return this->Check(pk, m_p, tag, h, r_p);
 }

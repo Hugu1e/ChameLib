@@ -1,4 +1,4 @@
-#include <scheme/CH/CH_KEF_MH_SDH_DL_AM_2004.h>
+#include "scheme/CH/CH_KEF_MH_SDH_DL_AM_2004.h"
 
 CH_KEF_MH_SDH_DL_AM_2004::CH_KEF_MH_SDH_DL_AM_2004(int curve): PbcScheme(curve) {
     element_init_G1(G1, pairing);
@@ -15,8 +15,10 @@ CH_KEF_MH_SDH_DL_AM_2004::CH_KEF_MH_SDH_DL_AM_2004(int curve): PbcScheme(curve) 
 }
 
 /**
- * input : 
- * output: 
+ * @brief 
+ * 
+ * @param  pp[out]  
+ * 
  */
 void CH_KEF_MH_SDH_DL_AM_2004::SetUp(CH_KEF_MH_SDH_DL_AM_2004_pp &pp) {    
     element_random(tmp_G);
@@ -24,8 +26,12 @@ void CH_KEF_MH_SDH_DL_AM_2004::SetUp(CH_KEF_MH_SDH_DL_AM_2004_pp &pp) {
 }
 
 /**
- * input : 
- * output: y
+ * @brief 
+ * 
+ * @param  pk[out]  
+ * @param  sk[out]  
+ * @param  pp[in]  
+ * 
  */
 void CH_KEF_MH_SDH_DL_AM_2004::KeyGen(CH_KEF_MH_SDH_DL_AM_2004_pk &pk, CH_KEF_MH_SDH_DL_AM_2004_sk &sk, CH_KEF_MH_SDH_DL_AM_2004_pp &pp) {  
     element_random(tmp_Zn);
@@ -40,8 +46,15 @@ void CH_KEF_MH_SDH_DL_AM_2004::H(element_t res, element_t m) {
 }
 
 /**
- * input : label, m, r, y
- * output: h
+ * @brief 
+ * 
+ * @param  h[out]     
+ * @param  r[out]     
+ * @param  m[in]      
+ * @param  label[in]  
+ * @param  pk[in]    
+ * @param  pp[in]    
+ * 
  */
 void CH_KEF_MH_SDH_DL_AM_2004::Hash(CH_KEF_MH_SDH_DL_AM_2004_h &h, CH_KEF_MH_SDH_DL_AM_2004_r &r, element_t m, element_t label, CH_KEF_MH_SDH_DL_AM_2004_pk &pk, CH_KEF_MH_SDH_DL_AM_2004_pp &pp) {
     element_random(tmp_Zn_3);
@@ -65,6 +78,18 @@ void CH_KEF_MH_SDH_DL_AM_2004::Hash(CH_KEF_MH_SDH_DL_AM_2004_h &h, CH_KEF_MH_SDH
     h.set(0, tmp_G);
 }
 
+/**
+ * @brief 
+ * 
+ * @param  h[in]     
+ * @param  r[in]     
+ * @param  m[in]      
+ * @param  label[in]  
+ * @param  pk[in]    
+ * @param  pp[in]    
+ * 
+ * @return 
+ */
 bool CH_KEF_MH_SDH_DL_AM_2004::Check(CH_KEF_MH_SDH_DL_AM_2004_h &h, CH_KEF_MH_SDH_DL_AM_2004_r &r, element_t m, element_t label, CH_KEF_MH_SDH_DL_AM_2004_pk &pk, CH_KEF_MH_SDH_DL_AM_2004_pp &pp) {
     // H(m)
     this->H(this->tmp_Zn, m);
@@ -87,8 +112,17 @@ bool CH_KEF_MH_SDH_DL_AM_2004::Check(CH_KEF_MH_SDH_DL_AM_2004_h &h, CH_KEF_MH_SD
 }
 
 /**
- * input : (this->x) ,h, m, label, r, m_p
- * output: r_p
+ * @brief 
+ * 
+ * @param  r_p[out]   
+ * @param  m_p[in]    
+ * @param  h[in]     
+ * @param  r[in]     
+ * @param  m[in]      
+ * @param  label[in]  
+ * @param  sk[in]    
+ * @param  pp[in]    
+ * 
  */
 void CH_KEF_MH_SDH_DL_AM_2004::Adapt(CH_KEF_MH_SDH_DL_AM_2004_r &r_p, element_t m_p, CH_KEF_MH_SDH_DL_AM_2004_h &h, CH_KEF_MH_SDH_DL_AM_2004_r &r, element_t m, element_t label, CH_KEF_MH_SDH_DL_AM_2004_sk &sk, CH_KEF_MH_SDH_DL_AM_2004_pp &pp) {
     // H(m) - H(m')
@@ -107,8 +141,16 @@ void CH_KEF_MH_SDH_DL_AM_2004::Adapt(CH_KEF_MH_SDH_DL_AM_2004_r &r_p, element_t 
 }
 
 /**
- * input : label, m_p, r_p, y, h
- * output: bool
+ * @brief 
+ * 
+ * @param  h[in]     
+ * @param  r_p[in]   
+ * @param  m_p[in]    
+ * @param  label[in]  
+ * @param  pk[in]    
+ * @param  pp[in]    
+ * 
+ * @return 
  */
 bool CH_KEF_MH_SDH_DL_AM_2004::Verify(CH_KEF_MH_SDH_DL_AM_2004_h &h, CH_KEF_MH_SDH_DL_AM_2004_r &r_p, element_t m_p, element_t label, CH_KEF_MH_SDH_DL_AM_2004_pk &pk, CH_KEF_MH_SDH_DL_AM_2004_pp &pp) {
     return this->Check(h, r_p, m_p, label, pk, pp);

@@ -2,8 +2,21 @@
 
 MCH_CDK_2017::MCH_CDK_2017(){}
 
+/**
+ * @brief 
+ * 
+ * 
+ */
 void MCH_CDK_2017::SetUp(){}
 
+/**
+ * @brief 
+ * 
+ * @param  pk[out]  
+ * @param  sk[out]  
+ * @param  k[in]    
+ * 
+ */
 void MCH_CDK_2017::KeyGen(MCH_CDK_2017_pk &pk, MCH_CDK_2017_sk &sk, short k){
     rsa.KeyGen(pk[n], pk[e], sk[d], k, 1);
 }
@@ -12,6 +25,15 @@ void MCH_CDK_2017::H(mpz_t res, mpz_t m, mpz_t n){
     HASH::hash_n(res, m, n);  
 }
 
+/**
+ * @brief 
+ * 
+ * @param  h[out]   
+ * @param  r[out]   
+ * @param  m[in]    
+ * @param  pk[in]  
+ * 
+ */
 void MCH_CDK_2017::Hash(MCH_CDK_2017_h &h, MCH_CDK_2017_r &r, mpz_t m, MCH_CDK_2017_pk &pk){
     mpz_t _r,_h,g,tmp;
     mpz_inits(_r,_h,g,tmp,NULL);
@@ -35,6 +57,16 @@ void MCH_CDK_2017::Hash(MCH_CDK_2017_h &h, MCH_CDK_2017_r &r, mpz_t m, MCH_CDK_2
     mpz_clears(_r,_h,g,tmp,NULL);
 }
 
+/**
+ * @brief 
+ * 
+ * @param  h[in]   
+ * @param  r[in]   
+ * @param  m[in]    
+ * @param  pk[in]  
+ * 
+ * @return 
+ */
 bool MCH_CDK_2017::Check(MCH_CDK_2017_h &h, MCH_CDK_2017_r &r, mpz_t m, MCH_CDK_2017_pk &pk){
     mpz_t _r,gcd_result,g,tmp,tmp_2;
     mpz_inits(_r,gcd_result,g,tmp,tmp_2,NULL);
@@ -67,6 +99,18 @@ bool MCH_CDK_2017::Check(MCH_CDK_2017_h &h, MCH_CDK_2017_r &r, mpz_t m, MCH_CDK_
     }
 }
 
+/**
+ * @brief 
+ * 
+ * @param  r_p[out]  
+ * @param  m_p[in]   
+ * @param  m[in]     
+ * @param  r[in]    
+ * @param  h[in]    
+ * @param  sk[in]   
+ * @param  pk[in]   
+ * 
+ */
 void MCH_CDK_2017::Adapt(MCH_CDK_2017_r &r_p, mpz_t m_p, mpz_t m, MCH_CDK_2017_r &r, MCH_CDK_2017_h &h, MCH_CDK_2017_sk &sk, MCH_CDK_2017_pk &pk){
     if(this->Check(h, r, m, pk) == false){
         throw std::runtime_error("MCH_CDK_2017::Adapt(): hash check failed");
@@ -105,6 +149,16 @@ void MCH_CDK_2017::Adapt(MCH_CDK_2017_r &r_p, mpz_t m_p, mpz_t m, MCH_CDK_2017_r
     mpz_clears(g,tmp,y,_r,g_p,tmp_1,tmp_2,_r_p,NULL);
 }
 
+/**
+ * @brief 
+ * 
+ * @param  h[in]    
+ * @param  r_p[in]  
+ * @param  m_p[in]   
+ * @param  pk[in]   
+ * 
+ * @return 
+ */
 bool MCH_CDK_2017::Verify(MCH_CDK_2017_h &h, MCH_CDK_2017_r &r_p, mpz_t m_p, MCH_CDK_2017_pk &pk){
     return this->Check(h, r_p, m_p, pk);
 }

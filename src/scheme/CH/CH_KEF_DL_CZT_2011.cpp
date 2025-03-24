@@ -1,4 +1,4 @@
-#include <scheme/CH/CH_KEF_DL_CZT_2011.h>
+#include "scheme/CH/CH_KEF_DL_CZT_2011.h"
 
 CH_KEF_DL_CZT_2011::CH_KEF_DL_CZT_2011(int curve, int group) : PbcScheme(curve) {
     switch(group){
@@ -24,11 +24,25 @@ CH_KEF_DL_CZT_2011::CH_KEF_DL_CZT_2011(int curve, int group) : PbcScheme(curve) 
     element_init_same_as(tmp_Zn_3, Zn);
 }
 
+/**
+ * @brief 
+ * 
+ * @param  pp[out]  
+ * 
+ */
 void CH_KEF_DL_CZT_2011::SetUp(CH_KEF_DL_CZT_2011_pp &pp) {    
     element_random(tmp_G);
     pp.set(g, tmp_G);
 }
 
+/**
+ * @brief 
+ * 
+ * @param  pk[out]  
+ * @param  sk[out]  
+ * @param  pp[in]  
+ * 
+ */
 void CH_KEF_DL_CZT_2011::KeyGen(CH_KEF_DL_CZT_2011_pk &pk, CH_KEF_DL_CZT_2011_sk &sk, CH_KEF_DL_CZT_2011_pp &pp) {
     element_random(tmp_Zn);
     sk.set(x, tmp_Zn);
@@ -41,6 +55,17 @@ void CH_KEF_DL_CZT_2011::H(element_t res, element_t m1, element_t m2) {
     HASH::hash(res, m1, m2);
 }
 
+/**
+ * @brief 
+ * 
+ * @param  h[out]    
+ * @param  r[out]   
+ * @param  I[in]    
+ * @param  m[in]    
+ * @param  pk[in]  
+ * @param  pp[in]  
+ * 
+ */
 void CH_KEF_DL_CZT_2011::Hash(element_t h, CH_KEF_DL_CZT_2011_r &r, element_t I, element_t m, CH_KEF_DL_CZT_2011_pk &pk, CH_KEF_DL_CZT_2011_pp &pp) {
     element_random(tmp_Zn);
     
@@ -55,6 +80,18 @@ void CH_KEF_DL_CZT_2011::Hash(element_t h, CH_KEF_DL_CZT_2011_r &r, element_t I,
     element_mul(h, tmp_G, this->tmp_G_2);
 }
 
+/**
+ * @brief 
+ * 
+ * @param  h[in]    
+ * @param  r[in]   
+ * @param  I[in]    
+ * @param  m[in]    
+ * @param  pk[in]  
+ * @param  pp[in]  
+ * 
+ * @return 
+ */
 bool CH_KEF_DL_CZT_2011::Check(element_t h, CH_KEF_DL_CZT_2011_r &r, element_t I, element_t m, CH_KEF_DL_CZT_2011_pk &pk, CH_KEF_DL_CZT_2011_pp &pp) {
     this->H(this->tmp_G, pk[y], I);
         
@@ -64,6 +101,19 @@ bool CH_KEF_DL_CZT_2011::Check(element_t h, CH_KEF_DL_CZT_2011_r &r, element_t I
     return element_cmp(h, tmp_G_2) == 0;
 }
 
+/**
+ * @brief 
+ * 
+ * @param  r_p[out]  
+ * @param  sk[in]   
+ * @param  h[in]     
+ * @param  m[in]     
+ * @param  r[in]    
+ * @param  m_p[in]   
+ * @param  I[in]     
+ * @param  pp[in]   
+ * 
+ */
 void CH_KEF_DL_CZT_2011::Adapt(CH_KEF_DL_CZT_2011_r &r_p, CH_KEF_DL_CZT_2011_sk &sk, element_t h, element_t m, CH_KEF_DL_CZT_2011_r &r, element_t m_p, element_t I, CH_KEF_DL_CZT_2011_pp &pp) {
     // y
     element_pow_zn(this->tmp_G, pp[g], sk[x]);
@@ -83,6 +133,18 @@ void CH_KEF_DL_CZT_2011::Adapt(CH_KEF_DL_CZT_2011_r &r_p, CH_KEF_DL_CZT_2011_sk 
     r_p.set(r2, tmp_G);
 }
 
+/**
+ * @brief 
+ * 
+ * @param  h[in]     
+ * @param  r_p[in]  
+ * @param  I[in]     
+ * @param  m_p[in]   
+ * @param  pk[in]   
+ * @param  pp[in]   
+ * 
+ * @return 
+ */
 bool CH_KEF_DL_CZT_2011::Verify(element_t h, CH_KEF_DL_CZT_2011_r &r_p, element_t I, element_t m_p, CH_KEF_DL_CZT_2011_pk &pk, CH_KEF_DL_CZT_2011_pp &pp) {
     return this->Check(h, r_p, I, m_p, pk, pp);
 }

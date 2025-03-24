@@ -35,8 +35,10 @@ CR_CH_DSS_2020::CR_CH_DSS_2020(int curve, int group):PbcScheme(curve) {
 }
 
 /**
- * input : 
- * output: 
+ * @brief 
+ * 
+ * @param  pp[out]  
+ * 
  */
 void CR_CH_DSS_2020::SetUp(CR_CH_DSS_2020_pp &pp) {
     element_random(tmp_G);
@@ -44,8 +46,12 @@ void CR_CH_DSS_2020::SetUp(CR_CH_DSS_2020_pp &pp) {
 }
 
 /**
- * input : 
- * output: x, y
+ * @brief 
+ * 
+ * @param  pk[out]  
+ * @param  sk[out]  
+ * @param  pp[in]  
+ * 
  */
 void CR_CH_DSS_2020::KeyGen(CR_CH_DSS_2020_pk &pk, CR_CH_DSS_2020_sk &sk, CR_CH_DSS_2020_pp &pp){  
     // secret key x ∈ Zp
@@ -57,11 +63,6 @@ void CR_CH_DSS_2020::KeyGen(CR_CH_DSS_2020_pk &pk, CR_CH_DSS_2020_sk &sk, CR_CH_
     pk.set(y, tmp_G);
 }
 
-
-/**
- * input : (y,h,m),(u11,u12,u2)
- * output: res
- */
 void CR_CH_DSS_2020::H(element_t res, element_t y, element_t h1, element_t h2, element_t m, element_t u11,element_t u12,element_t u2) {
     mpz_t ndonr;
     mpz_init(ndonr);
@@ -76,10 +77,15 @@ void CR_CH_DSS_2020::H(element_t res, element_t y, element_t h1, element_t h2, e
     mpz_clear(ndonr);
 }
 
-
 /**
- * input : pk(y), m
- * output: h(h1,h2), pai(e1,e2,s11,s12,s2)
+ * @brief 
+ * 
+ * @param  h[out]   
+ * @param  r[out]   
+ * @param  m[in]    
+ * @param  pk[in]  
+ * @param  pp[in]  
+ * 
  */
 void CR_CH_DSS_2020::Hash(CR_CH_DSS_2020_h &h, CR_CH_DSS_2020_r &r,  element_t m, CR_CH_DSS_2020_pk &pk, CR_CH_DSS_2020_pp &pp) {
     element_init_same_as(r[e1], Zn);
@@ -118,8 +124,15 @@ void CR_CH_DSS_2020::Hash(CR_CH_DSS_2020_h &h, CR_CH_DSS_2020_r &r,  element_t m
 }
 
 /**
- * input : pk(y), m, h(h1,h2), r(e1,e2,s1,s2)
- * output: bool
+ * @brief 
+ * 
+ * @param  h[in]   
+ * @param  r[in]   
+ * @param  m[in]    
+ * @param  pk[in]  
+ * @param  pp[in]  
+ * 
+ * @return 
  */
 bool CR_CH_DSS_2020::Check(CR_CH_DSS_2020_h &h, CR_CH_DSS_2020_r &r,  element_t m, CR_CH_DSS_2020_pk &pk, CR_CH_DSS_2020_pp &pp){
     // e1 + e2
@@ -151,8 +164,17 @@ bool CR_CH_DSS_2020::Check(CR_CH_DSS_2020_h &h, CR_CH_DSS_2020_r &r,  element_t 
 }
 
 /**
- * input : x , m,  m_p, r(e1,e2,s1,s2), h(h1,h2)
- * output: r_p(e1_p,e2_p,s1_p,s2_p)
+ * @brief 
+ * 
+ * @param  r_p[out]  
+ * @param  h[in]    
+ * @param  r[in]    
+ * @param  m[in]     
+ * @param  m_p[in]   
+ * @param  sk[in]   
+ * @param  pk[in]   
+ * @param  pp[in]   
+ * 
  */
 void CR_CH_DSS_2020::Adapt(CR_CH_DSS_2020_r &r_p, CR_CH_DSS_2020_h &h, CR_CH_DSS_2020_r &r, element_t m, element_t m_p, CR_CH_DSS_2020_sk &sk, CR_CH_DSS_2020_pk &pk, CR_CH_DSS_2020_pp &pp) {
     if(!this->Check(h, r, m, pk, pp)){
@@ -195,8 +217,15 @@ void CR_CH_DSS_2020::Adapt(CR_CH_DSS_2020_r &r_p, CR_CH_DSS_2020_h &h, CR_CH_DSS
 }
 
 /**
- * input : y, m_p,r_p, h
- * output: bool
+ * @brief 
+ * 
+ * @param  h[in]    
+ * @param  r_p[in]  
+ * @param  m_p[in]   
+ * @param  pk[in]   
+ * @param  pp[in]   
+ * 
+ * @return 
  */
 bool CR_CH_DSS_2020::Verify(CR_CH_DSS_2020_h &h, CR_CH_DSS_2020_r &r_p,  element_t m_p, CR_CH_DSS_2020_pk &pk, CR_CH_DSS_2020_pp &pp) {
     return this->Check(h, r_p, m_p, pk, pp);

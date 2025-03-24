@@ -11,6 +11,8 @@
 
 const int diff_max_len = 17;
 
+int repeat = 100;
+
 /*
 random in G1, random in G2, random in GT, random in Zr,
 hash to G1, hash to G2, hash to GT, hash to Zr,
@@ -41,8 +43,6 @@ const double op_time[][diff_max_len] = {
 template <typename T>
 class BaseTest : public testing::TestWithParam<T>  {
     protected:
-        int repeat = 100;
-
         bool out_file = true;
         bool check_visiable = true;
         bool visiable = true;
@@ -62,6 +62,8 @@ class BaseTest : public testing::TestWithParam<T>  {
             }
             out = fopen(filename.c_str(), "a");
             fflush(out);
+
+            if(visiable)printf("repeat times: %d\n", repeat);
         }
 
         void TearDown() override {

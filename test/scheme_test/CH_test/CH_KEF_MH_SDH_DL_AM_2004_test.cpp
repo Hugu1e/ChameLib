@@ -1,4 +1,4 @@
-#include "scheme/CH/CH_KEF_MH_SDH_DL_AM_2004.h"
+#include "ChameLib.h"
 #include "CommonTest.h"
 
 struct TestParams{
@@ -63,7 +63,7 @@ int op_cnt[][diff_max_len] = {
     }, //1, keygen
     
     {
-        0, 0, 0, 2, 
+        0, 0, 0, 1, 
         0, 0, 0, 2, 
         2, 0, 0, 0, 
         4, 0, 0, 0, 
@@ -81,8 +81,8 @@ int op_cnt[][diff_max_len] = {
     {
         0, 0, 0, 0, 
         0, 0, 0, 3, 
-        1, 0, 0, 2, 
         1, 0, 0, 1, 
+        1, 0, 0, 0, 
         0
     }, //4, adapt
 };
@@ -144,6 +144,14 @@ TEST_P(CH_KEF_MH_SDH_DL_AM_2004_Test, Test){
 
 int main(int argc, char **argv) 
 {
+    if (argc > 1) {
+        repeat = std::atoi(argv[1]);
+        if (repeat <= 0) {
+            std::cerr << "Invalid value for repeat. It must be a positive integer." << std::endl;
+            return 1;
+        }
+    }
+
 	::testing::InitGoogleTest(&argc, argv);
 	return RUN_ALL_TESTS();
 }

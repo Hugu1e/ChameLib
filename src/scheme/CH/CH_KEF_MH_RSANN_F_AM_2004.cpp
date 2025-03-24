@@ -1,4 +1,4 @@
-#include <scheme/CH/CH_KEF_MH_RSANN_F_AM_2004.h>
+#include "scheme/CH/CH_KEF_MH_RSANN_F_AM_2004.h"
 
 CH_KEF_MH_RSANN_F_AM_2004::CH_KEF_MH_RSANN_F_AM_2004(){}
 
@@ -22,14 +22,37 @@ void CH_KEF_MH_RSANN_F_AM_2004::L(mpz_t res, mpz_t x, mpz_t n){
     mpz_div(res, res, n);
 }
 
+/**
+ * @brief 
+ * 
+ * 
+ */
 void CH_KEF_MH_RSANN_F_AM_2004::SetUp(){}
 
+/**
+ * @brief 
+ * 
+ * @param  pk[out]  
+ * @param  sk[out]  
+ * @param  k[in]    
+ * 
+ */
 void CH_KEF_MH_RSANN_F_AM_2004::KeyGen(CH_KEF_MH_RSANN_F_AM_2004_pk &pk, CH_KEF_MH_RSANN_F_AM_2004_sk &sk, int k){
     RandomGenerator::RandomPrimeInLength(sk[p], k);
     RandomGenerator::RandomPrimeInLength(sk[q], k);
     mpz_mul(pk[n], sk[p], sk[q]);
 }
 
+/**
+ * @brief 
+ * 
+ * @param  h[out]     
+ * @param  r[out]     
+ * @param  m[in]      
+ * @param  Label[in]  
+ * @param  pk[in]    
+ * 
+ */
 void CH_KEF_MH_RSANN_F_AM_2004::Hash(CH_KEF_MH_RSANN_F_AM_2004_h &h, CH_KEF_MH_RSANN_F_AM_2004_r &r, mpz_t m, mpz_t Label, CH_KEF_MH_RSANN_F_AM_2004_pk &pk){
     mpz_t h_, n_pow_2, tmp, tmp_2, tmp_3;
     mpz_inits(h_, n_pow_2, tmp, tmp_2, tmp_3, NULL);
@@ -55,6 +78,17 @@ void CH_KEF_MH_RSANN_F_AM_2004::Hash(CH_KEF_MH_RSANN_F_AM_2004_h &h, CH_KEF_MH_R
     mpz_clears(h_, n_pow_2, tmp, tmp_2, tmp_3, NULL);
 }
 
+/**
+ * @brief 
+ * 
+ * @param  h[in]     
+ * @param  m[in]      
+ * @param  r[in]     
+ * @param  Label[in]  
+ * @param  pk[in]    
+ * 
+ * @return 
+ */
 bool CH_KEF_MH_RSANN_F_AM_2004::Check(CH_KEF_MH_RSANN_F_AM_2004_h &h, mpz_t m, CH_KEF_MH_RSANN_F_AM_2004_r &r, mpz_t Label, CH_KEF_MH_RSANN_F_AM_2004_pk &pk){
     mpz_t h_, n_pow_2, tmp, tmp_2, tmp_3;
     mpz_inits(h_, n_pow_2, tmp, tmp_2, tmp_3, NULL);
@@ -84,6 +118,19 @@ bool CH_KEF_MH_RSANN_F_AM_2004::Check(CH_KEF_MH_RSANN_F_AM_2004_h &h, mpz_t m, C
     }
 }
 
+/**
+ * @brief 
+ * 
+ * @param  r_p[out]   
+ * @param  m_p[in]    
+ * @param  h[in]     
+ * @param  m[in]      
+ * @param  r[in]     
+ * @param  Label[in]  
+ * @param  sk[in]    
+ * @param  pk[in]    
+ * 
+ */
 void CH_KEF_MH_RSANN_F_AM_2004::Adapt(CH_KEF_MH_RSANN_F_AM_2004_r &r_p, mpz_t m_p, CH_KEF_MH_RSANN_F_AM_2004_h &h, mpz_t m, CH_KEF_MH_RSANN_F_AM_2004_r &r, mpz_t Label, CH_KEF_MH_RSANN_F_AM_2004_sk &sk, CH_KEF_MH_RSANN_F_AM_2004_pk &pk){
     mpz_t tmp, tmp_2, tmp_3, tmp_4, c, lamuda, n_pow_2, h_;
     mpz_inits(tmp, tmp_2, tmp_3, tmp_4, c, lamuda, n_pow_2, h_, NULL);
@@ -129,6 +176,17 @@ void CH_KEF_MH_RSANN_F_AM_2004::Adapt(CH_KEF_MH_RSANN_F_AM_2004_r &r_p, mpz_t m_
     mpz_clears(tmp, tmp_2, tmp_3, tmp_4, c, lamuda, n_pow_2, h_, NULL);
 }
 
+/**
+ * @brief 
+ * 
+ * @param  h[in]     
+ * @param  m_p[in]    
+ * @param  r_p[in]   
+ * @param  Label[in]  
+ * @param  pk[in]    
+ * 
+ * @return 
+ */
 bool CH_KEF_MH_RSANN_F_AM_2004::Verify(CH_KEF_MH_RSANN_F_AM_2004_h &h, mpz_t m_p, CH_KEF_MH_RSANN_F_AM_2004_r &r_p, mpz_t Label, CH_KEF_MH_RSANN_F_AM_2004_pk &pk){
     return Check(h, m_p, r_p, Label, pk);
 }

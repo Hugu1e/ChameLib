@@ -1,10 +1,22 @@
-#include <scheme/CH/CH_KEF_NoMH_AM_2004.h>
+#include "scheme/CH/CH_KEF_NoMH_AM_2004.h"
 
 CH_KEF_NoMH_AM_2004::CH_KEF_NoMH_AM_2004() {}
 
-
+/**
+ * @brief 
+ * 
+ * 
+ */
 void CH_KEF_NoMH_AM_2004::Setup(){}
 
+/**
+ * @brief 
+ * 
+ * @param  pk[out]  
+ * @param  sk[out]  
+ * @param  k[in]    
+ * 
+ */
 void CH_KEF_NoMH_AM_2004::KeyGen(CH_KEF_NoMH_AM_2004_pk &pk, CH_KEF_NoMH_AM_2004_sk &sk, int k) {
     RandomGenerator::RandomPrimeInLength(pk[q], k);
     // p = 2q + 1
@@ -31,7 +43,15 @@ void CH_KEF_NoMH_AM_2004::KeyGen(CH_KEF_NoMH_AM_2004_pk &pk, CH_KEF_NoMH_AM_2004
     mpz_powm(pk[y], pk[g], sk[x], pk[p]);
 }
 
-
+/**
+ * @brief 
+ * 
+ * @param  h[out]   
+ * @param  r[out]   
+ * @param  m[in]    
+ * @param  pk[in]  
+ * 
+ */
 void CH_KEF_NoMH_AM_2004::Hash(CH_KEF_NoMH_AM_2004_h &h, CH_KEF_NoMH_AM_2004_r &r, mpz_t m, CH_KEF_NoMH_AM_2004_pk &pk) {
     mpz_t e, tmp, tmp_2;
     mpz_inits(e, tmp, tmp_2, NULL);
@@ -54,7 +74,16 @@ void CH_KEF_NoMH_AM_2004::Hash(CH_KEF_NoMH_AM_2004_h &h, CH_KEF_NoMH_AM_2004_r &
     mpz_clears(e, tmp, tmp_2, NULL);
 }
 
-
+/**
+ * @brief 
+ * 
+ * @param  h[in]   
+ * @param  r[in]   
+ * @param  m[in]    
+ * @param  pk[in]  
+ * 
+ * @return 
+ */
 bool CH_KEF_NoMH_AM_2004::Check(CH_KEF_NoMH_AM_2004_h &h, CH_KEF_NoMH_AM_2004_r &r, mpz_t m, CH_KEF_NoMH_AM_2004_pk &pk){
     mpz_t e, tmp, tmp_2;
     mpz_inits(e, tmp, tmp_2, NULL);
@@ -76,8 +105,18 @@ bool CH_KEF_NoMH_AM_2004::Check(CH_KEF_NoMH_AM_2004_h &h, CH_KEF_NoMH_AM_2004_r 
     return result;
 }
 
-
-
+/**
+ * @brief 
+ * 
+ * @param  r_p[out]  
+ * @param  m_p[in]   
+ * @param  h[in]    
+ * @param  r[in]    
+ * @param  m[in]     
+ * @param  pk[in]   
+ * @param  sk[in]   
+ * 
+ */
 void CH_KEF_NoMH_AM_2004::Adapt(CH_KEF_NoMH_AM_2004_r &r_p, mpz_t m_p, 
     CH_KEF_NoMH_AM_2004_h &h, CH_KEF_NoMH_AM_2004_r &r, mpz_t m, CH_KEF_NoMH_AM_2004_pk &pk, CH_KEF_NoMH_AM_2004_sk &sk){
     
@@ -102,7 +141,16 @@ void CH_KEF_NoMH_AM_2004::Adapt(CH_KEF_NoMH_AM_2004_r &r_p, mpz_t m_p,
     mpz_clears(k_, e, tmp, NULL);
 }
 
-
+/**
+ * @brief 
+ * 
+ * @param  h[in]    
+ * @param  r_p[in]  
+ * @param  m_p[in]   
+ * @param  pk[in]   
+ * 
+ * @return 
+ */
 bool CH_KEF_NoMH_AM_2004::Verify(CH_KEF_NoMH_AM_2004_h &h, CH_KEF_NoMH_AM_2004_r &r_p, mpz_t m_p, CH_KEF_NoMH_AM_2004_pk &pk){
     return this->Check(h, r_p, m_p, pk);
 }

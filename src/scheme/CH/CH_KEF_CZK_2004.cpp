@@ -1,4 +1,4 @@
-#include <scheme/CH/CH_KEF_CZK_2004.h>
+#include "scheme/CH/CH_KEF_CZK_2004.h"
 
 CH_KEF_CZK_2004::CH_KEF_CZK_2004(int curve, int group): PbcScheme(curve){
     switch(group){
@@ -25,8 +25,10 @@ CH_KEF_CZK_2004::CH_KEF_CZK_2004(int curve, int group): PbcScheme(curve){
 }
 
 /**
- * input : 
- * output: 
+ * @brief 
+ * 
+ * @param  pp[out]  
+ * 
  */
 void CH_KEF_CZK_2004::SetUp(CH_KEF_CZK_2004_pp &pp) {    
     element_random(tmp_G);
@@ -34,8 +36,12 @@ void CH_KEF_CZK_2004::SetUp(CH_KEF_CZK_2004_pp &pp) {
 }
 
 /**
- * input : 
- * output: y
+ * @brief 
+ * 
+ * @param  pk[out]  
+ * @param  sk[out]  
+ * @param  pp[in]  
+ * 
  */
 void CH_KEF_CZK_2004::KeyGen(CH_KEF_CZK_2004_pk &pk, CH_KEF_CZK_2004_sk &sk, CH_KEF_CZK_2004_pp &pp) {  
     element_random(tmp_Zn);
@@ -47,8 +53,15 @@ void CH_KEF_CZK_2004::KeyGen(CH_KEF_CZK_2004_pk &pk, CH_KEF_CZK_2004_sk &sk, CH_
  
 
 /**
- * input : I, m, y
- * output: h, r1, r2
+ * @brief 
+ * 
+ * @param  h[out]    
+ * @param  r[out]   
+ * @param  m[in]    
+ * @param  I[in]    
+ * @param  pk[in]  
+ * @param  pp[in]  
+ * 
  */
 void CH_KEF_CZK_2004::Hash(element_t h, CH_KEF_CZK_2004_r &r, element_t m, element_t I, CH_KEF_CZK_2004_pk &pk, CH_KEF_CZK_2004_pp &pp) {
     element_random(tmp_Zn);
@@ -64,7 +77,17 @@ void CH_KEF_CZK_2004::Hash(element_t h, CH_KEF_CZK_2004_r &r, element_t m, eleme
     element_mul(h, this->tmp_G, tmp_G_2);
 }
 
-
+/**
+ * @brief 
+ * 
+ * @param  I[in]    
+ * @param  m[in]    
+ * @param  r[in]   
+ * @param  h[in]    
+ * @param  pp[in]  
+ * 
+ * @return 
+ */
 bool CH_KEF_CZK_2004::Check(element_t I, element_t m, CH_KEF_CZK_2004_r &r, element_t h, CH_KEF_CZK_2004_pp &pp){
     element_mul(this->tmp_G, pp[g], I);
     element_pow_zn(this->tmp_G, this->tmp_G, m);
@@ -74,8 +97,17 @@ bool CH_KEF_CZK_2004::Check(element_t I, element_t m, CH_KEF_CZK_2004_r &r, elem
 }
 
 /**
- * input : (sk->getElement("x")) ,h, m, r1, r2, m_p, I
- * output: r1_p, r2_p
+ * @brief 
+ * 
+ * @param  r_p[out]  
+ * @param  sk[in]   
+ * @param  h[in]     
+ * @param  m[in]     
+ * @param  r[in]    
+ * @param  m_p[in]   
+ * @param  I[in]     
+ * @param  pp[in]   
+ * 
  */
 void CH_KEF_CZK_2004::Adapt(CH_KEF_CZK_2004_r &r_p, CH_KEF_CZK_2004_sk &sk, element_t h, element_t m, CH_KEF_CZK_2004_r &r, element_t m_p, element_t I, CH_KEF_CZK_2004_pp &pp) {
     // compute r1_p
@@ -97,8 +129,15 @@ void CH_KEF_CZK_2004::Adapt(CH_KEF_CZK_2004_r &r_p, CH_KEF_CZK_2004_sk &sk, elem
 }
 
 /**
- * input : I, m_p, r1_p, r2_p, h
- * output: bool
+ * @brief 
+ * 
+ * @param  I[in]     
+ * @param  m_p[in]   
+ * @param  r_p[in]  
+ * @param  h[in]     
+ * @param  pp[in]   
+ * 
+ * @return 
  */
 bool CH_KEF_CZK_2004::Verify(element_t I, element_t m_p, CH_KEF_CZK_2004_r &r_p, element_t h, CH_KEF_CZK_2004_pp &pp) {
     return this->Check(I, m_p, r_p, h, pp);

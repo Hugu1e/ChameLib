@@ -1,4 +1,4 @@
-#include <scheme/CH/CH_ET_KOG_CDK_2017.h>
+#include "scheme/CH/CH_ET_KOG_CDK_2017.h"
 
 CH_ET_KOG_CDK_2017_NIZKPOK::CH_ET_KOG_CDK_2017_NIZKPOK(){}
 
@@ -12,11 +12,14 @@ void CH_ET_KOG_CDK_2017_NIZKPOK::init(element_t _G, element_t _Zn){
 }
 
 /**
- * @param[out] z
- * @param[out] R
- * @param[in] pk
- * @param[in] sk
- * @param[in] g
+ * @brief 
+ * 
+ * @param  z[out]   
+ * @param  R[out]   
+ * @param  pk[in]  
+ * @param  sk[in]  
+ * @param  g[in]   
+ * 
  */
 void CH_ET_KOG_CDK_2017_NIZKPOK::proof(element_t z, element_t R, element_t pk, element_t sk, element_t g){
     // r
@@ -34,10 +37,14 @@ void CH_ET_KOG_CDK_2017_NIZKPOK::proof(element_t z, element_t R, element_t pk, e
 }
 
 /**
- * @param[in] z
- * @param[in] R
- * @param[in] pk
- * @param[in] g
+ * @brief 
+ * 
+ * @param  z[in]   
+ * @param  R[in]   
+ * @param  pk[in]  
+ * @param  g[in]   
+ * 
+ * @return 
  */
 bool CH_ET_KOG_CDK_2017_NIZKPOK::verify(element_t z, element_t R, element_t pk, element_t g){
     // g^z
@@ -90,11 +97,26 @@ CH_ET_KOG_CDK_2017::CH_ET_KOG_CDK_2017(int curve, int group): PbcScheme(curve){
     nizkpok.init(G1, Zn);
 }
 
+/**
+ * @brief 
+ * 
+ * @param  pp[out]  
+ * 
+ */
 void CH_ET_KOG_CDK_2017::SetUp(CH_ET_KOG_CDK_2017_pp &pp){
     element_random(tmp_G);
     pp.set(g, tmp_G);
 }
 
+/**
+ * @brief 
+ * 
+ * @param  sk[out]     
+ * @param  pk[out]     
+ * @param  pp[in]     
+ * @param  lamuda[in]  
+ * 
+ */
 void CH_ET_KOG_CDK_2017::KeyGen(CH_ET_KOG_CDK_2017_sk &sk, CH_ET_KOG_CDK_2017_pk &pk, CH_ET_KOG_CDK_2017_pp &pp, short lamuda){
     // x
     element_random(tmp_Zn);
@@ -112,12 +134,15 @@ void CH_ET_KOG_CDK_2017::KeyGen(CH_ET_KOG_CDK_2017_sk &sk, CH_ET_KOG_CDK_2017_pk
 }
 
 /**
- * @param[out] hash
- * @param[out] r
- * @param[out] etd
- * @param[in] m
- * @param[in] pk
- * @param[in] pp
+ * @brief 
+ * 
+ * @param  hash[out]  
+ * @param  r[out]     
+ * @param  etd[out]   
+ * @param  m[in]      
+ * @param  pk[in]    
+ * @param  pp[in]    
+ * 
  */
 void CH_ET_KOG_CDK_2017::Hash(CH_ET_KOG_CDK_2017_h &hash, CH_ET_KOG_CDK_2017_r &r, CH_ET_KOG_CDK_2017_etd &etd, 
     element_t m, CH_ET_KOG_CDK_2017_pk &pk, CH_ET_KOG_CDK_2017_pp &pp){
@@ -162,7 +187,17 @@ void CH_ET_KOG_CDK_2017::Hash(CH_ET_KOG_CDK_2017_h &hash, CH_ET_KOG_CDK_2017_r &
     hash.get_hash().set(b, tmp_G_3);
 }
 
-
+/**
+ * @brief 
+ * 
+ * @param  hash[in]  
+ * @param  m[in]      
+ * @param  r[in]     
+ * @param  pk[in]    
+ * @param  pp[in]    
+ * 
+ * @return 
+ */
 bool CH_ET_KOG_CDK_2017::Check(CH_ET_KOG_CDK_2017_h &hash, element_t m, CH_ET_KOG_CDK_2017_r &r, CH_ET_KOG_CDK_2017_pk &pk, CH_ET_KOG_CDK_2017_pp &pp){
     // pai_p
     if(!nizkpok.verify(r.get_pai_p()[pai_z], r.get_pai_p()[pai_R], r.get_ch_r()[p], pk.get_ch_pk()[h])){
@@ -185,7 +220,20 @@ bool CH_ET_KOG_CDK_2017::Check(CH_ET_KOG_CDK_2017_h &hash, element_t m, CH_ET_KO
     return element_cmp(tmp_G, hash.get_hash()[b]) == 0;
 }
 
-
+/**
+ * @brief 
+ * 
+ * @param  r_p[out]   
+ * @param  m_p[in]    
+ * @param  hash[in]  
+ * @param  m[in]      
+ * @param  r[in]     
+ * @param  pk[in]    
+ * @param  pp[in]    
+ * @param  sk[in]    
+ * @param  etd[in]   
+ * 
+ */
 void CH_ET_KOG_CDK_2017::Adapt(CH_ET_KOG_CDK_2017_r &r_p, element_t m_p, CH_ET_KOG_CDK_2017_h &hash, element_t m, CH_ET_KOG_CDK_2017_r &r, 
     CH_ET_KOG_CDK_2017_pk &pk, CH_ET_KOG_CDK_2017_pp &pp, CH_ET_KOG_CDK_2017_sk &sk, CH_ET_KOG_CDK_2017_etd &etd){
     
@@ -249,6 +297,17 @@ void CH_ET_KOG_CDK_2017::Adapt(CH_ET_KOG_CDK_2017_r &r_p, element_t m_p, CH_ET_K
     r_p.get_pai_p().set(pai_R, tmp_G);
 }
 
+/**
+ * @brief 
+ * 
+ * @param  hash[in]  
+ * @param  m_p[in]    
+ * @param  r_p[in]   
+ * @param  pk[in]    
+ * @param  pp[in]    
+ * 
+ * @return 
+ */
 bool CH_ET_KOG_CDK_2017::Verify(CH_ET_KOG_CDK_2017_h &hash, element_t m_p, CH_ET_KOG_CDK_2017_r &r_p, CH_ET_KOG_CDK_2017_pk &pk, CH_ET_KOG_CDK_2017_pp &pp){
     return Check(hash, m_p, r_p, pk, pp);
 }

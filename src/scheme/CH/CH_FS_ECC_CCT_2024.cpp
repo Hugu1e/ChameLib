@@ -30,16 +30,24 @@ CH_FS_ECC_CCT_2024::CH_FS_ECC_CCT_2024(int curve, int group): PbcScheme(curve){
     element_init_same_as(this->tmp_Zn, Zn);
 }
 
-
+/**
+ * @brief 
+ * 
+ * @param  pp[out]  
+ * 
+ */
 void CH_FS_ECC_CCT_2024::SetUp(CH_FS_ECC_CCT_2024_pp &pp){
     element_random(tmp_G);
     pp.set(g, tmp_G);
 }
 
 /**
- * KeyGen() -> (pk, sk)
- * @param pk public key
- * @param sk secret key
+ * @brief 
+ * 
+ * @param  pk[out]  
+ * @param  sk[out]  
+ * @param  pp[in]  
+ * 
  */
 void CH_FS_ECC_CCT_2024::KeyGen(CH_FS_ECC_CCT_2024_pk &pk, CH_FS_ECC_CCT_2024_sk &sk, CH_FS_ECC_CCT_2024_pp &pp) {
     element_random(tmp_Zn);
@@ -52,11 +60,14 @@ void CH_FS_ECC_CCT_2024::KeyGen(CH_FS_ECC_CCT_2024_pk &pk, CH_FS_ECC_CCT_2024_sk
 
 
 /**
- * Hash(pk, m, r, s) -> h
- * @param pk: public key
- * @param m: message
- * @param h: hash value
- * @param r: a NIZK proof
+ * @brief 
+ * 
+ * @param  h[out]    
+ * @param  r[out]   
+ * @param  pk[in]  
+ * @param  m[in]    
+ * @param  pp[in]  
+ * 
  */
 void CH_FS_ECC_CCT_2024::Hash(element_t h, CH_FS_ECC_CCT_2024_r &r, CH_FS_ECC_CCT_2024_pk &pk, element_t m, CH_FS_ECC_CCT_2024_pp &pp) {
     // random 𝜌
@@ -89,23 +100,10 @@ void CH_FS_ECC_CCT_2024::Hash(element_t h, CH_FS_ECC_CCT_2024_r &r, CH_FS_ECC_CC
     r.set(z2, tmp_Zn);
 }
 
-/**
- * H(m) -> res
- * @param m: message m
- * @param res: hash value
- */
 void CH_FS_ECC_CCT_2024::H(element_t res, element_t m){
     HASH::hash(res, m);
 }
 
-/**
- * H'(m1,m2,m3,m4) -> res
- * @param m1: message m1
- * @param m2: message m2
- * @param m3: message m3
- * @param m4: message m4
- * @param res: hash value
- */
 void CH_FS_ECC_CCT_2024::H(element_t res, element_t m1, element_t m2, element_t m3, element_t m4){
     mpz_t ndonr;
     mpz_init(ndonr);
@@ -119,11 +117,15 @@ void CH_FS_ECC_CCT_2024::H(element_t res, element_t m1, element_t m2, element_t 
 }
 
 /**
- * Check(pk, m, h, r) -> bool
- * @param pk: public key
- * @param m: message
- * @param h: hash value
- * @param r: random number r
+ * @brief 
+ * 
+ * @param  pk[in]  
+ * @param  m[in]    
+ * @param  h[in]    
+ * @param  r[in]   
+ * @param  pp[in]  
+ * 
+ * @return 
  */
 bool CH_FS_ECC_CCT_2024::Check(CH_FS_ECC_CCT_2024_pk &pk, element_t m, element_t h, CH_FS_ECC_CCT_2024_r &r, CH_FS_ECC_CCT_2024_pp &pp){
     // y' = h/H(m)
@@ -146,16 +148,18 @@ bool CH_FS_ECC_CCT_2024::Check(CH_FS_ECC_CCT_2024_pk &pk, element_t m, element_t
     return element_cmp(r[c1], this->tmp_Zn) == 0;
 }
 
-
 /**
- * Adapt(pk, sk, m, m_p, h, r) -> r_p
- * @param pk: public key
- * @param sk: secret key
- * @param m: message m
- * @param m_p: modified message m'
- * @param h: hash value
- * @param r: a NIZK proof r
- * @param r_p: a NIZK proof r'
+ * @brief 
+ * 
+ * @param  r_p[out]  
+ * @param  pk[in]   
+ * @param  sk[in]   
+ * @param  m[in]     
+ * @param  m_p[in]   
+ * @param  h[in]     
+ * @param  r[in]    
+ * @param  pp[in]   
+ * 
  */
 void CH_FS_ECC_CCT_2024::Adapt(CH_FS_ECC_CCT_2024_r &r_p, CH_FS_ECC_CCT_2024_pk &pk, CH_FS_ECC_CCT_2024_sk &sk, element_t m, element_t m_p, element_t h, CH_FS_ECC_CCT_2024_r &r, CH_FS_ECC_CCT_2024_pp &pp){
     if(!this->Check(pk, m, h, r, pp)){
@@ -195,11 +199,15 @@ void CH_FS_ECC_CCT_2024::Adapt(CH_FS_ECC_CCT_2024_r &r_p, CH_FS_ECC_CCT_2024_pk 
 
 
 /**
- * Verify(pk, m_p, r_p, s_p, h) -> bool
- * @param pk: public key
- * @param m_p: modified message m'
- * @param h: hash value
- * @param r_p: a NIZK proof r'
+ * @brief 
+ * 
+ * @param  pk[in]   
+ * @param  m_p[in]   
+ * @param  h[in]     
+ * @param  r_p[in]  
+ * @param  pp[in]   
+ * 
+ * @return 
  */
 bool CH_FS_ECC_CCT_2024::Verify(CH_FS_ECC_CCT_2024_pk &pk, element_t m_p, element_t h, CH_FS_ECC_CCT_2024_r &r_p, CH_FS_ECC_CCT_2024_pp &pp){
     return this->Check(pk, m_p, h, r_p, pp);

@@ -67,8 +67,6 @@ class ID_B_CollRes_XSL_2021: public PbcScheme{
 
         bool swap;
 
-        bool getBit(const char *bytes, int index);
-
         bool Pairing(element_t res, element_t g1, element_t g2);
 
     public:
@@ -86,6 +84,8 @@ class ID_B_CollRes_XSL_2021: public PbcScheme{
                         
         bool Verify(ID_B_CollRes_XSL_2021_h &h, element_t m_p, ID_B_CollRes_XSL_2021_r &r_p, const char *I, ID_B_CollRes_XSL_2021_pp &pp);
 
+        bool getBit(const char *bytes, int index);
+        
         ~ID_B_CollRes_XSL_2021();
 
         enum {

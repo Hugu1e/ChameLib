@@ -1,4 +1,4 @@
-#include "scheme/CH/CH_KEF_DL_CZT_2011.h"
+#include "ChameLib.h"
 #include "CommonTest.h"
 
 struct TestParams{
@@ -54,7 +54,7 @@ INSTANTIATE_TEST_CASE_P(
 	testing::ValuesIn(test_values)
 );
 
-int op_cnt_G1G2[][diff_max_len] = {
+int op_cnt_G1[][diff_max_len] = {
     {
         1, 0, 0, 0, 
         0, 0, 0, 0, 
@@ -92,6 +92,48 @@ int op_cnt_G1G2[][diff_max_len] = {
         1, 0, 0, 0, 
         2, 0, 0, 1, 
         3, 0, 0, 0, 
+        0
+    }, //4, adapt
+};
+
+int op_cnt_G2[][diff_max_len] = {
+    {
+        0, 1, 0, 0, 
+        0, 0, 0, 0, 
+        0, 0, 0, 0, 
+        0, 0, 0, 0, 
+        0
+    }, //0, setup
+
+    {
+        0, 0, 0, 1, 
+        0, 0, 0, 0, 
+        0, 0, 0, 0, 
+        0, 1, 0, 0, 
+        0
+    }, //1, keygen
+    
+    {
+        0, 0, 0, 1, 
+        0, 1, 0, 0, 
+        0, 1, 0, 0, 
+        0, 3, 0, 0, 
+        0
+    }, //2, hash
+
+    {
+        0, 0, 0, 0, 
+        0, 1, 0, 0, 
+        0, 1, 0, 0, 
+        0, 1, 0, 0, 
+        0
+    }, //3, check
+
+    {
+        0, 0, 0, 0, 
+        0, 1, 0, 0, 
+        0, 2, 0, 1, 
+        0, 3, 0, 0, 
         0
     }, //4, adapt
 };
@@ -184,14 +226,21 @@ TEST_P(CH_KEF_DL_CZT_2011_Test, Test){
 
     average();
 
-    if(GetParam().group == Group::G1 || GetParam().group == Group::G2){
-        EXPECT_TRUE(check_time(GetParam().curve, op_cnt_G1G2[0], "SetUp"));
-        EXPECT_TRUE(check_time(GetParam().curve, op_cnt_G1G2[1], "KeyGen"));
-        EXPECT_TRUE(check_time(GetParam().curve, op_cnt_G1G2[2], "Hash"));
-        EXPECT_TRUE(check_time(GetParam().curve, op_cnt_G1G2[3], "Check"));
-        EXPECT_TRUE(check_time(GetParam().curve, op_cnt_G1G2[4], "Adapt"));
-        EXPECT_TRUE(check_time(GetParam().curve, op_cnt_G1G2[3], "Verify"));
-    } else if(GetParam().group == Group::GT){
+    if(GetParam().group == Group::G1){
+        EXPECT_TRUE(check_time(GetParam().curve, op_cnt_G1[0], "SetUp"));
+        EXPECT_TRUE(check_time(GetParam().curve, op_cnt_G1[1], "KeyGen"));
+        EXPECT_TRUE(check_time(GetParam().curve, op_cnt_G1[2], "Hash"));
+        EXPECT_TRUE(check_time(GetParam().curve, op_cnt_G1[3], "Check"));
+        EXPECT_TRUE(check_time(GetParam().curve, op_cnt_G1[4], "Adapt"));
+        EXPECT_TRUE(check_time(GetParam().curve, op_cnt_G1[3], "Verify"));
+    } else if(GetParam().group == Group::G2){
+        EXPECT_TRUE(check_time(GetParam().curve, op_cnt_G2[0], "SetUp"));
+        EXPECT_TRUE(check_time(GetParam().curve, op_cnt_G2[1], "KeyGen"));
+        EXPECT_TRUE(check_time(GetParam().curve, op_cnt_G2[2], "Hash"));
+        EXPECT_TRUE(check_time(GetParam().curve, op_cnt_G2[3], "Check"));
+        EXPECT_TRUE(check_time(GetParam().curve, op_cnt_G2[4], "Adapt"));
+        EXPECT_TRUE(check_time(GetParam().curve, op_cnt_G2[3], "Verify"));
+    }else if(GetParam().group == Group::GT){
         EXPECT_TRUE(check_time(GetParam().curve, op_cnt_GT[0], "SetUp"));
         EXPECT_TRUE(check_time(GetParam().curve, op_cnt_GT[1], "KeyGen"));
         EXPECT_TRUE(check_time(GetParam().curve, op_cnt_GT[2], "Hash"));
@@ -203,6 +252,14 @@ TEST_P(CH_KEF_DL_CZT_2011_Test, Test){
 
 int main(int argc, char **argv) 
 {
+    if (argc > 1) {
+        repeat = std::atoi(argv[1]);
+        if (repeat <= 0) {
+            std::cerr << "Invalid value for repeat. It must be a positive integer." << std::endl;
+            return 1;
+        }
+    }
+
 	::testing::InitGoogleTest(&argc, argv);
 	return RUN_ALL_TESTS();
 }

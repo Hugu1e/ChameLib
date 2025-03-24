@@ -1,4 +1,4 @@
-#include <scheme/IBCH/IB_CH_ZSS_S1_2003.h>
+#include "scheme/IBCH/IB_CH_ZSS_S1_2003.h"
 
 IB_CH_ZSS_S1_2003::IB_CH_ZSS_S1_2003(int curve, bool swap) : PbcScheme(curve) {
     this->swap = swap;
@@ -20,6 +20,13 @@ IB_CH_ZSS_S1_2003::IB_CH_ZSS_S1_2003(int curve, bool swap) : PbcScheme(curve) {
     element_init_same_as(tmp_Zn_2, Zn);
 }
 
+/**
+ * @brief 
+ * 
+ * @param  pp[out]   
+ * @param  msk[out]  
+ * 
+ */
 void IB_CH_ZSS_S1_2003::SetUp(IB_CH_ZSS_S1_2003_pp &pp, IB_CH_ZSS_S1_2003_msk &msk) {
     // s
     element_random(tmp_Zn);
@@ -32,6 +39,15 @@ void IB_CH_ZSS_S1_2003::SetUp(IB_CH_ZSS_S1_2003_pp &pp, IB_CH_ZSS_S1_2003_msk &m
     pp.set(Ppub, tmp_H);
 }
 
+/**
+ * @brief 
+ * 
+ * @param  pk[out]   
+ * @param  sk[out]   
+ * @param  msk[in]  
+ * @param  ID[in]    
+ * 
+ */
 void IB_CH_ZSS_S1_2003::Extract(IB_CH_ZSS_S1_2003_pk &pk, IB_CH_ZSS_S1_2003_sk &sk, IB_CH_ZSS_S1_2003_msk &msk, element_t ID) {
     // QID = H(ID)
     this->H(this->tmp_G, ID);
@@ -54,6 +70,16 @@ void IB_CH_ZSS_S1_2003::Pairing(element_t res, element_t g1, element_t g2){
     }
 }
 
+/**
+ * @brief 
+ * 
+ * @param  h[out]   
+ * @param  r[out]   
+ * @param  m[in]    
+ * @param  ID[in]   
+ * @param  pp[in]  
+ * 
+ */
 void IB_CH_ZSS_S1_2003::Hash(IB_CH_ZSS_S1_2003_h &h, IB_CH_ZSS_S1_2003_r &r, element_t m, element_t ID, IB_CH_ZSS_S1_2003_pp &pp) {
     // r
     element_random(tmp_G);
@@ -70,6 +96,17 @@ void IB_CH_ZSS_S1_2003::Hash(IB_CH_ZSS_S1_2003_h &h, IB_CH_ZSS_S1_2003_r &r, ele
     h.set(h1, tmp_GT);
 }
 
+/**
+ * @brief 
+ * 
+ * @param  h[in]   
+ * @param  m[in]    
+ * @param  r[in]   
+ * @param  ID[in]   
+ * @param  pp[in]  
+ * 
+ * @return 
+ */
 bool IB_CH_ZSS_S1_2003::Check(IB_CH_ZSS_S1_2003_h &h, element_t m, IB_CH_ZSS_S1_2003_r &r, element_t ID, IB_CH_ZSS_S1_2003_pp &pp){
     // e(R, P)
     Pairing(tmp_GT, r[r1], pp[P]);
@@ -83,6 +120,19 @@ bool IB_CH_ZSS_S1_2003::Check(IB_CH_ZSS_S1_2003_h &h, element_t m, IB_CH_ZSS_S1_
     return element_cmp(h[h1], tmp_GT) == 0;
 }
 
+/**
+ * @brief 
+ * 
+ * @param  r_p[out]  
+ * @param  m_p[in]   
+ * @param  h[in]    
+ * @param  m[in]     
+ * @param  r[in]    
+ * @param  ID[in]    
+ * @param  sk[in]   
+ * @param  pp[in]   
+ * 
+ */
 void IB_CH_ZSS_S1_2003::Adapt(IB_CH_ZSS_S1_2003_r &r_p, element_t m_p, IB_CH_ZSS_S1_2003_h &h, element_t m, IB_CH_ZSS_S1_2003_r &r, element_t ID, IB_CH_ZSS_S1_2003_sk &sk, IB_CH_ZSS_S1_2003_pp &pp) {
     this->H(this->tmp_Zn, m);
     this->H(this->tmp_Zn_2, m_p);
@@ -93,6 +143,17 @@ void IB_CH_ZSS_S1_2003::Adapt(IB_CH_ZSS_S1_2003_r &r_p, element_t m_p, IB_CH_ZSS
     r_p.set(r1, tmp_G);
 }
 
+/**
+ * @brief 
+ * 
+ * @param  h_p[in]  
+ * @param  m_p[in]   
+ * @param  r_p[in]  
+ * @param  ID[in]    
+ * @param  pp[in]   
+ * 
+ * @return 
+ */
 bool IB_CH_ZSS_S1_2003::Verify(IB_CH_ZSS_S1_2003_h &h_p, element_t m_p, IB_CH_ZSS_S1_2003_r &r_p, element_t ID, IB_CH_ZSS_S1_2003_pp &pp) {
     return this->Check(h_p, m_p, r_p, ID, pp);
 }

@@ -1,4 +1,4 @@
-#include "scheme/CH/CH_AMV_2017.h"
+#include "ChameLib.h"
 #include "CommonTest.h"
 
 struct TestParams{

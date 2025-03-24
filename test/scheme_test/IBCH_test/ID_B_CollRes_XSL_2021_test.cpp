@@ -1,4 +1,4 @@
-#include "scheme/IBCH/ID_B_CollRes_XSL_2021.h"
+#include "ChameLib.h"
 #include "CommonTest.h"
 
 struct TestParams{
@@ -68,35 +68,77 @@ int op_cnt[][diff_max_len] = {
     }, //0, setup
 
     {
+        0, 0, 0, 1, 
         0, 0, 0, 0, 
         0, 1, 0, 0, 
-        0, 1, 0, 0, 
-        0, 0, 0, 0, 
+        1, 1, 0, 0, 
         0
     }, //1, KeyGen
     
     {
-        0, 0, 0, 1, 
         1, 1, 0, 0, 
-        2, 0, 0, 0, 
-        1, 0, 0, 0, 
-        1
+        0, 0, 0, 0, 
+        0, 0, 2, 0, 
+        0, 0, 1, 0, 
+        3
     }, //2, hash
 
     {
         0, 0, 0, 0, 
-        1, 0, 0, 0, 
-        1, 0, 0, 0, 
         0, 0, 0, 0, 
-        1
+        0, 0, 2, 0, 
+        0, 0, 1, 0, 
+        3
     }, //3, check
 
     {
         0, 0, 0, 0, 
+        0, 0, 0, 0, 
+        1, 1, 0, 0, 
+        1, 1, 0, 0, 
+        0
+    }, //4, adapt
+};
+
+int op_cnt_swap[][diff_max_len] = {
+    {
+        1, 1, 0, 1, 
+        0, 0, 0, 0, 
+        0, 0, 0, 0, 
+        1, 1, 0, 0, 
+        0
+    }, //0, setup
+
+    {
+        0, 0, 0, 1, 
+        0, 0, 0, 0, 
         1, 0, 0, 0, 
-        1, 0, 1, 0, 
+        1, 1, 0, 0, 
+        0
+    }, //1, KeyGen
+    
+    {
+        1, 1, 0, 0, 
+        0, 0, 0, 0, 
+        0, 0, 2, 0, 
         0, 0, 1, 0, 
-        2
+        3
+    }, //2, hash
+
+    {
+        0, 0, 0, 0, 
+        0, 0, 0, 0, 
+        0, 0, 2, 0, 
+        0, 0, 1, 0, 
+        3
+    }, //3, check
+
+    {
+        0, 0, 0, 0, 
+        0, 0, 0, 0, 
+        1, 1, 0, 0, 
+        1, 1, 0, 0, 
+        0
     }, //4, adapt
 };
 
@@ -156,14 +198,120 @@ TEST_P(ID_B_CollRes_XSL_2021_Test, Test){
         0, 0, 0, 0, 
         0
     };
-    for(int j=0;j<GetParam().length;j++){
+    for(int j=0; j<=GetParam().length;j++){
         for(int i=0;i<diff_max_len;i++) op_cnt_SetUp[i] += delta_SetUp[i];
     }
     EXPECT_TRUE(check_time(GetParam().curve, op_cnt_SetUp, "SetUp"));
+
+
+
+    if(!GetParam().swap){
+        int delta_I[] = {
+            0, 0, 0, 0, 
+            0, 0, 0, 0, 
+            0, 1, 0, 0, 
+            0, 0, 0, 0, 
+            0
+        };
+
+        int op_cnt_KeyGen[diff_max_len];
+        for(int i=0; i<diff_max_len; i++) op_cnt_KeyGen[i] = op_cnt[1][i];
+
+        for(unsigned long int i = 1; i <= GetParam().length; i++) {
+            if(ch.getBit(I.c_str(), i-1)) {
+                for(int j=0;j<diff_max_len;j++) op_cnt_KeyGen[j] += delta_I[j];
+            }
+        }
+        EXPECT_TRUE(check_time(GetParam().curve, op_cnt_KeyGen, "KeyGen"));
+
+        int op_cnt_Hash[diff_max_len];
+        for(int i=0; i<diff_max_len; i++) op_cnt_Hash[i] = op_cnt[2][i];
+        for(unsigned long int i = 1; i <= GetParam().length; i++) {
+            if(ch.getBit(I.c_str(), i-1)) {
+                for(int j=0;j<diff_max_len;j++) op_cnt_Hash[j] += delta_I[j];
+            }
+        }
+        EXPECT_TRUE(check_time(GetParam().curve, op_cnt_Hash, "Hash"));
+
+        int op_cnt_Check[diff_max_len];
+        for(int i=0; i<diff_max_len; i++) op_cnt_Check[i] = op_cnt[3][i];
+        for(unsigned long int i = 1; i <= GetParam().length; i++) {
+            if(ch.getBit(I.c_str(), i-1)) {
+                for(int j=0;j<diff_max_len;j++) op_cnt_Check[j] += delta_I[j];
+            }
+        }
+        EXPECT_TRUE(check_time(GetParam().curve, op_cnt_Check, "Check"));
+
+        EXPECT_TRUE(check_time(GetParam().curve, op_cnt[4], "Adapt"));
+
+        int op_cnt_Verify[diff_max_len];
+        for(int i=0; i<diff_max_len; i++) op_cnt_Verify[i] = op_cnt[3][i];
+        for(unsigned long int i = 1; i <= GetParam().length; i++) {
+            if(ch.getBit(I.c_str(), i-1)) {
+                for(int j=0;j<diff_max_len;j++) op_cnt_Verify[j] += delta_I[j];
+            }
+        }
+        EXPECT_TRUE(check_time(GetParam().curve, op_cnt_Verify, "Verify"));
+    }else{
+        int delta_I[] = {
+            0, 0, 0, 0, 
+            0, 0, 0, 0, 
+            1, 0, 0, 0, 
+            0, 0, 0, 0, 
+            0
+        };
+
+        int op_cnt_KeyGen[diff_max_len];
+        for(int i=0; i<diff_max_len; i++) op_cnt_KeyGen[i] = op_cnt_swap[1][i];
+
+        for(unsigned long int i = 1; i <= GetParam().length; i++) {
+            if(ch.getBit(I.c_str(), i-1)) {
+                for(int j=0;j<diff_max_len;j++) op_cnt_KeyGen[j] += delta_I[j];
+            }
+        }
+        EXPECT_TRUE(check_time(GetParam().curve, op_cnt_KeyGen, "KeyGen"));
+
+        int op_cnt_Hash[diff_max_len];
+        for(int i=0; i<diff_max_len; i++) op_cnt_Hash[i] = op_cnt_swap[2][i];
+        for(unsigned long int i = 1; i <= GetParam().length; i++) {
+            if(ch.getBit(I.c_str(), i-1)) {
+                for(int j=0;j<diff_max_len;j++) op_cnt_Hash[j] += delta_I[j];
+            }
+        }
+        EXPECT_TRUE(check_time(GetParam().curve, op_cnt_Hash, "Hash"));
+
+        int op_cnt_Check[diff_max_len];
+        for(int i=0; i<diff_max_len; i++) op_cnt_Check[i] = op_cnt_swap[3][i];
+        for(unsigned long int i = 1; i <= GetParam().length; i++) {
+            if(ch.getBit(I.c_str(), i-1)) {
+                for(int j=0;j<diff_max_len;j++) op_cnt_Check[j] += delta_I[j];
+            }
+        }
+        EXPECT_TRUE(check_time(GetParam().curve, op_cnt_Check, "Check"));
+
+        EXPECT_TRUE(check_time(GetParam().curve, op_cnt_swap[4], "Adapt"));
+
+        int op_cnt_Verify[diff_max_len];
+        for(int i=0; i<diff_max_len; i++) op_cnt_Verify[i] = op_cnt_swap[3][i];
+        for(unsigned long int i = 1; i <= GetParam().length; i++) {
+            if(ch.getBit(I.c_str(), i-1)) {
+                for(int j=0;j<diff_max_len;j++) op_cnt_Verify[j] += delta_I[j];
+            }
+        }
+        EXPECT_TRUE(check_time(GetParam().curve, op_cnt_Verify, "Verify"));
+    }
 }
 
 int main(int argc, char **argv) 
 {
+    if (argc > 1) {
+        repeat = std::atoi(argv[1]);
+        if (repeat <= 0) {
+            std::cerr << "Invalid value for repeat. It must be a positive integer." << std::endl;
+            return 1;
+        }
+    }
+    
 	::testing::InitGoogleTest(&argc, argv);
 	return RUN_ALL_TESTS();
 }

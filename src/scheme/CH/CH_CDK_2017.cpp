@@ -1,9 +1,22 @@
-#include <scheme/CH/CH_CDK_2017.h>
+#include "scheme/CH/CH_CDK_2017.h"
 
 CH_CDK_2017::CH_CDK_2017(){}
 
+/**
+ * @brief 
+ * 
+ * 
+ */
 void CH_CDK_2017::SetUp(){}
 
+/**
+ * @brief 
+ * 
+ * @param  pk[out]  
+ * @param  sk[out]  
+ * @param  k[in]    
+ * 
+ */
 void CH_CDK_2017::KeyGen(CH_CDK_2017_pk &pk, CH_CDK_2017_sk &sk, short k){
     rsa.KeyGen(pk.get_rsa_pk(), sk.get_rsa_sk(), k);
 }
@@ -12,6 +25,16 @@ void CH_CDK_2017::H(mpz_t res, mpz_t m1, mpz_t m2, mpz_t n){
     HASH::hash_n(res, m1, m2, n);  
 }
 
+/**
+ * @brief 
+ * 
+ * @param  h[out]   
+ * @param  r[out]   
+ * @param  m[in]    
+ * @param  tag[in]  
+ * @param  pk[in]  
+ * 
+ */
 void CH_CDK_2017::Hash(CH_CDK_2017_h &h, CH_CDK_2017_r &r, mpz_t m, mpz_t tag, CH_CDK_2017_pk &pk){
     // Draw r ← Zn*
     mpz_t _r,_h,n,e,g,tmp;
@@ -35,6 +58,17 @@ void CH_CDK_2017::Hash(CH_CDK_2017_h &h, CH_CDK_2017_r &r, mpz_t m, mpz_t tag, C
     mpz_clears(_r,_h,n,e,g,tmp,NULL);
 }
 
+/**
+ * @brief 
+ * 
+ * @param  h[in]   
+ * @param  r[in]   
+ * @param  m[in]    
+ * @param  tag[in]  
+ * @param  pk[in]  
+ * 
+ * @return 
+ */
 bool CH_CDK_2017::Check(CH_CDK_2017_h &h, CH_CDK_2017_r &r, mpz_t m, mpz_t tag, CH_CDK_2017_pk &pk){
     bool CheckResult = false;
 
@@ -61,6 +95,18 @@ bool CH_CDK_2017::Check(CH_CDK_2017_h &h, CH_CDK_2017_r &r, mpz_t m, mpz_t tag, 
     return CheckResult;
 }
 
+/**
+ * @brief 
+ * 
+ * @param  r_p[out]   
+ * @param  tag_p[out]  
+ * @param  h[in]     
+ * @param  r[in]     
+ * @param  m_p[in]    
+ * @param  sk[in]    
+ * @param  pk[in]    
+ * 
+ */
 void CH_CDK_2017::Adapt(CH_CDK_2017_r &r_p, mpz_t tag_p, CH_CDK_2017_h &h, CH_CDK_2017_r &r, mpz_t m_p, CH_CDK_2017_sk &sk, CH_CDK_2017_pk &pk){
     mpz_t n,_r,e,tmp_1,tmp_2,_h,_r_p, p,q,phi,d;
     mpz_inits(n,_r,e,tmp_1,tmp_2,_h,_r_p,p,q,phi,d,NULL);
@@ -85,6 +131,17 @@ void CH_CDK_2017::Adapt(CH_CDK_2017_r &r_p, mpz_t tag_p, CH_CDK_2017_h &h, CH_CD
     mpz_clears(n,_r,e,tmp_1,tmp_2,_h,_r_p,p,q,phi,d,NULL);
 }
 
+/**
+ * @brief 
+ * 
+ * @param  h[in]     
+ * @param  r_p[in]   
+ * @param  m_p[in]    
+ * @param  tag_p[in]  
+ * @param  pk[in]    
+ * 
+ * @return 
+ */
 bool CH_CDK_2017::Verify(CH_CDK_2017_h &h, CH_CDK_2017_r &r_p, mpz_t m_p, mpz_t tag_p, CH_CDK_2017_pk &pk){
     return Check(h, r_p, m_p, tag_p, pk);
 }

@@ -1,4 +1,4 @@
-#include <scheme/CH/CH_KEF_DLP_LLA_2012.h>
+#include "scheme/CH/CH_KEF_DLP_LLA_2012.h"
 
 CH_KEF_DLP_LLA_2012::CH_KEF_DLP_LLA_2012(int curve, int group): PbcScheme(curve) {
     switch(group){
@@ -23,8 +23,10 @@ CH_KEF_DLP_LLA_2012::CH_KEF_DLP_LLA_2012(int curve, int group): PbcScheme(curve)
 }
 
 /**
- * input : 
- * output: 
+ * @brief 
+ * 
+ * @param  pp[out]  
+ * 
  */
 void CH_KEF_DLP_LLA_2012::SetUp(CH_KEF_DLP_LLA_2012_pp &pp) {    
     element_random(tmp_G);
@@ -32,8 +34,13 @@ void CH_KEF_DLP_LLA_2012::SetUp(CH_KEF_DLP_LLA_2012_pp &pp) {
 }
 
 /**
- * input : 
- * output: sk, pk, label
+ * @brief 
+ * 
+ * @param  sk[out]  
+ * @param  pk[out]  
+ * @param  lm[out]  
+ * @param  pp[in]  
+ * 
  */
 void CH_KEF_DLP_LLA_2012::KeyGen(CH_KEF_DLP_LLA_2012_sk &sk, CH_KEF_DLP_LLA_2012_pk &pk, CH_KEF_DLP_LLA_2012_labelManager &lm, CH_KEF_DLP_LLA_2012_pp &pp) {  
     // alpha
@@ -65,10 +72,6 @@ void CH_KEF_DLP_LLA_2012::KeyGen(CH_KEF_DLP_LLA_2012_sk &sk, CH_KEF_DLP_LLA_2012
     lm.add(pk, lg);
 }
 
-/**
- * input: y1, w1, t
- * output: label
- */
 void CH_KEF_DLP_LLA_2012::getLabel(CH_KEF_DLP_LLA_2012_label &label, CH_KEF_DLP_LLA_2012_labelManager &lm, CH_KEF_DLP_LLA_2012_pk &pk){
     // t
     element_random(tmp_G);
@@ -87,10 +90,6 @@ void CH_KEF_DLP_LLA_2012::getLabel(CH_KEF_DLP_LLA_2012_label &label, CH_KEF_DLP_
     label.set(R, tmp_G);
 }
 
-/**
- * input : m1,m2,m3
- * output: res
- */
 void CH_KEF_DLP_LLA_2012::H1(element_t res, element_t m1, element_t m2, element_t m3) {
     HASH::hash(res, m1, m2, m3);
 }
@@ -104,8 +103,16 @@ void CH_KEF_DLP_LLA_2012::H2(element_t res, element_t m) {
 }
 
 /**
- * input : pk, m, r, lable
- * output: S
+ * @brief 
+ * 
+ * @param  h[out]       
+ * @param  r[out]       
+ * @param  label[out]  
+ * @param  pk[in]     
+ * @param  m[in]       
+ * @param  lm[in]     
+ * @param  pp[in]     
+ * 
  */
 void CH_KEF_DLP_LLA_2012::Hash(element_t h, element_t r, CH_KEF_DLP_LLA_2012_label &label, CH_KEF_DLP_LLA_2012_pk &pk, element_t m, CH_KEF_DLP_LLA_2012_labelManager &lm, CH_KEF_DLP_LLA_2012_pp &pp) {
     getLabel(label, lm, pk);
@@ -127,8 +134,16 @@ void CH_KEF_DLP_LLA_2012::Hash(element_t h, element_t r, CH_KEF_DLP_LLA_2012_lab
 }
 
 /**
- * input : m, r, pk, lable, S
- * output: bool
+ * @brief 
+ * 
+ * @param  m[in]       
+ * @param  r[in]       
+ * @param  pk[in]     
+ * @param  label[in]  
+ * @param  h[in]       
+ * @param  pp[in]     
+ * 
+ * @return 
  */
 bool CH_KEF_DLP_LLA_2012::Check(element_t m, element_t r, CH_KEF_DLP_LLA_2012_pk &pk, CH_KEF_DLP_LLA_2012_label &label, element_t h, CH_KEF_DLP_LLA_2012_pp &pp) {
     // c = H1(label, L)
@@ -148,8 +163,18 @@ bool CH_KEF_DLP_LLA_2012::Check(element_t m, element_t r, CH_KEF_DLP_LLA_2012_pk
 }
 
 /**
- * input: sk,pk,label, h, m, m_p, r
- * output: r_p
+ * @brief 
+ * 
+ * @param  r_p[out]     
+ * @param  sk[in]     
+ * @param  pk[in]     
+ * @param  label[in]  
+ * @param  h[in]       
+ * @param  m[in]       
+ * @param  m_p[in]     
+ * @param  r[in]       
+ * @param  pp[in]     
+ * 
  */
 void CH_KEF_DLP_LLA_2012::UForge(element_t r_p, CH_KEF_DLP_LLA_2012_sk &sk, CH_KEF_DLP_LLA_2012_pk &pk, CH_KEF_DLP_LLA_2012_label &label, element_t h, element_t m, element_t m_p, element_t r, CH_KEF_DLP_LLA_2012_pp &pp) {
     // check
@@ -184,8 +209,16 @@ void CH_KEF_DLP_LLA_2012::UForge(element_t r_p, CH_KEF_DLP_LLA_2012_sk &sk, CH_K
 }
 
 /**
- * input: label, m, m_p, r,r_p, m_pp
- * output: r_pp
+ * @brief 
+ * 
+ * @param  r_pp[out]    
+ * @param  label[in]  
+ * @param  m[in]       
+ * @param  m_p[in]     
+ * @param  r[in]       
+ * @param  r_p[in]     
+ * @param  m_pp[in]    
+ * 
  */
 void CH_KEF_DLP_LLA_2012::IForge(element_t r_pp, CH_KEF_DLP_LLA_2012_label &label, element_t m, element_t m_p, element_t r, element_t r_p, element_t m_pp){
     // s = (m-m')/(r'-r)
@@ -201,8 +234,16 @@ void CH_KEF_DLP_LLA_2012::IForge(element_t r_pp, CH_KEF_DLP_LLA_2012_label &labe
 }
 
 /**
- * input : m_p, r_p, pk, label, S
- * output: bool
+ * @brief 
+ * 
+ * @param  m_p[in]     
+ * @param  r_p[in]     
+ * @param  pk[in]     
+ * @param  label[in]  
+ * @param  h[in]       
+ * @param  pp[in]     
+ * 
+ * @return 
  */
 bool CH_KEF_DLP_LLA_2012::Verify(element_t m_p, element_t r_p, CH_KEF_DLP_LLA_2012_pk &pk, CH_KEF_DLP_LLA_2012_label &label, element_t h, CH_KEF_DLP_LLA_2012_pp &pp) {
     return this->Check(m_p, r_p, pk, label, h, pp);

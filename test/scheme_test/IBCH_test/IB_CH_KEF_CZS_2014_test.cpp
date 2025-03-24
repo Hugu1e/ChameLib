@@ -1,4 +1,4 @@
-#include "scheme/IBCH/IB_CH_KEF_CZS_2014.h"
+#include "ChameLib.h"
 #include "CommonTest.h"
 
 struct TestParams{
@@ -51,8 +51,8 @@ int op_cnt[][diff_max_len] = {
     {
         1, 0, 0, 1, 
         0, 0, 0, 0, 
-        0, 0, 0, 0, 
         1, 0, 0, 0, 
+        0, 0, 0, 0, 
         0
     }, //0, setup
 
@@ -67,8 +67,8 @@ int op_cnt[][diff_max_len] = {
     {
         0, 0, 0, 1, 
         1, 1, 0, 0, 
-        2, 0, 0, 0, 
-        1, 0, 0, 0, 
+        3, 0, 0, 0, 
+        0, 0, 0, 0, 
         1
     }, //2, hash
 
@@ -84,6 +84,48 @@ int op_cnt[][diff_max_len] = {
         0, 0, 0, 0, 
         1, 0, 0, 0, 
         1, 0, 1, 0, 
+        0, 0, 1, 0, 
+        2
+    }, //4, adapt
+};
+
+int op_cnt_swap[][diff_max_len] = {
+    {
+        0, 1, 0, 1, 
+        0, 0, 0, 0, 
+        0, 1, 0, 0, 
+        0, 0, 0, 0, 
+        0
+    }, //0, setup
+
+    {
+        0, 0, 0, 0, 
+        1, 0, 0, 0, 
+        1, 0, 0, 0, 
+        0, 0, 0, 0, 
+        0
+    }, //1, Extract
+    
+    {
+        0, 0, 0, 1, 
+        1, 1, 0, 0, 
+        0, 3, 0, 0, 
+        0, 0, 0, 0, 
+        1
+    }, //2, hash
+
+    {
+        0, 0, 0, 0, 
+        0, 1, 0, 0, 
+        0, 1, 0, 0, 
+        0, 0, 0, 0, 
+        1
+    }, //3, check
+
+    {
+        0, 0, 0, 0, 
+        0, 1, 0, 0, 
+        0, 1, 1, 0, 
         0, 0, 1, 0, 
         2
     }, //4, adapt
@@ -143,16 +185,33 @@ TEST_P(IB_CH_KEF_CZS_2014_Test, Test){
 
     average();
 
-    EXPECT_TRUE(check_time(GetParam().curve, op_cnt[0], "SetUp"));
-    EXPECT_TRUE(check_time(GetParam().curve, op_cnt[1], "Extract"));
-    EXPECT_TRUE(check_time(GetParam().curve, op_cnt[2], "Hash"));
-    EXPECT_TRUE(check_time(GetParam().curve, op_cnt[3], "Check"));
-    EXPECT_TRUE(check_time(GetParam().curve, op_cnt[4], "Adapt"));
-    EXPECT_TRUE(check_time(GetParam().curve, op_cnt[3], "Verify"));
+    if(!GetParam().swap){
+        EXPECT_TRUE(check_time(GetParam().curve, op_cnt[0], "SetUp"));
+        EXPECT_TRUE(check_time(GetParam().curve, op_cnt[1], "Extract"));
+        EXPECT_TRUE(check_time(GetParam().curve, op_cnt[2], "Hash"));
+        EXPECT_TRUE(check_time(GetParam().curve, op_cnt[3], "Check"));
+        EXPECT_TRUE(check_time(GetParam().curve, op_cnt[4], "Adapt"));
+        EXPECT_TRUE(check_time(GetParam().curve, op_cnt[3], "Verify"));
+    }else{
+        EXPECT_TRUE(check_time(GetParam().curve, op_cnt_swap[0], "SetUp"));
+        EXPECT_TRUE(check_time(GetParam().curve, op_cnt_swap[1], "Extract"));
+        EXPECT_TRUE(check_time(GetParam().curve, op_cnt_swap[2], "Hash"));
+        EXPECT_TRUE(check_time(GetParam().curve, op_cnt_swap[3], "Check"));
+        EXPECT_TRUE(check_time(GetParam().curve, op_cnt_swap[4], "Adapt"));
+        EXPECT_TRUE(check_time(GetParam().curve, op_cnt_swap[3], "Verify"));
+    }
 }
 
 int main(int argc, char **argv) 
 {
+    if (argc > 1) {
+        repeat = std::atoi(argv[1]);
+        if (repeat <= 0) {
+            std::cerr << "Invalid value for repeat. It must be a positive integer." << std::endl;
+            return 1;
+        }
+    }
+
 	::testing::InitGoogleTest(&argc, argv);
 	return RUN_ALL_TESTS();
 }

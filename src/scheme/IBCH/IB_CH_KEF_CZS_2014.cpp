@@ -1,4 +1,4 @@
-#include <scheme/IBCH/IB_CH_KEF_CZS_2014.h>
+#include "scheme/IBCH/IB_CH_KEF_CZS_2014.h"
 
 IB_CH_KEF_CZS_2014::IB_CH_KEF_CZS_2014(int curve, bool swap):PbcScheme(curve) {
     this->swap = swap;
@@ -30,8 +30,11 @@ void IB_CH_KEF_CZS_2014::Pairing(element_t res, element_t g1, element_t g2){
 }
 
 /**
- * input : 
- * output: msk, Ppub
+ * @brief 
+ * 
+ * @param  pp[out]   
+ * @param  msk[out]  
+ * 
  */
 void IB_CH_KEF_CZS_2014::SetUp(IB_CH_KEF_CZS_2014_pp &pp, IB_CH_KEF_CZS_2014_msk &msk) {
     // P
@@ -47,8 +50,12 @@ void IB_CH_KEF_CZS_2014::SetUp(IB_CH_KEF_CZS_2014_pp &pp, IB_CH_KEF_CZS_2014_msk
 }
 
 /**
- * input : x, ID
- * output: SID
+ * @brief 
+ * 
+ * @param  td[out]   
+ * @param  ID[in]    
+ * @param  msk[in]  
+ * 
  */
 void IB_CH_KEF_CZS_2014::Extract(IB_CH_KEF_CZS_2014_td &td, std::string ID, IB_CH_KEF_CZS_2014_msk &msk) {  
     // QID = H(ID)
@@ -59,17 +66,20 @@ void IB_CH_KEF_CZS_2014::Extract(IB_CH_KEF_CZS_2014_td &td, std::string ID, IB_C
 }
  
 
-/**
- * input : (y,h,m),(u11,u12,u2)
- * output: res
- */
 void IB_CH_KEF_CZS_2014::H(element_t res, std::string m) {
     HASH::hash(res, m);
 }
 
 /**
- * input : ID, L, m
- * output: r(r1,r2), h
+ * @brief 
+ * 
+ * @param  h[out]   
+ * @param  r[out]   
+ * @param  ID[in]   
+ * @param  L[in]    
+ * @param  m[in]    
+ * @param  pp[in]  
+ * 
  */
 void IB_CH_KEF_CZS_2014::Hash(IB_CH_KEF_CZS_2014_h &h, IB_CH_KEF_CZS_2014_r &r, std::string ID, std::string L, element_t m, IB_CH_KEF_CZS_2014_pp &pp) {
     // a
@@ -93,8 +103,15 @@ void IB_CH_KEF_CZS_2014::Hash(IB_CH_KEF_CZS_2014_h &h, IB_CH_KEF_CZS_2014_r &r, 
 }
 
 /**
- * input : h, L, m, r1
- * output: bool
+ * @brief 
+ * 
+ * @param  h[in]   
+ * @param  r[in]   
+ * @param  L[in]    
+ * @param  m[in]    
+ * @param  td[in]  
+ * 
+ * @return 
  */
 bool IB_CH_KEF_CZS_2014::Check(IB_CH_KEF_CZS_2014_h &h, IB_CH_KEF_CZS_2014_r &r, std::string L, element_t m, IB_CH_KEF_CZS_2014_td &td){
     // h = r1 + m * H(L)
@@ -116,8 +133,16 @@ bool IB_CH_KEF_CZS_2014::Check(IB_CH_KEF_CZS_2014_h &h, IB_CH_KEF_CZS_2014_r &r,
 }
 
 /**
- * input : SID, ID, L, h, m, r1, r2, m_p
- * output: r_p(r1_p, r2_p)
+ * @brief 
+ * 
+ * @param  r_p[out]  
+ * @param  m_p[in]   
+ * @param  h[in]    
+ * @param  r[in]    
+ * @param  L[in]     
+ * @param  m[in]     
+ * @param  td[in]   
+ * 
  */
 void IB_CH_KEF_CZS_2014::Adapt(IB_CH_KEF_CZS_2014_r &r_p, element_t m_p, IB_CH_KEF_CZS_2014_h &h, IB_CH_KEF_CZS_2014_r &r, std::string L, element_t m, IB_CH_KEF_CZS_2014_td &td) {
     // r1_p = r1 + (m - m_p) * H(L)
@@ -142,8 +167,15 @@ void IB_CH_KEF_CZS_2014::Adapt(IB_CH_KEF_CZS_2014_r &r_p, element_t m_p, IB_CH_K
 }
 
 /**
- * input : h, L, m_p, r1_p
- * output: bool
+ * @brief 
+ * 
+ * @param  h[in]   
+ * @param  r[in]   
+ * @param  L[in]    
+ * @param  m[in]    
+ * @param  td[in]  
+ * 
+ * @return 
  */
 bool IB_CH_KEF_CZS_2014::Verify(IB_CH_KEF_CZS_2014_h &h, IB_CH_KEF_CZS_2014_r &r, std::string L, element_t m, IB_CH_KEF_CZS_2014_td &td) {
     return this->Check(h, r, L, m, td);

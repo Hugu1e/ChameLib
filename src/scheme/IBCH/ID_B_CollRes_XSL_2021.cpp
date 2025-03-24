@@ -1,4 +1,4 @@
-#include <scheme/IBCH/ID_B_CollRes_XSL_2021.h>
+#include "scheme/IBCH/ID_B_CollRes_XSL_2021.h"
 
 ID_B_CollRes_XSL_2021::ID_B_CollRes_XSL_2021(int curve, bool swap):PbcScheme(curve) {
     this->swap = swap;
@@ -33,6 +33,14 @@ bool ID_B_CollRes_XSL_2021::Pairing(element_t res, element_t g1, element_t g2){
     }
 }
 
+/**
+ * @brief 
+ * 
+ * @param  pp[out]   
+ * @param  msk[out]  
+ * @param  n[in]     
+ * 
+ */
 void ID_B_CollRes_XSL_2021::SetUp(ID_B_CollRes_XSL_2021_pp &pp, ID_B_CollRes_XSL_2021_msk &msk, unsigned long int n) {
     pp.get_u().init(n+1);
 
@@ -62,9 +70,15 @@ void ID_B_CollRes_XSL_2021::SetUp(ID_B_CollRes_XSL_2021_pp &pp, ID_B_CollRes_XSL
     }
 }
 
+
 /**
- * input : msk, I
- * output: tk1, tk2
+ * @brief 
+ * 
+ * @param  tk[out]   
+ * @param  msk[in]  
+ * @param  I[in]     
+ * @param  pp[in]   
+ * 
  */
 void ID_B_CollRes_XSL_2021::KeyGen(ID_B_CollRes_XSL_2021_tk &tk, ID_B_CollRes_XSL_2021_msk &msk, const char *I, ID_B_CollRes_XSL_2021_pp &pp) {
     element_random(this->t);
@@ -86,9 +100,6 @@ void ID_B_CollRes_XSL_2021::KeyGen(ID_B_CollRes_XSL_2021_tk &tk, ID_B_CollRes_XS
     tk.set(tk2, tmp_G_2);
 }
  
-/**
- * 从element中获取第index二进制位的值
- */
 bool ID_B_CollRes_XSL_2021::getBit(const char *bytes, int index) {
     unsigned long int byte_index = index / 8;
     unsigned long int bit_index = index % 8;
@@ -96,8 +107,14 @@ bool ID_B_CollRes_XSL_2021::getBit(const char *bytes, int index) {
 }
 
 /**
- * input : I, m
- * output: h, r1, r2
+ * @brief 
+ * 
+ * @param  h[out]   
+ * @param  r[out]   
+ * @param  m[in]    
+ * @param  I[in]    
+ * @param  pp[in]  
+ * 
  */
 void ID_B_CollRes_XSL_2021::Hash(ID_B_CollRes_XSL_2021_h &h, ID_B_CollRes_XSL_2021_r &r, element_t m, const char *I, ID_B_CollRes_XSL_2021_pp &pp) {
     element_random(tmp_H);
@@ -125,8 +142,15 @@ void ID_B_CollRes_XSL_2021::Hash(ID_B_CollRes_XSL_2021_h &h, ID_B_CollRes_XSL_20
 }
 
 /**
- * input : I, m, r1, r2
- * output: h
+ * @brief 
+ * 
+ * @param  h[in]   
+ * @param  m[in]    
+ * @param  r[in]   
+ * @param  I[in]    
+ * @param  pp[in]  
+ * 
+ * @return 
  */
 bool ID_B_CollRes_XSL_2021::Check(ID_B_CollRes_XSL_2021_h &h, element_t m, ID_B_CollRes_XSL_2021_r &r, const char *I, ID_B_CollRes_XSL_2021_pp &pp) {
     // compute h
@@ -149,8 +173,15 @@ bool ID_B_CollRes_XSL_2021::Check(ID_B_CollRes_XSL_2021_h &h, element_t m, ID_B_
 }
 
 /**
- * input : tk1, tk2, h, m, r1, r2, m_p
- * output: r1_p, r2_p
+ * @brief 
+ * 
+ * @param  r_p[out]  
+ * @param  m_p[in]   
+ * @param  h[in]    
+ * @param  m[in]     
+ * @param  r[in]    
+ * @param  tk[in]   
+ * 
  */
 void ID_B_CollRes_XSL_2021::Adapt(ID_B_CollRes_XSL_2021_r &r_p, element_t m_p, ID_B_CollRes_XSL_2021_h &h, element_t m, ID_B_CollRes_XSL_2021_r &r, ID_B_CollRes_XSL_2021_tk &tk) {
     // compute r1_p
@@ -166,8 +197,15 @@ void ID_B_CollRes_XSL_2021::Adapt(ID_B_CollRes_XSL_2021_r &r_p, element_t m_p, I
 }
 
 /**
- * input : I, m_p, r1_p, r2_p, h
- * output: bool
+ * @brief 
+ * 
+ * @param  h[in]    
+ * @param  m_p[in]   
+ * @param  r_p[in]  
+ * @param  I[in]     
+ * @param  pp[in]   
+ * 
+ * @return 
  */
 bool ID_B_CollRes_XSL_2021::Verify(ID_B_CollRes_XSL_2021_h &h, element_t m_p, ID_B_CollRes_XSL_2021_r &r_p, const char *I, ID_B_CollRes_XSL_2021_pp &pp) {
     return Check(h, m_p, r_p, I, pp);
