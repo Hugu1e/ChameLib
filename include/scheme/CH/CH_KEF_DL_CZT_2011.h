@@ -47,7 +47,7 @@ class CH_KEF_DL_CZT_2011 : public PbcScheme {
 
         bool Check(element_t h, CH_KEF_DL_CZT_2011_r &r, element_t I, element_t m, CH_KEF_DL_CZT_2011_pk &pk, CH_KEF_DL_CZT_2011_pp &pp);
 
-        void Adapt(CH_KEF_DL_CZT_2011_r &r_p, CH_KEF_DL_CZT_2011_sk &sk, element_t h, element_t m, CH_KEF_DL_CZT_2011_r &r,  element_t m_p, element_t I, CH_KEF_DL_CZT_2011_pp &pp);
+        void Adapt(CH_KEF_DL_CZT_2011_r &r_p, CH_KEF_DL_CZT_2011_sk &sk, element_t h, element_t m, CH_KEF_DL_CZT_2011_r &r,  element_t m_p, element_t I, CH_KEF_DL_CZT_2011_pk &pk, CH_KEF_DL_CZT_2011_pp &pp);
 
         bool Verify(element_t h, CH_KEF_DL_CZT_2011_r &r_p, element_t I, element_t m_p, CH_KEF_DL_CZT_2011_pk &pk, CH_KEF_DL_CZT_2011_pp &pp);
 

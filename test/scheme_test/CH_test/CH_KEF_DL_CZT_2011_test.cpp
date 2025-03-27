@@ -91,7 +91,7 @@ int op_cnt_G1[][diff_max_len] = {
         0, 0, 0, 0, 
         1, 0, 0, 0, 
         2, 0, 0, 1, 
-        3, 0, 0, 0, 
+        2, 0, 0, 0, 
         0
     }, //4, adapt
 };
@@ -133,7 +133,7 @@ int op_cnt_G2[][diff_max_len] = {
         0, 0, 0, 0, 
         0, 1, 0, 0, 
         0, 2, 0, 1, 
-        0, 3, 0, 0, 
+        0, 2, 0, 0, 
         0
     }, //4, adapt
 };
@@ -175,7 +175,7 @@ int op_cnt_GT[][diff_max_len] = {
         0, 0, 0, 0, 
         0, 0, 1, 0, 
         0, 0, 2, 1, 
-        0, 0, 3, 0, 
+        0, 0, 2, 0, 
         0
     }, //4, adapt
 };
@@ -215,7 +215,7 @@ TEST_P(CH_KEF_DL_CZT_2011_Test, Test){
     for(int i = 0; i < repeat; i++) ASSERT_TRUE(check_result[i]);
 
     this->start("Adapt");
-    for(int i = 0; i < repeat; i++) ch.Adapt(r_p[i], sk[i], h[i], m[i], r[i], m_p[i], I[i], pp[i]);
+    for(int i = 0; i < repeat; i++) ch.Adapt(r_p[i], sk[i], h[i], m[i], r[i], m_p[i], I[i], pk[i], pp[i]);
     this->end("Adapt");
 
     bool verify_result[repeat];

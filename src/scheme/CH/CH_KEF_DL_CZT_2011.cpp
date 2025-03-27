@@ -110,15 +110,14 @@ bool CH_KEF_DL_CZT_2011::Check(element_t h, CH_KEF_DL_CZT_2011_r &r, element_t I
  * @param  m[in]     
  * @param  r[in]    
  * @param  m_p[in]   
- * @param  I[in]     
+ * @param  I[in]   
+ * @param  pk[in]  
  * @param  pp[in]   
  * 
  */
-void CH_KEF_DL_CZT_2011::Adapt(CH_KEF_DL_CZT_2011_r &r_p, CH_KEF_DL_CZT_2011_sk &sk, element_t h, element_t m, CH_KEF_DL_CZT_2011_r &r, element_t m_p, element_t I, CH_KEF_DL_CZT_2011_pp &pp) {
-    // y
-    element_pow_zn(this->tmp_G, pp[g], sk[x]);
+void CH_KEF_DL_CZT_2011::Adapt(CH_KEF_DL_CZT_2011_r &r_p, CH_KEF_DL_CZT_2011_sk &sk, element_t h, element_t m, CH_KEF_DL_CZT_2011_r &r, element_t m_p, element_t I, CH_KEF_DL_CZT_2011_pk &pk, CH_KEF_DL_CZT_2011_pp &pp) {
     // tmp_h
-    this->H(this->tmp_G_2, this->tmp_G, I);
+    this->H(this->tmp_G_2, pk[y], I);
     // g^a  r_1
     // h^(m-m')
     element_sub(this->tmp_Zn, m, m_p);
