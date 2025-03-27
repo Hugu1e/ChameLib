@@ -121,6 +121,8 @@ class CH_ET_KOG_CDK_2017: public PbcScheme{
 
         element_t tmp_G, tmp_G_2, tmp_G_3, tmp_Zn, tmp_Zn_2, tmp_Zn_3, tmp_Zn_4;
 
+        void H(element_t res, element_t m);
+
     public:
         CH_ET_KOG_CDK_2017(int curve, int group);
 

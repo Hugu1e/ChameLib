@@ -97,6 +97,10 @@ CH_ET_KOG_CDK_2017::CH_ET_KOG_CDK_2017(int curve, int group): PbcScheme(curve){
     nizkpok.init(G1, Zn);
 }
 
+void CH_ET_KOG_CDK_2017::H(element_t res, element_t m){
+    HASH::hash(res, m);
+}
+
 /**
  * @brief 
  * 
@@ -170,7 +174,6 @@ void CH_ET_KOG_CDK_2017::Hash(CH_ET_KOG_CDK_2017_h &hash, CH_ET_KOG_CDK_2017_r &
     enc.Encrypt(r.get_enc_c(), r_mpz, pk.get_enc_pk());
     mpz_clear(r_mpz);
 
-    // a = H(m)
 
     // p = h^r
     element_pow_zn(tmp_G_2, pk.get_ch_pk()[h], tmp_Zn);
@@ -182,7 +185,9 @@ void CH_ET_KOG_CDK_2017::Hash(CH_ET_KOG_CDK_2017_h &hash, CH_ET_KOG_CDK_2017_r &
     r.get_pai_p().set(pai_R, tmp_G_3);
 
     // b = p * (h'^a)
-    element_pow_zn(tmp_G_3, tmp_G, m);
+    // a = H(m)
+    H(tmp_Zn, m);
+    element_pow_zn(tmp_G_3, tmp_G, tmp_Zn);
     element_mul(tmp_G_3, tmp_G_2, tmp_G_3);
     hash.get_hash().set(b, tmp_G_3);
 }
@@ -213,8 +218,9 @@ bool CH_ET_KOG_CDK_2017::Check(CH_ET_KOG_CDK_2017_h &hash, element_t m, CH_ET_KO
     }
 
     // a = H(m)
+    H(tmp_Zn, m);
     // b = p * (h'^a)
-    element_pow_zn(tmp_G, hash.get_hash()[h_], m);
+    element_pow_zn(tmp_G, hash.get_hash()[h_], tmp_Zn);
     element_mul(tmp_G, r.get_ch_r()[p], tmp_G);
     
     return element_cmp(tmp_G, hash.get_hash()[b]) == 0;
@@ -275,8 +281,10 @@ void CH_ET_KOG_CDK_2017::Adapt(CH_ET_KOG_CDK_2017_r &r_p, element_t m_p, CH_ET_K
 
     // r' = (rx + a*etd - a'*etd) / x
     element_mul(tmp_Zn_2, sk.get_ch_sk()[x], tmp_Zn);
-    element_mul(tmp_Zn_3, m, etd[0]);
-    element_mul(tmp_Zn_4, m_p, etd[0]);
+    H(tmp_Zn, m);
+    element_mul(tmp_Zn_3, tmp_Zn, etd[0]);
+    H(tmp_Zn, m_p);
+    element_mul(tmp_Zn_4, tmp_Zn, etd[0]);
     element_add(tmp_Zn_2, tmp_Zn_2, tmp_Zn_3);
     element_sub(tmp_Zn_2, tmp_Zn_2, tmp_Zn_4);
     element_div(tmp_Zn_2, tmp_Zn_2, sk.get_ch_sk()[x]);
