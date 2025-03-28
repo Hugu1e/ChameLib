@@ -1,4 +1,4 @@
-#include "ABE/RABE_TMM.h"
+#include "ChameLib.h"
 #include "CommonTest.h"
 
 struct TestParams{
@@ -143,10 +143,77 @@ TEST_P(RABE_TMM_Test, Test){
     for (int i = 0; i < repeat; i++) ASSERT_TRUE(element_cmp(msg[i], res[i]) == 0);
     
     average();
+
+    int n = MSP->row();
+    int m = MSP->col();
+    int HT = log2(GetParam().leafNodeSize);
+    int UTS = kut[0].get_ku_theta().size();
+
+    int op_cnt_Setup[] = {
+        1, 1, 0, 7, 
+        0, 0, 0, 0, 
+        0, 0, 0, 2, 
+        3, 2, 2, 0, 
+        1
+    };
+    EXPECT_TRUE(check_time(GetParam().curve, op_cnt_Setup, "Setup"));
+
+    int op_cnt_KeyGen[] = {
+        0, 0, 0, 3 + n, 
+        6 + 6 * n, 0, 0, 0, 
+        9 + 6 * n + HT, 0, 0, 10 + 2 * n, 
+        9 + 9 * n, 3, 0, 0, 
+        0
+    };
+    EXPECT_TRUE(check_time(GetParam().curve, op_cnt_KeyGen, "KeyGen"));
+
+    int op_cnt_KUpt[] = {
+        0, 0, 0, UTS, 
+        UTS, 0, 0, 0, 
+        UTS, 0, 0, 0, 
+        UTS, UTS, 0, 0, 
+        0
+    };
+    EXPECT_TRUE(check_time(GetParam().curve, op_cnt_KUpt, "KUpt"));
+
+    int op_cnt_DKGen[] = {
+        0, 0, 0, 0, 
+        0, 0, 0, 0, 
+        1, 0, 0, 0, 
+        0, 0, 0, 0, 
+        0
+    };
+    EXPECT_TRUE(check_time(GetParam().curve, op_cnt_DKGen, "DKGen"));
+
+    int op_cnt_Encrypt[] = {
+        0, 0, 0, 0, 
+        3 * n * (2 * m + 2) + 1, 0, 0, 0, 
+        3 * n * (2 * m + 1), 0, 1, 1, 
+        3 * n * (3 * m + 2) + 1, 3, 2, 0, 
+        0
+    };
+    EXPECT_TRUE(check_time(GetParam().curve, op_cnt_Encrypt, "Encrypt"));
+
+    int op_cnt_Decrypt[] = {
+        0, 0, 0, 0, 
+        0, 0, 0, 0, 
+        6 * n, 0, 6, 1, 
+        6 * n, 0, 0, 0, 
+        7
+    };
+    EXPECT_TRUE(check_time(GetParam().curve, op_cnt_Decrypt, "Decrypt"));
 }
 
 int main(int argc, char **argv) 
 {
+    if (argc > 1) {
+        repeat = std::atoi(argv[1]);
+        if (repeat <= 0) {
+            std::cerr << "Invalid value for repeat. It must be a positive integer." << std::endl;
+            return 1;
+        }
+    }
+
 	::testing::InitGoogleTest(&argc, argv);
 	return RUN_ALL_TESTS();
 }

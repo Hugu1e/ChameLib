@@ -55,18 +55,19 @@ void RABE_XNM::Pairing(element_t res, element_t a, element_t b){
     }
 }
 
-/**
- * hash function {0,1}* -> G
- * input: m
- * output: res
- */
 void RABE_XNM::Hash(element_t res, std::string m){
     HASH::hash(res, m);
 }
 
 /**
- * input: n
- * output: mpk, msk, st, rl
+ * @brief 
+ * 
+ * @param  mpk[out]  
+ * @param  msk[out]  
+ * @param  rl[out]   
+ * @param  st[out]   
+ * @param  n[in]     
+ * 
  */
 void RABE_XNM::Setup(RABE_XNM_mpk &mpk, RABE_XNM_msk &msk, std::vector<RABE_XNM_revokedPreson> &rl, Binary_tree_RABE &st, int n){
     element_random(tmp_G);
@@ -103,14 +104,13 @@ void RABE_XNM::Setup(RABE_XNM_mpk &mpk, RABE_XNM_msk &msk, std::vector<RABE_XNM_
     // e(g,h)^(d1a1+d3)
     element_mul(this->tmp_Zn, this->d1, msk[a1]);
     element_add(this->tmp_Zn, this->tmp_Zn, this->d3);
-    Pairing(this->tmp_GT, msk[g], msk[h]);
-    element_pow_zn(tmp_GT, this->tmp_GT, this->tmp_Zn);
+    Pairing(this->tmp_GT_2, msk[g], msk[h]);
+    element_pow_zn(tmp_GT, this->tmp_GT_2, this->tmp_Zn);
     mpk.set(T1, tmp_GT);
     // e(g,h)^(d2a2+d3)
     element_mul(this->tmp_Zn, this->d2, msk[a2]);
     element_add(this->tmp_Zn, this->tmp_Zn, this->d3);
-    Pairing(this->tmp_GT, msk[g], msk[h]);
-    element_pow_zn(tmp_GT, this->tmp_GT, this->tmp_Zn);
+    element_pow_zn(tmp_GT, this->tmp_GT_2, this->tmp_Zn);
     mpk.set(T2, tmp_GT);
 
     // initialize rl
@@ -121,13 +121,16 @@ void RABE_XNM::Setup(RABE_XNM_mpk &mpk, RABE_XNM_msk &msk, std::vector<RABE_XNM_
 }
 
 /**
- * @param[out] skid
- * @param[out] st
- * @param[in] mpk
- * @param[in] msk
- * @param[in] attr_list
- * @param[in] id
- * @param[in] re_time revoke time
+ * @brief 
+ * 
+ * @param  skid[out]       
+ * @param  st[in]         
+ * @param  mpk[in]        
+ * @param  msk[in]        
+ * @param  attr_list[in]  
+ * @param  id[in]          
+ * @param  re_time[in]     
+ * 
  */
 void RABE_XNM::KGen(RABE_XNM_skid &skid, Binary_tree_RABE &st, RABE_XNM_mpk &mpk, RABE_XNM_msk &msk, std::vector<std::string> &attr_list, element_t id, time_t re_time){
     element_random(this->r1);
@@ -291,6 +294,7 @@ void RABE_XNM::KGen(RABE_XNM_skid &skid, Binary_tree_RABE &st, RABE_XNM_mpk &mpk
         node = node->getParent();
     }
 }
+
 std::vector<Binary_tree_RABE_node *> RABE_XNM::KUNodes(Binary_tree_RABE &st, std::vector<RABE_XNM_revokedPreson> &rl, time_t t)
 {
     // get rl_ids
@@ -302,8 +306,14 @@ std::vector<Binary_tree_RABE_node *> RABE_XNM::KUNodes(Binary_tree_RABE &st, std
 }
 
 /**
- * input: mpk, st, rl, t
- * output: kut
+ * @brief 
+ * 
+ * @param  kut[out]  
+ * @param  mpk[in]  
+ * @param  st[in]   
+ * @param  rl[in]   
+ * @param  t[in]     
+ * 
  */
 void RABE_XNM::KUpt(RABE_XNM_kut &kut, RABE_XNM_mpk &mpk, Binary_tree_RABE &st, std::vector<RABE_XNM_revokedPreson> &rl, time_t t){
     std::vector<Binary_tree_RABE_node *> thetas = this->KUNodes(st, rl, t);
@@ -328,8 +338,13 @@ void RABE_XNM::KUpt(RABE_XNM_kut &kut, RABE_XNM_mpk &mpk, Binary_tree_RABE &st, 
 }
 
 /**
- * input: mpk, skid, kut
- * output: dkidt
+ * @brief 
+ * 
+ * @param  dkidt[out]  
+ * @param  mpk[in]    
+ * @param  skid[in]   
+ * @param  kut[in]    
+ * 
  */
 void RABE_XNM::DKGen(RABE_XNM_dkidt &dkidt, RABE_XNM_mpk &mpk, RABE_XNM_skid &skid, RABE_XNM_kut &kut){
     // judge Path(id) ∩ KUNodes(st, rl, t) != NULL
@@ -389,8 +404,16 @@ void RABE_XNM::DKGen(RABE_XNM_dkidt &dkidt, RABE_XNM_mpk &mpk, RABE_XNM_skid &sk
 }
 
 /**
- * input: mpk, msg, policy_str, t, s1, s2
- * output: ciphertext
+ * @brief 
+ * 
+ * @param  ciphertext[out]  
+ * @param  mpk[in]         
+ * @param  msg[in]          
+ * @param  MSP[in]         
+ * @param  t[in]            
+ * @param  s1[in]           
+ * @param  s2[in]           
+ * 
  */
 void RABE_XNM::Enc(RABE_XNM_ciphertext &ciphertext, RABE_XNM_mpk &mpk, element_t msg, Element_t_matrix *MSP, time_t t, element_t s1, element_t s2){
     unsigned long int rows = MSP->row();
@@ -524,8 +547,14 @@ void RABE_XNM::Enc(RABE_XNM_ciphertext &ciphertext, RABE_XNM_mpk &mpk, element_t
 }
 
 /**
- * input: mpk, ciphertext, dkidt, 
- * output: res
+ * @brief 
+ * 
+ * @param  res[out]          
+ * @param  mpk[in]         
+ * @param  ciphertext[in]  
+ * @param  dkidt[in]       
+ * @param  MSP[in]         
+ * 
  */
 void RABE_XNM::Dec(element_t res, RABE_XNM_mpk &mpk, RABE_XNM_ciphertext &ciphertext, RABE_XNM_dkidt &dkidt, Element_t_matrix *MSP){ 
     // compute Yi
@@ -592,9 +621,9 @@ void RABE_XNM::Dec(element_t res, RABE_XNM_mpk &mpk, RABE_XNM_ciphertext &cipher
     element_mul(num, num, this->tmp_GT_4);
 
     // den
-    element_set1(this->tmp_G);
-    element_set1(this->tmp_G_2);
-    element_set1(this->tmp_G_3);
+    element_set(this->tmp_G, dkidt.get_sk_prime_prime().get(sk_1));
+    element_set(this->tmp_G_2, dkidt.get_sk_prime_prime().get(sk_2));
+    element_set(this->tmp_G_3, dkidt.get_sk_prime_prime().get(sk_3));
     count = 0;
     for(unsigned long int i=0; i<rows;i++){
         // judge whether the attribute is in the policy
@@ -609,12 +638,6 @@ void RABE_XNM::Dec(element_t res, RABE_XNM_mpk &mpk, RABE_XNM_ciphertext &cipher
         element_mul(this->tmp_G_3, this->tmp_G_3, this->tmp_G_4);
         count++;
     }
-    // sk_prime_1 * tmp_G
-    element_mul(this->tmp_G, dkidt.get_sk_prime_prime().get(sk_1), this->tmp_G);
-    // sk_prime_2 * tmp_G_2
-    element_mul(this->tmp_G_2, dkidt.get_sk_prime_prime().get(sk_2), this->tmp_G_2);
-    // sk_prime_3 * tmp_G_3
-    element_mul(this->tmp_G_3, dkidt.get_sk_prime_prime().get(sk_3), this->tmp_G_3);
 
     // e(tmp_G, ct01) * e(tmp_G_2, ct02) * e(tmp_G_3, ct03)
     Pairing(this->tmp_GT, this->tmp_G, ciphertext.get_ct0().get(ct0_1));
@@ -632,7 +655,12 @@ void RABE_XNM::Dec(element_t res, RABE_XNM_mpk &mpk, RABE_XNM_ciphertext &cipher
 }
 
 /**
- * input: rl, id, t
+ * @brief 
+ * 
+ * @param  rl[in]  
+ * @param  id[in]   
+ * @param  t[in]    
+ * 
  */
 void RABE_XNM::Rev(std::vector<RABE_XNM_revokedPreson> &rl, element_t id, time_t t){
     for(int i=0; i<rl.size(); i++){
