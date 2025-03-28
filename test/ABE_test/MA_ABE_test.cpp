@@ -1,4 +1,4 @@
-#include "ABE/MA_ABE.h"
+#include "ChameLib.h"
 #include "CommonTest.h"
 
 struct TestParams{
@@ -44,6 +44,33 @@ INSTANTIATE_TEST_CASE_P(
     MA_ABE_Test,
 	testing::ValuesIn(test_values)
 );
+
+
+int op_cnt[][diff_max_len] = {
+    {    
+        1, 0, 0, 0, 
+        0, 0, 0, 0, 
+        0, 0, 0, 0, 
+        0, 0, 0, 0, 
+        1
+    }, //0, global setup
+
+    {    
+        0, 0, 0, 2, 
+        0, 0, 0, 0, 
+        0, 0, 0, 0, 
+        1, 0, 1, 0, 
+        0
+    }, //1, auth setup
+    
+    {    
+        0, 0, 0, 1, 
+        2, 0, 0, 0, 
+        2, 0, 0, 0, 
+        4, 0, 0, 0, 
+        0
+    }, //2, keygen
+};
 
 TEST_P(MA_ABE_Test, Test){
     MA_ABE abe(GetParam().curve);
@@ -145,11 +172,43 @@ TEST_P(MA_ABE_Test, Test){
     for (int i = 0; i < repeat; i++) ASSERT_TRUE(element_cmp(msg[i], res[i]) == 0);
     
     average();
+
+    EXPECT_TRUE(check_time(GetParam().curve, op_cnt[0], "GlobalSetup"));
+    EXPECT_TRUE(check_time(GetParam().curve, op_cnt[1], "AuthSetup"));
+    EXPECT_TRUE(check_time(GetParam().curve, op_cnt[2], "KeyGen"));
+
+    int l = MSP->row();
+    int n = MSP->col();
+    int op_cnt_Encrypt[] = {
+        0, 0, 0, 0, 
+        l, 0, 0, 1 + l + 2*n, 
+        l, 0, 1 + l, 2*l*n, 
+        4*l, 0, 1 + 2*l, 0, 
+        0
+    };
+    EXPECT_TRUE(check_time(GetParam().curve, op_cnt_Encrypt, "Encrypt"));
+
+    int op_cnt_Decrypt[] = {
+        0, 0, 0, 0, 
+        l, 0, 0, 0, 
+        0, 0, 4*l, 0, 
+        0, 0, l, 0, 
+        3*l
+    };
+    EXPECT_TRUE(check_time(GetParam().curve, op_cnt_Decrypt, "Decrypt"));
 }
 
 
 int main(int argc, char **argv) 
 {
+    if (argc > 1) {
+        repeat = std::atoi(argv[1]);
+        if (repeat <= 0) {
+            std::cerr << "Invalid value for repeat. It must be a positive integer." << std::endl;
+            return 1;
+        }
+    }
+
 	::testing::InitGoogleTest(&argc, argv);
 	return RUN_ALL_TESTS();
 }

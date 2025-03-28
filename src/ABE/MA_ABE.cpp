@@ -29,29 +29,39 @@ void MA_ABE::initTmp(){
 }
 
 /**
- * GlobalSetup() -> gp
- * @param gpk global public key
+ * @brief 
+ * 
+ * @param  gpk[out]  global public key
+ * 
  */
 void MA_ABE::GlobalSetup(MA_ABE_gpk &gpk){
     element_random(tmp_G);
     gpk.set(g, tmp_G);
-}
-/**
- * GlobalSetup(g) -> gp
- * @param gpk global public key
- * @param g generator g
- */
-void MA_ABE::GlobalSetup(MA_ABE_gpk &gpk, element_t _g){    
-    gpk.set(g, _g);
+    element_pairing(tmp_GT, gpk[g], gpk[g]);
+    gpk.set(egg, tmp_GT);
 }
 
 /**
- * AuthSetup(theta) -> (pktheta, sktheta)
+ * @brief 
  * 
- * @param pkTheta public key of theta
- * @param skTheta secret key of theta
- * @param gpk global public key
- * @param A an attribute of the authority
+ * @param  gpk[out]  global public key
+ * @param  _g[in]    generator
+ * 
+ */
+void MA_ABE::GlobalSetup(MA_ABE_gpk &gpk, element_t _g){    
+    gpk.set(g, _g);
+    element_pairing(tmp_GT, gpk[g], gpk[g]);
+    gpk.set(egg, tmp_GT);
+}
+
+/**
+ * @brief 
+ * 
+ * @param  pkTheta[out]  public key of theta
+ * @param  skTheta[out]  secret key of theta
+ * @param  gpk[in]       global public key
+ * @param  A[in]         an attribute of the authority
+ * 
  */
 void MA_ABE::AuthSetup(MA_ABE_pkTheta &pkTheta, MA_ABE_skTheta &skTheta, MA_ABE_gpk &gpk, std::string A){
     element_random(tmp_Zn);
@@ -60,8 +70,7 @@ void MA_ABE::AuthSetup(MA_ABE_pkTheta &pkTheta, MA_ABE_skTheta &skTheta, MA_ABE_
     skTheta.set(yTheta, tmp_Zn);
     
     // pkTheta_1 = e(g,g)^aTheta
-    element_pairing(tmp_GT, gpk[g], gpk[g]);
-    element_pow_zn(tmp_GT, tmp_GT, skTheta[aTheta]);
+    element_pow_zn(tmp_GT, gpk[egg], skTheta[aTheta]);
     pkTheta.set(pkTheta_1, tmp_GT);
     // pkTheta_2 = g^yTheta
     element_pow_zn(tmp_G, gpk[g], skTheta[yTheta]);
@@ -71,10 +80,12 @@ void MA_ABE::AuthSetup(MA_ABE_pkTheta &pkTheta, MA_ABE_skTheta &skTheta, MA_ABE_
 }
 
 /**
- * HGID(bit, gid) -> G
- * @param res 
- * @param bit 0 or 1
- * @param gid
+ * @brief HGID(bit, gid) -> G
+ * 
+ * @param  res[out]  
+ * @param  bit[in]  0 or 1
+ * @param  gid[in]  
+ * 
  */
 void MA_ABE::HGID(element_t res, bool bit, std::string gid){
     std::string m = std::to_string(bit) + gid;
@@ -82,32 +93,37 @@ void MA_ABE::HGID(element_t res, bool bit, std::string gid){
 }
 
 /**
- * Hu(u) -> G
- * @param res 
- * @param u
+ * @brief Hu(u) -> G
+ * 
+ * @param  res[out]  
+ * @param  u[in]    
+ * 
  */
 void MA_ABE::Hu(element_t res, std::string u){
     HASH::hash(res, u);
 }
 
 /**
- * Ht(rt, A) -> G
+ * @brief Ht(rt, A) -> G
  * 
- * @param res
- * @param rt
- * @param A
+ * @param  res[out]  
+ * @param  rt[in]   
+ * @param  A[in]    
+ * 
  */
 void MA_ABE::Ht(element_t res, element_t rt, std::string A){
     HASH::hash(res, rt, A);
 }
 
 /**
- * KeyGen(gpk, skTheta, gid, A) -> skgidA
- * @param skgidA secret key of gid and A
- * @param gpk global public key
- * @param skTheta secret key of theta
- * @param gid a global identifier
- * @param A an attribute
+ * @brief 
+ * 
+ * @param  skgidA[out]   secret key of gid and A
+ * @param  gpk[in]      global public key
+ * @param  skTheta[in]  secret key of theta
+ * @param  gid[in]       a global identifier
+ * @param  A[in]         an attribute
+ * 
  */
 void MA_ABE::KeyGen(MA_ABE_skgidA &skgidA, MA_ABE_gpk &gpk, MA_ABE_skTheta &skTheta, std::string gid, std::string A){  
     // t
@@ -131,14 +147,16 @@ void MA_ABE::KeyGen(MA_ABE_skgidA &skgidA, MA_ABE_gpk &gpk, MA_ABE_skTheta &skTh
 }
 
 /**
- * Encrypt(gpk, pkThetas, polocy, m) -> c
- * @param C ciphertext
- * @param m message
- * @param rt random value
- * @param gpk global public key
- * @param pkThetas public keys of the authorities
- * @param policy access policy
-
+ * @brief 
+ * 
+ * @param  C[out]          ciphertext
+ * @param  m[in]           message
+ * @param  rt[in]          random value
+ * @param  gpk[in]        global public key
+ * @param  pkThetas[in]   public keys of the authorities
+ * @param  MSP[in]        
+ * @param  policy_str[in]  access policy
+ * 
  */
 void MA_ABE::Encrypt(MA_ABE_ciphertext &C, element_t m, element_t rt, MA_ABE_gpk &gpk, std::vector<MA_ABE_pkTheta *> &pkThetas, Element_t_matrix *MSP, std::string policy_str){    
     unsigned long int rows = MSP->row();
@@ -150,8 +168,7 @@ void MA_ABE::Encrypt(MA_ABE_ciphertext &C, element_t m, element_t rt, MA_ABE_gpk
     this->Ht(this->z, rt, policy_str);
 
     // c0 = m * e(g,g)^z
-    element_pairing(tmp_GT, gpk[g], gpk[g]);
-    element_pow_zn(tmp_GT, tmp_GT, this->z);
+    element_pow_zn(tmp_GT, gpk[egg], this->z);
     element_mul(tmp_GT, tmp_GT, m);
     C.get_ct_0().set(0, tmp_GT);
 
@@ -234,8 +251,7 @@ void MA_ABE::Encrypt(MA_ABE_ciphertext &C, element_t m, element_t rt, MA_ABE_gpk
     for(int i=0;i<rows;i++){
         // ci_1 = e(g,g)^lamuda_i * e(g,g)^(a*ti)
         std::string attr = MSP->getName(i);
-        element_pairing(tmp_GT, gpk[g], gpk[g]);
-        element_pow_zn(tmp_GT, tmp_GT, lamuda[i]);
+        element_pow_zn(tmp_GT, gpk[egg], lamuda[i]);
         for(int j=0;j<pkThetas.size();j++){
             if(pkThetas[j]->get_A() == attr){
                 element_pow_zn(tmp_GT_2, pkThetas[j]->get(pkTheta_1), ti[i]);
@@ -290,10 +306,13 @@ void MA_ABE::Encrypt(MA_ABE_ciphertext &C, element_t m, element_t rt, MA_ABE_gpk
 }
 
 /**
- * Decrypt(skgidAs, c) -> m
- * @param res message
- * @param skgidAs secret keys of the authorities
- * @param C ciphertext
+ * @brief 
+ * 
+ * @param  res[out]     decrypted message
+ * @param  skgidAs[in]  secret keys of the authorities
+ * @param  C[in]        ciphertext
+ * @param  MSP[in]      
+ * 
  */
 void MA_ABE::Decrypt(element_t res, std::vector<MA_ABE_skgidA *> &skgidAs, MA_ABE_ciphertext &C, Element_t_matrix *MSP){
     // compute Yi

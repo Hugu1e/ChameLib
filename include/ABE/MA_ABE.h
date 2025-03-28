@@ -13,7 +13,7 @@
 class MA_ABE_gpk: public PbcElements{
     public:
         MA_ABE_gpk(){
-            init(1);
+            init(2);
         }
 };
 
@@ -145,7 +145,7 @@ class MA_ABE: public PbcScheme{
         ~MA_ABE();
 
         enum {
-            g
+            g, egg
         };
 
         enum {
