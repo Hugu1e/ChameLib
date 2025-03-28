@@ -91,7 +91,7 @@ int op_cnt_G1[][diff_max_len] = {
         0, 0, 0, 5, 
         0, 0, 0, 2, 
         5, 0, 0, 1, 
-        10, 0, 0, 0, 
+        9, 0, 0, 0, 
         0
     }, //4, adapt
 };
@@ -134,7 +134,7 @@ int op_cnt_G2[][diff_max_len] = {
         0, 0, 0, 5, 
         0, 0, 0, 2, 
         0, 5, 0, 1, 
-        0, 10, 0, 0, 
+        0, 9, 0, 0, 
         0
     }, //4, adapt
 };
@@ -176,7 +176,7 @@ int op_cnt_GT[][diff_max_len] = {
         0, 0, 0, 5, 
         0, 0, 0, 2, 
         0, 0, 5, 1, 
-        0, 0, 10, 0, 
+        0, 0, 9, 0, 
         0
     }, //4, adapt
 };
@@ -215,7 +215,7 @@ TEST_P(FCR_CH_PreQA_DKS_2020_Test, Test){
     for(int i = 0; i < repeat; i++) ASSERT_TRUE(check_result[i]);
 
     this->start("Adapt");
-    for(int i = 0; i < repeat; i++) ch.Adapt(r_p[i], m_p[i], m[i], h[i], r[i], sk[i], pp[i]);
+    for(int i = 0; i < repeat; i++) ch.Adapt(r_p[i], m_p[i], m[i], h[i], r[i], sk[i], pk[i], pp[i]);
     this->end("Adapt");
 
     bool verify_result[repeat];

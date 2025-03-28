@@ -58,7 +58,11 @@ void CP_ABE::Pairing(element_t res, element_t a, element_t b){
 }
 
 /**
- * output: mpk, msk
+ * @brief 
+ * 
+ * @param  msk[out]  
+ * @param  mpk[out]  
+ * 
  */
 void CP_ABE::Setup(CP_ABE_msk &msk, CP_ABE_mpk &mpk){
     element_random(tmp_G);
@@ -107,11 +111,14 @@ void CP_ABE::Setup(CP_ABE_msk &msk, CP_ABE_mpk &mpk){
     mpk.set(T2, tmp_GT_2);
 }
 
-
 /**
- * Generate a key for a list of attributes.
- * input: msk, mpk, attr
- * output: sks
+ * @brief Generate a key for a list of attributes.
+ * 
+ * @param  sks[out]        
+ * @param  msk[in]        
+ * @param  mpk[in]        
+ * @param  attr_list[in]  
+ * 
  */
 void CP_ABE::KeyGen(CP_ABE_sks &sks, CP_ABE_msk &msk, CP_ABE_mpk &mpk, std::vector<std::string> &attr_list){    
     element_random(this->r1);
@@ -253,19 +260,20 @@ void CP_ABE::KeyGen(CP_ABE_sks &sks, CP_ABE_msk &msk, CP_ABE_mpk &mpk, std::vect
     sks.get_sk_prime().set(sk_3, sk_3_G);
 }
 
-/**
- * hash function {0,1}* -> G
- * input: m
- * output: res
- */
 void CP_ABE::Hash(element_t res, std::string m){
     HASH::hash(res, m);
 }
 
 /**
- * Encrypt a message msg under a policy string.
- * input: mpk, msg, policy_str, s1, s2
- * output: ct
+ * @brief Encrypt a message msg under a policy string.
+ * 
+ * @param  ciphertext[out]  
+ * @param  mpk[in]         
+ * @param  msg[in]          
+ * @param  MSP[in]         
+ * @param  s1[in]           
+ * @param  s2[in]           
+ * 
  */
 void CP_ABE::Encrypt(CP_ABE_ciphertext &ciphertext, CP_ABE_mpk &mpk, element_t msg, Element_t_matrix *MSP, element_t s1, element_t s2){
     unsigned long int rows = MSP->row();
@@ -384,10 +392,16 @@ void CP_ABE::Encrypt(CP_ABE_ciphertext &ciphertext, CP_ABE_mpk &mpk, element_t m
         ciphertext.get_ct_y()[i].set(ct_3, ct_3_G);
     }
 }
+
 /**
- * Decrypt a ciphertext.
- * input: mpk, ciphertext, sks
- * output: res
+ * @brief Decrypt a ciphertext.
+ * 
+ * @param  res[out]          
+ * @param  ciphertext[in]  
+ * @param  MSP[in]         
+ * @param  mpk[in]         
+ * @param  sks[in]         
+ * 
  */
 void CP_ABE::Decrypt(element_t res, CP_ABE_ciphertext &ciphertext, Element_t_matrix *MSP, CP_ABE_mpk &mpk, CP_ABE_sks &sks){
     // compute Yi
@@ -453,9 +467,9 @@ void CP_ABE::Decrypt(element_t res, CP_ABE_ciphertext &ciphertext, Element_t_mat
     element_mul(num, num, this->tmp_GT_3);
 
     // den
-    element_set1(this->tmp_G);
-    element_set1(this->tmp_G_2);
-    element_set1(this->tmp_G_3);
+    element_set(tmp_G, sks.get_sk_prime()[sk_1]);
+    element_set(tmp_G_2, sks.get_sk_prime()[sk_2]);
+    element_set(tmp_G_3, sks.get_sk_prime()[sk_3]);
     count = 0;
     for(unsigned long int i=0; i<rows;i++){
         // judge whether the attribute is in the policy
@@ -471,12 +485,6 @@ void CP_ABE::Decrypt(element_t res, CP_ABE_ciphertext &ciphertext, Element_t_mat
         element_mul(this->tmp_G_3, this->tmp_G_3, this->tmp_G_4);
         count++;
     }
-    // sk_prime_1 * tmp_G
-    element_mul(this->tmp_G, sks.get_sk_prime()[sk_1], this->tmp_G);
-    // sk_prime_2 * tmp_G_2
-    element_mul(this->tmp_G_2, sks.get_sk_prime()[sk_2], this->tmp_G_2);
-    // sk_prime_3 * tmp_G_3
-    element_mul(this->tmp_G_3, sks.get_sk_prime()[sk_3], this->tmp_G_3);
 
     // e(tmp_G, ct01) * e(tmp_G_2, ct02) * e(tmp_G_3, ct03)
     Pairing(this->tmp_GT, this->tmp_G, ciphertext.get_ct_0()[ct_1]);

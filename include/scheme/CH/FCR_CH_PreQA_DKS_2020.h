@@ -66,7 +66,7 @@ class FCR_CH_PreQA_DKS_2020: public PbcScheme{
 
         bool Check(FCR_CH_PreQA_DKS_2020_h &h, FCR_CH_PreQA_DKS_2020_r &r, element_t m, FCR_CH_PreQA_DKS_2020_pk &pk, FCR_CH_PreQA_DKS_2020_pp &pp);
 
-        void Adapt(FCR_CH_PreQA_DKS_2020_r &r_p, element_t m_p, element_t m, FCR_CH_PreQA_DKS_2020_h &h, FCR_CH_PreQA_DKS_2020_r &r, FCR_CH_PreQA_DKS_2020_sk &sk, FCR_CH_PreQA_DKS_2020_pp &pp);
+        void Adapt(FCR_CH_PreQA_DKS_2020_r &r_p, element_t m_p, element_t m, FCR_CH_PreQA_DKS_2020_h &h, FCR_CH_PreQA_DKS_2020_r &r, FCR_CH_PreQA_DKS_2020_sk &sk, FCR_CH_PreQA_DKS_2020_pk &pk, FCR_CH_PreQA_DKS_2020_pp &pp);
 
         bool Verify(FCR_CH_PreQA_DKS_2020_h &h, FCR_CH_PreQA_DKS_2020_r &r_p, element_t m_p, FCR_CH_PreQA_DKS_2020_pk &pk, FCR_CH_PreQA_DKS_2020_pp &pp);
 

@@ -176,17 +176,14 @@ bool FCR_CH_PreQA_DKS_2020::Check(FCR_CH_PreQA_DKS_2020_h &h, FCR_CH_PreQA_DKS_2
  * @param  m[in]     
  * @param  h[in]    
  * @param  r[in]    
- * @param  sk[in]   
+ * @param  sk[in] 
+ * @param  pk[in]  
  * @param  pp[in]   
  * 
  */
-void FCR_CH_PreQA_DKS_2020::Adapt(FCR_CH_PreQA_DKS_2020_r &r_p, element_t m_p, element_t m, FCR_CH_PreQA_DKS_2020_h &h, FCR_CH_PreQA_DKS_2020_r &r, FCR_CH_PreQA_DKS_2020_sk &sk, FCR_CH_PreQA_DKS_2020_pp &pp) {
-    FCR_CH_PreQA_DKS_2020_pk tmp_pk;
-    // y = g1^x
-    element_pow_zn(tmp_G, pp[g1], sk[x]);
-    tmp_pk.set(y, tmp_G);
+void FCR_CH_PreQA_DKS_2020::Adapt(FCR_CH_PreQA_DKS_2020_r &r_p, element_t m_p, element_t m, FCR_CH_PreQA_DKS_2020_h &h, FCR_CH_PreQA_DKS_2020_r &r, FCR_CH_PreQA_DKS_2020_sk &sk, FCR_CH_PreQA_DKS_2020_pk &pk, FCR_CH_PreQA_DKS_2020_pp &pp) {
     // Check
-    if(!this->Check(h, r, m, tmp_pk, pp)){
+    if(!this->Check(h, r, m, pk, pp)){
         printf("Forge(): Check failed !!\n");
         throw std::runtime_error("FCR_CH_PreQA_DKS_2020::Adapt(): Hash Check failed");
     }
@@ -211,7 +208,7 @@ void FCR_CH_PreQA_DKS_2020::Adapt(FCR_CH_PreQA_DKS_2020_r &r_p, element_t m_p, e
     // ? u2 = (g1^k12)
     element_pow_zn(this->u2, pp[g1], this->k12);
     // e = H((y,h,m_p),(u1,u2))
-    this->H(this->e, tmp_pk[y], h[h1], m_p, this->u1, this->u2);
+    this->H(this->e, pk[y], h[h1], m_p, this->u1, this->u2);
     // e2 = e - e1
     element_sub(r_p[e2], this->e, r_p[e1]);
     // s2 = k12 + e2 * x
