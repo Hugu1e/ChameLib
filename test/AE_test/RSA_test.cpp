@@ -1,4 +1,4 @@
-#include "AE/RSA.h"
+#include "ChameLib.h"
 #include "CommonTest.h"
 
 struct TestParams{
@@ -40,42 +40,35 @@ INSTANTIATE_TEST_CASE_P(
 
 TEST_P(RSA_Test, Test){
     AE_RSA rsa;
-    RSA_pk pk;
-    RSA_sk sk;
+    RSA_pk pk[repeat];
+    RSA_sk sk[repeat];
 
-    mpz_t m,c,m2;
-    mpz_inits(m,c,m2,NULL);
+    mpz_t m[repeat], c[repeat], res[repeat];
+    for(int i = 0; i < repeat; i++) mpz_inits(m[i], c[i], res[i], NULL);
 
-    this->start("SetUp");
-    rsa.SetUp(pk, sk);
-    this->end("SetUp");
 
     this->start("KeyGen");
-    rsa.KeyGen(pk, sk, GetParam().k);
+    for(int i = 0; i < repeat; i++) rsa.KeyGen(pk[i], sk[i], GetParam().k);
     this->end("KeyGen");
-    if(visiable){
-        pk.print();
-        sk.print();
-    }
 
-    mpz_set_ui(m, 123456);
+    for(int i = 0; i < repeat; i++) RandomGenerator::RandomInLength(m[i], 128);
+
     this->start("Encrypt");
-    rsa.Encrypt(c, m, pk);
+    for(int i = 0; i < repeat; i++) rsa.Encrypt(c[i], m[i], pk[i]);
     this->end("Encrypt");
-    if(visiable)gmp_printf("Ciphertext: %Zd\n", c);
 
     this->start("Decrypt");
-    rsa.Decrypt(m2, c, sk, pk);
+    for(int i = 0; i < repeat; i++) rsa.Decrypt(res[i], c[i], sk[i], pk[i]);
     this->end("Decrypt");
-    if(visiable)gmp_printf("Decrypted Plaintext: %Zd\n", m);
 
-    bool result = mpz_cmp(m, m2) == 0;
-    mpz_clears(m,c,m2,NULL);
-    ASSERT_TRUE(result);
+    for(int i = 0; i < repeat; i++) ASSERT_TRUE(mpz_cmp(m[i], res[i]) == 0);
+
+    for(int i = 0; i < repeat; i++) mpz_clears(m[i], c[i], res[i], NULL);
 }
 
-int main(int argc, char **argv) 
-{
+int main(int argc, char **argv){
+    ParseCommandLineArgs(argc, argv);
+
 	::testing::InitGoogleTest(&argc, argv);
 	return RUN_ALL_TESTS();
 }

@@ -45,33 +45,6 @@ INSTANTIATE_TEST_CASE_P(
 	testing::ValuesIn(test_values)
 );
 
-
-int op_cnt[][diff_max_len] = {
-    {    
-        1, 0, 0, 0, 
-        0, 0, 0, 0, 
-        0, 0, 0, 0, 
-        0, 0, 0, 0, 
-        1
-    }, //0, global setup
-
-    {    
-        0, 0, 0, 2, 
-        0, 0, 0, 0, 
-        0, 0, 0, 0, 
-        1, 0, 1, 0, 
-        0
-    }, //1, auth setup
-    
-    {    
-        0, 0, 0, 1, 
-        2, 0, 0, 0, 
-        2, 0, 0, 0, 
-        4, 0, 0, 0, 
-        0
-    }, //2, keygen
-};
-
 TEST_P(MA_ABE_Test, Test){
     MA_ABE abe(GetParam().curve);
 
@@ -173,17 +146,40 @@ TEST_P(MA_ABE_Test, Test){
     
     average();
 
-    EXPECT_TRUE(check_time(GetParam().curve, op_cnt[0], "GlobalSetup"));
-    EXPECT_TRUE(check_time(GetParam().curve, op_cnt[1], "AuthSetup"));
-    EXPECT_TRUE(check_time(GetParam().curve, op_cnt[2], "KeyGen"));
+    int op_cnt_GlobalSetUp[] = {    
+        1, 0, 0, 0, 
+        0, 0, 0, 0, 
+        0, 0, 0, 0, 
+        0, 0, 0, 0, 
+        1
+    };
+    EXPECT_TRUE(check_time(GetParam().curve, op_cnt_GlobalSetUp, "GlobalSetup"));
+
+    int op_cnt_AuthSetUp[] = {    
+        0, 0, 0, 2, 
+        0, 0, 0, 0, 
+        0, 0, 0, 0, 
+        1, 0, 1, 0, 
+        0
+    };
+    EXPECT_TRUE(check_time(GetParam().curve, op_cnt_AuthSetUp, "AuthSetup"));
+
+    int op_cnt_KeyGen[] = {    
+        0, 0, 0, 1, 
+        2, 0, 0, 0, 
+        2, 0, 0, 0, 
+        4, 0, 0, 0, 
+        0
+    };
+    EXPECT_TRUE(check_time(GetParam().curve, op_cnt_KeyGen, "KeyGen"));
 
     int l = MSP->row();
     int n = MSP->col();
     int op_cnt_Encrypt[] = {
-        0, 0, 0, 0, 
-        l, 0, 0, 1 + l + 2*n, 
-        l, 0, 1 + l, 2*l*n, 
-        4*l, 0, 1 + 2*l, 0, 
+        0, 0, 0, 2 * n - 1 + l, 
+        l, 0, 0, 0, 
+        l, 0, 1 + l, l * (2 * n + 2), 
+        4 * l, 0, 1 + 2 * l, 0, 
         0
     };
     EXPECT_TRUE(check_time(GetParam().curve, op_cnt_Encrypt, "Encrypt"));
@@ -191,23 +187,16 @@ TEST_P(MA_ABE_Test, Test){
     int op_cnt_Decrypt[] = {
         0, 0, 0, 0, 
         l, 0, 0, 0, 
-        0, 0, 4*l, 0, 
+        0, 0, 4 * l, 0, 
         0, 0, l, 0, 
-        3*l
+        3 * l
     };
     EXPECT_TRUE(check_time(GetParam().curve, op_cnt_Decrypt, "Decrypt"));
 }
 
 
-int main(int argc, char **argv) 
-{
-    if (argc > 1) {
-        repeat = std::atoi(argv[1]);
-        if (repeat <= 0) {
-            std::cerr << "Invalid value for repeat. It must be a positive integer." << std::endl;
-            return 1;
-        }
-    }
+int main(int argc, char **argv){
+    ParseCommandLineArgs(argc, argv);
 
 	::testing::InitGoogleTest(&argc, argv);
 	return RUN_ALL_TESTS();

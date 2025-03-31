@@ -1,4 +1,4 @@
-#include "signature/BLS.h"
+#include "ChameLib.h"
 #include "CommonTest.h"
 
 struct TestParams{
@@ -63,19 +63,11 @@ TEST_P(BLS_Test, Test){
     this->start("KeyGen");
     bls.KeyGen(pk, sk, pp);
     this->end("KeyGen");
-    if(visiable){
-        pp.print();
-        pk.print();
-        sk.print();
-    }
 
     std::string message = "Hello, BLS!";
     this->start("Sign");
     bls.Sign(signature, sk, message);
     this->end("Sign");
-    if(visiable){
-        signature.print();        
-    }
 
     this->start("Verify");
     bool verify_result = bls.Verify(pp, pk, message, signature);
@@ -83,8 +75,9 @@ TEST_P(BLS_Test, Test){
     ASSERT_TRUE(verify_result);
 }
 
-int main(int argc, char **argv) 
-{
+int main(int argc, char **argv){
+    ParseCommandLineArgs(argc, argv);
+
 	::testing::InitGoogleTest(&argc, argv);
 	return RUN_ALL_TESTS();
 }

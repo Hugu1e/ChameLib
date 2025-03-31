@@ -24,7 +24,6 @@ void CH_ET_BC_CDK_2017::SetUp(CH_ET_BC_CDK_2017_pp &pp, int k){
 void CH_ET_BC_CDK_2017::KeyGen(CH_ET_BC_CDK_2017_pk &pk, CH_ET_BC_CDK_2017_sk &sk, CH_ET_BC_CDK_2017_pp &pp){
     RSA_pk rsa_pk;
     RSA_sk rsa_sk;
-    rsa.SetUp(rsa_pk, rsa_sk);
     rsa.KeyGen(rsa_pk, rsa_sk, pp.getK());
 
     pk.set(n0, rsa_pk[AE_RSA::n]);
@@ -53,7 +52,6 @@ void CH_ET_BC_CDK_2017::Hash(CH_ET_BC_CDK_2017_h &h, CH_ET_BC_CDK_2017_r &r, CH_
 
     RSA_pk rsa_pk;
     RSA_sk rsa_sk;
-    rsa.SetUp(rsa_pk, rsa_sk);
     rsa.KeyGen(rsa_pk, rsa_sk, pp.getK());
     h.set(n1, rsa_pk[AE_RSA::n]);
     h.set(e1, rsa_pk[AE_RSA::e]);

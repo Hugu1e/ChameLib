@@ -1,28 +1,17 @@
 #include "AE/RSA.h"
 
-void AE_RSA::SetUp(){}
-
-void AE_RSA::SetUp(RSA_pk &pk, RSA_sk &sk){
-    pk.init(2);
-    sk.init(1);
-}
-
-void AE_RSA::SetUp(RSA_pk &pk, RSA_sk &sk, RSA_m &m){
-    pk.init(2);
-    sk.init(1);
-    m.init(1);
-}
-
 /**
- * @param pk public key
- * @param sk private key
- * @param k length of n
+ * @brief 
+ * 
+ * @param  pk[out]  public key
+ * @param  sk[out]  private key
+ * @param  k[in]    length of n
+ * 
  */
 void AE_RSA::KeyGen(RSA_pk &pk, RSA_sk &sk, short k) {
     mpz_t p, q, phi, gcdResult;
     mpz_inits(p, q, phi, gcdResult, NULL);
 
-    // TODO
     // e = 65537
     mpz_set_ui(pk[e], 65537);
 

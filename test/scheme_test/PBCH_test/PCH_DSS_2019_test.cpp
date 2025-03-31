@@ -109,15 +109,8 @@ TEST_P(PCH_DSS_2019_Test, Test){
     average();
 }
 
-int main(int argc, char **argv) 
-{
-    if (argc > 1) {
-        repeat = std::atoi(argv[1]);
-        if (repeat <= 0) {
-            std::cerr << "Invalid value for repeat. It must be a positive integer." << std::endl;
-            return 1;
-        }
-    }
+int main(int argc, char **argv){
+    ParseCommandLineArgs(argc, argv);
     
     ::testing::GTEST_FLAG(catch_exceptions) = false;
 	::testing::InitGoogleTest(&argc, argv);

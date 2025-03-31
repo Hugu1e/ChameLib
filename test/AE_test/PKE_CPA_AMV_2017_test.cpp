@@ -1,4 +1,4 @@
-#include "AE/PKE_CPA_AMV_2017.h"
+#include "ChameLib.h"
 #include "CommonTest.h"
 
 struct TestParams{
@@ -93,8 +93,9 @@ TEST_P(PKE_CPA_AMV_2017_Test, Test){
     ASSERT_TRUE(verify_result);
 }
 
-int main(int argc, char **argv) 
-{
+int main(int argc, char **argv){
+    ParseCommandLineArgs(argc, argv);
+
 	::testing::InitGoogleTest(&argc, argv);
 	return RUN_ALL_TESTS();
 }

@@ -13,6 +13,41 @@ const int diff_max_len = 17;
 
 int repeat = 100;
 
+// Enable time checking(verify that the actual runtime aligns with the expected time)
+bool checkTime = false;
+
+/**
+ * @brief parse command line arguments
+ * 
+ * @param  argc[in]   
+ * @param  argv[in]  
+ * 
+ */
+void ParseCommandLineArgs(int argc, char** argv) {
+    for (int i = 1; i < argc; ++i) {
+        if (strcmp(argv[i], "--repeat") == 0 || strcmp(argv[i], "-r") == 0) {
+            if (i + 1 < argc) {
+                repeat = std::stoi(argv[++i]);
+            } else {
+                std::cerr << "Error: --repeat/-r requires an integer value." << std::endl;
+                exit(EXIT_FAILURE);
+            }
+        } else if (strcmp(argv[i], "--checktime") == 0 || strcmp(argv[i], "-c") == 0) {
+            checkTime = true;
+        } else if (strcmp(argv[i], "--help") == 0 || strcmp(argv[i], "-h") == 0) {
+            std::cout << "Usage: [options]\n"
+                      << "Options:\n"
+                      << "  --repeat, -r <int>      Set the number of repetitions (default: 100)\n"
+                      << "  --checktime, -c         Enable time checking (default: false)\n"
+                      << "  --help, -h              Show this help message\n";
+            exit(EXIT_SUCCESS);
+        } else {
+            std::cerr << "Unknown argument: " << argv[i] << std::endl;
+            exit(EXIT_FAILURE);
+        }
+    }
+}
+
 /*
 random in G1, random in G2, random in GT, random in Zr,
 hash to G1, hash to G2, hash to GT, hash to Zr,
@@ -96,6 +131,8 @@ class BaseTest : public testing::TestWithParam<T>  {
         }
 
         bool check_time(int type, int ops[diff_max_len], std::string test_name) {
+            if(!checkTime) return true;
+
             if(average_time.find(test_name) == average_time.end()){
                 throw std::runtime_error("check_time(): wrong test name");
             }

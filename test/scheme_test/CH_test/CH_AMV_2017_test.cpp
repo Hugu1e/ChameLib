@@ -111,8 +111,8 @@ TEST_P(CH_AMV_2017_Test, Test){
     average();
 }
 
-int main(int argc, char **argv) 
-{
+int main(int argc, char **argv){
+    ParseCommandLineArgs(argc, argv);
 	::testing::InitGoogleTest(&argc, argv);
 	return RUN_ALL_TESTS();
 }

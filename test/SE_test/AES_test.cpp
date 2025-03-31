@@ -1,4 +1,4 @@
-#include "SE/AES.h"
+#include "ChameLib.h"
 #include "CommonTest.h"
 #include "curve/params.h"
 #include "exception/CurveException.h"
@@ -162,8 +162,9 @@ TEST_P(AES_Test, Test){
     delete[] ciphertext;
 }
 
-int main(int argc, char **argv) 
-{
+int main(int argc, char **argv){
+    ParseCommandLineArgs(argc, argv);
+    
 	::testing::InitGoogleTest(&argc, argv);
 	return RUN_ALL_TESTS();
 }

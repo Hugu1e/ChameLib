@@ -142,16 +142,8 @@ TEST_P(CH_KEF_MH_SDH_DL_AM_2004_Test, Test){
     EXPECT_TRUE(check_time(GetParam().curve, op_cnt[3], "Verify"));
 }
 
-int main(int argc, char **argv) 
-{
-    if (argc > 1) {
-        repeat = std::atoi(argv[1]);
-        if (repeat <= 0) {
-            std::cerr << "Invalid value for repeat. It must be a positive integer." << std::endl;
-            return 1;
-        }
-    }
-
+int main(int argc, char **argv){
+    ParseCommandLineArgs(argc, argv);
 	::testing::InitGoogleTest(&argc, argv);
 	return RUN_ALL_TESTS();
 }

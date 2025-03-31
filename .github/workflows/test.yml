@@ -22,14 +22,12 @@ jobs:
 
     - name: Download and install PBC library
       run: |
-        cd /tmp
-        wget https://crypto.stanford.edu/pbc/files/pbc-0.5.14.tar.gz
-        tar -xzf pbc-0.5.14.tar.gz
-        cd pbc-0.5.14
-        ./configure
-        make
+        git clone https://github.com/WCjrCK/pbc.git
+        cd pbc
+        sudo ./setup
+        sudo ./configure
+        sudo make -j8
         sudo make install
-        sudo ldconfig
 
     - name: Install gtest
       run: |
