@@ -265,6 +265,24 @@ void CP_ABE::Hash(element_t res, std::string m){
 }
 
 /**
+ * @brief 
+ * 
+ * @param  ciphertext[out]  
+ * @param  mpk[in]         
+ * @param  msg[in]          
+ * @param  MSP[in]         
+ * 
+ */
+void CP_ABE::Encrypt(CP_ABE_ciphertext &ciphertext, CP_ABE_mpk &mpk, element_t msg, Element_t_matrix *MSP){
+    element_s *s1 = GetZrElement();
+    element_s *s2 = GetZrElement();
+    Encrypt(ciphertext, mpk, msg, MSP, s1, s2);
+    // free s1,s2
+    element_clear(s1);
+    element_clear(s2);
+}
+
+/**
  * @brief Encrypt a message msg under a policy string.
  * 
  * @param  ciphertext[out]  

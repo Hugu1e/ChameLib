@@ -14,6 +14,9 @@ class RPCH_TMM_2022_sk{
         RABE_TMM_msk mskRABE;
         PbcElements skCHET;
     public:
+        RPCH_TMM_2022_sk(){
+            skCHET.init(1);
+        }
         RABE_TMM_msk &get_mskRABE(){
             return mskRABE;
         }
@@ -27,6 +30,9 @@ class RPCH_TMM_2022_pk{
         RABE_TMM_mpk mpkRABE;
         PbcElements pkCHET;
     public:
+        RPCH_TMM_2022_pk(){
+            pkCHET.init(1);
+        }
         RABE_TMM_mpk &get_mpkRABE(){
             return mpkRABE;
         }
@@ -40,6 +46,9 @@ class RPCH_TMM_2022_skid{
         PbcElements skCHET;
         RABE_TMM_skid skidRABE;
     public:
+        RPCH_TMM_2022_skid(){
+            skCHET.init(1);
+        }
         PbcElements &get_skCHET(){
             return skCHET;
         }
@@ -61,12 +70,19 @@ class RPCH_TMM_2022_dkidt{
         }
 };
 
-class RPCH_TMM_2022_r: public PbcElements{
+class RPCH_TMM_2022_r{
     private:
         // h,r
+        PbcElements r;
         // C
         RABE_TMM_ciphertext C;
     public:
+        RPCH_TMM_2022_r(){
+            r.init(2);
+        }
+        PbcElements &get_r(){
+            return r;
+        } 
         RABE_TMM_ciphertext &get_C(){
             return C;
         }
@@ -75,13 +91,12 @@ class RPCH_TMM_2022_r: public PbcElements{
 class RPCH_TMM_2022_h{
     private:
         PbcElements h;
-        RPCH_TMM_2022_r r;
     public:
+        RPCH_TMM_2022_h(){
+            h.init(1);
+        }
         PbcElements &get_h(){
             return h;
-        }
-        RPCH_TMM_2022_r &get_r(){
-            return r;
         }
 };
 
@@ -118,7 +133,7 @@ class RPCH_TMM_2022: public PbcScheme{
         RABE_TMM rabe;
 
         bool swap;
-        int k;
+
         element_t s1,s2;
         element_t K;
         element_t R;
@@ -126,7 +141,7 @@ class RPCH_TMM_2022: public PbcScheme{
     public:
         RPCH_TMM_2022(int curve, bool swap);
 
-        void SetUp(RPCH_TMM_2022_sk &skRPCH, RPCH_TMM_2022_pk &pkRPCH, RPCH_TMM_2022_RevokedPresonList &rl, RPCH_TMM_2022_Binary_tree &st, int k, int n);
+        void SetUp(RPCH_TMM_2022_sk &skRPCH, RPCH_TMM_2022_pk &pkRPCH, RPCH_TMM_2022_RevokedPresonList &rl, RPCH_TMM_2022_Binary_tree &st, int n);
 
         void KeyGen(RPCH_TMM_2022_skid &skidRPCH, RPCH_TMM_2022_pk &pkRPCH, RPCH_TMM_2022_sk &skRPCH, RPCH_TMM_2022_Binary_tree &st, std::vector<std::string> &attr_list, element_t id, time_t re_time);
 
@@ -136,13 +151,13 @@ class RPCH_TMM_2022: public PbcScheme{
 
         void Rev(RPCH_TMM_2022_RevokedPresonList &rl, element_t id, time_t t);
 
-        void Hash(RPCH_TMM_2022_h &h, element_t m, RPCH_TMM_2022_pk &pkRPCH, Element_t_matrix *MSP, time_t t);
+        void Hash(RPCH_TMM_2022_h &h, RPCH_TMM_2022_r &r, element_t m, RPCH_TMM_2022_pk &pkRPCH, Element_t_matrix *MSP, time_t t);
 
-        bool Check(RPCH_TMM_2022_pk &pkRPCH, element_t m, RPCH_TMM_2022_h &h);
+        bool Check(RPCH_TMM_2022_h &h, RPCH_TMM_2022_r &r, element_t m, RPCH_TMM_2022_pk &pkRPCH);
 
-        void Adapt(RPCH_TMM_2022_h &h_p, element_t m_p, element_t m, RPCH_TMM_2022_h &h, RPCH_TMM_2022_pk &pkRPCH, RPCH_TMM_2022_dkidt &dkidtRPCH, Element_t_matrix *MSP);
+        void Adapt(RPCH_TMM_2022_r &r_p, element_t m_p, RPCH_TMM_2022_h &h, RPCH_TMM_2022_r &r, element_t m, RPCH_TMM_2022_pk &pkRPCH, RPCH_TMM_2022_dkidt &dkidtRPCH, Element_t_matrix *MSP);
 
-        bool Verify(RPCH_TMM_2022_pk &pkRPCH, element_t m_p, RPCH_TMM_2022_h &h_p);
+        bool Verify(RPCH_TMM_2022_h &h, RPCH_TMM_2022_r &r_p, element_t m_p, RPCH_TMM_2022_pk &pkRPCH);
 
         ~RPCH_TMM_2022();
 
@@ -159,7 +174,7 @@ class RPCH_TMM_2022: public PbcScheme{
         };
 
         enum{
-            h1, r
+            h1, r1
         };
 };
 

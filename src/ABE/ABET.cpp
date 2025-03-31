@@ -66,7 +66,6 @@ void ABET::Setup(ABET_msk &msk, ABET_mpk &mpk, int k){
     mpk.get_gk_pow_a().init(k);
     mpk.get_hk().init(k);
 
-    this->k = k;
     element_random(tmp_Zn);
     msk.get_msk().set(a1, tmp_Zn);
     element_random(tmp_Zn);
@@ -119,7 +118,6 @@ void ABET::Setup(ABET_msk &msk, ABET_mpk &mpk, int k){
     mpk.get_mpk().set(T1, tmp_GT_2);
     // T2 = e(g, h)^(d2*a2+d3/a)
     element_mul(this->tmp_Zn, this->d2, msk.get_msk()[a2]);
-    element_div(this->tmp_Zn_2, this->d3, msk.get_msk()[a]);
     element_add(this->tmp_Zn, this->tmp_Zn, this->tmp_Zn_2);
     element_pow_zn(tmp_GT_2, this->tmp_GT, this->tmp_Zn);
     mpk.get_mpk().set(T2, tmp_GT_2);
@@ -341,6 +339,7 @@ void ABET::KeyGen(ABET_sks &sks, ABET_msk &msk, ABET_mpk &mpk, std::vector<std::
     sks.get_sk1().set(0, tmp_G_4);
 
     // sk2 = {gi-1^(a*r), gi-2^(a*r), ..., g1^(a*r)}
+    int k = mpk.get_gk().getSize();
     int lenOfSk2 = k - mi;
     sks.get_sk2().init(lenOfSk2);
     element_add(this->tmp_Zn, this->r1, this->r2);
@@ -786,6 +785,7 @@ void ABET::Decrypt(unsigned char *res_R, element_t res_r, ABET_mpk &mpk, ABET_ms
  * output: ID_
  */
 void ABET::GetID_(element_t ID_, ABET_mpk &mpk, ABET_ID &ID, int mi_oj, int type){
+    int k = mpk.get_gk().getSize();
     if(type == MODIFIER){
         element_set(this->tmp_G, mpk.get_mpk()[g]);
         for(int i=0; i<mi_oj; i++){

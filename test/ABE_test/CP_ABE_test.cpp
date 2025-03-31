@@ -49,75 +49,6 @@ INSTANTIATE_TEST_CASE_P(
 	testing::ValuesIn(test_values)
 );
 
-int op_cnt[][diff_max_len] = {
-    {
-        1, 1, 0, 7, 
-        0, 0, 0, 0, 
-        0, 0, 0, 2, 
-        3, 2, 2, 0, 
-        1
-    }, //0, setup
-
-    {
-        0, 0, 0, 3, 
-        6, 0, 0, 0, 
-        9, 0, 0, 10, 
-        9, 3, 0, 0, 
-        0
-    }, //1, keygen
-    
-    {
-        0, 0, 0, 0, 
-        0, 0, 0, 0, 
-        0, 0, 2, 0, 
-        0, 3, 2, 0, 
-        0
-    }, //2, Encrypt
-
-    {
-        0, 0, 0, 0, 
-        0, 0, 0, 0, 
-        0, 0, 6, 0, 
-        0, 0, 0, 0, 
-        6
-    }, //3, Decrypt
-};
-
-int op_cnt_swap[][diff_max_len] = {
-    {
-        1, 1, 0, 7, 
-        0, 0, 0, 0, 
-        0, 0, 0, 2, 
-        2, 3, 2, 0, 
-        1
-    }, //0, setup
-
-    {
-        0, 0, 0, 3, 
-        0, 6, 0, 0, 
-        0, 9, 0, 10, 
-        3, 9, 0, 0, 
-        0
-    }, //1, keygen
-    
-    {
-        0, 0, 0, 0, 
-        0, 0, 0, 0, 
-        0, 0, 2, 0, 
-        3, 0, 2, 0, 
-        0
-    }, //2, Encrypt
-
-    {
-        0, 0, 0, 0, 
-        0, 0, 0, 0, 
-        0, 0, 6, 0, 
-        0, 0, 0, 0, 
-        6
-    }, //3, Decrypt
-};
-
-
 TEST_P(CP_ABE_Test, Test){
     std::vector<std::string> attr_list = {"ONE","TWO","THREE"};
     
@@ -154,13 +85,8 @@ TEST_P(CP_ABE_Test, Test){
     for (int i = 0; i < repeat; i++) abe.KeyGen(sks[i], msk[i], mpk[i], attr_list);
     this->end("KeyGen");
 
-    element_s *s1[repeat], *s2[repeat];
-    for (int i = 0; i < repeat; i++){
-        s1[i] = abe.GetZrElement();
-        s2[i] = abe.GetZrElement();
-    }
     this->start("Encrypt");
-    for (int i = 0; i < repeat; i++) abe.Encrypt(ciphertext[i], mpk[i], msg[i], MSP, s1[i], s2[i]);
+    for (int i = 0; i < repeat; i++) abe.Encrypt(ciphertext[i], mpk[i], msg[i], MSP);
     this->end("Encrypt");
 
     this->start("Decrypt");
@@ -172,54 +98,41 @@ TEST_P(CP_ABE_Test, Test){
     average();
 
     if(!GetParam().swap){
-        EXPECT_TRUE(check_time(GetParam().curve, op_cnt[0], "SetUp"));
+        int op_cnt_SetUp[] = {
+            1, 1, 0, 7, 
+            0, 0, 0, 0, 
+            0, 0, 0, 2, 
+            3, 2, 2, 0, 
+            1
+        };
+        EXPECT_TRUE(check_time(GetParam().curve, op_cnt_SetUp, "SetUp"));
 
-        int op_cnt_KeyGen[diff_max_len];
-        for(int i=0; i<diff_max_len; i++) op_cnt_KeyGen[i] = op_cnt[1][i];
-        for(int i = 0;i < attr_list.size();i++){
-            int delta[] = {
-                0, 0, 0, 1, 
-                6, 0, 0, 0, 
-                6, 0, 0, 2, 
-                9, 0, 0, 0, 
-                0
-            };
-            for(int j=0; j<diff_max_len; j++){
-                op_cnt_KeyGen[j] += delta[j];
-            }
-        }
+        int n = attr_list.size();
+        int op_cnt_KeyGen[] = {
+            0, 0, 0, 3 + n, 
+            6 + 6*n, 0, 0, 0, 
+            9 + 6*n, 0, 0, 10 + 2*n, 
+            9 + 9*n, 3, 0, 0, 
+            0
+        };
         EXPECT_TRUE(check_time(GetParam().curve, op_cnt_KeyGen, "KeyGen"));
 
-        int op_cnt_Encrypt[diff_max_len];
-        for(int i=0; i<diff_max_len; i++) op_cnt_Encrypt[i] = op_cnt[2][i];
-        for(int i = 0; i < rows; i++){
-            int delta_row[] = {
-                0, 0, 0, 0, 
-                6, 0, 0, 0, 
-                3, 0, 0, 0, 
-                6, 0, 0, 0, 
-                0
-            };
-            for(int j=0; j<diff_max_len; j++){
-                op_cnt_Encrypt[j] += delta_row[j];
-            }
-            int delta_col[] = {
-                0, 0, 0, 0, 
-                6, 0, 0, 0, 
-                6, 0, 0, 0, 
-                9, 0, 0, 0, 
-                0
-            };
-            for(int l=0; l<cols; l++){
-                for(int j=0; j<diff_max_len; j++){
-                    op_cnt_Encrypt[j] += delta_col[j];
-                }
-            }
-        }
+        int op_cnt_Encrypt[] = {
+            0, 0, 0, 2, 
+            6*rows + 6*rows*cols, 0, 0, 0, 
+            3*rows + 6*rows*cols, 0, 2, 0, 
+            6*rows + 9*rows*cols, 3, 2, 0, 
+            0
+        };
         EXPECT_TRUE(check_time(GetParam().curve, op_cnt_Encrypt, "Encrypt"));
 
-        int op_cnt_Decrypt[diff_max_len];
-        for(int i=0; i<diff_max_len; i++) op_cnt_Decrypt[i] = op_cnt[3][i];
+        int op_cnt_Decrypt[] = {
+            0, 0, 0, 0, 
+            0, 0, 0, 0, 
+            0, 0, 6, 0, 
+            0, 0, 0, 0, 
+            6
+        };
         int delta_num_den[] = {
             0, 0, 0, 0, 
             0, 0, 0, 0, 
@@ -228,7 +141,7 @@ TEST_P(CP_ABE_Test, Test){
             0
         };
         for(unsigned long int i=0; i<rows;i++){
-            if(sks[0].get_attr2id().find(MSP->getName(i)) == sks[0].get_attr2id().end()){
+            if(sks[0].get_attr2id().find(MSP->getName(i)) != sks[0].get_attr2id().end()){
                 for(int j=0; j<diff_max_len; j++){
                     op_cnt_Decrypt[j] += delta_num_den[j];
                 }
@@ -236,54 +149,41 @@ TEST_P(CP_ABE_Test, Test){
         }
         EXPECT_TRUE(check_time(GetParam().curve, op_cnt_Decrypt, "Decrypt"));
     }else{
-        EXPECT_TRUE(check_time(GetParam().curve, op_cnt_swap[0], "SetUp"));
+        int op_cnt_SetUp[] = {
+            1, 1, 0, 7, 
+            0, 0, 0, 0, 
+            0, 0, 0, 2, 
+            2, 3, 2, 0, 
+            1
+        };
+        EXPECT_TRUE(check_time(GetParam().curve, op_cnt_SetUp, "SetUp"));
 
-        int op_cnt_KeyGen[diff_max_len];
-        for(int i=0; i<diff_max_len; i++) op_cnt_KeyGen[i] = op_cnt_swap[1][i];
-        for(int i = 0;i < attr_list.size();i++){
-            int delta[] = {
-                0, 0, 0, 1, 
-                0, 6, 0, 0, 
-                0, 6, 0, 2, 
-                0, 9, 0, 0, 
-                0
-            };
-            for(int j=0; j<diff_max_len; j++){
-                op_cnt_KeyGen[j] += delta[j];
-            }
-        }
+        int n = attr_list.size();
+        int op_cnt_KeyGen[] = {
+            0, 0, 0, 3 + n, 
+            0, 6 + 6*n, 0, 0, 
+            0, 9 + 6*n, 0, 10 + 2*n, 
+            3, 9 + 9*n, 0, 0, 
+            0
+        };
         EXPECT_TRUE(check_time(GetParam().curve, op_cnt_KeyGen, "KeyGen"));
 
-        int op_cnt_Encrypt[diff_max_len];
-        for(int i=0; i<diff_max_len; i++) op_cnt_Encrypt[i] = op_cnt_swap[2][i];
-        for(int i = 0; i < rows; i++){
-            int delta_row[] = {
-                0, 0, 0, 0, 
-                0, 6, 0, 0, 
-                0, 3, 0, 0, 
-                0, 6, 0, 0, 
-                0
-            };
-            for(int j=0; j<diff_max_len; j++){
-                op_cnt_Encrypt[j] += delta_row[j];
-            }
-            int delta_col[] = {
-                0, 0, 0, 0, 
-                0, 6, 0, 0, 
-                0, 6, 0, 0, 
-                0, 9, 0, 0, 
-                0
-            };
-            for(int l=0; l<cols; l++){
-                for(int j=0; j<diff_max_len; j++){
-                    op_cnt_Encrypt[j] += delta_col[j];
-                }
-            }
-        }
+        int op_cnt_Encrypt[] = {
+            0, 0, 0, 2, 
+            0, 6*rows + 6*rows*cols, 0, 0, 
+            0, 3*rows + 6*rows*cols, 2, 0, 
+            3, 6*rows + 9*rows*cols, 2, 0, 
+            0
+        };
         EXPECT_TRUE(check_time(GetParam().curve, op_cnt_Encrypt, "Encrypt"));
 
-        int op_cnt_Decrypt[diff_max_len];
-        for(int i=0; i<diff_max_len; i++) op_cnt_Decrypt[i] = op_cnt_swap[3][i];
+        int op_cnt_Decrypt[] = {
+            0, 0, 0, 0, 
+            0, 0, 0, 0, 
+            0, 0, 6, 0, 
+            0, 0, 0, 0, 
+            6
+        };
         int delta_num_den[] = {
             0, 0, 0, 0, 
             0, 0, 0, 0, 
@@ -292,7 +192,7 @@ TEST_P(CP_ABE_Test, Test){
             0
         };
         for(unsigned long int i=0; i<rows;i++){
-            if(sks[0].get_attr2id().find(MSP->getName(i)) == sks[0].get_attr2id().end()){
+            if(sks[0].get_attr2id().find(MSP->getName(i)) != sks[0].get_attr2id().end()){
                 for(int j=0; j<diff_max_len; j++){
                     op_cnt_Decrypt[j] += delta_num_den[j];
                 }

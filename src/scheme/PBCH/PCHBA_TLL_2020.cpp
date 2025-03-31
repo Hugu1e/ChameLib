@@ -1,4 +1,4 @@
-#include <scheme/PBCH/PCHBA_TLL_2020.h>
+#include "scheme/PBCH/PCHBA_TLL_2020.h"
 
 PCHBA_TLL_2020::PCHBA_TLL_2020(int curve, bool swap): PbcScheme(curve){
     this->swap = swap;
@@ -44,15 +44,14 @@ void PCHBA_TLL_2020::H(element_t res, std::string str){
 }
 
 /**
- * input: k
- * output: skPCHBA, pkPCHBA
+ * @brief 
+ * 
+ * @param  pkPCHBA[out]  
+ * @param  skPCHBA[out]  
+ * @param  k[in]         
+ * 
  */
 void PCHBA_TLL_2020::SetUp(PCHBA_TLL_2020_pk &pkPCHBA, PCHBA_TLL_2020_sk &skPCHBA, int k) {
-    pkPCHBA.get_pkCHET().init(1);
-    skPCHBA.get_skCHET().init(1);
-    
-    this->k = k;
-
     abet.Setup(skPCHBA.get_skABET(), pkPCHBA.get_pkABET(), k);
 
     element_random(tmp_Zn);
@@ -64,18 +63,34 @@ void PCHBA_TLL_2020::SetUp(PCHBA_TLL_2020_pk &pkPCHBA, PCHBA_TLL_2020_sk &skPCHB
 }
 
 /**
- * input : skPCHBA, pkPCHBA, attr_list, ID, mi
- * output: sksPCHBA
+ * @brief 
+ * 
+ * @param  sksPCHBA[out]   
+ * @param  pkPCHBA[in]    
+ * @param  skPCHBA[in]    
+ * @param  attr_list[in]  
+ * @param  ID[in]         
+ * @param  mi[in]          
+ * 
  */
 void PCHBA_TLL_2020::KeyGen(PCHBA_TLL_2020_sks &sksPCHBA, PCHBA_TLL_2020_pk &pkPCHBA, PCHBA_TLL_2020_sk &skPCHBA, std::vector<std::string> &attr_list, PCHBA_TLL_2020_ID &ID, int mi) {
     sksPCHBA.get_skCHET().set(x, skPCHBA.get_skCHET()[x]);
    
     abet.KeyGen(sksPCHBA.get_sksABET(), skPCHBA.get_skABET(), pkPCHBA.get_pkABET(), attr_list, ID.get_IDABET(), mi);
 }
- 
+
 /**
- * input : pkPCHBA, skPCHBA, m, policy_str, ID, oj
- * output: p, h', b(hash), C, c, epk, sigma
+ * @brief 
+ * 
+ * @param  h[out]        
+ * @param  random[out]   
+ * @param  m[in]         
+ * @param  pkPCHBA[in]  
+ * @param  skPCHBA[in]  
+ * @param  MSP[in]      
+ * @param  ID[in]       
+ * @param  oj[in]        length of ownerID
+ * 
  */
 void PCHBA_TLL_2020::Hash(PCHBA_TLL_2020_h &h, PCHBA_TLL_2020_r &random, element_t m, PCHBA_TLL_2020_pk &pkPCHBA, PCHBA_TLL_2020_sk &skPCHBA, Element_t_matrix *MSP, PCHBA_TLL_2020_ID &ID, int oj) {
     // r
@@ -136,8 +151,14 @@ void PCHBA_TLL_2020::Hash(PCHBA_TLL_2020_h &h, PCHBA_TLL_2020_r &random, element
 }
 
 /**
- * input : pkPCHBA, m, p, h', b, C, c, epk, sigma
- * output: bool
+ * @brief 
+ * 
+ * @param  h[in]        
+ * @param  random[in]   
+ * @param  m[in]         
+ * @param  pkPCHBA[in]  
+ * 
+ * @return 
  */
 bool PCHBA_TLL_2020::Check(PCHBA_TLL_2020_h &h, PCHBA_TLL_2020_r &random, element_t m, PCHBA_TLL_2020_pk &pkPCHBA) {
     // b =? p * (h'^m)
@@ -173,8 +194,20 @@ bool PCHBA_TLL_2020::Check(PCHBA_TLL_2020_h &h, PCHBA_TLL_2020_r &random, elemen
 }
 
 /**
- * input : pkPCHBA, skPCHBA, sksPCHBA, m, p, h', b, C, c, epk, sigma, m_p, policy_str, ID, mi
- * output: p_p, C_p, c_p, epk_p, sigma_p
+ * @brief 
+ * 
+ * @param  random_p[out]  
+ * @param  m_p[in]        
+ * @param  h[in]         
+ * @param  random[in]    
+ * @param  m[in]          
+ * @param  MSP[in]       
+ * @param  ID[in]        
+ * @param  mi[in]         length of modifierID
+ * @param  pkPCHBA[in]   
+ * @param  skPCHBA[in]   
+ * @param  sksPCHBA[in]  
+ * 
  */
 void PCHBA_TLL_2020::Adapt(PCHBA_TLL_2020_r &random_p, element_t m_p, PCHBA_TLL_2020_h &h, PCHBA_TLL_2020_r &random, element_t m, Element_t_matrix *MSP, PCHBA_TLL_2020_ID &ID, int mi, PCHBA_TLL_2020_pk &pkPCHBA, PCHBA_TLL_2020_sk &skPCHBA, PCHBA_TLL_2020_sks &sksPCHBA) {
     // R
@@ -236,8 +269,14 @@ void PCHBA_TLL_2020::Adapt(PCHBA_TLL_2020_r &random_p, element_t m_p, PCHBA_TLL_
 }
 
 /**
- * input : pkPCHBA, m_p, p_p, h', b, C_p, c_p, epk_p, sigma_p
- * output: bool
+ * @brief 
+ * 
+ * @param  h_p[in]       
+ * @param  random_p[in]  
+ * @param  m_p[in]        
+ * @param  pkPCHBA[in]   
+ * 
+ * @return 
  */
 bool PCHBA_TLL_2020::Verify(PCHBA_TLL_2020_h &h_p, PCHBA_TLL_2020_r &random_p, element_t m_p, PCHBA_TLL_2020_pk &pkPCHBA) {
     return this->Check(h_p, random_p, m_p, pkPCHBA);

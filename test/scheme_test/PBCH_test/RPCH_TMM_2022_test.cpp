@@ -1,11 +1,10 @@
-#include "scheme/PBCH/RPCH_TMM_2022.h"
+#include "ChameLib.h"
 #include "CommonTest.h"
 
 struct TestParams{
 	int curve;
     bool swap;
     int leafNodeSize;
-    int k;
 };
 
 class RPCH_TMM_2022_Test : public BaseTest<TestParams>{
@@ -15,8 +14,8 @@ class RPCH_TMM_2022_Test : public BaseTest<TestParams>{
 
             std::string testName = ::testing::UnitTest::GetInstance()->current_test_info()->name();
             std::string curveName = Curve::curve_names[GetParam().curve];
-            fprintf(out, "%s %s swap: %d leafNodeSize: %d k: %d\n", testName.c_str(), curveName.c_str(), GetParam().swap, GetParam().leafNodeSize, GetParam().k);
-            if(visiable)printf("%s %s swap: %d leafNodeSize: %d k: %d\n", testName.c_str(), curveName.c_str(), GetParam().swap, GetParam().leafNodeSize, GetParam().k);
+            fprintf(out, "%s %s swap: %d leafNodeSize: %d\n", testName.c_str(), curveName.c_str(), GetParam().swap, GetParam().leafNodeSize);
+            if(visiable)printf("%s %s swap: %d leafNodeSize: %d\n", testName.c_str(), curveName.c_str(), GetParam().swap, GetParam().leafNodeSize);
         }
 };
 
@@ -34,16 +33,12 @@ std::vector<TestParams> generateTestParams() {
 
     int leadNodeSizes[] = {8, 16, 32, 64};
 
-    int ks[] = {128, 256, 512};
-
     std::vector<TestParams> test_params;
 
     for (int curve : curves) {
         for (bool swap : swaps) {
             for (int leafNodeSize : leadNodeSizes) {
-                for (int k : ks) {
-                    test_params.push_back({curve, swap, leafNodeSize, k});
-                }
+                test_params.push_back({curve, swap, leafNodeSize});
             }
         }
     }
@@ -98,7 +93,8 @@ TEST_P(RPCH_TMM_2022_Test, Test){
 
     RPCH_TMM_2022_kut kut[repeat];
 
-    RPCH_TMM_2022_h h[repeat], h_p[repeat];
+    RPCH_TMM_2022_h h[repeat];
+    RPCH_TMM_2022_r r[repeat], r_p[repeat];
 
     RPCH_TMM_2022_RevokedPresonList rl[repeat];
     RPCH_TMM_2022_Binary_tree st[repeat];
@@ -110,7 +106,7 @@ TEST_P(RPCH_TMM_2022_Test, Test){
     }
     
     this->start("SetUp");
-    for (int i = 0; i < repeat; i++) ch.SetUp(skRPCH[i], pkRPCH[i], rl[i], st[i], GetParam().k, GetParam().leafNodeSize);
+    for (int i = 0; i < repeat; i++) ch.SetUp(skRPCH[i], pkRPCH[i], rl[i], st[i], GetParam().leafNodeSize);
     this->end("SetUp");
     
     this->start("KeyGen");
@@ -126,12 +122,12 @@ TEST_P(RPCH_TMM_2022_Test, Test){
     for (int i = 0; i < repeat; i++) ch.Rev(rl[i], id_3[i], re_time_3);
 
     this->start("Hash");
-    for (int i = 0; i < repeat; i++) ch.Hash(h[i], m[i], pkRPCH[i], MSP, T_present);
+    for (int i = 0; i < repeat; i++) ch.Hash(h[i], r[i], m[i], pkRPCH[i], MSP, T_present);
     this->end("Hash");
         
     bool check[repeat];
     this->start("Check");
-    for (int i = 0; i < repeat; i++) check[i] = ch.Check(pkRPCH[i], m[i], h[i]);
+    for (int i = 0; i < repeat; i++) check[i] = ch.Check(h[i], r[i], m[i], pkRPCH[i]);
     this->end("Check");
     for (int i = 0; i < repeat; i++) ASSERT_TRUE(check[i]);
     
@@ -153,12 +149,12 @@ TEST_P(RPCH_TMM_2022_Test, Test){
     this->end("DKGen");
 
     this->start("Adapt");
-    for (int i = 0; i < repeat; i++) ch.Adapt(h_p[i], m_p[i], m[i], h[i], pkRPCH[i], dkidtRPCH_2[i], MSP);
+    for (int i = 0; i < repeat; i++) ch.Adapt(r_p[i], m_p[i], h[i], r[i], m[i], pkRPCH[i], dkidtRPCH_2[i], MSP);
     this->end("Adapt");
     
     bool verify[repeat];
     this->start("Verify");
-    for (int i = 0; i < repeat; i++) verify[i] = ch.Verify(pkRPCH[i], m_p[i], h_p[i]);
+    for (int i = 0; i < repeat; i++) verify[i] = ch.Verify(h[i], r_p[i], m_p[i], pkRPCH[i]);
     this->end("Verify");
     for (int i = 0; i < repeat; i++) ASSERT_TRUE(verify[i]);
 
@@ -167,6 +163,14 @@ TEST_P(RPCH_TMM_2022_Test, Test){
 
 int main(int argc, char **argv) 
 {
+    if (argc > 1) {
+        repeat = std::atoi(argv[1]);
+        if (repeat <= 0) {
+            std::cerr << "Invalid value for repeat. It must be a positive integer." << std::endl;
+            return 1;
+        }
+    }
+
 	::testing::InitGoogleTest(&argc, argv);
 	return RUN_ALL_TESTS();
 }

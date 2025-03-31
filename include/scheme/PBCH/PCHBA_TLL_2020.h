@@ -13,6 +13,9 @@ class PCHBA_TLL_2020_sk{
         ABET_msk skABET;
         PbcElements skCHET;
     public:
+        PCHBA_TLL_2020_sk(){
+            skCHET.init(1);
+        }
         ABET_msk& get_skABET(){
             return skABET;
         }
@@ -26,6 +29,9 @@ class PCHBA_TLL_2020_pk{
         ABET_mpk pkABET;
         PbcElements pkCHET;
     public:
+        PCHBA_TLL_2020_pk(){
+            pkCHET.init(1);
+        }
         ABET_mpk& get_pkABET(){
             return pkABET;
         }
@@ -91,7 +97,6 @@ class PCHBA_TLL_2020: public PbcScheme{
     private:
         ABET abet;
 
-        int k;
         element_t r;
         element_t s1,s2;
         element_t esk;

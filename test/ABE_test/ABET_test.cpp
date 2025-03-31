@@ -1,6 +1,5 @@
-#include "ABE/ABET.h"
+#include "ChameLib.h"
 #include "CommonTest.h"
-#include "utils/RandomGenerator.h"
 
 struct TestParams{
 	int curve;
@@ -150,6 +149,14 @@ TEST_P(ABET_Test, Test){
 
 int main(int argc, char **argv) 
 {
+    if (argc > 1) {
+        repeat = std::atoi(argv[1]);
+        if (repeat <= 0) {
+            std::cerr << "Invalid value for repeat. It must be a positive integer." << std::endl;
+            return 1;
+        }
+    }
+
 	::testing::InitGoogleTest(&argc, argv);
 	return RUN_ALL_TESTS();
 }

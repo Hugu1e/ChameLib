@@ -165,7 +165,6 @@ class ABET_ciphertext{
 
 class ABET:public PbcScheme{
     private:
-        int k;
         element_t d1,d2,d3;
         element_t r1,r2;
         element_t R;
