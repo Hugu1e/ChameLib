@@ -1,4 +1,4 @@
-#include <scheme/PBCH/MAPCH_ZLW_2021.h>
+#include "scheme/PBCH/MAPCH_ZLW_2021.h"
 
 MAPCH_ZLW_2021::MAPCH_ZLW_2021(int curve): PbcScheme(curve){
     element_init_G1(G1, pairing);
@@ -86,8 +86,7 @@ void MAPCH_ZLW_2021::Hash(MAPCH_ZLW_2021_h &h, MAPCH_ZLW_2021_r &r, std::string 
 
     TypeConverter::mpz_to_element(tmp_GT, etd[CH_ET_BC_CDK_2017::d1]);
     
-    element_random(tmp_Zn);
-    ma_abe.Encrypt(r.get_c(), tmp_GT, tmp_Zn, mhks.at(0)->get_gpk_ABE(), pkThetas, MSP, policy);
+    ma_abe.Encrypt(r.get_c(), tmp_GT, mhks.at(0)->get_gpk_ABE(), pkThetas, MSP, policy);
 }
 
 /**

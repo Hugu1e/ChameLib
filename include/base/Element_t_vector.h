@@ -22,6 +22,7 @@ public:
     signed long int length() const;
 
     element_s *getElement(signed long int i) const;
+    element_s *operator[](signed long int i) const;
     void setElement(signed long int i, element_s *elem);
 
     void pushBack(element_s *elem);

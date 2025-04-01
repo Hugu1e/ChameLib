@@ -3,6 +3,7 @@
 
 #include "../base/PbcElements.h"
 #include "../base/PbcScheme.h"
+#include "../base/Element_t_vector.h"
 #include <vector>
 #include <string>
 #include <unordered_map>
@@ -138,7 +139,8 @@ class MA_ABE: public PbcScheme{
 
         void KeyGen(MA_ABE_skgidA &skgidA, MA_ABE_gpk &gpk, MA_ABE_skTheta &skTheta, std::string gid, std::string A);        
 
-        void Encrypt(MA_ABE_ciphertext &C, element_t m, element_t rt, MA_ABE_gpk &gpk, std::vector<MA_ABE_pkTheta *> &pkThetas, Element_t_matrix *MSP, std::string policy_str);
+        void Encrypt(MA_ABE_ciphertext &C, element_t m, MA_ABE_gpk &gpk, std::vector<MA_ABE_pkTheta *> &pkThetas, Element_t_matrix *MSP, std::string policy_str);
+        void Encrypt(MA_ABE_ciphertext &C, element_t m, MA_ABE_gpk &gpk, std::vector<MA_ABE_pkTheta *> &pkThetas, Element_t_matrix *MSP, std::string policy_str, Element_t_vector &v, Element_t_vector &w, Element_t_vector &t_x);
 
         void Decrypt(element_t res, std::vector<MA_ABE_skgidA *> &skgidAs, MA_ABE_ciphertext &C, Element_t_matrix *MSP);
 

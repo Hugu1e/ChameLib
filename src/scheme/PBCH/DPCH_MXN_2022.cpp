@@ -1,4 +1,4 @@
-#include <scheme/PBCH/DPCH_MXN_2022.h>
+#include "scheme/PBCH/DPCH_MXN_2022.h"
 #include <openssl/rand.h>
 
 DPCH_MXN_2022::DPCH_MXN_2022(int curve):PbcScheme(curve){
@@ -104,6 +104,39 @@ void DPCH_MXN_2022::ModKeyGen(DPCH_MXN_2022_skGidA &skGidA, DPCH_MXN_2022_pp &pp
     ma_abe.KeyGen(skGidA.get_sk(), pp.get_gpk_MA_ABE(), skTheta.get_sk(), gid, A);
 }
 
+void DPCH_MXN_2022::Ht(element_t res, element_t rt, std::string A){
+    HASH::hash(res, rt, A);
+}
+
+void DPCH_MXN_2022::genEncMAABE(MA_ABE_ciphertext &ct, element_t pt, Element_t_matrix *MSP, std::string policy_str, std::vector<MA_ABE_pkTheta *> &pkThetas_ABE, DPCH_MXN_2022_pp &pp){
+    int rows = MSP->row();
+    int cols = MSP->col();
+    // v, w, t_x
+    Element_t_vector v = Element_t_vector(cols, Zn);
+    Element_t_vector w = Element_t_vector(cols, Zn);
+    Element_t_vector t_x = Element_t_vector(rows, Zn);
+    for(int i = 0; i<cols; i++){
+        if(i==0){
+            // v[0] = z = Ht(rt, policy)
+            this->Ht(v[0], tmp_Zn_2, policy_str);
+            // w[0] = 0
+            element_set0(w[0]);
+        }else{
+            std::string str_vi = policy_str + "1" + std::to_string(i);
+            this->Ht(v[i], tmp_Zn_2, str_vi);
+
+            std::string str_wi = policy_str + "2" + std::to_string(i);
+            this->Ht(w[i], tmp_Zn_2, str_wi);
+        }
+    }
+    for(int i = 0;i<rows;i++){
+        std::string str_ti = policy_str + "0" + std::to_string(i);
+        this->Ht(t_x[i], tmp_Zn_2, str_ti);
+    }
+
+    ma_abe.Encrypt(ct, pt, pp.get_gpk_MA_ABE(), pkThetas_ABE, MSP, policy_str, v, w, t_x);
+}
+
 /**
  * @param h: hash value
  * @param r: random value
@@ -114,7 +147,7 @@ void DPCH_MXN_2022::ModKeyGen(DPCH_MXN_2022_skGidA &skGidA, DPCH_MXN_2022_pp &pp
  * @param pkThetas: public keys of Theta
  * @param polocy: policy
  */
-void DPCH_MXN_2022::Hash(DPCH_MXN_2022_h &h, DPCH_MXN_2022_r &r, std::string m, DPCH_MXN_2022_pp &pp, DPCH_MXN_2022_pk &pkDPCH, std::vector<DPCH_MXN_2022_pkTheta *> &pkThetas, Element_t_matrix *MSP, std::string polocy){
+void DPCH_MXN_2022::Hash(DPCH_MXN_2022_h &h, DPCH_MXN_2022_r &r, std::string m, DPCH_MXN_2022_pp &pp, DPCH_MXN_2022_pk &pkDPCH, std::vector<DPCH_MXN_2022_pkTheta *> &pkThetas, Element_t_matrix *MSP, std::string policy_str){
     CH_ET_BC_CDK_2017_etd etd;
     etd.init(1);
 
@@ -145,7 +178,8 @@ void DPCH_MXN_2022::Hash(DPCH_MXN_2022_h &h, DPCH_MXN_2022_r &r, std::string m, 
     element_from_bytes(tmp_Zn_2, tmp);
 
     Encode(tmp_GT, K, R, k_bytes, k_bytes);
-    ma_abe.Encrypt(r.get_c_abe(), tmp_GT, tmp_Zn_2, pp.get_gpk_MA_ABE(), pkThetas_ABE, MSP, polocy);
+
+    genEncMAABE(r.get_c_abe(), tmp_GT, MSP, policy_str, pkThetas_ABE, pp);
 }
 
 /**
@@ -207,7 +241,7 @@ void DPCH_MXN_2022::Adapt(DPCH_MXN_2022_r &r_p, std::string m_p, DPCH_MXN_2022_h
     memcpy(tmp, R, k_bytes);
     element_from_bytes(tmp_Zn_2, tmp);
 
-    ma_abe.Encrypt(tmp_c, tmp_GT, tmp_Zn_2, pp.get_gpk_MA_ABE(), pkThetas_ABE, MSP, policy_str);
+    genEncMAABE(tmp_c, tmp_GT, MSP, policy_str, pkThetas_ABE, pp);
     if(!(tmp_c == r.get_c_abe())){
         throw std::runtime_error("DPCH_MXN_2022::Adapt(): c' != c");
     }

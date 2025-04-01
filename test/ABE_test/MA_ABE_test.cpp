@@ -75,11 +75,10 @@ TEST_P(MA_ABE_Test, Test){
 
     MA_ABE_ciphertext c[repeat];
 
-    element_s *msg[repeat], *res[repeat], *rt[repeat];
+    element_s *msg[repeat], *res[repeat];
     for (int i = 0; i < repeat; i++){
         msg[i] = abe.GetGTElement();
         res[i] = abe.GetGTElement();
-        rt[i] = abe.GetZrElement();
     }
 
     this->start("GlobalSetup");
@@ -127,7 +126,7 @@ TEST_P(MA_ABE_Test, Test){
     average("KeyGen", GetParam().authNum);
 
     this->start("Encrypt");
-    for (int i = 0; i < repeat; i++) abe.Encrypt(c[i], msg[i], rt[i], gpk[i], pkThetas[i], MSP, POLICY);
+    for (int i = 0; i < repeat; i++) abe.Encrypt(c[i], msg[i], gpk[i], pkThetas[i], MSP, POLICY);
     this->end("Encrypt");
     
     // choose partial secret keys

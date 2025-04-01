@@ -150,6 +150,10 @@ class DPCH_MXN_2022: public PbcScheme{
 
         element_t tmp_G, tmp_GT, tmp_Zn, tmp_Zn_2;
 
+        void Ht(element_t res, element_t rt, std::string A);
+
+        void genEncMAABE(MA_ABE_ciphertext &ct, element_t pt, Element_t_matrix *MSP, std::string policy_str, std::vector<MA_ABE_pkTheta *> &pkThetas_ABE, DPCH_MXN_2022_pp &pp);
+
     public:
         DPCH_MXN_2022(int curve);
 
@@ -161,7 +165,7 @@ class DPCH_MXN_2022: public PbcScheme{
 
         void ModKeyGen(DPCH_MXN_2022_skGidA &skGidA, DPCH_MXN_2022_pp &pp, DPCH_MXN_2022_pk &pkDPCH, std::string gid, DPCH_MXN_2022_sigmaGid &sigmaGid, DPCH_MXN_2022_skTheta &skTheta, std::string A);
 
-        void Hash(DPCH_MXN_2022_h &h, DPCH_MXN_2022_r &r, std::string m, DPCH_MXN_2022_pp &pp, DPCH_MXN_2022_pk &pkDPCH, std::vector<DPCH_MXN_2022_pkTheta *> &pkThetas, Element_t_matrix *MSP, std::string polocy);
+        void Hash(DPCH_MXN_2022_h &h, DPCH_MXN_2022_r &r, std::string m, DPCH_MXN_2022_pp &pp, DPCH_MXN_2022_pk &pkDPCH, std::vector<DPCH_MXN_2022_pkTheta *> &pkThetas, Element_t_matrix *MSP, std::string policy_str);
 
         bool Check(DPCH_MXN_2022_pk &pkDPCH, std::string m, DPCH_MXN_2022_h &h, DPCH_MXN_2022_r &r);
 

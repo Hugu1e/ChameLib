@@ -61,6 +61,10 @@ element_s* Element_t_vector::getElement(signed long int i) const {
     return value[i];
 }
 
+element_s *Element_t_vector::operator[](signed long int i) const {
+    return value[i];
+}
+
 /**
  * @brief set 'elem' to the element with index i
  * 

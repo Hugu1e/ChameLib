@@ -151,123 +151,79 @@ void MA_ABE::KeyGen(MA_ABE_skgidA &skgidA, MA_ABE_gpk &gpk, MA_ABE_skTheta &skTh
  * 
  * @param  C[out]          ciphertext
  * @param  m[in]           message
- * @param  rt[in]          random value
  * @param  gpk[in]        global public key
  * @param  pkThetas[in]   public keys of the authorities
  * @param  MSP[in]        
  * @param  policy_str[in]  access policy
  * 
  */
-void MA_ABE::Encrypt(MA_ABE_ciphertext &C, element_t m, element_t rt, MA_ABE_gpk &gpk, std::vector<MA_ABE_pkTheta *> &pkThetas, Element_t_matrix *MSP, std::string policy_str){    
+void MA_ABE::Encrypt(MA_ABE_ciphertext &C, element_t m, MA_ABE_gpk &gpk, std::vector<MA_ABE_pkTheta *> &pkThetas, Element_t_matrix *MSP, std::string policy_str){    
+    unsigned long int rows = MSP->row();
+    unsigned long int cols = MSP->col();
+
+    // v, w, t_x
+    Element_t_vector v = Element_t_vector(cols, Zn);
+    for(int i=0; i<v.length(); i++) element_random(v[i]);
+    Element_t_vector w = Element_t_vector(cols, Zn);
+    element_set0(w[0]);
+    for(int i=1; i<w.length(); i++) element_random(w[i]);
+    Element_t_vector t_x = Element_t_vector(rows, Zn);
+    for(int i=0; i<t_x.length(); i++) element_random(t_x[i]);
+
+    Encrypt(C, m, gpk, pkThetas, MSP, policy_str, v, w, t_x);
+}
+
+void MA_ABE::Encrypt(MA_ABE_ciphertext &C, element_t m, MA_ABE_gpk &gpk, std::vector<MA_ABE_pkTheta *> &pkThetas, Element_t_matrix *MSP, std::string policy_str, Element_t_vector &v, Element_t_vector &w, Element_t_vector &t_x){    
     unsigned long int rows = MSP->row();
     unsigned long int cols = MSP->col();
 
     C.setPolicy(policy_str);
 
-    // z = Ht(rt, policy)
-    this->Ht(this->z, rt, policy_str);
-
     // c0 = m * e(g,g)^z
-    element_pow_zn(tmp_GT, gpk[egg], this->z);
+    element_pow_zn(tmp_GT, gpk[egg], v[0]);
     element_mul(tmp_GT, tmp_GT, m);
     C.get_ct_0().set(0, tmp_GT);
 
-    // compute ci
-    // ti = Ht(rt, policy, 0, i)
-    element_s ** ti = new element_s*[rows];
-    for(int i = 0;i<rows;i++){
-        element_s *tmp_ti = new element_s();
-        element_init_same_as(tmp_ti, this->Zn);
-        std::string str_ti = policy_str + "0" + std::to_string(i);
-        this->Ht(tmp_ti, rt, str_ti);
-        ti[i] = tmp_ti;
-    }
-    // vi = Ht(rt, policy, 1, i), wi = Ht(rt, policy, 2, i)
-    element_s ** vi = new element_s*[cols];
-    element_s ** wi = new element_s*[cols];
-    for(int i = 0;i<cols;i++){
-        element_s *tmp_vi = new element_s();
-        element_init_same_as(tmp_vi, this->Zn);
-        std::string str_vi = policy_str + "1" + std::to_string(i);
-        this->Ht(tmp_vi, rt, str_vi);
-        vi[i] = tmp_vi;
-
-        element_s *tmp_wi = new element_s();
-        element_init_same_as(tmp_wi, this->Zn);
-        std::string str_wi = policy_str + "2" + std::to_string(i);
-        this->Ht(tmp_wi, rt, str_wi);
-        wi[i] = tmp_wi;
-    }
-    // v = (z, v2, ..., vl2)T
-    element_s ** v = new element_s*[cols];
-    for(int i=0;i<cols;i++){
-        element_s *tmp_v = new element_s();
-        element_init_same_as(tmp_v, this->Zn);
-        if(i==0){
-            element_set(tmp_v, this->z);
-        }else{
-            element_set(tmp_v, vi[i]);
-        }
-        v[i] = tmp_v;
-    }
-    // w = (0, w2, ..., wl2)T
-    element_s ** w = new element_s*[cols];
-    for(int i=0;i<cols;i++){
-        element_s *tmp_w = new element_s();
-        element_init_same_as(tmp_w, this->Zn);
-        if(i==0){
-            element_set0(tmp_w);
-        }else{
-            element_set(tmp_w, wi[i]);
-        }
-        w[i] = tmp_w;
-    }
     // lamuda = M * v
-    element_s** lamuda = new element_s*[rows];
-    for(int i=0;i<rows;i++){
-        element_s *tmp_lamuda = new element_s();
-        element_init_same_as(tmp_lamuda, this->Zn);
-        element_set0(tmp_lamuda);
+    Element_t_vector lamuda = Element_t_vector(rows, Zn);
+    for(int i=0; i<rows; i++){
+        element_set0(lamuda[i]);
         for(int j=0;j<cols;j++){
             element_mul(this->tmp_Zn, MSP->getElement(i, j), v[j]);
-            element_add(tmp_lamuda, tmp_lamuda, this->tmp_Zn);
+            element_add(lamuda[i], lamuda[i], this->tmp_Zn);
         }
-        lamuda[i] = tmp_lamuda;
     }
     // w = M * w
-    element_s** w_tmp = new element_s*[rows];
+    Element_t_vector w_tmp = Element_t_vector(rows, Zn);
     for(int i=0;i<rows;i++){
-        element_s *tmp_w = new element_s();
-        element_init_same_as(tmp_w, this->Zn);
-        element_set0(tmp_w);
+        element_set0(w_tmp[i]);
         for(int j=0;j<cols;j++){
             element_mul(this->tmp_Zn, MSP->getElement(i, j), w[j]);
-            element_add(tmp_w, tmp_w, this->tmp_Zn);
+            element_add(w_tmp[i], w_tmp[i], this->tmp_Zn);
         }
-        w_tmp[i] = tmp_w;
     }
 
+    // compute ci
+    for(int i=0; i<rows; i++){
+        PbcElements tmp_ci;
+        tmp_ci.init(4);
 
-    for(int i=0;i<rows;i++){
         // ci_1 = e(g,g)^lamuda_i * e(g,g)^(a*ti)
         std::string attr = MSP->getName(i);
         element_pow_zn(tmp_GT, gpk[egg], lamuda[i]);
         for(int j=0;j<pkThetas.size();j++){
             if(pkThetas[j]->get_A() == attr){
-                element_pow_zn(tmp_GT_2, pkThetas[j]->get(pkTheta_1), ti[i]);
-                element_pow_zn(tmp_G, pkThetas[j]->get(pkTheta_2), ti[i]);
+                element_pow_zn(tmp_GT_2, pkThetas[j]->get(pkTheta_1), t_x[i]);
+                element_pow_zn(tmp_G, pkThetas[j]->get(pkTheta_2), t_x[i]);
                 break;
             }
         }
         element_mul(tmp_GT, tmp_GT, tmp_GT_2);
-        
-        PbcElements tmp_ci;
-        tmp_ci.init(4);
 
         tmp_ci.set(ct_1, tmp_GT);
 
         // ci_2 = g^(-ti)
-        element_neg(tmp_Zn, ti[i]);
+        element_neg(tmp_Zn, t_x[i]);
         element_pow_zn(tmp_G_2, gpk[g], tmp_Zn);
         tmp_ci.set(ct_2, tmp_G_2);
 
@@ -278,31 +234,11 @@ void MA_ABE::Encrypt(MA_ABE_ciphertext &C, element_t m, element_t rt, MA_ABE_gpk
 
         // ci_4 = Hu(π(i))^ti
         this->Hu(tmp_G, attr);
-        element_pow_zn(tmp_G_2, tmp_G, ti[i]);
+        element_pow_zn(tmp_G_2, tmp_G, t_x[i]);
         tmp_ci.set(ct_4, tmp_G_2);
 
         C.get_ct_i().push_back(tmp_ci);
-    }
-
-    // free
-    for(int i=0;i<rows;i++){
-        element_clear(ti[i]);
-        element_clear(lamuda[i]);
-        element_clear(w_tmp[i]);
-    }
-    for(int i=0;i<cols;i++){
-        element_clear(vi[i]);
-        element_clear(wi[i]);
-        element_clear(v[i]);
-        element_clear(w[i]);
-    }
-    delete[] ti;
-    delete[] lamuda;
-    delete[] w_tmp;
-    delete[] vi;
-    delete[] wi;
-    delete[] v;
-    delete[] w;
+    }    
 }
 
 /**
