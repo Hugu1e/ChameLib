@@ -28,7 +28,7 @@ void ABET::init(element_t _G1, element_t _G2, element_t _GT, element_t _Zn, bool
 
 void ABET::initTmp(){
     element_s *zr_list[] = {d1, d2, d3, r1, r2, R, 
-        b1r1a1, b1r1a2, b2r2a1, b2r2a2, r1r2a1, r1r2a2, 
+        b1r1a1, b1r1a2, b2r2a1, b2r2a2, r1r2a1a, r1r2a2a, aa1, aa2,
         s1, s2, z_1, z_2, z, alpha_a_1, alpha_a_2, 
         tmp_Zn, tmp_Zn_2};
     element_s *G1_list[] = {ID_i_1, tmp_G, tmp_G_2, tmp_G_3, tmp_G_4};
@@ -58,7 +58,12 @@ void ABET::Pairing(element_t res, element_t a, element_t b){
 }
 
 /**
- * output: mpk, msk
+ * @brief 
+ * 
+ * @param  msk[out]  
+ * @param  mpk[out]  
+ * @param  k[in]     
+ * 
  */
 void ABET::Setup(ABET_msk &msk, ABET_mpk &mpk, int k){
     msk.get_zk().init(k);
@@ -153,10 +158,17 @@ void ABET::Setup(ABET_msk &msk, ABET_mpk &mpk, int k){
     element_pow_zn(tmp_H, mpk.get_mpk()[h], this->tmp_Zn);
     mpk.get_mpk().set(h_pow_b_div_a, tmp_H);
 }
+
 /**
- * Generate a key for a list of attributes.
- * input: msk, mpk, attr , ID, i
- * output: sks
+ * @brief Generate a key for a list of attributes.
+ * 
+ * @param  sks[out]        
+ * @param  msk[in]        
+ * @param  mpk[in]        
+ * @param  attr_list[in]  
+ * @param  ID[in]         
+ * @param  mi[in]          length of modifierID
+ * 
  */
 void ABET::KeyGen(ABET_sks &sks, ABET_msk &msk, ABET_mpk &mpk, std::vector<std::string> &attr_list, ABET_ID &ID, int mi){  
     element_random(this->r1);
@@ -181,22 +193,25 @@ void ABET::KeyGen(ABET_sks &sks, ABET_msk &msk, ABET_mpk &mpk, std::vector<std::
     element_div(this->tmp_Zn_2, this->tmp_Zn, msk.get_msk()[a]);
     element_pow_zn(tmp_H, mpk.get_mpk()[h], this->tmp_Zn_2);
     sks.get_sk0().set(sk0_3, tmp_H);
-    // (r1 + r2) / a1
-    element_div(this->r1r2a1, this->tmp_Zn, msk.get_msk()[a1]);
-    // (r1 + r2) / a2
-    element_div(this->r1r2a2, this->tmp_Zn, msk.get_msk()[a2]);
+    // (r1 + r2) / (a1*a)
+    element_div(this->r1r2a1a, this->tmp_Zn_2, msk.get_msk()[a1]);
+    // (r1 + r2) / (a2*a)
+    element_div(this->r1r2a2a, this->tmp_Zn_2, msk.get_msk()[a2]);
+    // g^(r/a)
+    element_div(this->tmp_Zn, this->tmp_Zn, msk.get_msk()[a]);
+    element_pow_zn(tmp_G, mpk.get_mpk()[g], this->tmp_Zn);
+    sks.get_sk0().set(sk0_5, tmp_G);
     // g^(1/a)
     element_invert(this->tmp_Zn, msk.get_msk()[a]);
     element_pow_zn(tmp_G, mpk.get_mpk()[g], this->tmp_Zn);
     sks.get_sk0().set(sk0_4, tmp_G);
-    // g^(r/a)
-    element_add(this->tmp_Zn, this->r1, this->r2);
-    element_div(this->tmp_Zn, this->tmp_Zn, msk.get_msk()[a]);
-    element_pow_zn(tmp_G, mpk.get_mpk()[g], this->tmp_Zn);
-    sks.get_sk0().set(sk0_5, tmp_G);
     // g^R
     element_pow_zn(tmp_G, mpk.get_mpk()[g], this->R);
     sks.get_sk0().set(sk0_6, tmp_G);
+    // aa1 = a * a1
+    element_mul(aa1, msk.get_msk()[a], msk.get_msk()[a1]);
+    // aa2 = a * a2
+    element_mul(aa2, msk.get_msk()[a], msk.get_msk()[a2]);
 
     // compute sk_y
     sks.get_sk_y().resize(attr_list.size());
@@ -217,11 +232,9 @@ void ABET::KeyGen(ABET_sks &sks, ABET_msk &msk, ABET_mpk &mpk, std::vector<std::
         // H(y31)^(r1r2a1/a)
         std::string y31 = attr_list[i] + "3" + "1";
         this->Hash(this->tmp_G_3, y31);
-        element_div(this->tmp_Zn_2, this->r1r2a1, msk.get_msk()[a]);
-        element_pow_zn(this->tmp_G_3, this->tmp_G_3, this->tmp_Zn_2);
+        element_pow_zn(this->tmp_G_3, this->tmp_G_3, r1r2a1a);
         // g^(sigma_y / (a*a1))
-        element_mul(this->tmp_Zn_2, msk.get_msk()[a], msk.get_msk()[a1]);
-        element_div(this->tmp_Zn_2, this->tmp_Zn, this->tmp_Zn_2);
+        element_div(this->tmp_Zn_2, this->tmp_Zn, aa1);
         element_pow_zn(this->tmp_G_4, mpk.get_mpk()[g], this->tmp_Zn_2);
         // sky1
         element_mul(tmp_G, this->tmp_G, this->tmp_G_2);
@@ -242,11 +255,9 @@ void ABET::KeyGen(ABET_sks &sks, ABET_msk &msk, ABET_mpk &mpk, std::vector<std::
         // H(y32)^(r1r2a2/a)
         std::string y32 = attr_list[i] + "3" + "2";
         this->Hash(this->tmp_G_3, y32);
-        element_div(this->tmp_Zn_2, this->r1r2a2, msk.get_msk()[a]);
-        element_pow_zn(this->tmp_G_3, this->tmp_G_3, this->tmp_Zn_2);
+        element_pow_zn(this->tmp_G_3, this->tmp_G_3, r1r2a2a);
         // g^(sigma_y / (a*a2))
-        element_mul(this->tmp_Zn_2, msk.get_msk()[a], msk.get_msk()[a2]);
-        element_div(this->tmp_Zn_2, this->tmp_Zn, this->tmp_Zn_2);
+        element_div(this->tmp_Zn_2, this->tmp_Zn, aa2);
         element_pow_zn(this->tmp_G_4, mpk.get_mpk()[g], this->tmp_Zn_2);
         // sky2
         element_mul(tmp_G, this->tmp_G, this->tmp_G_2);
@@ -277,11 +288,9 @@ void ABET::KeyGen(ABET_sks &sks, ABET_msk &msk, ABET_mpk &mpk, std::vector<std::
     // H(0131)^(r1r2a1/a)
     std::string y0131 = "0131";
     this->Hash(this->tmp_G_3, y0131);
-    element_div(this->tmp_Zn_2, this->r1r2a1, msk.get_msk()[a]);
-    element_pow_zn(this->tmp_G_3, this->tmp_G_3, this->tmp_Zn_2);
+    element_pow_zn(this->tmp_G_3, this->tmp_G_3, r1r2a1a);
     // g^(sigma_prime / (a*a1))
-    element_mul(this->tmp_Zn_2, msk.get_msk()[a], msk.get_msk()[a1]);
-    element_div(this->tmp_Zn_2, this->tmp_Zn, this->tmp_Zn_2);
+    element_div(this->tmp_Zn_2, this->tmp_Zn, this->aa1);
     element_pow_zn(this->tmp_G_4, mpk.get_mpk()[g], this->tmp_Zn_2);
     // sk_prime1
     element_mul(tmp_G, msk.get_msk()[g_pow_d1], this->tmp_G);
@@ -302,11 +311,9 @@ void ABET::KeyGen(ABET_sks &sks, ABET_msk &msk, ABET_mpk &mpk, std::vector<std::
     // H(0132)^(r1r2a2/a)
     std::string y0132 = "0132";
     this->Hash(this->tmp_G_3, y0132);
-    element_div(this->tmp_Zn_2, this->r1r2a2, msk.get_msk()[a]);
-    element_pow_zn(this->tmp_G_3, this->tmp_G_3, this->tmp_Zn_2);
+    element_pow_zn(this->tmp_G_3, this->tmp_G_3, r1r2a2a);
     // g^(sigma_prime / (a*a2))
-    element_mul(this->tmp_Zn_2, msk.get_msk()[a], msk.get_msk()[a2]);
-    element_div(this->tmp_Zn_2, this->tmp_Zn, this->tmp_Zn_2);
+    element_div(this->tmp_Zn_2, this->tmp_Zn, this->aa2);
     element_pow_zn(this->tmp_G_4, mpk.get_mpk()[g], this->tmp_Zn_2);
     // sk_prime2
     element_mul(tmp_G, msk.get_msk()[g_pow_d2], this->tmp_G);
@@ -350,27 +357,29 @@ void ABET::KeyGen(ABET_sks &sks, ABET_msk &msk, ABET_mpk &mpk, std::vector<std::
     }
 }
 
-/**
- * hash function {0,1}* -> G
- * input: m
- * output: res
- */
 void ABET::Hash(element_t res, std::string m){
     HASH::hash(res, m);
 }
 
-/**
- * hash function {0,1}* -> Zq
- * input: m
- * output: res
- */
 void ABET::Hash2(element_t res, element_t m){
     HASH::hash(res, m);
 }
+
 /**
- * Encrypt a message msg under a policy string.
- * input: mpk, msk,msg(r,R), policy_str, ID, oj, s1, s2
- * output: ct
+ * @brief Encrypt a message msg under a policy string.
+ * 
+ * @param  ciphertext[out]  
+ * @param  mpk[in]         
+ * @param  msk[in]         
+ * @param  r[in]            
+ * @param  R[in]           
+ * @param  size_R[in]       
+ * @param  MSP[in]         
+ * @param  ID[in]          
+ * @param  oj[in]           
+ * @param  s1[in]           
+ * @param  s2[in]           
+ * 
  */
 void ABET::Encrypt(ABET_ciphertext &ciphertext, ABET_mpk &mpk, ABET_msk &msk, element_t r, unsigned char *R, int size_R, Element_t_matrix *MSP, ABET_ID &ID, int oj, element_t s1, element_t s2){
     unsigned long int rows = MSP->row();
@@ -443,7 +452,6 @@ void ABET::Encrypt(ABET_ciphertext &ciphertext, ABET_mpk &mpk, ABET_msk &msk, el
     for(unsigned long int i = 0; i < rows; i++){
         ciphertext.get_ct_y()[i].init(3);
         std::string attr = MSP->getName(i);
-        // printf("attr: %s\n", attr.c_str());
 
         // l = 1
         std::string attr_l_1 = attr + "1" + "1";
@@ -644,10 +652,20 @@ bool ABET::UserDelegate(ABET_sks &sk, ABET_mpk &mpk, ABET_msk &msk, ABET_ID &ID,
     return SkDelegate(sk, mpk, msk, ID_i_1, ID[i]);
 }
 
+
 /**
- * Decrypt a ciphertext.
- * input: mpk, ciphertext, sks
- * output: res_R, res_r
+ * @brief Decrypt a ciphertext.
+ * 
+ * @param  res_R[out]       
+ * @param  res_r[out]        
+ * @param  mpk[in]         
+ * @param  msk[in]         
+ * @param  ciphertext[in]  
+ * @param  sks[in]         
+ * @param  MSP[in]         
+ * @param  ID[in]          
+ * @param  mi[in]           
+ * 
  */
 void ABET::Decrypt(unsigned char *res_R, element_t res_r, ABET_mpk &mpk, ABET_msk &msk, ABET_ciphertext &ciphertext, ABET_sks &sks, Element_t_matrix *MSP, ABET_ID &ID, int mi){
     ABET_sks sk_p(sks);
@@ -779,11 +797,7 @@ void ABET::Decrypt(unsigned char *res_R, element_t res_r, ABET_mpk &mpk, ABET_ms
     element_clear(num);
     element_clear(den);
 }
-/**
- * get ID^
- * input: mpk, ID, mi_oj, type
- * output: ID_
- */
+
 void ABET::GetID_(element_t ID_, ABET_mpk &mpk, ABET_ID &ID, int mi_oj, int type){
     int k = mpk.get_gk().getSize();
     if(type == MODIFIER){
@@ -806,7 +820,7 @@ void ABET::GetID_(element_t ID_, ABET_mpk &mpk, ABET_ID &ID, int mi_oj, int type
 
 ABET::~ABET(){
     element_s *clear_list[] = {d1, d2, d3, r1, r2, 
-        b1r1a1, b1r1a2, b2r2a1, b2r2a2, r1r2a1, r1r2a2, 
+        b1r1a1, b1r1a2, b2r2a1, b2r2a2, r1r2a1a, r1r2a2a, aa1, aa2,
         s1, s2, tmp_G, tmp_G_2, tmp_G_3, tmp_G_4, 
         tmp_H, tmp_H_2, 
         tmp_GT, tmp_GT_2, tmp_GT_3, 

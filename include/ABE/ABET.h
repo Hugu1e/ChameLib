@@ -168,7 +168,7 @@ class ABET:public PbcScheme{
         element_t d1,d2,d3;
         element_t r1,r2;
         element_t R;
-        element_t b1r1a1,b1r1a2,b2r2a1,b2r2a2,r1r2a1,r1r2a2;
+        element_t b1r1a1, b1r1a2, b2r2a1, b2r2a2, r1r2a1a, r1r2a2a, aa1, aa2;
         element_t s1,s2;
         element_t z_1,z_2, z;
         element_t alpha_a_1, alpha_a_2;

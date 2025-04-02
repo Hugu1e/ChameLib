@@ -155,18 +155,19 @@ TEST_P(PCHBA_TLL_2020_Test, Test){
     int op_cnt_KeyGen[] = {    
         0, 0, 0, 3 + n + 1, 
         6 + 6 * n, 0, 0, 0, 
-        9 + 6 * n + ID_len + 2, 0, 0, 10 + 2 * n + 3 + 2 + 2,  // 6*n + ID_len + 13, 0, 0, 2*n + 7
-        9 + 9 * n + 3 + 2 + k + 2, 3, 0, 0, // 9*n + 14 + k, 3, 0, 0
+        6 * n + ID_len + 13, 0, 0, 17 + 2 * n,
+        16 + 9 * n + k, 3, 0, 0,
         0
     };
     EXPECT_TRUE(check_time(GetParam().curve, op_cnt_KeyGen, "KeyGen"));
 
+    n = MSP->row();
     int m = MSP->col();
     int op_cnt_Hash[] = {
-        0, 0, 0, 1 + 2 + 2 + 1, // 0, 0, 0, 4
-        3 * n * (2 * m + 2), 0, 0, 2 + 1, // 3 * n * (2 * m + 2), 0, 0, 5
-        ID_len + 3 * n * (2 * m + 1), 1, 1, 1, // 3 * n * (2 * m + 1), 1 + ID_len, 1, 3
-        ID_len + 3 * n * (3 * m + 2), 4 + 3 + 1 + 2 + 1, 2 + 1, 0, // 1 + 3 * n * (3 * m + 2), 11 + ID_len, 3, 0
+        0, 0, 0, 1 + 2 + 2 + 1,
+        3 * n * (2 * m + 2), 0, 0, 2 + 1,
+        3 * n * (2 * m + 1), 1 + ID_len, 1, 1,
+        3 * n * (3 * m + 2), 11 + ID_len, 3, 0,
         1
     };
     EXPECT_TRUE(check_time(GetParam().curve, op_cnt_Hash, "Hash"));

@@ -14,21 +14,23 @@ PCHBA_TLL_2020::PCHBA_TLL_2020(int curve, bool swap): PbcScheme(curve){
 
     abet.init(G1, G2, GT, Zn, swap);
 
-    element_init_same_as(this->r, Zn);
-    element_init_same_as(this->s1, Zn);
-    element_init_same_as(this->s2, Zn);
-    element_init_same_as(this->esk, Zn);
+    element_s *init_G1_list[] = {tmp_G, tmp_G_2};
+    element_s *init_G2_list[] = {tmp_H, tmp_H_2};
+    element_s *init_GT_list[] = {tmp_GT, tmp_GT_2, tmp_GT_3};
+    element_s *init_zr_list[] = {r, s1, s2, esk, tmp_Zn, tmp_Zn_2, tmp_Zn_3};
 
-    element_init_same_as(this->tmp_G, G1);
-    element_init_same_as(this->tmp_G_2, G1);
-    element_init_same_as(this->tmp_H, G2);
-    element_init_same_as(this->tmp_H_2, G2);
-    element_init_same_as(this->tmp_GT, GT);
-    element_init_same_as(this->tmp_GT_2, GT);
-    element_init_same_as(this->tmp_GT_3, GT);
-    element_init_same_as(this->tmp_Zn, Zn);
-    element_init_same_as(this->tmp_Zn_2, Zn);
-    element_init_same_as(this->tmp_Zn_3, Zn);
+    for(int i = 0;i < sizeof(init_G1_list)/sizeof(element_s*);i++){
+        element_init_same_as(init_G1_list[i], G1);
+    }
+    for(int i = 0;i < sizeof(init_G2_list)/sizeof(element_s*);i++){
+        element_init_same_as(init_G2_list[i], G2);
+    }
+    for(int i = 0;i < sizeof(init_GT_list)/sizeof(element_s*);i++){
+        element_init_same_as(init_GT_list[i], GT);
+    }
+    for(int i = 0;i < sizeof(init_zr_list)/sizeof(element_s*);i++){
+        element_init_same_as(init_zr_list[i], Zn);
+    }
 }
 
 bool PCHBA_TLL_2020::Pairing(element_t res, element_t a, element_t b){
@@ -54,6 +56,7 @@ void PCHBA_TLL_2020::H(element_t res, std::string str){
 void PCHBA_TLL_2020::SetUp(PCHBA_TLL_2020_pk &pkPCHBA, PCHBA_TLL_2020_sk &skPCHBA, int k) {
     abet.Setup(skPCHBA.get_skABET(), pkPCHBA.get_pkABET(), k);
 
+    // x
     element_random(tmp_Zn);
     skPCHBA.get_skCHET().set(x, tmp_Zn);
 
@@ -70,7 +73,7 @@ void PCHBA_TLL_2020::SetUp(PCHBA_TLL_2020_pk &pkPCHBA, PCHBA_TLL_2020_sk &skPCHB
  * @param  skPCHBA[in]    
  * @param  attr_list[in]  
  * @param  ID[in]         
- * @param  mi[in]          
+ * @param  mi[in]          length of modifierID
  * 
  */
 void PCHBA_TLL_2020::KeyGen(PCHBA_TLL_2020_sks &sksPCHBA, PCHBA_TLL_2020_pk &pkPCHBA, PCHBA_TLL_2020_sk &skPCHBA, std::vector<std::string> &attr_list, PCHBA_TLL_2020_ID &ID, int mi) {
@@ -102,8 +105,6 @@ void PCHBA_TLL_2020::Hash(PCHBA_TLL_2020_h &h, PCHBA_TLL_2020_r &random, element
     element_random(this->s1);
     element_random(this->s2);
     // C
-    // Logger::PrintPbc("Encrypt:R", this->R);
-    // Logger::PrintPbc("Encrypt:r", this->r);
     abet.Encrypt(random.get_C(), pkPCHBA.get_pkABET(), skPCHBA.get_skABET(), 
         this->r, R, element_length_in_bytes(r) / 2, MSP, ID.get_IDABET(), oj, this->s1, this->s2);
 
@@ -215,7 +216,6 @@ void PCHBA_TLL_2020::Adapt(PCHBA_TLL_2020_r &random_p, element_t m_p, PCHBA_TLL_
     
     // retrieve R, r
     this->abet.Decrypt(R, this->r, pkPCHBA.get_pkABET(), skPCHBA.get_skABET(), random.get_C(), sksPCHBA.get_sksABET(), MSP, ID.get_IDABET(), mi);
-    // PrintElement("Decrypt:r", this->r);
 
     element_random(this->s1);
     element_random(this->s2);
