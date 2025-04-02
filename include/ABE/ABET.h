@@ -102,8 +102,8 @@ class ABET_ciphertext{
         PbcElements ct0;
         std::vector<PbcElements> ct_y;
         PbcElements ct_p;
-        unsigned char *ct_;
-        unsigned char *ct_prime;
+        unsigned char *ct_ = nullptr;
+        unsigned char *ct_prime = nullptr;
         PbcElements ct1;
         PbcElements ct2;
         PbcElements ct3;
@@ -158,8 +158,8 @@ class ABET_ciphertext{
             this->ownerId_length = ownerId_length;
         }
         ~ABET_ciphertext(){
-            delete[] ct_;
-            delete[] ct_prime;
+            if(ct_ != nullptr) delete[] ct_;
+            if(ct_prime != nullptr) delete[] ct_prime;
         }
 };
 

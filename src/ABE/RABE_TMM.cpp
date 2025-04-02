@@ -450,14 +450,23 @@ void RABE_TMM::Enc(RABE_TMM_ciphertext &ciphertext, RABE_TMM_mpk &mpk, element_t
     element_pow_zn(tmp_G, this->tmp_G, this->tmp_Zn_2);
     ciphertext.get_ct0().set(ct0_4, tmp_G);
 
-    // ct_prime = T1^s1 * T2^s2 * msg
+    // T1^s1 * T2^s2
     element_pow_zn(this->tmp_GT, mpk.get(T1), this->s1);
     element_pow_zn(this->tmp_GT_2, mpk.get(T2), this->s2);
     element_mul(this->tmp_GT_3, this->tmp_GT, this->tmp_GT_2);
-    // H(T1^s1 * T2^s2)
-    this->Hash(this->tmp_Zn_3, this->tmp_GT_3);
-    element_mul(tmp_Zn, this->tmp_Zn_3, msg);
-    ciphertext.get_ct_prime().set(ct_prime, tmp_Zn);
+    int len_ct_p = element_length_in_bytes(tmp_GT_3);
+    unsigned char ct_p[len_ct_p];
+    element_to_bytes(ct_p, tmp_GT_3);
+
+    int len_msg = element_length_in_bytes(msg);
+    unsigned char m_bytes[len_msg];
+    element_to_bytes(m_bytes, msg);
+
+    for(int i = 0;i < len_msg;++i) ct_p[i] ^= m_bytes[i];
+    ciphertext.set_ct_p(ct_p, len_ct_p);
+
+    element_set1(tmp_GT);
+    ciphertext.get_ct_prime().set(ct_prime, tmp_GT);
 
     // ct_y
     // for i = 1,2,...,rows
@@ -658,12 +667,20 @@ void RABE_TMM::Dec(element_t res, RABE_TMM_mpk &mpk, RABE_TMM_ciphertext &cipher
 
     // res = den / num
     element_div(this->tmp_GT, den, num);
-    this->Hash(this->tmp_Zn, this->tmp_GT);
     // res = ct_prime / res
-    element_div(res, ciphertext.get_ct_prime().get(ct_prime), this->tmp_Zn);
+    element_div(tmp_GT, ciphertext.get_ct_prime().get(ct_prime), this->tmp_GT);
 
     element_clear(num);
     element_clear(den);
+
+    Logger::PrintPbc("tmp_GT", this->tmp_GT);
+    element_invert(tmp_GT, tmp_GT);
+    Logger::PrintPbc("tmp_GT", this->tmp_GT);
+    int len_tmp = element_length_in_bytes(tmp_GT);
+    unsigned char tmp[len_tmp];
+    element_to_bytes(tmp, tmp_GT);
+    for(int i=0;i<len_tmp;i++) tmp[i]^=ciphertext.get_ct_p()[i];
+    element_from_bytes(res, tmp);
 }
 
 /**

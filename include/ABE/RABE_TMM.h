@@ -11,6 +11,7 @@
 #include "../utils/Hash.h"
 #include "../utils/TimeUtils.h"
 #include "../base/Binary_tree_RABE.h"
+#include <string.h>
 
 class RABE_TMM_mpk: public PbcElements{
     public:
@@ -148,6 +149,7 @@ class RABE_TMM_ciphertext{
         PbcElements ct0;
         std::vector<PbcElements> ct_y;
         PbcElements ct_prime;
+        unsigned char *ct_p = nullptr;
     public:
         RABE_TMM_ciphertext(){
             ct0.init(4);
@@ -174,6 +176,16 @@ class RABE_TMM_ciphertext{
         PbcElements& get_ct_prime()
         {
             return ct_prime;
+        }
+        void set_ct_p(unsigned char *str, int size){
+            ct_p = new unsigned char[size];
+            memcpy(ct_p, str, size);
+        }
+        unsigned char* get_ct_p(){
+            return ct_p;
+        }
+        ~RABE_TMM_ciphertext(){
+            if(ct_p != nullptr) delete []ct_p;
         }
 };
 
