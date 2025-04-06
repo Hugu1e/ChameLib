@@ -665,17 +665,14 @@ void RABE_TMM::Dec(element_t res, RABE_TMM_mpk &mpk, RABE_TMM_ciphertext &cipher
     element_mul(den, this->tmp_GT, this->tmp_GT_2);
     element_mul(den, den, this->tmp_GT_3);
 
-    // res = den / num
-    element_div(this->tmp_GT, den, num);
-    // res = ct_prime / res
+    // num / den
+    element_div(this->tmp_GT, num, den);
+    // ct_prime / (num / den)
     element_div(tmp_GT, ciphertext.get_ct_prime().get(ct_prime), this->tmp_GT);
 
     element_clear(num);
     element_clear(den);
 
-    Logger::PrintPbc("tmp_GT", this->tmp_GT);
-    element_invert(tmp_GT, tmp_GT);
-    Logger::PrintPbc("tmp_GT", this->tmp_GT);
     int len_tmp = element_length_in_bytes(tmp_GT);
     unsigned char tmp[len_tmp];
     element_to_bytes(tmp, tmp_GT);
