@@ -140,70 +140,137 @@ TEST_P(PCHBA_TLL_2020_Test, Test){
     
     average();
 
-    int k = GetParam().k;
-    int op_cnt_SetUp[] = {
-        1, 1, 0, 1 + 6 + 3 + k, 
-        0, 0, 0, 0, 
-        0, 0, 0, 1 + 2 + 3, 
-        4 + 2 * k, 6 + k, 2, 0, 
-        1
-    };
-    EXPECT_TRUE(check_time(GetParam().curve, op_cnt_SetUp, "SetUp"));
+    if(!GetParam().swap){
+        int k = GetParam().k;
+        int op_cnt_SetUp[] = {
+            1, 1, 0, 1 + 6 + 3 + k, 
+            0, 0, 0, 0, 
+            0, 0, 0, 1 + 2 + 3, 
+            4 + 2 * k, 6 + k, 2, 0, 
+            1
+        };
+        EXPECT_TRUE(check_time(GetParam().curve, op_cnt_SetUp, "SetUp"));
+    
+        int n = S1.size();
+        int ID_len = U1;
+        int op_cnt_KeyGen[] = {    
+            0, 0, 0, 3 + n + 1, 
+            6 + 6 * n, 0, 0, 0, 
+            6 * n + ID_len + 13, 0, 0, 17 + 2 * n,
+            16 + 9 * n + k, 3, 0, 0,
+            0
+        };
+        EXPECT_TRUE(check_time(GetParam().curve, op_cnt_KeyGen, "KeyGen"));
+    
+        n = MSP->row();
+        int m = MSP->col();
+        int op_cnt_Hash[] = {
+            0, 0, 0, 1 + 2 + 2 + 1,
+            3 * n * (2 * m + 2), 0, 0, 2 + 1,
+            3 * n * (2 * m + 1), 1 + ID_len, 1, 1,
+            3 * n * (3 * m + 2), 11 + ID_len, 3, 0,
+            1
+        };
+        EXPECT_TRUE(check_time(GetParam().curve, op_cnt_Hash, "Hash"));
+    
+        int op_cnt_Check[] = {    
+            0, 0, 0, 0, 
+            0, 0, 0, 1, 
+            0, 1, 1, 0, 
+            0, 1, 2, 0, 
+            3
+        };
+        EXPECT_TRUE(check_time(GetParam().curve, op_cnt_Check, "Check"));
+    
+        int Owner_ID_len = U1;
+        int Modifier_ID_len = U1;
+        int delta_len = Owner_ID_len - Modifier_ID_len;
+        int op_cnt_Adapt_1[] = {    
+            0, 0, 0, 2 * delta_len, 
+            (6 * n + 6) * delta_len, 0, 0, 1, 
+            (1 + 6 * n + 6 + 2 + k) * delta_len - (Owner_ID_len + Modifier_ID_len + 1) * delta_len / 2, 1 + 3 * delta_len, 1, 10 * delta_len, 
+            (1 + 6 * n + 6 + 2 + k) * delta_len - (Owner_ID_len + Modifier_ID_len + 1) * delta_len / 2, 1 + 3 * delta_len, 2, 0, 
+            3
+        };
+        int op_cnt_Adapt_2[] = {    
+            0, 0, 0, 1 + 2 + 2, 
+            3 * n * (2 * m + 2), 0, 0, 1 + 2, 
+            6 * n + ID_len + 3 * n * (2 * m + 1), 0, 2 + 5 + 1, 2 + 1, 
+            6 * n + ID_len + 3 * n * (3 * m + 2), 1 + 4 + 3 + 1, 2 + 1, 0, 
+            3 + 6 + 1
+        };
+        for(int i=0; i<diff_max_len;i++){
+            op_cnt_Adapt_1[i] += op_cnt_Adapt_2[i];
+        }
+        EXPECT_TRUE(check_time(GetParam().curve, op_cnt_Adapt_1, "Adapt"));
+    
+        EXPECT_TRUE(check_time(GetParam().curve, op_cnt_Check, "Verify"));
+    }else{
+        int k = GetParam().k;
+        int op_cnt_SetUp[] = {
+            1, 1, 0, 1 + 6 + 3 + k, 
+            0, 0, 0, 0, 
+            0, 0, 0, 1 + 2 + 3, 
+            6 + k, 4 + 2 * k, 2, 0, 
+            1
+        };
+        EXPECT_TRUE(check_time(GetParam().curve, op_cnt_SetUp, "SetUp"));
 
-    int n = S1.size();
-    int ID_len = U1;
-    int op_cnt_KeyGen[] = {    
-        0, 0, 0, 3 + n + 1, 
-        6 + 6 * n, 0, 0, 0, 
-        6 * n + ID_len + 13, 0, 0, 17 + 2 * n,
-        16 + 9 * n + k, 3, 0, 0,
-        0
-    };
-    EXPECT_TRUE(check_time(GetParam().curve, op_cnt_KeyGen, "KeyGen"));
+        int n = S1.size();
+        int ID_len = U1;
+        int op_cnt_KeyGen[] = {    
+            0, 0, 0, 3 + n + 1, 
+            0, 6 + 6 * n, 0, 0, 
+            0, 6 * n + ID_len + 13, 0, 17 + 2 * n,
+            3, 16 + 9 * n + k, 0, 0,
+            0
+        };
+        EXPECT_TRUE(check_time(GetParam().curve, op_cnt_KeyGen, "KeyGen"));
 
-    n = MSP->row();
-    int m = MSP->col();
-    int op_cnt_Hash[] = {
-        0, 0, 0, 1 + 2 + 2 + 1,
-        3 * n * (2 * m + 2), 0, 0, 2 + 1,
-        3 * n * (2 * m + 1), 1 + ID_len, 1, 1,
-        3 * n * (3 * m + 2), 11 + ID_len, 3, 0,
-        1
-    };
-    EXPECT_TRUE(check_time(GetParam().curve, op_cnt_Hash, "Hash"));
+        n = MSP->row();
+        int m = MSP->col();
+        int op_cnt_Hash[] = {
+            0, 0, 0, 1 + 2 + 2 + 1,
+            0, 3 * n * (2 * m + 2), 0, 2 + 1,
+            1 + ID_len, 3 * n * (2 * m + 1), 1, 1,
+            11 + ID_len, 3 * n * (3 * m + 2), 3, 0,
+            1
+        };
+        EXPECT_TRUE(check_time(GetParam().curve, op_cnt_Hash, "Hash"));
 
-    int op_cnt_Check[] = {    
-        0, 0, 0, 0, 
-        0, 0, 0, 1, 
-        0, 1, 1, 0, 
-        0, 1, 2, 0, 
-        3
-    };
-    EXPECT_TRUE(check_time(GetParam().curve, op_cnt_Check, "Check"));
+        int op_cnt_Check[] = {    
+            0, 0, 0, 0, 
+            0, 0, 0, 1, 
+            1, 0, 1, 0, 
+            1, 0, 2, 0, 
+            3
+        };
+        EXPECT_TRUE(check_time(GetParam().curve, op_cnt_Check, "Check"));
 
-    int Owner_ID_len = U1;
-    int Modifier_ID_len = U1;
-    int delta_len = Owner_ID_len - Modifier_ID_len;
-    int op_cnt_Adapt_1[] = {    
-        0, 0, 0, 2 * delta_len, 
-        (6 * n + 6) * delta_len, 0, 0, 1, 
-        (1 + 6 * n + 6 + 2 + k) * delta_len - (Owner_ID_len + Modifier_ID_len + 1) * delta_len / 2, 1 + 3 * delta_len, 1, 10 * delta_len, 
-        (1 + 6 * n + 6 + 2 + k) * delta_len - (Owner_ID_len + Modifier_ID_len + 1) * delta_len / 2, 1 + 3 * delta_len, 2, 0, 
-        3
-    };
-    int op_cnt_Adapt_2[] = {    
-        0, 0, 0, 1 + 2 + 2, 
-        3 * n * (2 * m + 2), 0, 0, 1 + 2, 
-        6 * n + ID_len + 3 * n * (2 * m + 1), 0, 2 + 5 + 1, 2 + 1, 
-        6 * n + ID_len + 3 * n * (3 * m + 2), 1 + 4 + 3 + 1, 2 + 1, 0, 
-        3 + 6 + 1
-    };
-    for(int i=0; i<diff_max_len;i++){
-        op_cnt_Adapt_1[i] += op_cnt_Adapt_2[i];
+        int Owner_ID_len = U1;
+        int Modifier_ID_len = U1;
+        int delta_len = Owner_ID_len - Modifier_ID_len;
+        int op_cnt_Adapt_1[] = {    
+            0, 0, 0, 2 * delta_len, 
+            0, (6 * n + 6) * delta_len, 0, 1, 
+            1 + 3 * delta_len, (1 + 6 * n + 6 + 2 + k) * delta_len - (Owner_ID_len + Modifier_ID_len + 1) * delta_len / 2, 1, 10 * delta_len, 
+            1 + 3 * delta_len, (1 + 6 * n + 6 + 2 + k) * delta_len - (Owner_ID_len + Modifier_ID_len + 1) * delta_len / 2, 2, 0, 
+            3
+        };
+        int op_cnt_Adapt_2[] = {    
+            0, 0, 0, 1 + 2 + 2, 
+            0, 3 * n * (2 * m + 2), 0, 1 + 2, 
+            0, 6 * n + ID_len + 3 * n * (2 * m + 1), 2 + 5 + 1, 2 + 1, 
+            1 + 4 + 3 + 1, 6 * n + ID_len + 3 * n * (3 * m + 2), 2 + 1, 0, 
+            3 + 6 + 1
+        };
+        for(int i=0; i<diff_max_len;i++){
+            op_cnt_Adapt_1[i] += op_cnt_Adapt_2[i];
+        }
+        EXPECT_TRUE(check_time(GetParam().curve, op_cnt_Adapt_1, "Adapt"));
+
+        EXPECT_TRUE(check_time(GetParam().curve, op_cnt_Check, "Verify"));
     }
-    EXPECT_TRUE(check_time(GetParam().curve, op_cnt_Adapt_1, "Adapt"));
-
-    EXPECT_TRUE(check_time(GetParam().curve, op_cnt_Check, "Verify"));
 }
 
 int main(int argc, char **argv){
