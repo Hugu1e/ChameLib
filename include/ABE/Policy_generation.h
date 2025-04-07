@@ -8,17 +8,21 @@
 
 class Policy_generation{
     private:
-        void assignAccessToChildInMatrixForm(Binary_tree_policy_node *node, signed long int *m);
+        static void assignAccessToChildInMatrixForm(Binary_tree_policy_node *node, signed long int *m);
 
-        void assignAccessToChildInBinaryTreeForm(Binary_tree_policy_node *node);
+        static void assignAccessToChildInBinaryTreeForm(Binary_tree_policy_node *node);
+
+        static void generatePolicyInMatrixForm(Binary_tree_policy *tree);
 
     public:
-        void generatePolicyInMatrixForm(Binary_tree_policy *tree);
-        Element_t_matrix *getPolicyInMatrixFormFromTree(Binary_tree_policy *tree);
-        std::map<signed long int, std::string> *getRhoFromTree(Binary_tree_policy *tree);
+        
+        static Element_t_matrix *getPolicyInMatrixFormFromTree(Binary_tree_policy *tree);
 
-        void generatePolicyInBinaryTreeForm(Binary_tree_policy *tree, element_s *root_secret);
-        Element_t_vector *getPolicyInBinaryTreeFormFromTree(Binary_tree_policy *tree);
+        // static std::map<signed long int, std::string> *getRhoFromTree(Binary_tree_policy *tree);
+
+        // static void generatePolicyInBinaryTreeForm(Binary_tree_policy *tree, element_s *root_secret);
+
+        // static Element_t_vector *getPolicyInBinaryTreeFormFromTree(Binary_tree_policy *tree);
 };
 
 #endif  // CHAMELIB_POLICY_GENERATION_H

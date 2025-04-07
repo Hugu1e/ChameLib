@@ -50,12 +50,9 @@ TEST_P(MA_ABE_Test, Test){
 
     const std::string POLICY = "(ONE&THREE)&(TWO|FOUR)";
     // compute MSP
-    Policy_resolution pr;
-    Policy_generation pg;
-    std::vector<std::string>* postfix_expression = pr.infixToPostfix(POLICY);
-    Binary_tree_policy* binary_tree_expression = pr.postfixToBinaryTree(postfix_expression, abe.GetZrElement());
-    pg.generatePolicyInMatrixForm(binary_tree_expression);
-    Element_t_matrix* MSP = pg.getPolicyInMatrixFormFromTree(binary_tree_expression);
+    std::vector<std::string> postfix_expression = Policy_resolution::infixToPostfix(POLICY);
+    Binary_tree_policy* binary_tree_expression = Policy_resolution::postfixToBinaryTree(postfix_expression, abe.GetZrElement());
+    Element_t_matrix* MSP = Policy_generation::getPolicyInMatrixFormFromTree(binary_tree_expression);
 
     // attribute
     const std::string A = "ONE";

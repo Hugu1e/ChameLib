@@ -121,6 +121,8 @@ void Policy_generation::generatePolicyInMatrixForm(Binary_tree_policy *tree) {
 }
 
 Element_t_matrix* Policy_generation::getPolicyInMatrixFormFromTree(Binary_tree_policy *tree) {
+    Policy_generation::generatePolicyInMatrixForm(tree);
+
     Element_t_matrix* res = new Element_t_matrix();
 
     std::queue<Binary_tree_policy_node*> q;
@@ -145,73 +147,73 @@ Element_t_matrix* Policy_generation::getPolicyInMatrixFormFromTree(Binary_tree_p
     return res;
 }
 
-std::map<signed long int, std::string>* Policy_generation::getRhoFromTree(Binary_tree_policy *tree) {
-    std::map<signed long int, std::string> *res = new std::map<signed long int, std::string>;
+// std::map<signed long int, std::string>* Policy_generation::getRhoFromTree(Binary_tree_policy *tree) {
+//     std::map<signed long int, std::string> *res = new std::map<signed long int, std::string>;
 
-    signed long int kk = 0;
+//     signed long int kk = 0;
 
-    std::queue<Binary_tree_policy_node*> q;
+//     std::queue<Binary_tree_policy_node*> q;
 
-    q.push(tree->getRoot());
+//     q.push(tree->getRoot());
 
-    while (!q.empty()) {
-        if (q.front()->getType() == Binary_tree_policy_node::LEAF) {
-            signed long int k = kk;
-            std::string v = "";
-            v.assign(q.front()->getName());
-            res->insert(std::pair<signed long int, std::string>(k, v));
-            ++kk;
-        }
-        if (q.front()->getLeftChild() != NULL) {
-            q.push(q.front()->getLeftChild());
-        }
-        if (q.front()->getRightChild() != NULL) {
-            q.push(q.front()->getRightChild());
-        }
-        q.pop();
-    }
+//     while (!q.empty()) {
+//         if (q.front()->getType() == Binary_tree_policy_node::LEAF) {
+//             signed long int k = kk;
+//             std::string v = "";
+//             v.assign(q.front()->getName());
+//             res->insert(std::pair<signed long int, std::string>(k, v));
+//             ++kk;
+//         }
+//         if (q.front()->getLeftChild() != NULL) {
+//             q.push(q.front()->getLeftChild());
+//         }
+//         if (q.front()->getRightChild() != NULL) {
+//             q.push(q.front()->getRightChild());
+//         }
+//         q.pop();
+//     }
 
-    return res;
-}
+//     return res;
+// }
 
-void Policy_generation::generatePolicyInBinaryTreeForm(Binary_tree_policy *tree, element_s *root_secret) {
-    tree->getRoot()->setValueElement(0, root_secret);
+// void Policy_generation::generatePolicyInBinaryTreeForm(Binary_tree_policy *tree, element_s *root_secret) {
+//     tree->getRoot()->setValueElement(0, root_secret);
 
-    std::queue<Binary_tree_policy_node*> q;
+//     std::queue<Binary_tree_policy_node*> q;
 
-    q.push(tree->getRoot());
+//     q.push(tree->getRoot());
 
-    while (!q.empty()) {
-        assignAccessToChildInBinaryTreeForm(q.front());
-        if (q.front()->getLeftChild() != NULL) {
-            q.push(q.front()->getLeftChild());
-        }
-        if (q.front()->getRightChild() != NULL) {
-            q.push(q.front()->getRightChild());
-        }
-        q.pop();
-    }
-}
+//     while (!q.empty()) {
+//         assignAccessToChildInBinaryTreeForm(q.front());
+//         if (q.front()->getLeftChild() != NULL) {
+//             q.push(q.front()->getLeftChild());
+//         }
+//         if (q.front()->getRightChild() != NULL) {
+//             q.push(q.front()->getRightChild());
+//         }
+//         q.pop();
+//     }
+// }
 
-Element_t_vector* Policy_generation::getPolicyInBinaryTreeFormFromTree(Binary_tree_policy *tree) {
-    Element_t_vector* res = new Element_t_vector();
+// Element_t_vector* Policy_generation::getPolicyInBinaryTreeFormFromTree(Binary_tree_policy *tree) {
+//     Element_t_vector* res = new Element_t_vector();
 
-    std::queue<Binary_tree_policy_node*> q;
+//     std::queue<Binary_tree_policy_node*> q;
 
-    q.push(tree->getRoot());
+//     q.push(tree->getRoot());
 
-    while (!q.empty()) {
-        if (q.front()->getType() == Binary_tree_policy_node::LEAF) {
-            res->pushBack(q.front()->getValueElement(0));
-        }
-        if (q.front()->getLeftChild() != NULL) {
-            q.push(q.front()->getLeftChild());
-        }
-        if (q.front()->getRightChild() != NULL) {
-            q.push(q.front()->getRightChild());
-        }
-        q.pop();
-    }
+//     while (!q.empty()) {
+//         if (q.front()->getType() == Binary_tree_policy_node::LEAF) {
+//             res->pushBack(q.front()->getValueElement(0));
+//         }
+//         if (q.front()->getLeftChild() != NULL) {
+//             q.push(q.front()->getLeftChild());
+//         }
+//         if (q.front()->getRightChild() != NULL) {
+//             q.push(q.front()->getRightChild());
+//         }
+//         q.pop();
+//     }
 
-    return res;
-}
+//     return res;
+// }
