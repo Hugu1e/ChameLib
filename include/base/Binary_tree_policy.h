@@ -49,6 +49,8 @@ public:
     void setLeftChild(Binary_tree_policy_node *left_child);
     Binary_tree_policy_node *getRightChild();
     void setRightChild(Binary_tree_policy_node *right_child);
+
+    ~Binary_tree_policy_node();
 };
 
 class Binary_tree_policy
@@ -60,6 +62,8 @@ private:
 
     void inOrderTraversalRoughly(Binary_tree_policy_node *node);
 
+    void freeTree(Binary_tree_policy_node *root);
+
 public:
     Binary_tree_policy(element_s *sample_element);
     Binary_tree_policy(Binary_tree_policy_node *root);
@@ -68,6 +72,8 @@ public:
 
     void levelTraversal();
     void inOrderTraversal();
+
+    ~Binary_tree_policy();
 };
 
 #endif // CHAMELIB_BINARY_TREE_POLICY_H

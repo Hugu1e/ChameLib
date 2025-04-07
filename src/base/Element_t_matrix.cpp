@@ -497,3 +497,12 @@ signed long int Element_t_matrix::gaussElimination(Element_t_vector *x, Element_
     }
     return 0;
 }
+
+Element_t_matrix::~Element_t_matrix(){
+    for(int i=0; i<value.size(); i++){
+        for(int j=0; j<value[i].size(); j++){
+            element_clear(value[i][j]);
+            delete value[i][j];
+        }
+    }
+}

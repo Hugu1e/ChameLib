@@ -28,6 +28,8 @@ public:
     void pushBack(element_s *elem);
 
     void resizeValue(signed long int i);
+
+    ~Element_t_vector();
 };
 
 #endif // CHAMELIB_ELEMENT_T_VECTOR_H

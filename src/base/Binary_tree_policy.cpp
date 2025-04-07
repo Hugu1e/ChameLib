@@ -158,6 +158,10 @@ void Binary_tree_policy_node::setRightChild(Binary_tree_policy_node *right_child
     this->right_child = right_child;
 }
 
+Binary_tree_policy_node::~Binary_tree_policy_node(){
+    delete value;
+}
+
 
 Binary_tree_policy::Binary_tree_policy(element_s *sample_element) {
     root = new Binary_tree_policy_node(sample_element);
@@ -241,4 +245,17 @@ void Binary_tree_policy::levelTraversal() {
 void Binary_tree_policy::inOrderTraversal() {
     inOrderTraversalRoughly(root);
     std::cout << std::endl;
+}
+
+void Binary_tree_policy::freeTree(Binary_tree_policy_node *root){
+    if(root == nullptr){
+        return;
+    }
+    freeTree(root->getLeftChild());
+    freeTree(root->getRightChild());
+    delete root;
+}
+
+Binary_tree_policy::~Binary_tree_policy(){
+    freeTree(root);
 }

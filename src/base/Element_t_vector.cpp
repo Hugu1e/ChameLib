@@ -111,3 +111,10 @@ void Element_t_vector::resizeValue(signed long int i) {
         }
     }
 }
+
+Element_t_vector::~Element_t_vector(){
+    for(int i=0; i<value.size(); i++){
+        element_clear(value[i]);
+        delete value[i];
+    }
+}

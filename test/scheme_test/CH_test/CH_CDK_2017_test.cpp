@@ -67,7 +67,7 @@ TEST_P(CH_CDK_2017_Test, Test){
     this->start("Check");
     for(int i = 0; i < repeat; i++) check_result[i] = ch.Check(h[i], r[i], m[i], tag[i], pk[i]);
     this->end("Check");
-    for(int i = 0; i < repeat; i++) ASSERT_TRUE(check_result);
+    for(int i = 0; i < repeat; i++) ASSERT_TRUE(check_result[i]);
 
     this->start("Adapt");
     for(int i = 0; i < repeat; i++) ch.Adapt(r_p[i], tag_p[i], h[i], r[i], m_p[i], sk[i], pk[i]);
@@ -77,7 +77,7 @@ TEST_P(CH_CDK_2017_Test, Test){
     this->start("Verify");
     for(int i = 0; i < repeat; i++) verify_result[i] = ch.Verify(h[i], r_p[i], m_p[i], tag_p[i], pk[i]);
     this->end("Verify");
-    for(int i = 0; i < repeat; i++) ASSERT_TRUE(verify_result);
+    for(int i = 0; i < repeat; i++) ASSERT_TRUE(verify_result[i]);
 
     average();
 }

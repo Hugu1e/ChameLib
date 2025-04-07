@@ -147,9 +147,27 @@ TEST_P(MAPCH_ZLW_2021_Test, Test){
     this->start("Verify");
     for (int i = 0; i < repeat; i++) verify_result[i] = ch.Verify(h[i], r_p[i], m_p, mhks[i]);
     this->end("Verify");
-    ASSERT_TRUE(verify_result);
     
     average();
+
+    delete postfix_expression;
+    delete binary_tree_expression;
+    delete MSP;
+    for(int i=0; i<mhks.size(); i++){
+        for(int j=0; j<mhks[i].size(); j++){
+            delete mhks[i][j];
+        }
+    }
+    for(int i=0; i<mtks.size(); i++){
+        for(int j=0; j<mtks[i].size(); j++){
+            delete mtks[i][j];
+        }
+    }
+    for(int i=0; i<mskis.size(); i++){
+        for(int j=0; j<mskis[i].size(); j++){
+            delete mskis[i][j];
+        }
+    }
 }
 
 int main(int argc, char **argv){

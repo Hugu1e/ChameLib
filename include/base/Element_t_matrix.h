@@ -32,6 +32,8 @@ class Element_t_matrix{
         Element_t_vector* getCoordinateAxisUnitVector();
 
         static signed long int gaussElimination(Element_t_vector *x, Element_t_matrix *A, Element_t_vector *b);
+
+        ~Element_t_matrix();
 };
 
 #endif // CHAMELIB_ELEMENT_T_MATRIX_H
