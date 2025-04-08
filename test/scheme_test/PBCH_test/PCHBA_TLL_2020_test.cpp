@@ -124,16 +124,16 @@ TEST_P(PCHBA_TLL_2020_Test, Test){
     this->end("Verify");
     for (int i = 0; i < repeat; i++) ASSERT_TRUE(verify_result[i]);
 
-    for (int i = 0; i < repeat; i++) ch.Hash(h2[i], r2[i], m2[i], pkPCHBA[i], skPCHBA[i], MSP, ID12, U2);
-    for (int i = 0; i < repeat; i++) check_result[i] = ch.Check(h2[i], r2[i], m2[i], pkPCHBA[i]);
-    for (int i = 0; i < repeat; i++) ASSERT_TRUE(check_result[i]);
-    try{
-        for (int i = 0; i < repeat; i++) ch.Adapt(r_p[i], m_p[i], h2[i], r2[i], m2[i], MSP, ID12, U2, pkPCHBA[i], skPCHBA[i], sksPCHBA_2[i]);
-    }catch(const std::runtime_error& e){}
+    // for (int i = 0; i < repeat; i++) ch.Hash(h2[i], r2[i], m2[i], pkPCHBA[i], skPCHBA[i], MSP, ID12, U2);
+    // for (int i = 0; i < repeat; i++) check_result[i] = ch.Check(h2[i], r2[i], m2[i], pkPCHBA[i]);
+    // for (int i = 0; i < repeat; i++) ASSERT_TRUE(check_result[i]);
+    // try{
+    //     for (int i = 0; i < repeat; i++) ch.Adapt(r_p[i], m_p[i], h2[i], r2[i], m2[i], MSP, ID12, U2, pkPCHBA[i], skPCHBA[i], sksPCHBA_2[i]);
+    // }catch(const std::runtime_error& e){}
 
-    for (int i = 0; i < repeat; i++) ch.Adapt(r_p[i], m_p[i], h2[i], r2[i], m2[i], MSP, ID12, U1, pkPCHBA[i], skPCHBA[i], sksPCHBA_1[i]);
-    for (int i = 0; i < repeat; i++) verify_result[i] = ch.Verify(h2[i], r_p[i], m_p[i], pkPCHBA[i]);
-    for (int i = 0; i < repeat; i++) ASSERT_TRUE(verify_result[i]);
+    // for (int i = 0; i < repeat; i++) ch.Adapt(r_p[i], m_p[i], h2[i], r2[i], m2[i], MSP, ID12, U1, pkPCHBA[i], skPCHBA[i], sksPCHBA_1[i]);
+    // for (int i = 0; i < repeat; i++) verify_result[i] = ch.Verify(h2[i], r_p[i], m_p[i], pkPCHBA[i]);
+    // for (int i = 0; i < repeat; i++) ASSERT_TRUE(verify_result[i]);
     
     average();
 

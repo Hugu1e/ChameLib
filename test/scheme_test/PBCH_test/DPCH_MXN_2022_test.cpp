@@ -163,6 +163,21 @@ TEST_P(DPCH_MXN_2022_Test, Test){
     // free
     delete binary_tree_expression;
     delete MSP;
+    for(int i=0; i<pkThetas.size(); i++){
+        for(int j=0; j<pkThetas[i].size(); j++){
+            delete pkThetas[i][j];
+        }
+    }
+    for(int i=0; i<skThetas.size(); i++){
+        for(int j=0; j<skThetas[i].size(); j++){
+            delete skThetas[i][j];
+        }
+    }
+    for(int i=0; i<skGidAs.size(); i++){
+        for(int j=0; j<skGidAs[i].size(); j++){
+            delete skGidAs[i][j];
+        }
+    }
 }
 
 int main(int argc, char **argv){
