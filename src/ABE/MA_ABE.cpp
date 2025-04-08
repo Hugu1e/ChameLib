@@ -264,6 +264,7 @@ void MA_ABE::Decrypt(element_t res, std::vector<MA_ABE_skgidA *> &skgidAs, MA_AB
                     v->pushBack(MSP->getElement(i, j));
                 }
                 attributesMatrix->pushBack(v);
+                delete v;
                 break;
             }
         }
@@ -311,6 +312,12 @@ void MA_ABE::Decrypt(element_t res, std::vector<MA_ABE_skgidA *> &skgidAs, MA_AB
     }
     // res = c0 / tmp_GT_3
     element_div(res, C.get_ct_0()[0], tmp_GT_3);
+
+    // free
+    delete attributesMatrix;
+    delete inverse_attributesMatrix;
+    delete unit;
+    delete x;
 }
 
 MA_ABE::~MA_ABE(){

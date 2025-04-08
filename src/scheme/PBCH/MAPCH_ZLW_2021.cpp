@@ -74,19 +74,18 @@ void MAPCH_ZLW_2021::Hash(MAPCH_ZLW_2021_h &h, MAPCH_ZLW_2021_r &r, std::string 
     etd.init(1);
 
     std::vector<MA_ABE_pkTheta *> pkThetas(mhks.size());
-    for(int i=0;i<mhks.size();i++){
-        MA_ABE_pkTheta *pkTheta = new MA_ABE_pkTheta();
-
-        *pkTheta = mhks.at(i)->get_pkj();
-
-        pkThetas[i] = pkTheta;
-    }
+    for(int i=0;i<mhks.size();i++) pkThetas[i] = new MA_ABE_pkTheta(mhks.at(i)->get_pkj());
 
     ch_et.Hash(h.get_h(), r.get_r(), etd, pp.get_pp_CH(), mhks.at(0)->get_hk(), m);
 
     TypeConverter::mpz_to_element(tmp_GT, etd[CH_ET_BC_CDK_2017::d1]);
     
     ma_abe.Encrypt(r.get_c(), tmp_GT, mhks.at(0)->get_gpk_ABE(), pkThetas, MSP, policy);
+
+    // free pkThetas
+    for(int i=0;i<pkThetas.size();i++){
+        delete pkThetas[i];
+    }
 }
 
 /**
@@ -111,14 +110,8 @@ void MAPCH_ZLW_2021::Adapt(MAPCH_ZLW_2021_r &r_p, std::string m_p, MAPCH_ZLW_202
     if(!Check(h, r, m, mhks)){
         throw std::runtime_error("Forge: Hash Check failed!");
     }
-    std::vector<MA_ABE_skgidA *> skgidAs;
-    for(int i=0;i<msks.size();i++){
-        MA_ABE_skgidA *skgidA = new MA_ABE_skgidA();
-        
-        *skgidA = msks.at(i)->get_KiGid();
-
-        skgidAs.push_back(skgidA);
-    }
+    std::vector<MA_ABE_skgidA *> skgidAs(msks.size());
+    for(int i=0;i<msks.size();i++) skgidAs[i] = new MA_ABE_skgidA(msks.at(i)->get_KiGid());
 
     ma_abe.Decrypt(tmp_GT, skgidAs, r.get_c(), MSP);
 
@@ -134,6 +127,9 @@ void MAPCH_ZLW_2021::Adapt(MAPCH_ZLW_2021_r &r_p, std::string m_p, MAPCH_ZLW_202
     ch_et.Adapt(r_p.get_r(), msks.at(0)->get_tk(), etd, mhks.at(0)->get_hk(), h.get_h(), r.get_r(), m, m_p);
 
     r_p.get_c() = r.get_c();
+
+    // free skgidAs
+    for(int i=0;i<skgidAs.size();i++) delete skgidAs[i];
 }
 
 /**

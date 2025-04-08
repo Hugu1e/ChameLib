@@ -128,6 +128,7 @@ GmpElements::~GmpElements(){
     if (elements != nullptr){
         for (int i = 0; i < size; i++){
             mpz_clear(elements[i]);
+            delete elements[i];
         }
         delete[] elements;
     }

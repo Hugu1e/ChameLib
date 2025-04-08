@@ -120,7 +120,7 @@ void PbcElements::pop_front(){
 PbcElements::~PbcElements(){
     if (elements != nullptr){
         for (int i = 0; i < size; i++){
-            // element_clear(elements[i]);
+            element_clear(elements[i]);
             delete elements[i];
         }
         delete[] elements;

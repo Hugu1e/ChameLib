@@ -25,18 +25,14 @@ class MA_ABE_pkTheta: public PbcElements{
         MA_ABE_pkTheta(){
             init(2);
         }
+        MA_ABE_pkTheta(const MA_ABE_pkTheta &other) : PbcElements(other){
+            this->A = other.A;
+        }
         void set_A(std::string A){
             this->A = A;
         }
         std::string get_A(){
             return this->A;
-        }
-        MA_ABE_pkTheta &operator=(const MA_ABE_pkTheta &other){
-            if(this != &other){
-                PbcElements::operator=(other);
-                this->A = other.A;
-            }
-            return *this;
         }
 };
 
@@ -55,6 +51,10 @@ class MA_ABE_skgidA: public PbcElements{
         MA_ABE_skgidA(){
             init(2);
         }
+        MA_ABE_skgidA(const MA_ABE_skgidA &other) : PbcElements(other){
+            this->gid = other.gid;
+            this->A = other.A;
+        }
         void set_gid(std::string gid){
             this->gid = gid;
         }
@@ -66,14 +66,6 @@ class MA_ABE_skgidA: public PbcElements{
         }
         std::string get_A(){
             return this->A;
-        }
-        MA_ABE_skgidA &operator=(const MA_ABE_skgidA &other){
-            if(this != &other){
-                PbcElements::operator=(other);
-                this->gid = other.gid;
-                this->A = other.A;
-            }
-            return *this;
         }
 };
 
