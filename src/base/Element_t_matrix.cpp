@@ -318,7 +318,7 @@ signed long int Element_t_matrix::gaussElimination(Element_t_vector *x, Element_
     }
 
     // free_x marks whether the free variable
-    Num_vector* free_x = new Num_vector(A->col());
+    Num_vector free_x(A->col());
 
     // initialization
     element_t zero_elem;
@@ -326,7 +326,7 @@ signed long int Element_t_matrix::gaussElimination(Element_t_vector *x, Element_
     element_set0(zero_elem);
     for (signed long int i = 0; i < x->length(); i++) {
         x->setElement(i, zero_elem);
-        free_x->setElement(i, 1);
+        free_x.setElement(i, 1);
     }
 
     // the currently processed row
@@ -411,6 +411,10 @@ signed long int Element_t_matrix::gaussElimination(Element_t_vector *x, Element_
     // no solution
     for (signed long int i = current_row; i < row; i++) {
         if (!element_is0(augmented_matrix.getElement(i, col - 1))) {
+            // free
+            element_s* element_clear_list[] = {zero_elem, temp, inverse, temp_coefficient, coefficient, elimination, elimination_result};
+            for (int i = 0; i < sizeof(element_clear_list) / sizeof(element_s*); i++) element_clear(element_clear_list[i]);
+            
             return -1;
         }
     }
@@ -432,12 +436,12 @@ signed long int Element_t_matrix::gaussElimination(Element_t_vector *x, Element_
             free_x_num = 0;
             for (signed long int j = i; j < col - 1; j++) {
                 if (0 == free_x_num) {
-                    if ((!element_is0(augmented_matrix.getElement(i, j))) && free_x->getElement(j)) {
+                    if ((!element_is0(augmented_matrix.getElement(i, j))) && free_x.getElement(j)) {
                         free_x_num++;
                         free_index.setElement(free_x_num - 1, j);
                     }
                 } else {
-                    if (free_x->getElement(j)) {
+                    if (free_x.getElement(j)) {
                         free_x_num++;
                         free_index.setElement(free_x_num - 1, j);
                     }
@@ -448,7 +452,7 @@ signed long int Element_t_matrix::gaussElimination(Element_t_vector *x, Element_
                     // set random value
                     element_random(random_value);
                     x->setElement(free_index.getElement(k), random_value);
-                    free_x->setElement(free_index.getElement(k), 0);
+                    free_x.setElement(free_index.getElement(k), 0);
                     element_mul(part_mul, augmented_matrix.getElement(i, free_index.getElement(k)), random_value);
                     element_neg(inverse_part_mul, part_mul);
                     element_add(res, res, inverse_part_mul);
@@ -463,7 +467,7 @@ signed long int Element_t_matrix::gaussElimination(Element_t_vector *x, Element_
                 element_invert(inverse, augmented_matrix.getElement(i, free_index.getElement(0)));
                 element_mul(res, inverse, res);
                 x->setElement(free_index.getElement(0), res);
-                free_x->setElement(free_index.getElement(0), 0);
+                free_x.setElement(free_index.getElement(0), 0);
             } else {
                 for (signed long int k = col - 2; k > free_index.getElement(0); k--) {
                     if (!element_is0(augmented_matrix.getElement(i, k))) {
@@ -475,9 +479,14 @@ signed long int Element_t_matrix::gaussElimination(Element_t_vector *x, Element_
                 element_invert(inverse, augmented_matrix.getElement(i, free_index.getElement(0)));
                 element_mul(res, inverse, res);
                 x->setElement(free_index.getElement(0), res);
-                free_x->setElement(free_index.getElement(0), 0);
+                free_x.setElement(free_index.getElement(0), 0);
             }
         }
+
+        // free
+        element_s* element_clear_list[] = {zero_elem, temp, inverse, temp_coefficient, coefficient, elimination, elimination_result, random_value, part_mul, inverse_part_mul, res};
+        for (int i = 0; i < sizeof(element_clear_list) / sizeof(element_s*); i++) element_clear(element_clear_list[i]);
+
         return col - 1 - current_row;
     }
 
@@ -495,6 +504,11 @@ signed long int Element_t_matrix::gaussElimination(Element_t_vector *x, Element_
         element_mul(res, inverse, res);
         x->setElement(i, res);
     }
+
+    // free
+    element_s* element_clear_list[] = {zero_elem, temp, inverse, temp_coefficient, coefficient, elimination, elimination_result, random_value, part_mul, inverse_part_mul, res};
+    for (int i = 0; i < sizeof(element_clear_list) / sizeof(element_s*); i++) element_clear(element_clear_list[i]);
+
     return 0;
 }
 

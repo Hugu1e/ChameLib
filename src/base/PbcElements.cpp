@@ -54,6 +54,18 @@ PbcElements &PbcElements::operator=(const PbcElements &other){
     }
 }
 
+void PbcElements::set(const PbcElements &other){
+    if (this == &other)
+        return;
+    if(this->size != other.size)
+        throw std::runtime_error("Size mismatch");
+
+    for(int i = 0; i < size; i++){
+        element_init_same_as(elements[i], other.elements[i]);
+        element_set(elements[i], other.elements[i]);
+    }
+}
+
 element_s* PbcElements::operator[](int index){
     return elements[index];
 }

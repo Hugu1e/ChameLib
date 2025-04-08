@@ -66,6 +66,10 @@ void PbcScheme::initPairing(std::string param) {
     pbc_param_t par;
     pbc_param_init_set_str(par, param.c_str());
     pairing_init_pbc_param(pairing, par);
+    pbc_param_clear(par);
+}
+
+void PbcScheme::defaultInit(){
     element_init_G1(G1, pairing);
     element_init_G2(G2, pairing);
     element_init_GT(GT, pairing);
@@ -110,4 +114,8 @@ element_s* PbcScheme::GetGTElement(){
     element_init_same_as(gt, this->GT);
     element_random(gt);
     return gt;
+}
+
+PbcScheme::~PbcScheme() {
+    // pairing_clear(pairing);
 }

@@ -41,9 +41,9 @@ void MAPCH_ZLW_2021::GlobalSetup(CH_ET_BC_CDK_2017_pk &pkCH, CH_ET_BC_CDK_2017_s
  * @param pp: public parameters
  */
 void MAPCH_ZLW_2021::AuthSetUp(MAPCH_ZLW_2021_mhk &mhk, MAPCH_ZLW_2021_mtk &mtk, std::string A, CH_ET_BC_CDK_2017_pk &pkCH, CH_ET_BC_CDK_2017_sk &skCH, MA_ABE_gpk &gpkABE, MAPCH_ZLW_2021_pp &pp){
-    mhk.get_hk() = pkCH;
-    mhk.get_gpk_ABE() = gpkABE;
-    mtk.get_tk() = skCH;
+    mhk.get_hk().set(pkCH);
+    mhk.get_gpk_ABE().set(gpkABE);
+    mtk.get_tk().set(skCH);
 
     ma_abe.AuthSetup(mhk.get_pkj(), mtk.get_skj(), mhk.get_gpk_ABE(), A);
 }
@@ -57,7 +57,7 @@ void MAPCH_ZLW_2021::AuthSetUp(MAPCH_ZLW_2021_mhk &mhk, MAPCH_ZLW_2021_mtk &mtk,
  * @param GID: global identifier
  */
 void MAPCH_ZLW_2021::KeyGen(MAPCH_ZLW_2021_mski &msk, MAPCH_ZLW_2021_mtk &mtk, MAPCH_ZLW_2021_mhk &mhk, std::string A, std::string GID){
-    msk.get_tk() = mtk.get_tk();
+    msk.get_tk().set(mtk.get_tk());
 
     ma_abe.KeyGen(msk.get_KiGid(), mhk.get_gpk_ABE(), mtk.get_skj(), GID, A);
 }

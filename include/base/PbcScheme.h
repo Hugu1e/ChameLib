@@ -22,6 +22,8 @@ class PbcScheme{
 
         void init(element_t _G, element_t _Zn);
 
+        void defaultInit();
+
         element_s* GetZrElement();
 
         element_s* GetG1Element();
@@ -30,7 +32,7 @@ class PbcScheme{
 
         element_s* GetGTElement();
 
-        ~PbcScheme(){}
+        ~PbcScheme();
 };
 
 #endif  // CHAMELIB_PBCSCHEME_H

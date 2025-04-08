@@ -64,6 +64,16 @@ GmpElements &GmpElements::operator=(const GmpElements &other){
     return *this;
 }
 
+void GmpElements::set(const GmpElements &other){
+    if(this == &other)
+        return;
+    if(this->size != other.size)
+        throw std::runtime_error("Size mismatch");
+    for(int i = 0; i < size; i++){
+        mpz_set(elements[i], other.elements[i]);
+    }
+}
+
 /**
  * @brief Copy elements from another GmpElements object, note that the size of the two objects should be the same
  */

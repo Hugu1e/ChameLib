@@ -50,7 +50,10 @@ TEST_P(Base_Test, Test){
     auto curve = GetParam().curve;
     printf("curve: %d\n", curve);
     auto repeat = GetParam().repeat;
+    
     PbcScheme ch(GetParam().curve);
+    ch.defaultInit();
+
     element_s *G1s[repeat];
     for(int i = 0;i < repeat;++i) G1s[i] = ch.GetG1Element();
     element_s *G2s[repeat];

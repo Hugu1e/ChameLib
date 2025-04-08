@@ -3,6 +3,7 @@
 
 #include <pbc/pbc.h>
 #include <string>
+#include <stdexcept>
 
 class GmpElements{
     private:
@@ -17,6 +18,7 @@ class GmpElements{
 
         GmpElements(const GmpElements &other);
         GmpElements &operator=(const GmpElements &other);
+        void set(const GmpElements &other);
 
         void copyFrom(const GmpElements &other);
         

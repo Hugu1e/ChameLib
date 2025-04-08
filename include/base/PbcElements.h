@@ -19,6 +19,7 @@ class PbcElements{
 
         PbcElements(const PbcElements &other);
         PbcElements &operator=(const PbcElements &other);
+        void set(const PbcElements &other);
         
         element_s* operator[](int index);
         element_s* get(int index);
