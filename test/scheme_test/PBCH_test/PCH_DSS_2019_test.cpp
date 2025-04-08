@@ -104,6 +104,10 @@ TEST_P(PCH_DSS_2019_Test, Test){
     for (int i = 0; i < repeat; i++) ASSERT_TRUE(verify_result[i]);
     
     average();
+
+    // free
+    delete binary_tree_expression;
+    delete MSP;
 }
 
 int main(int argc, char **argv){

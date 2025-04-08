@@ -161,6 +161,10 @@ TEST_P(RPCH_XNM_2021_Test, Test){
     for (int i = 0; i < repeat; i++) ASSERT_TRUE(verify[i]);
 
     average();
+
+    // free
+    delete binary_tree_expression;
+    delete MSP;
 }
 
 int main(int argc, char **argv){

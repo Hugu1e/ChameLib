@@ -147,6 +147,7 @@ TEST_P(MAPCH_ZLW_2021_Test, Test){
     
     average();
 
+    // free
     delete binary_tree_expression;
     delete MSP;
     for(int i=0; i<mhks.size(); i++){

@@ -142,6 +142,10 @@ TEST_P(ABET_Test, Test){
     }
 
     average();
+
+    // free
+    delete binary_tree_expression;
+    delete MSP;
 }
 
 int main(int argc, char **argv){

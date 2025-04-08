@@ -268,6 +268,10 @@ TEST_P(PCHBA_TLL_2020_Test, Test){
 
         EXPECT_TRUE(check_time(GetParam().curve, op_cnt_Check, "Verify"));
     }
+
+    // free
+    delete binary_tree_expression;
+    delete MSP;
 }
 
 int main(int argc, char **argv){

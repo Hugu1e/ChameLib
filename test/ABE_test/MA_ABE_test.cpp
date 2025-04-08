@@ -188,6 +188,10 @@ TEST_P(MA_ABE_Test, Test){
         3 * l
     };
     EXPECT_TRUE(check_time(GetParam().curve, op_cnt_Decrypt, "Decrypt"));
+
+    // free
+    delete binary_tree_expression;
+    delete MSP;
 }
 
 

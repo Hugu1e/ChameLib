@@ -186,6 +186,10 @@ TEST_P(RABE_XNM_Test, Test){
         7
     };
     EXPECT_TRUE(check_time(GetParam().curve, op_cnt_Decrypt, "Decrypt"));
+
+    // free
+    delete binary_tree_expression;
+    delete MSP;
 }
 
 int main(int argc, char **argv){

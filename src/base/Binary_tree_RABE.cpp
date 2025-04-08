@@ -41,6 +41,11 @@ bool Binary_tree_RABE_node::isEmpty(){
     }
 }
 
+Binary_tree_RABE_node::~Binary_tree_RABE_node(){
+    element_clear(gtheta);
+    element_clear(id);
+}
+
 void Binary_tree_RABE_node::setParent(Binary_tree_RABE_node *parent)
 {
     this->parent = parent;
@@ -221,4 +226,17 @@ std::vector<Binary_tree_RABE_node *> Binary_tree_RABE::KUNodes(std::vector<eleme
         }
     }
     return res;
+}
+
+void Binary_tree_RABE::freeTree(Binary_tree_RABE_node *root){
+    if(root == nullptr){
+        return;
+    }
+    freeTree(root->getLeftChild());
+    freeTree(root->getRightChild());
+    delete root;
+}
+
+Binary_tree_RABE::~Binary_tree_RABE(){
+    freeTree(this->root);
 }

@@ -590,6 +590,7 @@ void RABE_TMM::Dec(element_t res, RABE_TMM_mpk &mpk, RABE_TMM_ciphertext &cipher
             v->pushBack(MSP->getElement(i, j));
         }
         attributesMatrix->pushBack(v);
+        delete v;
     }
     // get inverse matrix
     Element_t_matrix* inverse_attributesMatrix = attributesMatrix->inverse();
@@ -678,6 +679,12 @@ void RABE_TMM::Dec(element_t res, RABE_TMM_mpk &mpk, RABE_TMM_ciphertext &cipher
     element_to_bytes(tmp, tmp_GT);
     for(int i=0;i<len_tmp;i++) tmp[i]^=ciphertext.get_ct_p()[i];
     element_from_bytes(res, tmp);
+
+    // free
+    delete attributesMatrix;
+    delete inverse_attributesMatrix;
+    delete unit;
+    delete x;
 }
 
 /**

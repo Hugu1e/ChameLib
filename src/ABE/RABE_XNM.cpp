@@ -571,6 +571,7 @@ void RABE_XNM::Dec(element_t res, RABE_XNM_mpk &mpk, RABE_XNM_ciphertext &cipher
             v->pushBack(MSP->getElement(i, j));
         }
         attributesMatrix->pushBack(v);
+        delete v;
     }
     // get inverse matrix
     Element_t_matrix* inverse_attributesMatrix = attributesMatrix->inverse();
@@ -652,6 +653,11 @@ void RABE_XNM::Dec(element_t res, RABE_XNM_mpk &mpk, RABE_XNM_ciphertext &cipher
 
     element_clear(num);
     element_clear(den);
+    // free
+    delete attributesMatrix;
+    delete inverse_attributesMatrix;
+    delete unit;
+    delete x;
 }
 
 /**

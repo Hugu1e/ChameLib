@@ -42,12 +42,16 @@ class Binary_tree_RABE_node {
         void setRightChild(Binary_tree_RABE_node *right_child);
 
         bool isEmpty();
+
+        ~Binary_tree_RABE_node();
 };
 
 class Binary_tree_RABE {
     private:
         int n;  // number of leaf nodes
         Binary_tree_RABE_node *root;
+
+        void freeTree(Binary_tree_RABE_node *root);
 
     public:
         Binary_tree_RABE();
@@ -60,6 +64,8 @@ class Binary_tree_RABE {
         Binary_tree_RABE_node* setLeafNode(element_t id, time_t time);
 
         std::vector<Binary_tree_RABE_node *> KUNodes(std::vector<element_s *> rl_ids, time_t t);
+
+        ~Binary_tree_RABE();
 };
 
 

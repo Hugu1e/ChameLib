@@ -39,6 +39,10 @@ void Policy_generation::assignAccessToChildInMatrixForm(Binary_tree_policy_node 
         lc->pushBackValue(one);
         rc->pushBackValue(negOne);
         (*m)++;
+
+        element_clear(zero);
+        element_clear(one);
+        element_clear(negOne);
         return;
     }
 }
