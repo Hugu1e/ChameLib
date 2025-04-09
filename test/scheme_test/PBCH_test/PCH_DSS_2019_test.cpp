@@ -1,5 +1,5 @@
 #include "ChameLib.h"
-#include "CommonTest.h"
+#include <gtest/gtest.h>
 
 struct TestParams{
 	int curve;
@@ -7,17 +7,7 @@ struct TestParams{
     int k;
 };
 
-class PCH_DSS_2019_Test : public BaseTest<TestParams>{
-    protected:
-        void SetUp() override {
-            BaseTest::SetUp();
-
-            std::string testName = ::testing::UnitTest::GetInstance()->current_test_info()->name();
-            std::string curveName = Curve::curve_names[GetParam().curve];
-            fprintf(out, "%s %s swap: %d k: %d\n", testName.c_str(), curveName.c_str(), GetParam().swap, GetParam().k);
-            if(visiable)printf("%s %s swap: %d k: %d\n", testName.c_str(), curveName.c_str(), GetParam().swap, GetParam().k);
-        }
-};
+class PCH_DSS_2019_Test : public testing::TestWithParam<TestParams>{};
 
 std::vector<TestParams> generateTestParams() {
     int curves[] = {
@@ -58,62 +48,39 @@ TEST_P(PCH_DSS_2019_Test, Test){
     PCH_DSS_2019 ch(GetParam().curve, GetParam().swap);
 
     std::vector<std::string> attr_list = {"ONE","TWO","THREE"};
+    const int SIZE_OF_ATTR = attr_list.size();
     const std::string POLICY = "(ONE&THREE)&(TWO|FOUR)";
     // compute MSP
     std::vector<std::string> postfix_expression = Policy_resolution::infixToPostfix(POLICY);
     Binary_tree_policy* binary_tree_expression = Policy_resolution::postfixToBinaryTree(postfix_expression, ch.GetZrElement());
     Element_t_matrix* MSP = Policy_generation::getPolicyInMatrixFormFromTree(binary_tree_expression);
 
-    PCH_DSS_2019_pp ppPCH[repeat];
-    PCH_DSS_2019_sk skPCH[repeat];
-    PCH_DSS_2019_pk pkPCH[repeat];
-    PCH_DSS_2019_sks sksPCH[repeat];
+    PCH_DSS_2019_pp ppPCH;
+    PCH_DSS_2019_sk skPCH;
+    PCH_DSS_2019_pk pkPCH;
+    PCH_DSS_2019_sks sksPCH;
 
-    PCH_DSS_2019_h h[repeat];
-    PCH_DSS_2019_r r[repeat], r_p[repeat];
+    PCH_DSS_2019_h h;
+    PCH_DSS_2019_r r,r_p;
 
     std::string m = "message to hash";
     std::string m_p = "message to adapt";
 
-    this->start("SetUp");
-    for (int i = 0; i < repeat; i++) ch.SetUp(ppPCH[i], pkPCH[i], skPCH[i], GetParam().k);
-    this->end("SetUp");
+    ch.SetUp(ppPCH, pkPCH, skPCH, GetParam().k);
 
-    this->start("KeyGen");
-    for (int i = 0; i < repeat; i++) ch.KeyGen(sksPCH[i], skPCH[i], pkPCH[i], attr_list);
-    this->end("KeyGen");
+    ch.KeyGen(sksPCH, skPCH, pkPCH, attr_list);
 
-    this->start("Hash");
-    for (int i = 0; i < repeat; i++) ch.Hash(h[i], r[i], m, MSP, POLICY, pkPCH[i], ppPCH[i]);
-    this->end("Hash");
+    ch.Hash(h, r, m, MSP, POLICY, pkPCH, ppPCH);
 
-    bool check_result[repeat];
-    this->start("Check");
-    for (int i = 0; i < repeat; i++) check_result[i] = ch.Check(h[i], r[i], m, pkPCH[i]);
-    this->end("Check");
-    for (int i = 0; i < repeat; i++) ASSERT_TRUE(check_result[i]);
+    ASSERT_TRUE(ch.Check(h, r, m, pkPCH));
     
-    this->start("Adapt");
-    for (int i = 0; i < repeat; i++) ch.Adapt(r_p[i], m_p, h[i], r[i], m, sksPCH[i], pkPCH[i], MSP, POLICY);
-    this->end("Adapt");
+    ch.Adapt(r_p, m_p, h, r, m, sksPCH, pkPCH, MSP, POLICY);
 
-    bool verify_result[repeat];
-    this->start("Verify");
-    for (int i = 0; i < repeat; i++) verify_result[i] = ch.Verify(h[i], r_p[i], m_p, pkPCH[i]);
-    this->end("Verify");
-    for (int i = 0; i < repeat; i++) ASSERT_TRUE(verify_result[i]);
-    
-    average();
-
-    // free
-    delete binary_tree_expression;
-    delete MSP;
+    ASSERT_TRUE(ch.Verify(h, r_p, m_p, pkPCH));
 }
 
-int main(int argc, char **argv){
-    ParseCommandLineArgs(argc, argv);
-    
-    ::testing::GTEST_FLAG(catch_exceptions) = false;
+int main(int argc, char **argv) 
+{
 	::testing::InitGoogleTest(&argc, argv);
 	return RUN_ALL_TESTS();
 }

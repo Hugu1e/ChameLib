@@ -1,5 +1,6 @@
 #include "ChameLib.h"
-#include "CommonTest.h"
+#include <gtest/gtest.h>
+
 
 struct TestParams{
 	int curve;
@@ -7,17 +8,7 @@ struct TestParams{
     int lamuda;
 };
 
-class DPCH_MXN_2022_Test : public BaseTest<TestParams>{
-    protected:
-        void SetUp() override {
-            BaseTest::SetUp();
-
-            std::string testName = ::testing::UnitTest::GetInstance()->current_test_info()->name();
-            std::string curveName = Curve::curve_names[GetParam().curve];
-            fprintf(out, "%s %s authNum:%d lamuda:%d\n", testName.c_str(), curveName.c_str(), GetParam().authNum, GetParam().lamuda);
-            if(visiable)printf("%s %s authNum:%d lamuda:%d\n", testName.c_str(), curveName.c_str(), GetParam().authNum, GetParam().lamuda);
-        }
-};
+class DPCH_MXN_2022_Test : public testing::TestWithParam<TestParams>{};
 
 std::vector<TestParams> generateTestParams() {
     int curves[] = {
@@ -49,7 +40,7 @@ INSTANTIATE_TEST_CASE_P(
 	testing::ValuesIn(test_values)
 );
 
-TEST_P(DPCH_MXN_2022_Test, Test){    
+TEST_P(DPCH_MXN_2022_Test, Test){
     DPCH_MXN_2022 ch(GetParam().curve);
 
     const std::string POLICY = "(ONE&THREE)&(TWO|FOUR)";
@@ -75,99 +66,60 @@ TEST_P(DPCH_MXN_2022_Test, Test){
     DPCH_MXN_2022_pp ppDPCH;
     DPCH_MXN_2022_pk pkDPCH;
     DPCH_MXN_2022_sk skDPCH;
-    DPCH_MXN_2022_skGid skGid[repeat];
+    DPCH_MXN_2022_skGid skGid;
     DPCH_MXN_2022_sigmaGid sigmaGid;
-    DPCH_MXN_2022_h h[repeat];
-    DPCH_MXN_2022_r r[repeat], r_p[repeat];
+    DPCH_MXN_2022_h h;
+    DPCH_MXN_2022_r r,r_p;
     std::string m = "message";
     std::string m_p = "message_p";
 
-    this->start("SetUp");
-    for (int i = 0; i < repeat; i++) ch.SetUp(ppDPCH, pkDPCH, skDPCH, GetParam().lamuda);
-    this->end("SetUp");
+    ch.SetUp(ppDPCH, pkDPCH, skDPCH, GetParam().lamuda);
 
-    this->start("ModSetUp");
-    for (int i = 0; i < repeat; i++) ch.ModSetUp(skGid[i], sigmaGid, skDPCH, GID);
-    this->end("ModSetUp");
-    
-    for(int j = 0; j < GetParam().authNum; j++) {
+    ch.ModSetUp(skGid, sigmaGid, skDPCH, GID);
+
+    for(int i = 0; i < GetParam().authNum; i++) {
         DPCH_MXN_2022_pkTheta *pkTheta = new DPCH_MXN_2022_pkTheta; 
         DPCH_MXN_2022_skTheta *skTheta = new DPCH_MXN_2022_skTheta;
 
-        if(j < SIZE_OF_ATTRIBUTES){
-            this->start("AuthSetUp", false);
-            ch.AuthSetUp(*pkTheta, *skTheta, ppDPCH, ATTRIBUTES[j]);
-            this->end("AuthSetUp", false);
+        if(i < SIZE_OF_ATTRIBUTES){
+            ch.AuthSetUp(*pkTheta, *skTheta, ppDPCH, ATTRIBUTES[i]);
         }else{
-            this->start("AuthSetUp", false);
-            ch.AuthSetUp(*pkTheta, *skTheta, ppDPCH, "ATTRIBUTE@AUTHORITY_" + std::to_string(j));
-            this->end("AuthSetUp", false);
+            ch.AuthSetUp(*pkTheta, *skTheta, ppDPCH, "ATTRIBUTE@AUTHORITY_" + std::to_string(i));
         }
 
         pkThetas.push_back(pkTheta);
         skThetas.push_back(skTheta);
     }
-    average("AuthSetUp", GetParam().authNum);
-    
-    for(int j = 0; j < GetParam().authNum; j++) {
+
+    for(int i = 0; i < GetParam().authNum; i++) {
         DPCH_MXN_2022_skGidA *skGidA = new DPCH_MXN_2022_skGidA;
 
-        if (j < SIZE_OF_ATTRIBUTES) {
-            this->start("ModKeyGen", false);
-            ch.ModKeyGen(*skGidA, ppDPCH, pkDPCH, GID, sigmaGid, *skThetas[j], ATTRIBUTES[j]);
-            this->end("ModKeyGen", false);
+        if (i < SIZE_OF_ATTRIBUTES) {
+            ch.ModKeyGen(*skGidA, ppDPCH, pkDPCH, GID, sigmaGid, *skThetas[i], ATTRIBUTES[i]);
         } else {
-            this->start("ModKeyGen", false);
-            ch.ModKeyGen(*skGidA, ppDPCH, pkDPCH, GID, sigmaGid, *skThetas[j], "ATTRIBUTE@AUTHORITY_" + std::to_string(j));
-            this->end("ModKeyGen", false);
+            ch.ModKeyGen(*skGidA, ppDPCH, pkDPCH, GID, sigmaGid, *skThetas[i], "ATTRIBUTE@AUTHORITY_" + std::to_string(i));
         }
         
         skGidAs.push_back(skGidA);
     }
-    average("ModKeyGen", GetParam().authNum);
 
-    this->start("Hash");
-    for (int i = 0; i < repeat; i++) ch.Hash(h[i], r[i], m, ppDPCH, pkDPCH, pkThetas, MSP, POLICY);
-    this->end("Hash");
+    ch.Hash(h, r, m, ppDPCH, pkDPCH, pkThetas, MSP, POLICY);
 
-    bool check_result[repeat];
-    this->start("Check");
-    for (int i = 0; i < repeat; i++) check_result[i] = ch.Check(pkDPCH, m, h[i], r[i]);
-    this->end("Check");
-    for (int i = 0; i < repeat; i++) ASSERT_TRUE(check_result[i]);
+    ASSERT_TRUE(ch.Check(pkDPCH, m, h, r));
 
     // choose partial secret keys
     std::vector<DPCH_MXN_2022_skGidA *> _skGidAs;
-    for (int i = 0; i < repeat; i++){
-        _skGidAs.push_back(skGidAs[0]);
-        _skGidAs.push_back(skGidAs[1]);
-        _skGidAs.push_back(skGidAs[2]);
-    }
+    _skGidAs.push_back(skGidAs[0]);
+    _skGidAs.push_back(skGidAs[1]);
+    _skGidAs.push_back(skGidAs[2]);
 
-    this->start("Adapt");
-    for (int i = 0; i < repeat; i++) ch.Adapt(r_p[i], m_p, h[i], r[i], m, pkDPCH, skGid[i], _skGidAs, ppDPCH, pkThetas, MSP, POLICY);
-    this->end("Adapt");
+    ch.Adapt(r_p, m_p, h, r, m, pkDPCH, skGid, _skGidAs, ppDPCH, pkThetas, MSP, POLICY);
 
-    bool verify_result[repeat];
-    this->start("Verify");
-    for (int i = 0; i < repeat; i++) verify_result[i] = ch.Verify(pkDPCH, m_p, h[i], r_p[i]);
-    this->end("Verify");
-    for (int i = 0; i < repeat; i++) ASSERT_TRUE(verify_result[i]);
-    
-    std::vector<std::string> list = {"SetUp", "ModSetUp", "Hash", "Check", "Adapt", "Verify"};
-    average(list);
-
-    // free
-    delete binary_tree_expression;
-    delete MSP;
-    for(int j=0; j<pkThetas.size(); j++) delete pkThetas[j];
-    for(int j=0; j<skThetas.size(); j++) delete skThetas[j];
-    for(int j=0; j<skGidAs.size(); j++) delete skGidAs[j];
+    ASSERT_TRUE(ch.Verify(pkDPCH, m_p, h, r_p));
 }
 
-int main(int argc, char **argv){
-    ParseCommandLineArgs(argc, argv);
-
+int main(int argc, char **argv) 
+{
 	::testing::InitGoogleTest(&argc, argv);
 	return RUN_ALL_TESTS();
 }
