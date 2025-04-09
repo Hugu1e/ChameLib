@@ -28,6 +28,7 @@ jobs:
         tar -zxf pbc-0.5.14.tar.gz
         git clone https://github.com/WCjrCK/pbc.git
         mv pbc/arith/poly.c pbc-0.5.14/arith/poly.c
+        cd pbc-0.5.14
         ./configure
         sudo make
         sudo make install
