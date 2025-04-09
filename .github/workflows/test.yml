@@ -50,7 +50,7 @@ jobs:
         cmake ..
         make
 
-    # - name: test
-    #   run: |
-    #     cd build
-    #     ctest -L "basetest"
+    - name: basetest
+      run: |
+        cd build
+        ctest -L "basetest"

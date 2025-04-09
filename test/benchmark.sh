@@ -1,9 +1,9 @@
 #!/bin/bash
 
 directories=(
+    "scheme_test/benchmark/CH"
+    "scheme_test/benchmark/IBCH"
     "scheme_test/benchmark/PBCH"
-    "scheme_test/CH_test"
-    "scheme_test/IBCH_test"
 )
 
 #  repeat test times
