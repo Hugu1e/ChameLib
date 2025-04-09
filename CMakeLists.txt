@@ -63,7 +63,9 @@ if(BUILD_TESTS)
         add_executable(${test_name} ${test_source})
         target_include_directories(${test_name} PRIVATE test/common)
         target_link_libraries(${test_name} PRIVATE ChameLib GTest::GTest pthread)
-        add_test(NAME ${test_name} COMMAND ${test_name})
+
+        add_test(NAME "basetest_${test_name}" COMMAND ${test_name} "-r" "1")
+        set_tests_properties("basetest_${test_name}" PROPERTIES LABELS "basetest")
     endmacro()
 
     add_test_executable(RSA_test test/AE_test/RSA_test.cpp)
