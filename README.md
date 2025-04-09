@@ -28,18 +28,28 @@
 
 ## Testing
 
-1. **Run all the Tests**
+1. **Run base tests**
 
    ```
    cd build
-   ctest
+   ctest -L "basetest"
    ```
 
-2. **Run individual test**
+    **Run individual base test**
 
    ```
    cd build
-   ./bin/[TEST_NAME]
+   ./bin/[BASETEST_NAME]
+   ```
+3. **Run benchmark tests**
+   ```
+   cd build
+   ctest -L "benchmarktest"
+   ```
+    **Run individual benchmark test**
+   ```
+   cd build
+   ./bin/[BENCHMARKTEST_NAME]
    ```
    **Command-Line Arguments**
 
@@ -48,45 +58,29 @@
    - `--repeat` or `-r`: Set the number of repetitions for the test (default: 100).
      Example:
      ```
-     ./bin/[TEST_NAME] --repeat 200
+     ./bin/[BENCHMARKTEST_NAME] --repeat 200
      ```
      or
      ```
-     ./bin/[TEST_NAME] -r 200
+     ./bin/[BENCHMARKTEST_NAME] -r 200
      ```
 
    - `--checktime` or `-c`: Enable time checking to verify runtime consistency (default: disabled).
      Example:
      ```
-     ./bin/[TEST_NAME] --checktime
+     ./bin/[BENCHMARKTEST_NAME] --checktime
      ```
      or
      ```
-     ./bin/[TEST_NAME] -c
+     ./bin/[BENCHMARKTEST_NAME] -c
      ```
 
    - `--help` or `-h`: Display help information about the available arguments.
      Example:
      ```
-     ./bin/[TEST_NAME] --help
+     ./bin/[BENCHMARKTEST_NAME] --help
      ```
      or
      ```
-     ./bin/[TEST_NAME] -h
-     ```
-
-   **Example Usage**
-
-   - Run a test with 500 repetitions and enable time checking:
-     ```
-     ./bin/[TEST_NAME] --repeat 500 --checktime
-     ```
-     or
-     ```
-     ./bin/[TEST_NAME] -r 500 -c
-     ```
-
-   - Run a test with default settings:
-     ```
-     ./bin/[TEST_NAME]
+     ./bin/[BENCHMARKTEST_NAME] -h
      ```
