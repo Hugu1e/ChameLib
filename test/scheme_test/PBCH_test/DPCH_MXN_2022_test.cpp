@@ -1,7 +1,6 @@
 #include "ChameLib.h"
 #include <gtest/gtest.h>
 
-
 struct TestParams{
 	int curve;
     int authNum;

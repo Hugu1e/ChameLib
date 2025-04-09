@@ -112,6 +112,12 @@ if(BUILD_TESTS)
     # benchmark
     add_test_executable(base_test test/scheme_test/benchmark/base_test.cpp)
 
+    add_test_executable(IB_CH_KEF_CZS_2014_benchmark test/scheme_test/benchmark/IBCH/IB_CH_KEF_CZS_2014_benchmark.cpp)
+    add_test_executable(IB_CH_MD_LSX_2022_benchmark test/scheme_test/benchmark/IBCH/IB_CH_MD_LSX_2022_benchmark.cpp)
+    add_test_executable(IB_CH_ZSS_S1_2003_benchmark test/scheme_test/benchmark/IBCH/IB_CH_ZSS_S1_2003_benchmark.cpp)
+    add_test_executable(IB_CH_ZSS_S2_2003_benchmark test/scheme_test/benchmark/IBCH/IB_CH_ZSS_S2_2003_benchmark.cpp)
+    add_test_executable(ID_B_CollRes_XSL_2021_benchmark test/scheme_test/benchmark/IBCH/ID_B_CollRes_XSL_2021_benchmark.cpp)
+
     add_test_executable(DPCH_MXN_2022_benchmark test/scheme_test/benchmark/PBCH/DPCH_MXN_2022_benchmark.cpp)
     add_test_executable(MAPCH_ZLW_2021_benchmark test/scheme_test/benchmark/PBCH/MAPCH_ZLW_2021_benchmark.cpp)
     add_test_executable(PCH_DSS_2019_benchmark test/scheme_test/benchmark/PBCH/PCH_DSS_2019_benchmark.cpp)
