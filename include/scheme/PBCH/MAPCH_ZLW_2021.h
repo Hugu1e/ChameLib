@@ -12,9 +12,13 @@
 class MAPCH_ZLW_2021_pp{
     private:
         CH_ET_BC_CDK_2017_pp pp_CH;
+        MA_ABE_gpk gpk_MA_ABE;
     public:
         CH_ET_BC_CDK_2017_pp &get_pp_CH(){
             return this->pp_CH;
+        }
+        MA_ABE_gpk &get_gpk_MA_ABE(){
+            return gpk_MA_ABE;
         }
 };
 
@@ -92,8 +96,9 @@ class MAPCH_ZLW_2021: public PbcScheme{
     public:
         MAPCH_ZLW_2021(int curve);
 
-        void GlobalSetup(CH_ET_BC_CDK_2017_pk &pkCH, CH_ET_BC_CDK_2017_sk &skCH, MA_ABE_gpk &gpkABE, MAPCH_ZLW_2021_pp &pp, int k);
-        void AuthSetUp(MAPCH_ZLW_2021_mhk &mhk, MAPCH_ZLW_2021_mtk &mtk, std::string A, CH_ET_BC_CDK_2017_pk &pkCH, CH_ET_BC_CDK_2017_sk &skCH, MA_ABE_gpk &gpkABE, MAPCH_ZLW_2021_pp &pp);
+        void GlobalSetup(CH_ET_BC_CDK_2017_pk &pkCH, CH_ET_BC_CDK_2017_sk &skCH, MAPCH_ZLW_2021_pp &pp, int k);
+
+        void AuthSetUp(MAPCH_ZLW_2021_mhk &mhk, MAPCH_ZLW_2021_mtk &mtk, std::string A, CH_ET_BC_CDK_2017_pk &pkCH, CH_ET_BC_CDK_2017_sk &skCH, MAPCH_ZLW_2021_pp &pp);
 
         void KeyGen(MAPCH_ZLW_2021_mski &msk, MAPCH_ZLW_2021_mtk &mtk, MAPCH_ZLW_2021_mhk &mhk, std::string A, std::string GID);
 
