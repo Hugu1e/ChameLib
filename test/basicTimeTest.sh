@@ -1,10 +1,9 @@
 #!/bin/bash
 
 directories=(
-    "ABE_test"
+    "scheme_test/benchmark/PBCH"
     "scheme_test/CH_test"
     "scheme_test/IBCH_test"
-    "scheme_test/PBCH_test"
 )
 
 #  repeat test times
@@ -20,7 +19,7 @@ for dir in "${directories[@]}"; do
             if [ -f "$file" ]; then
                 TEST_NAME=$(basename "$file" | sed 's/\.[^.]*$//')
                 cd ../build
-                ./bin/"$TEST_NAME" --repeat ${REPEAT} --checktime
+                ./bin/"$TEST_NAME" --repeat ${REPEAT}
                 cd - > /dev/null
             fi
         done

@@ -84,13 +84,12 @@ TEST_P(PCHBA_TLL_2020_Test, Test){
     PCHBA_TLL_2020_sk skPCHBA[repeat];
     PCHBA_TLL_2020_pk pkPCHBA[repeat];
     
-    PCHBA_TLL_2020_sks sksPCHBA_1[repeat], sksPCHBA_2[repeat];
-    PCHBA_TLL_2020_h h1[repeat], h2[repeat];
-    PCHBA_TLL_2020_r r1[repeat], r2[repeat], r_p[repeat];
+    PCHBA_TLL_2020_sks sksPCHBA_1[repeat];
+    PCHBA_TLL_2020_h h2[repeat];
+    PCHBA_TLL_2020_r r2[repeat], r_p[repeat];
 
-    element_s *m1[repeat], *m2[repeat], *m_p[repeat];
+    element_s *m2[repeat], *m_p[repeat];
     for (int i = 0; i < repeat; i++){
-        m1[i] = ch.GetZrElement();
         m2[i] = ch.GetZrElement();
         m_p[i] = ch.GetZrElement();
     }
@@ -102,37 +101,25 @@ TEST_P(PCHBA_TLL_2020_Test, Test){
     this->start("KeyGen");
     for (int i = 0; i < repeat; i++) ch.KeyGen(sksPCHBA_1[i], pkPCHBA[i], skPCHBA[i], S1, ID12, U1);
     this->end("KeyGen");
-    for (int i = 0; i < repeat; i++) ch.KeyGen(sksPCHBA_2[i], pkPCHBA[i], skPCHBA[i], S2, ID12, U2);
     
     this->start("Hash");
-    for (int i = 0; i < repeat; i++) ch.Hash(h1[i], r1[i], m1[i], pkPCHBA[i], skPCHBA[i], MSP, ID12, U1);
+    for (int i = 0; i < repeat; i++) ch.Hash(h2[i], r2[i], m2[i], pkPCHBA[i], skPCHBA[i], MSP, ID12, U2);
     this->end("Hash");
     
     bool check_result[repeat];
     this->start("Check");
-    for (int i = 0; i < repeat; i++) check_result[i] = ch.Check(h1[i], r1[i], m1[i], pkPCHBA[i]);
+    for (int i = 0; i < repeat; i++) check_result[i] = ch.Check(h2[i], r2[i], m2[i], pkPCHBA[i]);
     this->end("Check");
     for (int i = 0; i < repeat; i++) ASSERT_TRUE(check_result[i]);
 
     this->start("Adapt");
-    for (int i = 0; i < repeat; i++) ch.Adapt(r_p[i], m_p[i], h1[i], r1[i], m1[i], MSP, ID12, U1, pkPCHBA[i], skPCHBA[i], sksPCHBA_1[i]);
+    for (int i = 0; i < repeat; i++) ch.Adapt(r_p[i], m_p[i], h2[i], r2[i], m2[i], MSP, ID12, U1, pkPCHBA[i], skPCHBA[i], sksPCHBA_1[i]);
     this->end("Adapt");
 
     bool verify_result[repeat];
     this->start("Verify");
-    for (int i = 0; i < repeat; i++) verify_result[i] = ch.Verify(h1[i], r_p[i], m_p[i], pkPCHBA[i]);
-    this->end("Verify");
-    for (int i = 0; i < repeat; i++) ASSERT_TRUE(verify_result[i]);
-
-    for (int i = 0; i < repeat; i++) ch.Hash(h2[i], r2[i], m2[i], pkPCHBA[i], skPCHBA[i], MSP, ID12, U2);
-    for (int i = 0; i < repeat; i++) check_result[i] = ch.Check(h2[i], r2[i], m2[i], pkPCHBA[i]);
-    for (int i = 0; i < repeat; i++) ASSERT_TRUE(check_result[i]);
-    try{
-        for (int i = 0; i < repeat; i++) ch.Adapt(r_p[i], m_p[i], h2[i], r2[i], m2[i], MSP, ID12, U2, pkPCHBA[i], skPCHBA[i], sksPCHBA_2[i]);
-    }catch(const std::runtime_error& e){}
-
-    for (int i = 0; i < repeat; i++) ch.Adapt(r_p[i], m_p[i], h2[i], r2[i], m2[i], MSP, ID12, U1, pkPCHBA[i], skPCHBA[i], sksPCHBA_1[i]);
     for (int i = 0; i < repeat; i++) verify_result[i] = ch.Verify(h2[i], r_p[i], m_p[i], pkPCHBA[i]);
+    this->end("Verify");
     for (int i = 0; i < repeat; i++) ASSERT_TRUE(verify_result[i]);
     
     average();

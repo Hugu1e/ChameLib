@@ -110,6 +110,14 @@ if(BUILD_TESTS)
     add_test_executable(RPCH_XNM_2021_test test/scheme_test/PBCH_test/RPCH_XNM_2021_test.cpp)
     
     add_test_executable(base_test test/scheme_test/base_test.cpp)
+
+    # benchmark
+    add_test_executable(DPCH_MXN_2022_benchmark test/scheme_test/benchmark/PBCH/DPCH_MXN_2022_benchmark.cpp)
+    add_test_executable(MAPCH_ZLW_2021_benchmark test/scheme_test/benchmark/PBCH/MAPCH_ZLW_2021_benchmark.cpp)
+    add_test_executable(PCH_DSS_2019_benchmark test/scheme_test/benchmark/PBCH/PCH_DSS_2019_benchmark.cpp)
+    add_test_executable(PCHBA_TLL_2020_benchmark test/scheme_test/benchmark/PBCH/PCHBA_TLL_2020_benchmark.cpp)
+    add_test_executable(RPCH_TMM_2022_benchmark test/scheme_test/benchmark/PBCH/RPCH_TMM_2022_benchmark.cpp)
+    add_test_executable(RPCH_XNM_2021_benchmark test/scheme_test/benchmark/PBCH/RPCH_XNM_2021_benchmark.cpp)
 endif()
 
 install(TARGETS ChameLib ARCHIVE DESTINATION lib)
