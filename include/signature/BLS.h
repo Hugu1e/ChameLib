@@ -5,10 +5,33 @@
 #include "../base/PbcScheme.h"
 #include "../utils/Hash.h"
 
-class BLS_pp: public PbcElements{};
-class BLS_pk: public PbcElements{};
-class BLS_sk: public PbcElements{};
-class BLS_signature: public PbcElements{};
+class BLS_pp: public PbcElements{
+    public:
+        BLS_pp(){
+            init(1);
+        }
+};
+
+class BLS_pk: public PbcElements{
+    public:
+        BLS_pk(){
+            init(1);
+        }
+};
+
+class BLS_sk: public PbcElements{
+    public:
+        BLS_sk(){
+            init(1);
+        }
+};
+
+class BLS_signature: public PbcElements{
+    public:
+        BLS_signature(){
+            init(1);
+        }
+};
 
 class BLS: public PbcScheme{
     private:
@@ -24,8 +47,8 @@ class BLS: public PbcScheme{
 
         void init(element_t _G, element_t _H, element_t _GT, element_t _Zn);
 
-        void Setup(BLS_pp &pp, BLS_pk &pk, BLS_sk &sk, BLS_signature &signature);
-        void Setup(BLS_pp &pp, BLS_pk &pk, BLS_sk &sk, BLS_signature &signature, element_t _g);
+        void Setup(BLS_pp &pp);
+        void Setup(BLS_pp &pp, element_t _g);
 
         void KeyGen(BLS_pk &pk, BLS_sk &sk, BLS_pp &pp);
 

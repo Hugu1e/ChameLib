@@ -49,12 +49,15 @@ void DPCH_MXN_2022::Decode(unsigned char *k, unsigned char * r, element_t res){
 }
 
 /**
- * @param pp: public parameters
- * @param pkDPCH: public key of DPCH
- * @param skDPCH: secret key of DPCH
- * @param k: key size
+ * @brief 
+ * 
+ * @param  pp[out]        public parameters
+ * @param  pkDPCH[out]    public key of DPCH
+ * @param  skDPCH[out]    secret key of DPCH
+ * @param  k[in]          key size
+ * 
  */
-void DPCH_MXN_2022::SetUp(DPCH_MXN_2022_pp &pp, DPCH_MXN_2022_pk &pkDPCH, DPCH_MXN_2022_sk &skDPCH, DPCH_MXN_2022_sigmaGid &sigmaGid, int k) {    
+void DPCH_MXN_2022::SetUp(DPCH_MXN_2022_pp &pp, DPCH_MXN_2022_pk &pkDPCH, DPCH_MXN_2022_sk &skDPCH, int k) {    
     element_random(tmp_G);
 
     ch_et.SetUp(pp.get_pp_CH(), k);
@@ -62,15 +65,18 @@ void DPCH_MXN_2022::SetUp(DPCH_MXN_2022_pp &pp, DPCH_MXN_2022_pk &pkDPCH, DPCH_M
 
     ma_abe.GlobalSetup(pp.get_gpk_MA_ABE(), tmp_G);
 
-    bls.Setup(pp.get_pp_BLS(), pkDPCH.get_pk_BLS(), skDPCH.get_sk_BLS(), sigmaGid.get_signature(), tmp_G);
+    bls.Setup(pp.get_pp_BLS(), tmp_G);
     bls.KeyGen(pkDPCH.get_pk_BLS(), skDPCH.get_sk_BLS(), pp.get_pp_BLS());
 }
 
 /**
- * @param skGid: secret key of gid
- * @param sigmaGid: signature of gid
- * @param skDPCH: secret key of DPCH
- * @param gid: global id
+ * @brief 
+ * 
+ * @param  skGid[out]     secret key of gid
+ * @param  sigmaGid[out]  signature of gid
+ * @param  skDPCH[in]     secret key of DPCH
+ * @param  gid[in]        global id
+ * 
  */
 void DPCH_MXN_2022::ModSetUp(DPCH_MXN_2022_skGid &skGid, DPCH_MXN_2022_sigmaGid &sigmaGid, DPCH_MXN_2022_sk &skDPCH, std::string gid){
     skGid.get_sk_CH().set(CH_ET_BC_CDK_2017::d0, skDPCH.get_sk_CH()[CH_ET_BC_CDK_2017::d0]);
@@ -78,23 +84,29 @@ void DPCH_MXN_2022::ModSetUp(DPCH_MXN_2022_skGid &skGid, DPCH_MXN_2022_sigmaGid 
 }
 
 /**
- * @param pkTheta: public key of Theta
- * @param skTheta: secret key of Theta
- * @param pp: public parameters
- * @param A: attribute
+ * @brief 
+ * 
+ * @param  pkTheta[out]  public key of Theta
+ * @param  skTheta[out]  secret key of Theta
+ * @param  pp[in]        public parameters
+ * @param  A[in]         attribute
+ * 
  */
 void DPCH_MXN_2022::AuthSetUp(DPCH_MXN_2022_pkTheta &pkTheta, DPCH_MXN_2022_skTheta &skTheta, DPCH_MXN_2022_pp &pp, std::string A){
     ma_abe.AuthSetup(pkTheta.get_pk(), skTheta.get_sk(), pp.get_gpk_MA_ABE(), A);
 }
 
 /**
- * @param skGidA: secret key of gid and attribute
- * @param pp: public parameters
- * @param pkDPCH: public key of DPCH
- * @param gid: global id
- * @param sigmaGid: signature of gid
- * @param skTheta: secret key of Theta
- * @param A: attribute
+ * @brief 
+ * 
+ * @param  skGidA[out]    secret key of gid and attribute
+ * @param  pp[in]         public parameters
+ * @param  pkDPCH[in]     public key of DPCH
+ * @param  gid[in]        global id
+ * @param  sigmaGid[in]   signature of gid
+ * @param  skTheta[in]    secret key of Theta
+ * @param  A[in]          attribute
+ * 
  */
 void DPCH_MXN_2022::ModKeyGen(DPCH_MXN_2022_skGidA &skGidA, DPCH_MXN_2022_pp &pp, DPCH_MXN_2022_pk &pkDPCH, std::string gid, DPCH_MXN_2022_sigmaGid &sigmaGid, DPCH_MXN_2022_skTheta &skTheta, std::string A){
     if(!(bls.Verify(pp.get_pp_BLS(), pkDPCH.get_pk_BLS(), gid, sigmaGid.get_signature()))){
@@ -138,14 +150,17 @@ void DPCH_MXN_2022::genEncMAABE(MA_ABE_ciphertext &ct, element_t pt, Element_t_m
 }
 
 /**
- * @param h: hash value
- * @param r: random value
- * @param c: cyphertext
- * @param pp: public parameters
- * @param pkDPCH: public key of DPCH
- * @param m: message
- * @param pkThetas: public keys of Theta
- * @param polocy: policy
+ * @brief 
+ * 
+ * @param  h[out]          hash value
+ * @param  r[out]          random value
+ * @param  m[in]           message
+ * @param  pp[in]          public parameters
+ * @param  pkDPCH[in]      public key of DPCH
+ * @param  pkThetas[in]    public keys of Theta
+ * @param  MSP[in]         
+ * @param  policy_str[in]  
+ * 
  */
 void DPCH_MXN_2022::Hash(DPCH_MXN_2022_h &h, DPCH_MXN_2022_r &r, std::string m, DPCH_MXN_2022_pp &pp, DPCH_MXN_2022_pk &pkDPCH, std::vector<DPCH_MXN_2022_pkTheta *> &pkThetas, Element_t_matrix *MSP, std::string policy_str){
     CH_ET_BC_CDK_2017_etd etd;
@@ -183,26 +198,35 @@ void DPCH_MXN_2022::Hash(DPCH_MXN_2022_h &h, DPCH_MXN_2022_r &r, std::string m, 
 }
 
 /**
- * @param pkDPCH: public key of DPCH
- * @param m: message
- * @param h: hash value
- * @param r: random value
- * @return bool
+ * @brief 
+ * 
+ * @param  pkDPCH[in]  public key of DPCH
+ * @param  m[in]       message
+ * @param  h[in]       hash value
+ * @param  r[in]       random value
+ * 
+ * @return 
  */
 bool DPCH_MXN_2022::Check(DPCH_MXN_2022_pk &pkDPCH, std::string m, DPCH_MXN_2022_h &h, DPCH_MXN_2022_r &r){
     return ch_et.Check(h.get_h(), r.get_r(), pkDPCH.get_pk_CH(), m);
 }
 
 /**
- * @param r_p: random value
- * @param pkDPCH: public key of DPCH
- * @param skGid: secret key of gid
- * @param skGidAs: secret keys of gid and attributes
- * @param c: cyphertext
- * @param m: message
- * @param m_p: message
- * @param h: hash value
- * @param r: random value
+ * @brief 
+ * 
+ * @param  r_p[out]        adapted random value
+ * @param  m_p[in]         message to adapt
+ * @param  h[in]           hash value
+ * @param  r[in]           random value
+ * @param  m[in]           original message
+ * @param  pkDPCH[in]      public key of DPCH
+ * @param  skGid[in]       secret key of gid
+ * @param  skGidAs[in]     secret keys of gid and attributes
+ * @param  pp[in]          public parameters
+ * @param  pkThetas[in]    public keys of Theta
+ * @param  MSP[in]         
+ * @param  policy_str[in]  
+ * 
  */
 void DPCH_MXN_2022::Adapt(DPCH_MXN_2022_r &r_p, std::string m_p, DPCH_MXN_2022_h &h, DPCH_MXN_2022_r &r, std::string m,
     DPCH_MXN_2022_pk &pkDPCH, DPCH_MXN_2022_skGid &skGid, std::vector<DPCH_MXN_2022_skGidA *> &skGidAs,

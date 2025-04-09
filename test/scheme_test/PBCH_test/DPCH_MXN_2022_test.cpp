@@ -68,116 +68,101 @@ TEST_P(DPCH_MXN_2022_Test, Test){
 
     const std::string GID = "GID of A B C D with attribute ONE TOW THREE FOUR";
 
-    std::vector<std::vector<DPCH_MXN_2022_pkTheta *>> pkThetas(repeat);
-    std::vector<std::vector<DPCH_MXN_2022_skTheta *>> skThetas(repeat);
-    std::vector<std::vector<DPCH_MXN_2022_skGidA *>> skGidAs(repeat);
+    std::vector<DPCH_MXN_2022_pkTheta *> pkThetas;
+    std::vector<DPCH_MXN_2022_skTheta *> skThetas;
+    std::vector<DPCH_MXN_2022_skGidA *> skGidAs;
 
-    DPCH_MXN_2022_pp ppDPCH[repeat];
-    DPCH_MXN_2022_pk pkDPCH[repeat];
-    DPCH_MXN_2022_sk skDPCH[repeat];
+    DPCH_MXN_2022_pp ppDPCH;
+    DPCH_MXN_2022_pk pkDPCH;
+    DPCH_MXN_2022_sk skDPCH;
     DPCH_MXN_2022_skGid skGid[repeat];
-    DPCH_MXN_2022_sigmaGid sigmaGid[repeat];
+    DPCH_MXN_2022_sigmaGid sigmaGid;
     DPCH_MXN_2022_h h[repeat];
     DPCH_MXN_2022_r r[repeat], r_p[repeat];
     std::string m = "message";
     std::string m_p = "message_p";
 
     this->start("SetUp");
-    for (int i = 0; i < repeat; i++) ch.SetUp(ppDPCH[i], pkDPCH[i], skDPCH[i], sigmaGid[i], GetParam().lamuda);
+    for (int i = 0; i < repeat; i++) ch.SetUp(ppDPCH, pkDPCH, skDPCH, GetParam().lamuda);
     this->end("SetUp");
 
     this->start("ModSetUp");
-    for (int i = 0; i < repeat; i++) ch.ModSetUp(skGid[i], sigmaGid[i], skDPCH[i], GID);
+    for (int i = 0; i < repeat; i++) ch.ModSetUp(skGid[i], sigmaGid, skDPCH, GID);
     this->end("ModSetUp");
     
-    for (int i = 0; i < repeat; i++){
-        for(int j = 0; j < GetParam().authNum; j++) {
-            DPCH_MXN_2022_pkTheta *pkTheta = new DPCH_MXN_2022_pkTheta; 
-            DPCH_MXN_2022_skTheta *skTheta = new DPCH_MXN_2022_skTheta;
-    
-            if(j < SIZE_OF_ATTRIBUTES){
-                this->start("AuthSetUp", false);
-                ch.AuthSetUp(*pkTheta, *skTheta, ppDPCH[i], ATTRIBUTES[j]);
-                this->end("AuthSetUp", false);
-            }else{
-                this->start("AuthSetUp", false);
-                ch.AuthSetUp(*pkTheta, *skTheta, ppDPCH[i], "ATTRIBUTE@AUTHORITY_" + std::to_string(j));
-                this->end("AuthSetUp", false);
-            }
-    
-            pkThetas[i].push_back(pkTheta);
-            skThetas[i].push_back(skTheta);
+    for(int j = 0; j < GetParam().authNum; j++) {
+        DPCH_MXN_2022_pkTheta *pkTheta = new DPCH_MXN_2022_pkTheta; 
+        DPCH_MXN_2022_skTheta *skTheta = new DPCH_MXN_2022_skTheta;
+
+        if(j < SIZE_OF_ATTRIBUTES){
+            this->start("AuthSetUp", false);
+            ch.AuthSetUp(*pkTheta, *skTheta, ppDPCH, ATTRIBUTES[j]);
+            this->end("AuthSetUp", false);
+        }else{
+            this->start("AuthSetUp", false);
+            ch.AuthSetUp(*pkTheta, *skTheta, ppDPCH, "ATTRIBUTE@AUTHORITY_" + std::to_string(j));
+            this->end("AuthSetUp", false);
         }
+
+        pkThetas.push_back(pkTheta);
+        skThetas.push_back(skTheta);
     }
     average("AuthSetUp", GetParam().authNum);
     
-    for (int i = 0; i < repeat; i++){
-        for(int j = 0; j < GetParam().authNum; j++) {
-            DPCH_MXN_2022_skGidA *skGidA = new DPCH_MXN_2022_skGidA;
-    
-            if (j < SIZE_OF_ATTRIBUTES) {
-                this->start("ModKeyGen", false);
-                ch.ModKeyGen(*skGidA, ppDPCH[i], pkDPCH[i], GID, sigmaGid[i], *skThetas[i][j], ATTRIBUTES[j]);
-                this->end("ModKeyGen", false);
-            } else {
-                this->start("ModKeyGen", false);
-                ch.ModKeyGen(*skGidA, ppDPCH[i], pkDPCH[i], GID, sigmaGid[i], *skThetas[i][j], "ATTRIBUTE@AUTHORITY_" + std::to_string(j));
-                this->end("ModKeyGen", false);
-            }
-            
-            skGidAs[i].push_back(skGidA);
+    for(int j = 0; j < GetParam().authNum; j++) {
+        DPCH_MXN_2022_skGidA *skGidA = new DPCH_MXN_2022_skGidA;
+
+        if (j < SIZE_OF_ATTRIBUTES) {
+            this->start("ModKeyGen", false);
+            ch.ModKeyGen(*skGidA, ppDPCH, pkDPCH, GID, sigmaGid, *skThetas[j], ATTRIBUTES[j]);
+            this->end("ModKeyGen", false);
+        } else {
+            this->start("ModKeyGen", false);
+            ch.ModKeyGen(*skGidA, ppDPCH, pkDPCH, GID, sigmaGid, *skThetas[j], "ATTRIBUTE@AUTHORITY_" + std::to_string(j));
+            this->end("ModKeyGen", false);
         }
+        
+        skGidAs.push_back(skGidA);
     }
     average("ModKeyGen", GetParam().authNum);
 
     this->start("Hash");
-    for (int i = 0; i < repeat; i++) ch.Hash(h[i], r[i], m, ppDPCH[i], pkDPCH[i], pkThetas[i], MSP, POLICY);
+    for (int i = 0; i < repeat; i++) ch.Hash(h[i], r[i], m, ppDPCH, pkDPCH, pkThetas, MSP, POLICY);
     this->end("Hash");
 
     bool check_result[repeat];
     this->start("Check");
-    for (int i = 0; i < repeat; i++) check_result[i] = ch.Check(pkDPCH[i], m, h[i], r[i]);
+    for (int i = 0; i < repeat; i++) check_result[i] = ch.Check(pkDPCH, m, h[i], r[i]);
     this->end("Check");
     for (int i = 0; i < repeat; i++) ASSERT_TRUE(check_result[i]);
 
     // choose partial secret keys
-    std::vector<std::vector<DPCH_MXN_2022_skGidA *>> _skGidAs(repeat);
+    std::vector<DPCH_MXN_2022_skGidA *> _skGidAs;
     for (int i = 0; i < repeat; i++){
-        _skGidAs[i].push_back(skGidAs[i][0]);
-        _skGidAs[i].push_back(skGidAs[i][1]);
-        _skGidAs[i].push_back(skGidAs[i][2]);
+        _skGidAs.push_back(skGidAs[0]);
+        _skGidAs.push_back(skGidAs[1]);
+        _skGidAs.push_back(skGidAs[2]);
     }
 
     this->start("Adapt");
-    for (int i = 0; i < repeat; i++) ch.Adapt(r_p[i], m_p, h[i], r[i], m, pkDPCH[i], skGid[i], _skGidAs[i], ppDPCH[i], pkThetas[i], MSP, POLICY);
+    for (int i = 0; i < repeat; i++) ch.Adapt(r_p[i], m_p, h[i], r[i], m, pkDPCH, skGid[i], _skGidAs, ppDPCH, pkThetas, MSP, POLICY);
     this->end("Adapt");
 
     bool verify_result[repeat];
     this->start("Verify");
-    for (int i = 0; i < repeat; i++) verify_result[i] = ch.Verify(pkDPCH[i], m_p, h[i], r_p[i]);
+    for (int i = 0; i < repeat; i++) verify_result[i] = ch.Verify(pkDPCH, m_p, h[i], r_p[i]);
     this->end("Verify");
     for (int i = 0; i < repeat; i++) ASSERT_TRUE(verify_result[i]);
     
-    average();
+    std::vector<std::string> list = {"SetUp", "ModSetUp", "Hash", "Check", "Adapt", "Verify"};
+    average(list);
 
     // free
     delete binary_tree_expression;
     delete MSP;
-    for(int i=0; i<pkThetas.size(); i++){
-        for(int j=0; j<pkThetas[i].size(); j++){
-            delete pkThetas[i][j];
-        }
-    }
-    for(int i=0; i<skThetas.size(); i++){
-        for(int j=0; j<skThetas[i].size(); j++){
-            delete skThetas[i][j];
-        }
-    }
-    for(int i=0; i<skGidAs.size(); i++){
-        for(int j=0; j<skGidAs[i].size(); j++){
-            delete skGidAs[i][j];
-        }
-    }
+    for(int j=0; j<pkThetas.size(); j++) delete pkThetas[j];
+    for(int j=0; j<skThetas.size(); j++) delete skThetas[j];
+    for(int j=0; j<skGidAs.size(); j++) delete skGidAs[j];
 }
 
 int main(int argc, char **argv){

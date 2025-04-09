@@ -126,6 +126,16 @@ class BaseTest : public testing::TestWithParam<T>  {
             }
         }
 
+        void average(std::vector<std::string> list){
+            for(auto &p : average_time){
+                if(std::find(list.begin(), list.end(), p.first) != list.end()){
+                    p.second /= repeat;
+                }
+                if(out_file) fprintf(out, "%s average time: %lf ms.\n", p.first.c_str(), p.second);
+                if(visiable) printf("%s average time: %lf ms.\n", p.first.c_str(), p.second);
+            }
+        }
+
         void average(std::string name, int repeat_time){
             average_time[name] /= repeat_time;
         }

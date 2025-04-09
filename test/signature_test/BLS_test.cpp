@@ -57,7 +57,7 @@ TEST_P(BLS_Test, Test){
     BLS_signature signature;
     
     this->start("Setup");
-    bls.Setup(pp, pk, sk, signature);
+    bls.Setup(pp);
     this->end("Setup");
 
     this->start("KeyGen");

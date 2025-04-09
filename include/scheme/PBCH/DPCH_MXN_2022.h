@@ -157,7 +157,7 @@ class DPCH_MXN_2022: public PbcScheme{
     public:
         DPCH_MXN_2022(int curve);
 
-        void SetUp(DPCH_MXN_2022_pp &pp, DPCH_MXN_2022_pk &pkDPCH, DPCH_MXN_2022_sk &skDPCH, DPCH_MXN_2022_sigmaGid &sigmaGid, int k);
+        void SetUp(DPCH_MXN_2022_pp &pp, DPCH_MXN_2022_pk &pkDPCH, DPCH_MXN_2022_sk &skDPCH, int k);
 
         void ModSetUp(DPCH_MXN_2022_skGid &skGid, DPCH_MXN_2022_sigmaGid &sigmaGid, DPCH_MXN_2022_sk &skDPCH, std::string gid);
 

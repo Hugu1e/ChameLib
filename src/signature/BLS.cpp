@@ -44,36 +44,36 @@ void BLS::Pairing(element_t res, element_t a, element_t b){
 }
 
 /**
- * @param[out] pp public parameters
+ * @brief Setup the public parameters
+ * 
+ * @param  pp[out]  public parameters
+ * 
  */
-void BLS::Setup(BLS_pp &pp, BLS_pk &pk, BLS_sk &sk, BLS_signature &signature)
+void BLS::Setup(BLS_pp &pp)
 {
-    pp.init(1);
-    pk.init(1);
-    sk.init(1);
-    signature.init(1);
-
     element_random(tmp_G);
     pp.set(g, tmp_G);
 }
+
 /**
- * @param[out] pp public parameters
- * @param[in] g generator g
+ * @brief Setup the public parameters
+ * 
+ * @param  pp[out]  public parameters
+ * @param  _g[in]   generator g
+ * 
  */
-void BLS::Setup(BLS_pp &pp, BLS_pk &pk, BLS_sk &sk, BLS_signature &signature, element_t _g)
-{
-    pp.init(1);
-    pk.init(1);
-    sk.init(1);
-    signature.init(1);
-    
+void BLS::Setup(BLS_pp &pp, element_t _g)
+{    
     pp.set(g, _g);
 }
 
 /**
- * @param[out] pk public key
- * @param[out] sk secret key
- * @param[in] pp public parameters
+ * @brief Generate the public key and secret key
+ * 
+ * @param  pk[out]  public key
+ * @param  sk[out]  secret key
+ * @param  pp[in]   public parameters
+ * 
  */
 void BLS::KeyGen(BLS_pk &pk, BLS_sk &sk, BLS_pp &pp)
 {
@@ -91,10 +91,11 @@ void BLS::H(element_t res, std::string m)
 
 /**
  * @brief Sign a message
- *
- * @param[out] signature: signature of message
- * @param[in] sk: secret key
- * @param[in] message: message to sign
+ * 
+ * @param  signature[out]  signature of message
+ * @param  sk[in]          secret key
+ * @param  message[in]     message to sign
+ * 
  */
 void BLS::Sign(BLS_signature &signature, BLS_sk &sk, std::string message)
 {
@@ -105,11 +106,12 @@ void BLS::Sign(BLS_signature &signature, BLS_sk &sk, std::string message)
 
 /**
  * @brief Verify a message
- *
- * @param[in] pp: public parameters
- * @param[in] pk: public key
- * @param[in] message: message to verify
- * @param[in] signature: signature of message
+ * 
+ * @param  pp[in]         public parameters
+ * @param  pk[in]         public key
+ * @param  message[in]    message to verify
+ * @param  signature[in]  signature of message
+ * 
  * @return true if signature is valid
  */
 bool BLS::Verify(BLS_pp &pp, BLS_pk &pk, std::string message, BLS_signature &signature)
