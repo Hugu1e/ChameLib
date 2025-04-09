@@ -1,13 +1,9 @@
 #include "ChameLib.h"
-#include "CommonTest.h"
+#include <gtest/gtest.h>
 
 struct TestParams{
 	int lamuda;
 };
-
-std::ostream& operator<<(std::ostream& os, const TestParams& params) {
-    return os << "lamuda=" << params.lamuda;
-}
 
 const TestParams test_values[] = {
     {256},
@@ -16,18 +12,7 @@ const TestParams test_values[] = {
     {2048}
 };
 
-class CH_CDK_2017_Test : public BaseTest<TestParams>{
-    protected:
-        void SetUp() override {
-            BaseTest::SetUp();
-
-            std::string testName = ::testing::UnitTest::GetInstance()->current_test_info()->name();
-            int lamuda = GetParam().lamuda;
-
-            fprintf(out, "%s lamuda %d\n", testName.c_str(), lamuda);
-            if(visiable)printf("%s lamuda %d\n", testName.c_str(), lamuda);
-        }
-};
+class CH_CDK_2017_Test : public testing::TestWithParam<TestParams>{};
 
 INSTANTIATE_TEST_CASE_P(
 	CH_Test,
@@ -38,53 +23,33 @@ INSTANTIATE_TEST_CASE_P(
 TEST_P(CH_CDK_2017_Test, Test){
     CH_CDK_2017 ch;
 
-    CH_CDK_2017_pk pk[repeat];
-    CH_CDK_2017_sk sk[repeat];
-    CH_CDK_2017_h h[repeat];
-    CH_CDK_2017_r r[repeat], r_p[repeat];
-    mpz_t m[repeat], tag[repeat], m_p[repeat], tag_p[repeat];
+    CH_CDK_2017_pk pk;
+    CH_CDK_2017_sk sk;
+    CH_CDK_2017_h h;
+    CH_CDK_2017_r r, r_p;
+    mpz_t m, tag, m_p, tag_p;
+    mpz_inits(m, tag, m_p, tag_p, NULL);
 
-    this->start("SetUp");
-    for(int i = 0; i < repeat; i++) ch.SetUp();
-    this->end("SetUp");
+    ch.SetUp();
 
-    this->start("KeyGen");
-    for(int i = 0; i < repeat; i++) ch.KeyGen(pk[i], sk[i], GetParam().lamuda);
-    this->end("KeyGen");
+    ch.KeyGen(pk, sk, GetParam().lamuda);
 
-    for(int i = 0; i < repeat; i++){
-        mpz_inits(m[i], tag[i], m_p[i], tag_p[i], NULL);
-        RandomGenerator::RandomN(m[i], pk[i].get_rsa_pk()[AE_RSA::n]);
-        RandomGenerator::RandomN(tag[i], pk[i].get_rsa_pk()[AE_RSA::n]);
-        RandomGenerator::RandomN(m_p[i], pk[i].get_rsa_pk()[AE_RSA::n]);
-    }
+    RandomGenerator::RandomN(m, pk.get_rsa_pk()[AE_RSA::n]);
+    RandomGenerator::RandomN(tag, pk.get_rsa_pk()[AE_RSA::n]);
 
-    this->start("Hash");
-    for(int i = 0; i < repeat; i++) ch.Hash(h[i], r[i], m[i], tag[i], pk[i]);
-    this->end("Hash");
+    ch.Hash(h, r, m, tag, pk);
 
-    bool check_result[repeat];
-    this->start("Check");
-    for(int i = 0; i < repeat; i++) check_result[i] = ch.Check(h[i], r[i], m[i], tag[i], pk[i]);
-    this->end("Check");
-    for(int i = 0; i < repeat; i++) ASSERT_TRUE(check_result[i]);
+    ASSERT_TRUE(ch.Check(h, r, m, tag, pk));
 
-    this->start("Adapt");
-    for(int i = 0; i < repeat; i++) ch.Adapt(r_p[i], tag_p[i], h[i], r[i], m_p[i], sk[i], pk[i]);
-    this->end("Adapt");
+    RandomGenerator::RandomN(m_p, pk.get_rsa_pk()[AE_RSA::n]);
 
-    bool verify_result[repeat];
-    this->start("Verify");
-    for(int i = 0; i < repeat; i++) verify_result[i] = ch.Verify(h[i], r_p[i], m_p[i], tag_p[i], pk[i]);
-    this->end("Verify");
-    for(int i = 0; i < repeat; i++) ASSERT_TRUE(verify_result[i]);
+    ch.Adapt(r_p, tag_p, h, r, m_p, sk, pk);
 
-    average();
+    ASSERT_TRUE(ch.Verify(h, r_p, m_p, tag_p, pk));
 }
 
-int main(int argc, char **argv){
-    ParseCommandLineArgs(argc, argv);
-    
+int main(int argc, char **argv) 
+{
 	::testing::InitGoogleTest(&argc, argv);
 	return RUN_ALL_TESTS();
 }

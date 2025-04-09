@@ -1,31 +1,16 @@
 #include "ChameLib.h"
-#include "CommonTest.h"
+#include <gtest/gtest.h>
 
 struct TestParams{
 	int k;
     int tau;
 };
 
-std::ostream& operator<<(std::ostream& os, const TestParams& params) {
-    return os << "k=" << params.k << " tau=" << params.tau;
-}
-
 const TestParams test_values[] = {
     {1024, 512}
 };
 
-class CH_KEF_MH_RSA_F_AM_2004_Test : public BaseTest<TestParams>{
-    protected:
-        void SetUp() override {
-            BaseTest::SetUp();
-
-            std::string testName = ::testing::UnitTest::GetInstance()->current_test_info()->name();
-            int k = GetParam().k;
-            int tau = GetParam().tau;
-            fprintf(out, "%s k %d tau %d\n", testName.c_str(), k, tau);
-            if(visiable)printf("%s k %d tau %d\n", testName.c_str(), k, tau);
-        }
-};
+class CH_KEF_MH_RSA_F_AM_2004_Test : public testing::TestWithParam<TestParams>{};
 
 INSTANTIATE_TEST_CASE_P(
 	CH_Test,
@@ -36,52 +21,35 @@ INSTANTIATE_TEST_CASE_P(
 TEST_P(CH_KEF_MH_RSA_F_AM_2004_Test, Test){
     CH_KEF_MH_RSA_F_AM_2004 ch;
 
-    CH_KEF_MH_RSA_F_AM_2004_pk pk[repeat];
-    CH_KEF_MH_RSA_F_AM_2004_sk sk[repeat];
-    mpz_t h[repeat], B[repeat], m[repeat], m_p[repeat], label[repeat], r[repeat], r_p[repeat];
-    for (int i = 0; i < repeat; i++) mpz_inits(h[i], B[i], r[i], m[i], label[i], r_p[i], m_p[i], NULL);
+    CH_KEF_MH_RSA_F_AM_2004_pk pk;
+    CH_KEF_MH_RSA_F_AM_2004_sk sk;
+    mpz_t h;
+    mpz_t B;
+    mpz_t m,m_p;
+    mpz_t label;
+    mpz_t r, r_p;
+    mpz_inits(h, B, r, m, label, r_p, m_p, NULL);
 
-    this->start("SetUp");
-    for (int i = 0; i < repeat; i++) ch.SetUp();
-    this->end("SetUp");
+    ch.SetUp();
 
-    this->start("KeyGen");
-    for (int i = 0; i < repeat; i++) ch.KeyGen(pk[i], sk[i], GetParam().k, GetParam().tau);
-    this->end("KeyGen");
+    ch.KeyGen(pk, sk, GetParam().k, GetParam().tau);
 
-    for (int i = 0; i < repeat; i++) {
-        mpz_set_ui(m[i], 42525346346746 + i);
-        mpz_set_ui(label[i], 424253532414 + i);
-    }
+    mpz_set_ui(m, 42525346346746);
+    mpz_set_ui(label, 424253532414);
+ 
+    ch.Hash(h, r, B, pk, sk, m, label);
 
-    this->start("Hash");
-    for (int i = 0; i < repeat; i++) ch.Hash(h[i], r[i], B[i], pk[i], sk[i], m[i], label[i]);
-    this->end("Hash");
+    ASSERT_TRUE(ch.Check(pk, m, label, h, r));
 
-    bool check_result[repeat];
-    this->start("Check");
-    for (int i = 0; i < repeat; i++) check_result[i] = ch.Check(pk[i], m[i], label[i], h[i], r[i]);
-    this->end("Check");
-    for (int i = 0; i < repeat; i++) ASSERT_TRUE(check_result[i]);
+    mpz_set_ui(m_p, 96725346346246);
 
-    for (int i = 0; i < repeat; i++) mpz_set_ui(m_p[i], 96725346346246 + i);
+    ch.Adapt(r_p, pk, m, m_p, label, h, B, r);
 
-    this->start("Adapt");
-    for (int i = 0; i < repeat; i++) ch.Adapt(r_p[i], pk[i], m[i], m_p[i], label[i], h[i], B[i], r[i]);
-    this->end("Adapt");
-
-    bool verify_result[repeat];
-    this->start("Verify");
-    for (int i = 0; i < repeat; i++) verify_result[i] = ch.Verify(pk[i], m_p[i], label[i], h[i], r_p[i]);
-    this->end("Verify");
-    for (int i = 0; i < repeat; i++) ASSERT_TRUE(verify_result[i]);
-
-    average();
+    ASSERT_TRUE(ch.Verify(pk, m_p, label, h, r_p));
 }
 
-int main(int argc, char **argv){
-    ParseCommandLineArgs(argc, argv);
-    
+int main(int argc, char **argv) 
+{
 	::testing::InitGoogleTest(&argc, argv);
 	return RUN_ALL_TESTS();
 }
