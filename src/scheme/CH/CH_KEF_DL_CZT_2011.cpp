@@ -155,6 +155,4 @@ CH_KEF_DL_CZT_2011::~CH_KEF_DL_CZT_2011() {
     element_clear(tmp_Zn);
     element_clear(tmp_Zn_2);
     element_clear(tmp_Zn_3);
-    element_clear(G1);
-    element_clear(Zn);
 }

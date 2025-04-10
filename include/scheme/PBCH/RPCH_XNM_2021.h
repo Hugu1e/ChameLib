@@ -169,6 +169,8 @@ class RPCH_XNM_2021: public PbcScheme{
 
         bool Verify(RPCH_XNM_2021_h &h, RPCH_XNM_2021_r &r_p, std::string m_p, RPCH_XNM_2021_pk &pkRPCH);
 
+        Element_t_matrix* ComputeMSP(const std::string &policy_str);
+
         ~RPCH_XNM_2021();
 };
 

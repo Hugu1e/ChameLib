@@ -15,13 +15,9 @@ ABET::ABET(int curve, bool swap):PbcScheme(curve){
     initTmp();
 }
 
-void ABET::init(element_t _G1, element_t _G2, element_t _GT, element_t _Zn, bool swap){
+void ABET::init(element_t _G1, element_t _G2, element_t _GT, element_t _Zn, bool swap, bool shared_pairing){
     this->swap = swap;
-
-    element_init_same_as(G1, _G1);
-    element_init_same_as(G2, _G2);
-    element_init_same_as(GT, _GT);
-    element_init_same_as(Zn, _Zn);
+    PbcScheme::init(_G1, _G2, _GT, _Zn, shared_pairing);
 
     initTmp();
 }
@@ -707,6 +703,7 @@ void ABET::Decrypt(unsigned char *res_R, element_t res_r, ABET_mpk &mpk, ABET_ms
             v->pushBack(MSP->getElement(i, j));
         }
         attributesMatrix->pushBack(v);
+        delete v;
     }
     // get inverse matrix
     Element_t_matrix* inverse_attributesMatrix = attributesMatrix->inverse();
@@ -794,8 +791,14 @@ void ABET::Decrypt(unsigned char *res_R, element_t res_r, ABET_mpk &mpk, ABET_ms
 
     element_div(res_r, ciphertext.get_ct_p()[0], this->tmp_Zn);
 
+    // free
     element_clear(num);
     element_clear(den);
+    delete attributesMatrix;
+    delete inverse_attributesMatrix;
+    delete unit;
+    delete x;
+    delete R_;
 }
 
 void ABET::GetID_(element_t ID_, ABET_mpk &mpk, ABET_ID &ID, int mi_oj, int type){
@@ -817,15 +820,23 @@ void ABET::GetID_(element_t ID_, ABET_mpk &mpk, ABET_ID &ID, int mi_oj, int type
     }
 }
 
+Element_t_matrix* ABET::ComputeMSP(const std::string &policy_str){
+    std::vector<std::string> postfix_expression = Policy_resolution::infixToPostfix(policy_str);
+    Binary_tree_policy* binary_tree_expression = Policy_resolution::postfixToBinaryTree(postfix_expression, Zn);
+    Element_t_matrix* MSP = Policy_generation::getPolicyInMatrixFormFromTree(binary_tree_expression);
+
+    delete binary_tree_expression;
+    return MSP;
+}
 
 ABET::~ABET(){
-    element_s *clear_list[] = {d1, d2, d3, r1, r2, 
+    element_s *clear_list[] = {d1, d2, d3, r1, r2, R,
         b1r1a1, b1r1a2, b2r2a1, b2r2a2, r1r2a1a, r1r2a2a, aa1, aa2,
-        s1, s2, tmp_G, tmp_G_2, tmp_G_3, tmp_G_4, 
+        s1, s2, z_1, z_2, z, alpha_a_1, alpha_a_2, ID_i_1,
+        tmp_G, tmp_G_2, tmp_G_3, tmp_G_4, 
         tmp_H, tmp_H_2, 
         tmp_GT, tmp_GT_2, tmp_GT_3, 
-        tmp_Zn, tmp_Zn_2, 
-        G1, G2, GT, Zn};
+        tmp_Zn, tmp_Zn_2};
     
     for(int i = 0; i < sizeof(clear_list)/sizeof(clear_list[0]); i++){
         element_clear(clear_list[i]);

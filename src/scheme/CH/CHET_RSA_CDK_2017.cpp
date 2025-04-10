@@ -120,8 +120,8 @@ bool CHET_RSA_CDK_2017::Check(CHET_RSA_CDK_2017_h &h, mpz_t r, mpz_t m, CHET_RSA
  */
 void CHET_RSA_CDK_2017::Adapt(mpz_t r_p, mpz_t m_p, mpz_t m, mpz_t r, CHET_RSA_CDK_2017_h &h, CHET_RSA_CDK_2017_sk &sk, CHET_RSA_CDK_2017_etd &etd, CHET_RSA_CDK_2017_pk &pk){
     // Check that n0 = p0q0, where p0 and q0 is taken from etd. If this is not thecase, return ⊥.
-    mpz_t tmp, tmp_nn,tmp_d, etd_p_minus_1, etd_q_minus_1, p_minus_1, q_minus_1,phi, g_p,tmp_1,tmp_2;
-    mpz_inits(tmp, tmp_nn,tmp_d, etd_p_minus_1, etd_q_minus_1, p_minus_1, q_minus_1,phi, g_p,tmp_1,tmp_2, NULL);
+    mpz_t tmp, tmp_nn, tmp_d, etd_p_minus_1, etd_q_minus_1, p_minus_1, q_minus_1,phi, g_p, tmp_1, tmp_2;
+    mpz_inits(tmp, tmp_nn,tmp_d, etd_p_minus_1, etd_q_minus_1, p_minus_1, q_minus_1,phi, g_p, tmp_1, tmp_2, NULL);
 
     mpz_mul(tmp, etd[p], etd[q]);
     if(mpz_cmp(tmp, h[n_]) != 0){
@@ -145,19 +145,7 @@ void CHET_RSA_CDK_2017::Adapt(mpz_t r_p, mpz_t m_p, mpz_t m, mpz_t r, CHET_RSA_C
     mpz_mul(phi, phi, q_minus_1);
     // compute d
     mpz_invert(tmp_d, pk[e], phi);
-
-    // // 验证 d 计算是否正确
-    // mpz_t tmp_test;
-    // mpz_init(tmp_test);
-    // mpz_mul(tmp_test, e, tmp_d);
-    // mpz_mod(tmp_test, tmp_test, phi);
-    // gmp_printf("tmp_test: %Zd\n", tmp_test);
-    // if(mpz_cmp_ui(tmp_test, 1) != 0){
-    //     return false;
-    // }
     
-    // gmp_printf("tmp_d: %Zd\n", tmp_d);
-    // gmp_printf("phi: %Zd\n", phi);
 
     // Let g' ← Hnn' (m') and r' ← (h(g'−1))d mod nn0. 
     this->H(g_p, m_p, tmp_nn);
@@ -167,7 +155,7 @@ void CHET_RSA_CDK_2017::Adapt(mpz_t r_p, mpz_t m_p, mpz_t m, mpz_t r, CHET_RSA_C
     mpz_mod(tmp_2, tmp_2, tmp_nn);
     mpz_powm(r_p, tmp_2, tmp_d, tmp_nn);
 
-    mpz_clears(tmp, tmp_nn,tmp_d, n,e, etd_p_minus_1, etd_q_minus_1, p_minus_1, q_minus_1,phi, g_p,tmp_1,tmp_2, NULL);
+    mpz_clears(tmp, tmp_nn, tmp_d, etd_p_minus_1, etd_q_minus_1, p_minus_1, q_minus_1,phi, g_p, tmp_1, tmp_2, NULL);
 }
 
 /**

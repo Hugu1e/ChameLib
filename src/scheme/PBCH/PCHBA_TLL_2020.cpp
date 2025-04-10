@@ -12,7 +12,7 @@ PCHBA_TLL_2020::PCHBA_TLL_2020(int curve, bool swap): PbcScheme(curve){
     element_init_GT(GT, pairing);
     element_init_Zr(Zn, pairing);
 
-    abet.init(G1, G2, GT, Zn, swap);
+    abet.init(G1, G2, GT, Zn, swap, true);
 
     element_s *init_G1_list[] = {tmp_G, tmp_G_2};
     element_s *init_G2_list[] = {tmp_H, tmp_H_2};
@@ -282,10 +282,13 @@ bool PCHBA_TLL_2020::Verify(PCHBA_TLL_2020_h &h_p, PCHBA_TLL_2020_r &random_p, e
     return this->Check(h_p, random_p, m_p, pkPCHBA);
 }
 
+Element_t_matrix* PCHBA_TLL_2020::ComputeMSP(const std::string &policy_str){
+    return abet.ComputeMSP(policy_str);
+}
+
 PCHBA_TLL_2020::~PCHBA_TLL_2020() {
     element_s *clear_list[] = {r, s1, s2, esk, 
-        tmp_G, tmp_G_2, tmp_H, tmp_H_2, tmp_GT, tmp_GT_2, tmp_GT_3, tmp_Zn, tmp_Zn_2, tmp_Zn_3, 
-        G1, G2, GT, Zn};
+        tmp_G, tmp_G_2, tmp_H, tmp_H_2, tmp_GT, tmp_GT_2, tmp_GT_3, tmp_Zn, tmp_Zn_2, tmp_Zn_3};
     for(int i=0;i<sizeof(clear_list)/sizeof(clear_list[0]);i++){
         element_clear(clear_list[i]);
     }

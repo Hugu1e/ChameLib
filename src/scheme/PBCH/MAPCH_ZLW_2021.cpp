@@ -5,7 +5,7 @@ MAPCH_ZLW_2021::MAPCH_ZLW_2021(int curve): PbcScheme(curve){
     element_init_GT(GT, pairing);
     element_init_Zr(Zn, pairing);
 
-    ma_abe.init(G1, GT, Zn);
+    ma_abe.init(G1, GT, Zn, true);
     
     element_init_same_as(tmp_G, G1);
     element_init_same_as(tmp_GT, GT);
@@ -163,9 +163,12 @@ bool MAPCH_ZLW_2021::Verify(MAPCH_ZLW_2021_h &h, MAPCH_ZLW_2021_r &r, std::strin
     return Check(h, r, m, mhks);
 }
 
+Element_t_matrix* MAPCH_ZLW_2021::ComputeMSP(const std::string &policy_str){
+    return ma_abe.ComputeMSP(policy_str);
+}
 
 MAPCH_ZLW_2021::~MAPCH_ZLW_2021() {
-    element_s *clear_list[] = {tmp_G, tmp_GT, tmp_Zn, tmp_Zn_2, G1, GT, Zn};
+    element_s *clear_list[] = {tmp_G, tmp_GT, tmp_Zn, tmp_Zn_2};
     for(int i=0;i<sizeof(clear_list)/sizeof(clear_list[0]);i++){
         element_clear(clear_list[i]);
     }

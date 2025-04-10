@@ -140,6 +140,16 @@ TEST_P(CH_KEF_MH_SDH_DL_AM_2004_Test, Test){
     EXPECT_TRUE(check_time(GetParam().curve, op_cnt[3], "Check"));
     EXPECT_TRUE(check_time(GetParam().curve, op_cnt[4], "Adapt"));
     EXPECT_TRUE(check_time(GetParam().curve, op_cnt[3], "Verify"));
+
+    // free
+    for (int i = 0; i < repeat; i++) {
+        element_clear(m[i]);
+        element_clear(m_p[i]);
+        element_clear(label[i]);
+        delete m[i];
+        delete m_p[i];
+        delete label[i];
+    }
 }
 
 int main(int argc, char **argv){

@@ -165,9 +165,4 @@ IB_CH_ZSS_S1_2003::~IB_CH_ZSS_S1_2003() {
     element_clear(tmp_GT_2);
     element_clear(tmp_Zn);
     element_clear(tmp_Zn_2);
-
-    element_clear(G1);
-    element_clear(G2);
-    element_clear(GT);
-    element_clear(Zn);
 }

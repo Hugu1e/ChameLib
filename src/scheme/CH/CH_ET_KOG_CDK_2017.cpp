@@ -2,8 +2,8 @@
 
 CH_ET_KOG_CDK_2017_NIZKPOK::CH_ET_KOG_CDK_2017_NIZKPOK(){}
 
-void CH_ET_KOG_CDK_2017_NIZKPOK::init(element_t _G, element_t _Zn){
-    PbcScheme::init(_G, _Zn);
+void CH_ET_KOG_CDK_2017_NIZKPOK::init(element_t _G, element_t _Zn, bool shared_pairing){
+    PbcScheme::init(_G, _Zn, shared_pairing);
 
     element_init_same_as(tmp_G, _G);
     element_init_same_as(tmp_G_2, _G);
@@ -64,9 +64,6 @@ CH_ET_KOG_CDK_2017_NIZKPOK::~CH_ET_KOG_CDK_2017_NIZKPOK(){
     element_clear(tmp_G_2);
     element_clear(tmp_Zn);
     element_clear(tmp_Zn_2);
-
-    element_clear(G1);
-    element_clear(Zn);
 }
 
 
@@ -94,7 +91,7 @@ CH_ET_KOG_CDK_2017::CH_ET_KOG_CDK_2017(int curve, int group): PbcScheme(curve){
     element_init_same_as(tmp_Zn_3, Zn);
     element_init_same_as(tmp_Zn_4, Zn);
 
-    nizkpok.init(G1, Zn);
+    nizkpok.init(G1, Zn, true);
 }
 
 void CH_ET_KOG_CDK_2017::H(element_t res, element_t m){
@@ -253,6 +250,7 @@ void CH_ET_KOG_CDK_2017::Adapt(CH_ET_KOG_CDK_2017_r &r_p, element_t m_p, CH_ET_K
     mpz_init(r_mpz);
     enc.Decrypt(r_mpz, r.get_enc_c(), sk.get_enc_sk(), pk.get_enc_pk());
     element_set_mpz(tmp_Zn, r_mpz);
+    mpz_clear(r_mpz);
 
     // h' ?= g^etd 
     element_pow_zn(tmp_G, pp[g], etd[0]);
@@ -328,7 +326,4 @@ CH_ET_KOG_CDK_2017::~CH_ET_KOG_CDK_2017() {
     element_clear(tmp_Zn_2);
     element_clear(tmp_Zn_3);
     element_clear(tmp_Zn_4);
-
-    element_clear(G1);
-    element_clear(Zn);
 }

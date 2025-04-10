@@ -300,6 +300,14 @@ TEST_P(ID_B_CollRes_XSL_2021_Test, Test){
         }
         EXPECT_TRUE(check_time(GetParam().curve, op_cnt_Verify, "Verify"));
     }
+
+    // free
+    for (int i = 0; i < repeat; i++) {
+        element_clear(m[i]);
+        element_clear(m_p[i]);
+        delete m[i];
+        delete m_p[i];
+    }
 }
 
 int main(int argc, char **argv){

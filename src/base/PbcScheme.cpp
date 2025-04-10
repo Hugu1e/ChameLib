@@ -76,16 +76,25 @@ void PbcScheme::defaultInit(){
     element_init_Zr(Zn, pairing);
 }
 
-void PbcScheme::init(element_t _G1, element_t _G2, element_t _GT, element_t _Zn){
+void PbcScheme::init(element_t _G1, element_t _G2, element_t _GT, element_t _Zn, bool shared_pairing){
     element_init_same_as(G1, _G1);
     element_init_same_as(G2, _G2);
     element_init_same_as(GT, _GT);
     element_init_same_as(Zn, _Zn);
+    this->shared_pairing = shared_pairing;
 }
 
-void PbcScheme::init(element_t _G, element_t _Zn){
+void PbcScheme::init(element_t _G1, element_t _GT, element_t _Zn, bool shared_pairing){
+    element_init_same_as(G1, _G1);
+    element_init_same_as(GT, _GT);
+    element_init_same_as(Zn, _Zn);
+    this->shared_pairing = shared_pairing;
+}
+
+void PbcScheme::init(element_t _G, element_t _Zn, bool shared_pairing){
     element_init_same_as(G1, _G);
     element_init_same_as(Zn, _Zn);
+    this->shared_pairing = shared_pairing;
 }
 
 element_s* PbcScheme::GetZrElement(){
@@ -117,5 +126,14 @@ element_s* PbcScheme::GetGTElement(){
 }
 
 PbcScheme::~PbcScheme() {
-    // pairing_clear(pairing);
+    if(G1->field != nullptr) element_clear(G1);
+    if(G2->field != nullptr) element_clear(G2);
+    if(GT->field != nullptr) element_clear(GT);
+    if(Zn->field != nullptr) element_clear(Zn);
+    delete G1;
+    delete G2;
+    delete GT;
+    delete Zn;
+
+    if(!shared_pairing) pairing_clear(pairing);
 }

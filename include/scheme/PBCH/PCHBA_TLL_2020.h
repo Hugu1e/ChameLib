@@ -124,6 +124,8 @@ class PCHBA_TLL_2020: public PbcScheme{
 
         bool Verify(PCHBA_TLL_2020_h &h_p, PCHBA_TLL_2020_r &random_p, element_t m_p, PCHBA_TLL_2020_pk &pkPCHBA);
 
+        Element_t_matrix* ComputeMSP(const std::string &policy_str);
+
         ~PCHBA_TLL_2020();
 
         enum{

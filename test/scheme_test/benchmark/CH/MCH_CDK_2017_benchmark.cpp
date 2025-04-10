@@ -77,6 +77,9 @@ TEST_P(MCH_CDK_2017_Test, Test){
     for(int i = 0; i < repeat; i++) ASSERT_TRUE(verify_result[i]);
 
     average();
+
+    for (int i = 0; i < repeat; i++) mpz_clears(m[i], m_p[i], NULL);
+    
 }
 
 int main(int argc, char **argv){

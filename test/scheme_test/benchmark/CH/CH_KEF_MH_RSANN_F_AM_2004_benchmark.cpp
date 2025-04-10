@@ -75,9 +75,10 @@ TEST_P(CH_KEF_MH_RSANN_F_AM_2004_Test, Test){
     this->end("Verify");
     for (int i = 0; i < repeat; i++) ASSERT_TRUE(verify_result[i]);
 
-    for (int i = 0; i < repeat; i++) mpz_clears(m[i], m_p[i], label[i], NULL);
-
     average();
+
+    // free
+    for (int i = 0; i < repeat; i++) mpz_clears(m[i], m_p[i], label[i], NULL);
 }
 
 int main(int argc, char **argv){

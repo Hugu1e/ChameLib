@@ -175,6 +175,8 @@ class DPCH_MXN_2022: public PbcScheme{
 
         bool Verify(DPCH_MXN_2022_pk &pkDPCH, std::string m_p, DPCH_MXN_2022_h &h, DPCH_MXN_2022_r &r_p);
 
+        Element_t_matrix* ComputeMSP(const std::string &policy_str);
+
         ~DPCH_MXN_2022();
 };
 

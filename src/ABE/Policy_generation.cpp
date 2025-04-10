@@ -122,6 +122,8 @@ void Policy_generation::generatePolicyInMatrixForm(Binary_tree_policy *tree) {
         }
         q.pop();
     }
+
+    delete m;
 }
 
 Element_t_matrix* Policy_generation::getPolicyInMatrixFormFromTree(Binary_tree_policy *tree) {

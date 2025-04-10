@@ -60,9 +60,7 @@ TEST_P(PCH_DSS_2019_Test, Test){
     std::vector<std::string> attr_list = {"ONE","TWO","THREE"};
     const std::string POLICY = "(ONE&THREE)&(TWO|FOUR)";
     // compute MSP
-    std::vector<std::string> postfix_expression = Policy_resolution::infixToPostfix(POLICY);
-    Binary_tree_policy* binary_tree_expression = Policy_resolution::postfixToBinaryTree(postfix_expression, ch.GetZrElement());
-    Element_t_matrix* MSP = Policy_generation::getPolicyInMatrixFormFromTree(binary_tree_expression);
+    Element_t_matrix* MSP = ch.ComputeMSP(POLICY);
 
     PCH_DSS_2019_pp ppPCH[repeat];
     PCH_DSS_2019_sk skPCH[repeat];
@@ -106,7 +104,6 @@ TEST_P(PCH_DSS_2019_Test, Test){
     average();
 
     // free
-    delete binary_tree_expression;
     delete MSP;
 }
 

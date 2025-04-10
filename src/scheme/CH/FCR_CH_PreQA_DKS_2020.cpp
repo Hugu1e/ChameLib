@@ -245,7 +245,4 @@ FCR_CH_PreQA_DKS_2020::~FCR_CH_PreQA_DKS_2020() {
     element_clear(tmp_G_3);
     element_clear(tmp_Zn);
     element_clear(tmp_Zn_2);
-    
-    element_clear(G1);
-    element_clear(Zn);
 }

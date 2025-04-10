@@ -8,7 +8,12 @@
 class PbcScheme{
     protected:
         pairing_t pairing;
-        element_t G1, G2, GT, Zn;
+        bool shared_pairing = false;  // true if the pairing is shared, then do not free it
+
+        element_s *G1 = new element_s();
+        element_s *G2 = new element_s();
+        element_s *GT = new element_s();
+        element_s *Zn = new element_s();
 
     public:
         PbcScheme(){}
@@ -18,9 +23,9 @@ class PbcScheme{
 
         void initPairing(std::string param);
 
-        void init(element_t _G1, element_t _G2, element_t _GT, element_t _Zn);
-
-        void init(element_t _G, element_t _Zn);
+        void init(element_t _G1, element_t _G2, element_t _GT, element_t _Zn, bool shared_pairing = false);
+        void init(element_t _G1, element_t _GT, element_t _Zn, bool shared_pairing = false);
+        void init(element_t _G, element_t _Zn, bool shared_pairing = false);
 
         void defaultInit();
 

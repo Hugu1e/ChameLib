@@ -15,12 +15,9 @@ RABE_TMM::RABE_TMM(int curve, bool swap): PbcScheme(curve){
     initTmp();
 }
 
-void RABE_TMM::init(element_t _G1, element_t _G2, element_t _GT, element_t _Zn, bool swap){
+void RABE_TMM::init(element_t _G1, element_t _G2, element_t _GT, element_t _Zn, bool swap, bool shared_pairing){
     this->swap = swap;
-    element_init_same_as(G1, _G1);
-    element_init_same_as(G2, _G2);
-    element_init_same_as(GT, _GT);
-    element_init_same_as(Zn, _Zn);
+    PbcScheme::init(_G1, _G2, _GT, _Zn, shared_pairing);
 
     initTmp();
 }
@@ -671,9 +668,6 @@ void RABE_TMM::Dec(element_t res, RABE_TMM_mpk &mpk, RABE_TMM_ciphertext &cipher
     // ct_prime / (num / den)
     element_div(tmp_GT, ciphertext.get_ct_prime().get(ct_prime), this->tmp_GT);
 
-    element_clear(num);
-    element_clear(den);
-
     int len_tmp = element_length_in_bytes(tmp_GT);
     unsigned char tmp[len_tmp];
     element_to_bytes(tmp, tmp_GT);
@@ -681,6 +675,8 @@ void RABE_TMM::Dec(element_t res, RABE_TMM_mpk &mpk, RABE_TMM_ciphertext &cipher
     element_from_bytes(res, tmp);
 
     // free
+    element_clear(num);
+    element_clear(den);
     delete attributesMatrix;
     delete inverse_attributesMatrix;
     delete unit;
@@ -703,13 +699,20 @@ void RABE_TMM::Rev(std::vector<RABE_TMM_revokedPreson> &rl, element_t id, time_t
     rl.push_back(rp);
 }
 
+Element_t_matrix* RABE_TMM::ComputeMSP(const std::string &policy_str){
+    std::vector<std::string> postfix_expression = Policy_resolution::infixToPostfix(policy_str);
+    Binary_tree_policy* binary_tree_expression = Policy_resolution::postfixToBinaryTree(postfix_expression, Zn);
+    Element_t_matrix* MSP = Policy_generation::getPolicyInMatrixFormFromTree(binary_tree_expression);
+
+    delete binary_tree_expression;
+    return MSP;
+}
 
 RABE_TMM::~RABE_TMM(){
     element_s *clear_list[] = {d1, d2, d3, r1, r2, 
         b1r1a1, b1r1a2, b2r2a1, b2r2a2, r1r2a1, r1r2a2, 
         s1, s2, tmp_G, tmp_G_2, tmp_G_3, tmp_G_4, tmp_H, tmp_GT, 
-        tmp_GT_2, tmp_GT_3, tmp_GT_4, tmp_Zn, tmp_Zn_2, tmp_Zn_3,
-        G1, G2, GT, Zn};
+        tmp_GT_2, tmp_GT_3, tmp_GT_4, tmp_Zn, tmp_Zn_2, tmp_Zn_3};
 
     for(int i = 0;i < sizeof(clear_list)/sizeof(element_s*);i++){
         element_clear(clear_list[i]);

@@ -15,7 +15,7 @@ PCH_DSS_2019::PCH_DSS_2019(int curve, bool swap): PbcScheme(curve){
     element_init_GT(GT, pairing);
     element_init_Zr(Zn, pairing);
 
-    cp_abe.init(G1, G2, GT, Zn, swap);
+    cp_abe.init(G1, G2, GT, Zn, swap, true);
 
     element_init_same_as(tmp_GT, GT);
     element_init_same_as(tmp_Zn, Zn);
@@ -175,9 +175,12 @@ bool PCH_DSS_2019::Verify(PCH_DSS_2019_h &h, PCH_DSS_2019_r &r_p, std::string m_
     return this->Check(h, r_p, m_p, pk);
 }
 
+Element_t_matrix* PCH_DSS_2019::ComputeMSP(const std::string &policy_str){
+    return cp_abe.ComputeMSP(policy_str);
+}
 
 PCH_DSS_2019::~PCH_DSS_2019() {
-    element_s *clear_list[] = {tmp_GT, tmp_Zn, tmp_Zn_2, tmp_Zn_3, tmp_Zn_4, G1, G2, GT, Zn};
+    element_s *clear_list[] = {tmp_GT, tmp_Zn, tmp_Zn_2, tmp_Zn_3, tmp_Zn_4};
     for(int i=0;i<sizeof(clear_list)/sizeof(clear_list[0]);i++){
         element_clear(clear_list[i]);
     }

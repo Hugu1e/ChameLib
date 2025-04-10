@@ -54,9 +54,7 @@ TEST_P(DPCH_MXN_2022_Test, Test){
 
     const std::string POLICY = "(ONE&THREE)&(TWO|FOUR)";
     // compute MSP
-    std::vector<std::string> postfix_expression = Policy_resolution::infixToPostfix(POLICY);
-    Binary_tree_policy* binary_tree_expression = Policy_resolution::postfixToBinaryTree(postfix_expression, ch.GetZrElement());
-    Element_t_matrix* MSP = Policy_generation::getPolicyInMatrixFormFromTree(binary_tree_expression);
+    Element_t_matrix *MSP = ch.ComputeMSP(POLICY);
 
     // attributes
     const std::string A = "ONE";
@@ -158,7 +156,6 @@ TEST_P(DPCH_MXN_2022_Test, Test){
     average(list);
 
     // free
-    delete binary_tree_expression;
     delete MSP;
     for(int j=0; j<pkThetas.size(); j++) delete pkThetas[j];
     for(int j=0; j<skThetas.size(); j++) delete skThetas[j];

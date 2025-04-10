@@ -20,12 +20,9 @@ BLS::BLS(int curve, bool swap): PbcScheme(curve){
     element_init_same_as(tmp_Zn, Zn);
 }
 
-void BLS::init(element_t _G, element_t _H, element_t _GT, element_t _Zn){
+void BLS::init(element_t _G, element_t _H, element_t _GT, element_t _Zn, bool shared_pairing){
     this->swap = false;
-    element_init_same_as(G1, _G);
-    element_init_same_as(G2, _H);
-    element_init_same_as(GT, _GT);
-    element_init_same_as(Zn, _Zn);
+    PbcScheme::init(_G, _H, _GT, _Zn, shared_pairing);
 
     element_init_same_as(tmp_G, G1);
     element_init_same_as(tmp_H, G2);
@@ -137,9 +134,4 @@ BLS::~BLS() {
     element_clear(tmp_GT);
     element_clear(tmp_GT_2);
     element_clear(tmp_Zn);
-
-    element_clear(G1);
-    element_clear(G2);
-    element_clear(GT);
-    element_clear(Zn);
 }

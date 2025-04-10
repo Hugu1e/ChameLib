@@ -110,6 +110,8 @@ class MAPCH_ZLW_2021: public PbcScheme{
 
         bool Verify(MAPCH_ZLW_2021_h &h, MAPCH_ZLW_2021_r &r, std::string m, std::vector<MAPCH_ZLW_2021_mhk *> &mhks);
 
+        Element_t_matrix* ComputeMSP(const std::string &policy_str);
+        
         ~MAPCH_ZLW_2021();
 };
 

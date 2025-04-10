@@ -192,7 +192,7 @@ class ABET:public PbcScheme{
         ABET(){}
         ABET(int curve, bool swap);
 
-        void init(element_t _G1, element_t _G2, element_t _GT, element_t _Zn, bool swap);
+        void init(element_t _G1, element_t _G2, element_t _GT, element_t _Zn, bool swap, bool shared_pairing);
 
         void Setup(ABET_msk &msk, ABET_mpk &mpk, int k);
 
@@ -204,6 +204,8 @@ class ABET:public PbcScheme{
 
         void Hash(element_t res, std::string m);
         void Hash2(element_t res, element_t m);
+
+        Element_t_matrix* ComputeMSP(const std::string &policy_str);
 
         ~ABET();
 

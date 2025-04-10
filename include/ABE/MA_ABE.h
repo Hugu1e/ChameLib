@@ -122,7 +122,7 @@ class MA_ABE: public PbcScheme{
         MA_ABE(){}
         MA_ABE(int curve);
 
-        void init(element_t _G1, element_t _GT, element_t _Zn);
+        void init(element_t _G1, element_t _GT, element_t _Zn, bool shared_pairing);
 
         void GlobalSetup(MA_ABE_gpk &gpk);
         void GlobalSetup(MA_ABE_gpk &gpk, element_t _g);
@@ -135,6 +135,8 @@ class MA_ABE: public PbcScheme{
         void Encrypt(MA_ABE_ciphertext &C, element_t m, MA_ABE_gpk &gpk, std::vector<MA_ABE_pkTheta *> &pkThetas, Element_t_matrix *MSP, std::string policy_str, Element_t_vector &v, Element_t_vector &w, Element_t_vector &t_x);
 
         void Decrypt(element_t res, std::vector<MA_ABE_skgidA *> &skgidAs, MA_ABE_ciphertext &C, Element_t_matrix *MSP);
+
+        Element_t_matrix* ComputeMSP(const std::string &policy_str);
 
         ~MA_ABE();
 

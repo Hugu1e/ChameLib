@@ -159,6 +159,8 @@ class RPCH_TMM_2022: public PbcScheme{
 
         bool Verify(RPCH_TMM_2022_h &h, RPCH_TMM_2022_r &r_p, element_t m_p, RPCH_TMM_2022_pk &pkRPCH);
 
+        Element_t_matrix* ComputeMSP(const std::string &policy_str);
+
         ~RPCH_TMM_2022();
 
         enum {

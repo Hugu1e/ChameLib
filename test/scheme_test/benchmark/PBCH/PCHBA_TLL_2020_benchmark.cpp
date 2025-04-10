@@ -59,9 +59,7 @@ TEST_P(PCHBA_TLL_2020_Test, Test){
 
     const std::string POLICY = "A&(DDDD|(BB&CCC))";
     // compute MSP
-    std::vector<std::string> postfix_expression = Policy_resolution::infixToPostfix(POLICY);
-    Binary_tree_policy* binary_tree_expression = Policy_resolution::postfixToBinaryTree(postfix_expression, ch.GetZrElement());
-    Element_t_matrix* MSP = Policy_generation::getPolicyInMatrixFormFromTree(binary_tree_expression);
+    Element_t_matrix* MSP = ch.ComputeMSP(POLICY);
 
     std::vector<std::string> S1 = {"A","DDDD"};
     const int SIZE_OF_S1 = S1.size();
@@ -79,6 +77,7 @@ TEST_P(PCHBA_TLL_2020_Test, Test){
 
         ID12.get_IDABET().set(i-1, tmp_Zn);
         element_clear(tmp_Zn);
+        delete tmp_Zn;
     }
 
     PCHBA_TLL_2020_sk skPCHBA[repeat];
@@ -257,8 +256,13 @@ TEST_P(PCHBA_TLL_2020_Test, Test){
     }
 
     // free
-    delete binary_tree_expression;
     delete MSP;
+    for(int i = 0; i < repeat; i++){
+        element_clear(m2[i]);
+        element_clear(m_p[i]);
+        delete m2[i];
+        delete m_p[i];
+    }
 }
 
 int main(int argc, char **argv){

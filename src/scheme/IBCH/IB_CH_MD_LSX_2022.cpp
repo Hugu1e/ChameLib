@@ -172,8 +172,4 @@ IB_CH_MD_LSX_2022::~IB_CH_MD_LSX_2022() {
     element_clear(tmp_Zn);
     element_clear(tmp_Zn_2);
     element_clear(tmp_Zn_3);
-
-    element_clear(G1);
-    element_clear(GT);
-    element_clear(Zn);
 }

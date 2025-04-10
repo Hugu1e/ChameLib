@@ -247,7 +247,4 @@ CR_CH_DSS_2020::~CR_CH_DSS_2020() {
     element_clear(tmp_G_4);
     element_clear(tmp_Zn);
     element_clear(tmp_Zn_2);
-
-    element_clear(G1);
-    element_clear(Zn);
 }

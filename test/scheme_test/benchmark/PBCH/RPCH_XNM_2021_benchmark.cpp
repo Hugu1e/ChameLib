@@ -65,9 +65,7 @@ TEST_P(RPCH_XNM_2021_Test, Test){
     std::vector<std::string> attr_list = {"ONE", "TWO", "THREE"};
     const std::string POLICY = "(ONE&THREE)&(TWO|FOUR)";
     // Compute MSP
-    std::vector<std::string> postfix_expression = Policy_resolution::infixToPostfix(POLICY);
-    Binary_tree_policy* binary_tree_expression = Policy_resolution::postfixToBinaryTree(postfix_expression, ch.GetZrElement());
-    Element_t_matrix* MSP = Policy_generation::getPolicyInMatrixFormFromTree(binary_tree_expression);
+    Element_t_matrix* MSP = ch.ComputeMSP(POLICY);
 
     element_s *id_2[repeat];
     for (int i = 0; i < repeat; i++) {
@@ -142,8 +140,11 @@ TEST_P(RPCH_XNM_2021_Test, Test){
     average();
 
     // free
-    delete binary_tree_expression;
     delete MSP;
+    for(int i = 0; i < repeat; i++) {
+        element_clear(id_2[i]);
+        delete id_2[i];
+    }
 }
 
 int main(int argc, char **argv){

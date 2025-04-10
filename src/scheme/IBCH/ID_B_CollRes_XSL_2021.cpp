@@ -223,9 +223,4 @@ ID_B_CollRes_XSL_2021::~ID_B_CollRes_XSL_2021() {
     element_clear(tmp_GT_2);
     element_clear(tmp_GT_3);
     element_clear(tmp_Zn);
-
-    element_clear(G1);
-    element_clear(G2);
-    element_clear(GT);
-    element_clear(Zn);
 }

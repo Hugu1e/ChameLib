@@ -12,7 +12,7 @@ RPCH_TMM_2022::RPCH_TMM_2022(int curve, bool swap): PbcScheme(curve){
     element_init_GT(GT, pairing);
     element_init_Zr(Zn, pairing);
 
-    rabe.init(G1, G2, GT, Zn, swap);
+    rabe.init(G1, G2, GT, Zn, swap, true);
 
     element_init_same_as(this->s1, Zn);
     element_init_same_as(this->s2, Zn);
@@ -202,11 +202,13 @@ bool RPCH_TMM_2022::Verify(RPCH_TMM_2022_h &h, RPCH_TMM_2022_r &r_p, element_t m
     return this->Check(h, r_p, m_p, pkRPCH);
 }
 
+Element_t_matrix* RPCH_TMM_2022::ComputeMSP(const std::string &policy_str){
+    return rabe.ComputeMSP(policy_str);
+}
 
 RPCH_TMM_2022::~RPCH_TMM_2022() {
     element_s *clear_list[] = {s1, s2, K, R, 
-        tmp_G, tmp_G_2, tmp_Zn, tmp_Zn_2, tmp_Zn_3, 
-        G1, G2, GT, Zn};
+        tmp_G, tmp_G_2, tmp_Zn, tmp_Zn_2, tmp_Zn_3};
     for(int i=0;i<sizeof(clear_list)/sizeof(clear_list[0]);i++){
         element_clear(clear_list[i]);
     }

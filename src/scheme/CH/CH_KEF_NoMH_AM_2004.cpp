@@ -38,6 +38,8 @@ void CH_KEF_NoMH_AM_2004::KeyGen(CH_KEF_NoMH_AM_2004_pk &pk, CH_KEF_NoMH_AM_2004
         mpz_powm(tmp, pk[g], pk[q], pk[p]);
     }
 
+    mpz_clear(tmp);
+
     // y = g^x
     RandomGenerator::RandomN(sk[x], pk[q]);
     mpz_powm(pk[y], pk[g], sk[x], pk[p]);

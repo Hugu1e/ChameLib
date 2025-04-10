@@ -12,7 +12,7 @@ RPCH_XNM_2021::RPCH_XNM_2021(int curve, bool swap): PbcScheme(curve){
     element_init_GT(GT, pairing);
     element_init_Zr(Zn, pairing);
 
-    rabe.init(G1, G2, GT, Zn, swap);
+    rabe.init(G1, G2, GT, Zn, swap, true);
 
     element_init_same_as(this->s1, Zn);
     element_init_same_as(this->s2, Zn);
@@ -117,9 +117,12 @@ bool RPCH_XNM_2021::Verify(RPCH_XNM_2021_h &h, RPCH_XNM_2021_r &r_p, std::string
     return this->Check(h, r_p, m_p, pkRPCH);
 }
 
+Element_t_matrix* RPCH_XNM_2021::ComputeMSP(const std::string &policy_str){
+    return rabe.ComputeMSP(policy_str);
+}
 
 RPCH_XNM_2021::~RPCH_XNM_2021() {
-    element_s *clear_list[] = {s1, s2, K, G1, G2, GT, Zn};
+    element_s *clear_list[] = {s1, s2, K};
     for(int i=0;i<sizeof(clear_list)/sizeof(clear_list[0]);i++){
         element_clear(clear_list[i]);
     }

@@ -130,6 +130,8 @@ class PCH_DSS_2019: public PbcScheme{
 
         bool Verify(PCH_DSS_2019_h &h, PCH_DSS_2019_r &r_p, std::string m_p, PCH_DSS_2019_pk &pk);
 
+        Element_t_matrix* ComputeMSP(const std::string &policy_str);
+
         ~PCH_DSS_2019();
 };
 

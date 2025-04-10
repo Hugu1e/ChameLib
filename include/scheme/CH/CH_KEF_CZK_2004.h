@@ -60,8 +60,7 @@ class CH_KEF_CZK_2004: public PbcScheme {
         };
 
         enum{
-            r1,
-            r2
+            r1, r2
         };
 
         enum{

@@ -55,9 +55,7 @@ TEST_P(MAPCH_ZLW_2021_Test, Test){
 
     const std::string POLICY = "(ONE&THREE)&(TWO|FOUR)";
     // compute MSP
-    std::vector<std::string> postfix_expression = Policy_resolution::infixToPostfix(POLICY);
-    Binary_tree_policy* binary_tree_expression = Policy_resolution::postfixToBinaryTree(postfix_expression, ch.GetZrElement()); 
-    Element_t_matrix* MSP = Policy_generation::getPolicyInMatrixFormFromTree(binary_tree_expression);
+    Element_t_matrix* MSP = ch.ComputeMSP(POLICY);
 
     // attributes
     const std::string A = "ONE";
@@ -144,7 +142,6 @@ TEST_P(MAPCH_ZLW_2021_Test, Test){
     average(list);
 
     // free
-    delete binary_tree_expression;
     delete MSP;
     for (int i = 0; i < mhks.size(); i++) delete mhks[i];
     for (int i = 0; i < mtks.size(); i++) delete mtks[i];

@@ -254,6 +254,4 @@ CH_KEF_DLP_LLA_2012::~CH_KEF_DLP_LLA_2012() {
     element_clear(tmp_G_2);
     element_clear(tmp_Zn);
     element_clear(tmp_Zn_2);
-    element_clear(G1);
-    element_clear(Zn);
 }

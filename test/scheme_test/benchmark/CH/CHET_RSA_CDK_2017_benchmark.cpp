@@ -76,6 +76,9 @@ TEST_P(CHET_RSA_CDK_2017_Test, Test){
     for (int i = 0; i < repeat; i++) ASSERT_TRUE(verify_result[i]);
 
     average();
+
+    // free
+    for(int i = 0; i < repeat; i++) mpz_clears(r[i], r_p[i], m[i], m_p[i], NULL);
 }
 
 int main(int argc, char **argv){

@@ -250,6 +250,16 @@ TEST_P(CH_FS_ECC_CCT_2024_Test, Test){
         EXPECT_TRUE(check_time(GetParam().curve, op_cnt_GT[4], "Adapt"));
         EXPECT_TRUE(check_time(GetParam().curve, op_cnt_GT[3], "Verify"));
     }
+
+    // free
+    for(int i = 0; i < repeat; i++) {
+        element_clear(m[i]);
+        element_clear(m_p[i]);
+        element_clear(h[i]);
+        delete m[i];
+        delete m_p[i];
+        delete h[i];
+    }
 }
 
 int main(int argc, char **argv){

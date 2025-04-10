@@ -15,12 +15,9 @@ RABE_XNM::RABE_XNM(int curve, bool swap): PbcScheme(curve){
     initTmp();
 }
 
-void RABE_XNM::init(element_t _G1, element_t _G2, element_t _GT, element_t _Zn, bool swap){
+void RABE_XNM::init(element_t _G1, element_t _G2, element_t _GT, element_t _Zn, bool swap, bool shared_pairing){
     this->swap = swap;
-    element_init_same_as(G1, _G1);
-    element_init_same_as(G2, _G2);
-    element_init_same_as(GT, _GT);
-    element_init_same_as(Zn, _Zn);
+    PbcScheme::init(_G1, _G2, _GT, _Zn, shared_pairing);
 
     initTmp();
 }
@@ -683,13 +680,20 @@ void RABE_XNM::Rev(std::vector<RABE_XNM_revokedPreson> &rl, element_t id, time_t
     rl.push_back(rp);
 }
 
+Element_t_matrix* RABE_XNM::ComputeMSP(const std::string &policy_str){
+    std::vector<std::string> postfix_expression = Policy_resolution::infixToPostfix(policy_str);
+    Binary_tree_policy* binary_tree_expression = Policy_resolution::postfixToBinaryTree(postfix_expression, Zn);
+    Element_t_matrix* MSP = Policy_generation::getPolicyInMatrixFormFromTree(binary_tree_expression);
+
+    delete binary_tree_expression;
+    return MSP;
+}
 
 RABE_XNM::~RABE_XNM(){
     element_s *clear_list[] = {d1, d2, d3, r1, r2, 
         b1r1a1, b1r1a2, b2r2a1, b2r2a2, r1r2a1, r1r2a2, 
         s1, s2, tmp_G, tmp_G_2, tmp_G_3, tmp_G_4, 
-        tmp_H, tmp_GT, tmp_GT_2, tmp_GT_3, tmp_GT_4, tmp_Zn, tmp_Zn_2,
-        G1, G2, GT, Zn};
+        tmp_H, tmp_GT, tmp_GT_2, tmp_GT_3, tmp_GT_4, tmp_Zn, tmp_Zn_2};
 
     for(int i = 0; i < sizeof(clear_list)/sizeof(clear_list[0]); i++){
         element_clear(clear_list[i]);

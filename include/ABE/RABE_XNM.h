@@ -193,7 +193,7 @@ class RABE_XNM: public PbcScheme{
         RABE_XNM(){}
         RABE_XNM(int curve, bool swap);
 
-        void init(element_t _G1, element_t _G2, element_t _GT, element_t _Zn, bool swap);
+        void init(element_t _G1, element_t _G2, element_t _GT, element_t _Zn, bool swap, bool shared_pairing);
 
         ~RABE_XNM();
 
@@ -214,6 +214,8 @@ class RABE_XNM: public PbcScheme{
         void Dec(element_t res, RABE_XNM_mpk &mpk, RABE_XNM_ciphertext &ciphertext, RABE_XNM_dkidt &dkidt, Element_t_matrix *MSP);
 
         void Rev(std::vector<RABE_XNM_revokedPreson> &rl, element_t id, time_t t);
+
+        Element_t_matrix* ComputeMSP(const std::string &policy_str);
 
         enum {
             _,

@@ -45,7 +45,7 @@ class BLS: public PbcScheme{
         BLS(){}
         BLS(int curve, bool swap);
 
-        void init(element_t _G, element_t _H, element_t _GT, element_t _Zn);
+        void init(element_t _G, element_t _H, element_t _GT, element_t _Zn, bool shared_pairing);
 
         void Setup(BLS_pp &pp);
         void Setup(BLS_pp &pp, element_t _g);

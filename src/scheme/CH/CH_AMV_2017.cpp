@@ -366,7 +366,4 @@ CH_AMV_2017::~CH_AMV_2017(){
     element_clear(tmp_Zn_2);
     element_clear(tmp_Zn_3);
     element_clear(tmp_Zn_4);
-
-    element_clear(G1);
-    element_clear(Zn);
 }

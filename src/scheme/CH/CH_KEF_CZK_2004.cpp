@@ -150,7 +150,4 @@ CH_KEF_CZK_2004::~CH_KEF_CZK_2004() {
     element_clear(tmp_Zn_2);
     element_clear(tmp_Zn_3);
     element_clear(tmp_Zn_4);
-
-    element_clear(G1);
-    element_clear(Zn);
 }

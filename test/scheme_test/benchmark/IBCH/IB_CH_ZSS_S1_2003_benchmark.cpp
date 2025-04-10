@@ -200,6 +200,16 @@ TEST_P(IB_CH_ZSS_S1_2003_Test, Test){
         EXPECT_TRUE(check_time(GetParam().curve, op_cnt_swap[4], "Adapt"));
         EXPECT_TRUE(check_time(GetParam().curve, op_cnt_swap[3], "Verify"));
     }
+
+    // free
+    for (int i = 0; i < repeat; i++) {
+        element_clear(m[i]);
+        element_clear(m_p[i]);
+        element_clear(ID[i]);
+        delete m[i];
+        delete m_p[i];
+        delete ID[i];
+    }
 }
 
 int main(int argc, char **argv){

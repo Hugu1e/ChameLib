@@ -164,8 +164,4 @@ CH_KEF_MH_SDH_DL_AM_2004::~CH_KEF_MH_SDH_DL_AM_2004() {
     element_clear(tmp_Zn);
     element_clear(tmp_Zn_2);
     element_clear(tmp_Zn_3);
-
-    element_clear(G1);
-    element_clear(GT);
-    element_clear(Zn);
 }

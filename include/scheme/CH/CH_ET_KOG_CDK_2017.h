@@ -104,7 +104,7 @@ class CH_ET_KOG_CDK_2017_NIZKPOK: public PbcScheme{
     public:
         CH_ET_KOG_CDK_2017_NIZKPOK();
 
-        void init(element_t _G, element_t _Zn);
+        void init(element_t _G, element_t _Zn, bool shared_pairing = false);
 
         void proof(element_t z, element_t R, element_t pk, element_t sk, element_t g);
 

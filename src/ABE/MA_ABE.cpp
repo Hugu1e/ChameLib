@@ -8,10 +8,8 @@ MA_ABE::MA_ABE(int curve): PbcScheme(curve){
     initTmp();
 }
 
-void MA_ABE::init(element_t _G1, element_t _GT, element_t _Zn){
-    element_init_same_as(G1, _G1);
-    element_init_same_as(GT, _GT);
-    element_init_same_as(Zn, _Zn);
+void MA_ABE::init(element_t _G1, element_t _GT, element_t _Zn, bool shared_pairing){
+    PbcScheme::init(_G1, _GT, _Zn, shared_pairing);
 
     initTmp();
 }
@@ -320,8 +318,17 @@ void MA_ABE::Decrypt(element_t res, std::vector<MA_ABE_skgidA *> &skgidAs, MA_AB
     delete x;
 }
 
+Element_t_matrix* MA_ABE::ComputeMSP(const std::string &policy_str){
+    std::vector<std::string> postfix_expression = Policy_resolution::infixToPostfix(policy_str);
+    Binary_tree_policy* binary_tree_expression = Policy_resolution::postfixToBinaryTree(postfix_expression, Zn);
+    Element_t_matrix* MSP = Policy_generation::getPolicyInMatrixFormFromTree(binary_tree_expression);
+
+    delete binary_tree_expression;
+    return MSP;
+}
+
 MA_ABE::~MA_ABE(){
-    element_s *clear_list[] = {z, tmp_G, tmp_G_2, tmp_G_3, tmp_G_4, tmp_GT, tmp_GT_2, tmp_GT_3, tmp_Zn, G1, GT, Zn};
+    element_s *clear_list[] = {z, tmp_G, tmp_G_2, tmp_G_3, tmp_G_4, tmp_GT, tmp_GT_2, tmp_GT_3, tmp_Zn};
     for(int i=0;i<sizeof(clear_list)/sizeof(element_s*);i++){
         element_clear(clear_list[i]);
     }

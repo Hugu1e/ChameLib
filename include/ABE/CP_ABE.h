@@ -119,7 +119,7 @@ class CP_ABE:public PbcScheme{
         CP_ABE(){}
         CP_ABE(int curve, bool swap);
 
-        void init(element_t _G1, element_t _G2, element_t _GT, element_t _Zn,  bool swap);
+        void init(element_t _G1, element_t _G2, element_t _GT, element_t _Zn,  bool swap, bool shared_pairing);
 
         void Setup(CP_ABE_msk &msk, CP_ABE_mpk &mpk);
 
@@ -130,6 +130,8 @@ class CP_ABE:public PbcScheme{
         void Encrypt(CP_ABE_ciphertext &ciphertext, CP_ABE_mpk &mpk, element_t msg, Element_t_matrix *MSP, element_t s1, element_t s2);
 
         void Decrypt(element_t res, CP_ABE_ciphertext &ciphertext, Element_t_matrix *MSP, CP_ABE_mpk &mpk, CP_ABE_sks &sks);
+
+        Element_t_matrix* ComputeMSP(const std::string &policy_str);
 
         ~CP_ABE();
 

@@ -80,6 +80,9 @@ TEST_P(CH_CDK_2017_Test, Test){
     for(int i = 0; i < repeat; i++) ASSERT_TRUE(verify_result[i]);
 
     average();
+
+    // free
+    for (int i = 0; i < repeat; i++) mpz_clears(m[i], tag[i], m_p[i], tag_p[i], NULL);
 }
 
 int main(int argc, char **argv){

@@ -224,7 +224,4 @@ CH_FS_ECC_CCT_2024::~CH_FS_ECC_CCT_2024() {
     element_clear(this->tmp_G);
     element_clear(this->tmp_G_2);
     element_clear(this->tmp_Zn);
-
-    element_clear(G1);
-    element_clear(Zn);
 }

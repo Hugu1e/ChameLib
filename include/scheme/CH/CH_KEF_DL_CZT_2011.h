@@ -66,8 +66,7 @@ class CH_KEF_DL_CZT_2011 : public PbcScheme {
         };
 
         enum {
-            r1,
-            r2
+            r1, r2
         };
 };
 

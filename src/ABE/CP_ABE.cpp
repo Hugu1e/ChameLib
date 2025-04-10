@@ -15,13 +15,9 @@ CP_ABE::CP_ABE(int curve, bool swap): PbcScheme(curve){
     initTmp();
 }
 
-void CP_ABE::init(element_t _G1, element_t _G2, element_t _GT, element_t _Zn, bool swap){
+void CP_ABE::init(element_t _G1, element_t _G2, element_t _GT, element_t _Zn, bool swap, bool shared_pairing){
     this->swap = swap;
-
-    element_init_same_as(G1, _G1);
-    element_init_same_as(G2, _G2);
-    element_init_same_as(GT, _GT);
-    element_init_same_as(Zn, _Zn);
+    PbcScheme::init(_G1, _G2, _GT, _Zn, shared_pairing);
 
     initTmp();
 }
@@ -436,6 +432,7 @@ void CP_ABE::Decrypt(element_t res, CP_ABE_ciphertext &ciphertext, Element_t_mat
             v->pushBack(MSP->getElement(i, j));
         }
         attributesMatrix->pushBack(v);
+        delete v;
     }
     // get inverse matrix
     Element_t_matrix* inverse_attributesMatrix = attributesMatrix->inverse();
@@ -515,10 +512,23 @@ void CP_ABE::Decrypt(element_t res, CP_ABE_ciphertext &ciphertext, Element_t_mat
     // res = num / den
     element_div(res, num, den);
 
+    // free
     element_clear(num);
     element_clear(den);
+    delete attributesMatrix;
+    delete inverse_attributesMatrix;
+    delete unit;
+    delete x;
 }
 
+Element_t_matrix* CP_ABE::ComputeMSP(const std::string &policy_str){
+    std::vector<std::string> postfix_expression = Policy_resolution::infixToPostfix(policy_str);
+    Binary_tree_policy* binary_tree_expression = Policy_resolution::postfixToBinaryTree(postfix_expression, Zn);
+    Element_t_matrix* MSP = Policy_generation::getPolicyInMatrixFormFromTree(binary_tree_expression);
+
+    delete binary_tree_expression;
+    return MSP;
+}
 
 CP_ABE::~CP_ABE(){
     element_s *clear_list[] = {d1, d2, d3, r1, r2, 
@@ -526,8 +536,7 @@ CP_ABE::~CP_ABE(){
         s1, s2, 
         sk_1_G, sk_2_G, sk_3_G, sk_1_H, sk_2_H, sk_3_H, 
         ct_1_G, ct_2_G, ct_3_G, ct_1_H, ct_2_H, ct_3_H, 
-        tmp_G, tmp_G_2, tmp_G_3, tmp_G_4, tmp_H, tmp_GT, tmp_GT_2, tmp_GT_3, tmp_Zn, tmp_Zn_2,
-        G1, G2, GT, Zn};
+        tmp_G, tmp_G_2, tmp_G_3, tmp_G_4, tmp_H, tmp_GT, tmp_GT_2, tmp_GT_3, tmp_Zn, tmp_Zn_2};
 
     for(int i = 0;i < sizeof(clear_list)/sizeof(element_s*);i++){
         element_clear(clear_list[i]);

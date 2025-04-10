@@ -7,8 +7,8 @@ DPCH_MXN_2022::DPCH_MXN_2022(int curve):PbcScheme(curve){
     element_init_GT(GT, pairing);
     element_init_Zr(Zn, pairing);
 
-    ma_abe.init(G1, GT, Zn);
-    bls.init(G1, G2, GT, Zn);
+    ma_abe.init(G1, GT, Zn, true);
+    bls.init(G1, G2, GT, Zn, true);
 
     element_init_same_as(tmp_G, G1);
     element_init_same_as(tmp_GT, GT);
@@ -293,9 +293,12 @@ bool DPCH_MXN_2022::Verify(DPCH_MXN_2022_pk &pkDPCH, std::string m_p, DPCH_MXN_2
     return Check(pkDPCH, m_p, h, r_p);
 }
 
+Element_t_matrix* DPCH_MXN_2022::ComputeMSP(const std::string &policy_str){
+    return ma_abe.ComputeMSP(policy_str);
+}
 
 DPCH_MXN_2022::~DPCH_MXN_2022() {
-    element_s *clear_list[] = {tmp_G, tmp_GT, tmp_Zn, tmp_Zn_2, G1, G2, GT, Zn};
+    element_s *clear_list[] = {tmp_G, tmp_GT, tmp_Zn, tmp_Zn_2};
     for(int i=0;i<sizeof(clear_list)/sizeof(clear_list[0]);i++){
         element_clear(clear_list[i]);
     }

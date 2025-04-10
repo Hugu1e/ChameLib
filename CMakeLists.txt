@@ -83,7 +83,7 @@ if(BUILD_TESTS)
         set_tests_properties("${test_name}" PROPERTIES LABELS "benchmarktest")
     endmacro()
 
-    file(GLOB BENCHMARKTEST_SOURCES "test/scheme_test/benchmark/*/*.cpp")
+    file(GLOB BENCHMARKTEST_SOURCES "test/scheme_test/benchmark/*/*.cpp" "test/scheme_test/benchmark/*.cpp")
     foreach(test_source ${BENCHMARKTEST_SOURCES})
         get_filename_component(test_name ${test_source} NAME_WE)
         add_benchmarktest(${test_name} ${test_source})

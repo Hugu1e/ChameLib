@@ -286,6 +286,24 @@ TEST_P(CH_KEF_DLP_LLA_2012_Test, Test){
         EXPECT_TRUE(check_time(GetParam().curve, op_cnt_GT[4], "UForge"));
         EXPECT_TRUE(check_time(GetParam().curve, op_cnt_GT[5], "IForge"));
     }
+
+    // free
+    for (int i = 0; i < repeat; i++) {
+        element_clear(m[i]);
+        element_clear(m_p[i]);
+        element_clear(m_pp[i]);
+        element_clear(r[i]);
+        element_clear(r_p[i]);
+        element_clear(r_pp[i]);
+        element_clear(h[i]);
+        delete m[i];
+        delete m_p[i];
+        delete m_pp[i];
+        delete r[i];
+        delete r_p[i];
+        delete r_pp[i];
+        delete h[i];
+    }
 }
 
 int main(int argc, char **argv){
