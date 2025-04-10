@@ -25,7 +25,7 @@ std::vector<TestParams> generateTestParams() {
         Curve::A1,
         Curve::E,
     };
-    int authNums[] = {16, 32, 64};
+    int authNums[] = {256, 512, 1024};
     int lamudas[] = {256, 512, 1024};
 
     std::vector<TestParams> test_params;
@@ -88,41 +88,45 @@ TEST_P(DPCH_MXN_2022_Test, Test){
     for (int i = 0; i < repeat; i++) ch.ModSetUp(skGid[i], sigmaGid, skDPCH, GID);
     this->end("ModSetUp");
     
+    {
+        DPCH_MXN_2022_pkTheta *pkTheta = new DPCH_MXN_2022_pkTheta; 
+        DPCH_MXN_2022_skTheta *skTheta = new DPCH_MXN_2022_skTheta;
+        this->start("AuthSetUp");
+        for (int i = 0; i < repeat; i++) ch.AuthSetUp(*pkTheta, *skTheta, ppDPCH, ATTRIBUTES[0]);
+        this->end("AuthSetUp");
+        delete pkTheta;
+        delete skTheta;
+    }
+
     for(int j = 0; j < GetParam().authNum; j++) {
         DPCH_MXN_2022_pkTheta *pkTheta = new DPCH_MXN_2022_pkTheta; 
         DPCH_MXN_2022_skTheta *skTheta = new DPCH_MXN_2022_skTheta;
 
-        if(j < SIZE_OF_ATTRIBUTES){
-            this->start("AuthSetUp", false);
-            ch.AuthSetUp(*pkTheta, *skTheta, ppDPCH, ATTRIBUTES[j]);
-            this->end("AuthSetUp", false);
-        }else{
-            this->start("AuthSetUp", false);
-            ch.AuthSetUp(*pkTheta, *skTheta, ppDPCH, "ATTRIBUTE@AUTHORITY_" + std::to_string(j));
-            this->end("AuthSetUp", false);
-        }
+        if(j < SIZE_OF_ATTRIBUTES) ch.AuthSetUp(*pkTheta, *skTheta, ppDPCH, ATTRIBUTES[j]);
+        else ch.AuthSetUp(*pkTheta, *skTheta, ppDPCH, "ATTRIBUTE@AUTHORITY_" + std::to_string(j));
 
         pkThetas.push_back(pkTheta);
         skThetas.push_back(skTheta);
     }
-    average("AuthSetUp", GetParam().authNum);
+    // average("AuthSetUp", GetParam().authNum);
+    
+    {
+        DPCH_MXN_2022_skGidA *skGidA = new DPCH_MXN_2022_skGidA;
+        this->start("ModKeyGen");
+        for (int i = 0; i < repeat; i++) ch.ModKeyGen(*skGidA, ppDPCH, pkDPCH, GID, sigmaGid, *skThetas[0], ATTRIBUTES[0]);
+        this->end("ModKeyGen");
+        delete skGidA;
+    }
     
     for(int j = 0; j < GetParam().authNum; j++) {
         DPCH_MXN_2022_skGidA *skGidA = new DPCH_MXN_2022_skGidA;
 
-        if (j < SIZE_OF_ATTRIBUTES) {
-            this->start("ModKeyGen", false);
-            ch.ModKeyGen(*skGidA, ppDPCH, pkDPCH, GID, sigmaGid, *skThetas[j], ATTRIBUTES[j]);
-            this->end("ModKeyGen", false);
-        } else {
-            this->start("ModKeyGen", false);
-            ch.ModKeyGen(*skGidA, ppDPCH, pkDPCH, GID, sigmaGid, *skThetas[j], "ATTRIBUTE@AUTHORITY_" + std::to_string(j));
-            this->end("ModKeyGen", false);
-        }
+        if (j < SIZE_OF_ATTRIBUTES) ch.ModKeyGen(*skGidA, ppDPCH, pkDPCH, GID, sigmaGid, *skThetas[j], ATTRIBUTES[j]);
+        else ch.ModKeyGen(*skGidA, ppDPCH, pkDPCH, GID, sigmaGid, *skThetas[j], "ATTRIBUTE@AUTHORITY_" + std::to_string(j));
         
         skGidAs.push_back(skGidA);
     }
-    average("ModKeyGen", GetParam().authNum);
+    // average("ModKeyGen", GetParam().authNum);
 
     this->start("Hash");
     for (int i = 0; i < repeat; i++) ch.Hash(h[i], r[i], m, ppDPCH, pkDPCH, pkThetas, MSP, POLICY);
@@ -152,8 +156,8 @@ TEST_P(DPCH_MXN_2022_Test, Test){
     this->end("Verify");
     for (int i = 0; i < repeat; i++) ASSERT_TRUE(verify_result[i]);
     
-    std::vector<std::string> list = {"SetUp", "ModSetUp", "Hash", "Check", "Adapt", "Verify"};
-    average(list);
+    // std::vector<std::string> list = {"SetUp", "ModSetUp", "Hash", "Check", "Adapt", "Verify"};
+    average();
 
     // free
     delete MSP;

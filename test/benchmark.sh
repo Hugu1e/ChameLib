@@ -19,6 +19,7 @@ for dir in "${directories[@]}"; do
             if [ -f "$file" ]; then
                 TEST_NAME=$(basename "$file" | sed 's/\.[^.]*$//')
                 cd ../build
+                > ./"${TEST_NAME%_*}".txt
                 ./bin/"$TEST_NAME" --repeat ${REPEAT}
                 cd - > /dev/null
             fi
