@@ -12,8 +12,7 @@ std::ostream& operator<<(std::ostream& os, const TestParams& params) {
 const TestParams test_values[] = {
     {256},
     {512},
-    {1024},
-    {2048}
+    {1024}
 };
 
 class CH_CDK_2017_Test : public BaseTest<TestParams>{

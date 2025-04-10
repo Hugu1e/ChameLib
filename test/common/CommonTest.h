@@ -97,7 +97,7 @@ class BaseTest : public testing::TestWithParam<T>  {
             }
             out = fopen(filename.c_str(), "a");
             fflush(out);
-
+            fprintf(out, "repeat times: %d\n", repeat);
             if(visiable)printf("repeat times: %d\n", repeat);
         }
 

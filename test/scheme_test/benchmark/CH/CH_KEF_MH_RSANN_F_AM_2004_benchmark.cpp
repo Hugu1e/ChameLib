@@ -10,7 +10,7 @@ std::ostream& operator<<(std::ostream& os, const TestParams& params) {
 }
 
 const TestParams test_values[] = {
-    {512}
+    256, 512, 1024
 };
 
 class CH_KEF_MH_RSANN_F_AM_2004_Test : public BaseTest<TestParams>{

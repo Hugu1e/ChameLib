@@ -35,7 +35,7 @@ std::vector<TestParams> generateTestParams() {
 
     bool swaps[] = {false, true};
 
-    int lengths[] = {64, 128, 256};
+    int lengths[] = {32, 64, 128};
 
     std::vector<TestParams> test_params;
 

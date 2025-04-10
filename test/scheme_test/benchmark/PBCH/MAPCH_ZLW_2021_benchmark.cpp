@@ -25,7 +25,7 @@ std::vector<TestParams> generateTestParams() {
         Curve::A1,
         Curve::E,
     };
-    int authNums[] = {16, 32, 64};
+    int authNums[] = {256, 512, 1024};
     // int lamudas[] = {256, 512, 1024};
     int lamudas[] = {32, 64, 128};
 
@@ -83,40 +83,42 @@ TEST_P(MAPCH_ZLW_2021_Test, Test){
     this->start("GlobalSetup");
     for (int i = 0; i < repeat; i++) ch.GlobalSetup(pkCH, skCH, pp, GetParam().lamuda);
     this->end("GlobalSetup");
-    
+
+    {
+        MAPCH_ZLW_2021_mhk *mhk = new MAPCH_ZLW_2021_mhk();
+        MAPCH_ZLW_2021_mtk *mtk = new MAPCH_ZLW_2021_mtk();
+        this->start("AuthSetUp");
+        for (int i = 0; i < repeat; i++) ch.AuthSetUp(*mhk, *mtk, As[0], pkCH, skCH, pp);
+        this->end("AuthSetUp");
+        delete mhk;
+        delete mtk;
+    }
+
     for(int j=0; j<GetParam().authNum; j++){
         MAPCH_ZLW_2021_mhk *mhk = new MAPCH_ZLW_2021_mhk();
         MAPCH_ZLW_2021_mtk *mtk = new MAPCH_ZLW_2021_mtk();
 
-        if (j < SIZE_OF_ATTRIBUTES) {
-            this->start("AuthSetUp", false);
-            ch.AuthSetUp(*mhk, *mtk, As[j], pkCH, skCH, pp);
-            this->end("AuthSetUp", false);
-        }else{
-            this->start("AuthSetUp", false);
-            ch.AuthSetUp(*mhk, *mtk, "ATTRIBUTE@AUTHORITY_" + std::to_string(j), pkCH, skCH, pp);
-            this->end("AuthSetUp", false);
-        }
-        
+        if (j < SIZE_OF_ATTRIBUTES) ch.AuthSetUp(*mhk, *mtk, As[j], pkCH, skCH, pp);
+        else ch.AuthSetUp(*mhk, *mtk, "ATTRIBUTE@AUTHORITY_" + std::to_string(j), pkCH, skCH, pp);
+
         mhks.push_back(mhk);
         mtks.push_back(mtk);
     }
-    average("AuthSetUp", GetParam().authNum);
+
+    {
+        MAPCH_ZLW_2021_mski *mski = new MAPCH_ZLW_2021_mski();
+        this->start("KeyGen");
+        for (int i = 0; i < repeat; i++) ch.KeyGen(*mski, *mtks[0], *mhks[0], As[0], GID);
+        this->end("KeyGen");
+        delete mski;
+    }
 
     for(int j=0; j<GetParam().authNum; j++){
         MAPCH_ZLW_2021_mski *mski = new MAPCH_ZLW_2021_mski();
-        if(j < SIZE_OF_ATTRIBUTES){
-            this->start("KeyGen", false);
-            ch.KeyGen(*mski, *mtks[j], *mhks[j], As[j], GID);
-            this->end("KeyGen", false);
-        }else{
-            this->start("KeyGen", false);
-            ch.KeyGen(*mski, *mtks[j], *mhks[j], "ATTRIBUTE@AUTHORITY_" + std::to_string(j), GID);
-            this->end("KeyGen", false);
-        }
+        if(j < SIZE_OF_ATTRIBUTES) ch.KeyGen(*mski, *mtks[j], *mhks[j], As[j], GID);
+        else ch.KeyGen(*mski, *mtks[j], *mhks[j], "ATTRIBUTE@AUTHORITY_" + std::to_string(j), GID);
         mskis.push_back(mski);
     }
-    average("KeyGen", GetParam().authNum);
 
     this->start("Hash");
     for (int i = 0; i < repeat; i++) ch.Hash(h[i], r[i], m, pp, mhks, MSP, POLICY);
@@ -138,8 +140,8 @@ TEST_P(MAPCH_ZLW_2021_Test, Test){
     for (int i = 0; i < repeat; i++) verify_result[i] = ch.Verify(h[i], r_p[i], m_p, mhks);
     this->end("Verify");
     
-    std::vector<std::string> list = {"GlobalSetup", "Hash", "Check", "Adapt", "Verify"};
-    average(list);
+    // std::vector<std::string> list = {"GlobalSetup", "Hash", "Check", "Adapt", "Verify"};
+    average();
 
     // free
     delete MSP;

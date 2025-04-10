@@ -31,7 +31,7 @@ std::vector<TestParams> generateTestParams() {
 
     bool swaps[] = {false, true};
 
-    int leadNodeSizes[] = {8, 16, 32, 64};
+    int leadNodeSizes[] = {1024, 2048, 4096};
 
     std::vector<TestParams> test_params;
 
